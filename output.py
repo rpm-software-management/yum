@@ -588,6 +588,7 @@ class YumOutput:
            ...also highlight_na can be passed, and we'll highlight
            pkgs with (names, arch) in that set."""
 
+        kern_pkgtup = yum.misc.get_running_kernel_pkgtup(self.ts)
         if outputType in ['list', 'info']:
             thingslisted = 0
             if len(lst) > 0:
@@ -596,7 +597,8 @@ class YumOutput:
                 for pkg in sorted(lst):
                     key = (pkg.name, pkg.arch)
                     highlight = False
-                    if False: pass
+                    if pkg.pkgtup == kern_pkgtup:
+                        highlight = highlight_modes.get('kern','bold,underline')
                     elif key not in highlight_na:
                         highlight = highlight_modes.get('not in', 'normal')
                     elif pkg.verEQ(highlight_na[key]):

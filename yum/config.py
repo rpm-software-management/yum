@@ -686,11 +686,13 @@ class YumConf(StartupConf):
     color_list_installed_newer = Option('bold,yellow')
     color_list_installed_reinstall = Option('normal')
     color_list_installed_extra = Option('bold,red')
+    color_list_installed_running_kernel = Option('bold,underline')
 
     color_list_available_upgrade = Option('bold,blue')
     color_list_available_downgrade = Option('dim,cyan')
     color_list_available_reinstall = Option('bold,underline,green')
     color_list_available_install = Option('normal')
+    color_list_available_running_kernel = Option('bold,underline')
 
     color_update_installed = Option('normal')
     color_update_local     = Option('bold')

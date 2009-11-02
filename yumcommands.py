@@ -288,6 +288,7 @@ class InfoCommand(YumCommand):
                         local_pkgs[(po.name, po.arch)] = po
 
             # Output the packages:
+            kern = base.conf.color_list_installed_running_kernel
             clio = base.conf.color_list_installed_older
             clin = base.conf.color_list_installed_newer
             clir = base.conf.color_list_installed_reinstall
@@ -295,7 +296,9 @@ class InfoCommand(YumCommand):
             rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
                                 highlight_na=update_pkgs, columns=columns,
                                 highlight_modes={'>' : clio, '<' : clin,
+                                                 'kern' : kern,
                                                  '=' : clir, 'not in' : clie})
+            kern = base.conf.color_list_available_running_kernel
             clau = base.conf.color_list_available_upgrade
             clad = base.conf.color_list_available_downgrade
             clar = base.conf.color_list_available_reinstall
@@ -303,6 +306,7 @@ class InfoCommand(YumCommand):
             rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
                                 highlight_na=inst_pkgs, columns=columns,
                                 highlight_modes={'<' : clau, '>' : clad,
+                                                 'kern' : kern,
                                                  '=' : clar, 'not in' : clai})
             rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)

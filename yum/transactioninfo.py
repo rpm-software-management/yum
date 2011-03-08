@@ -106,6 +106,7 @@ class TransactionData:
         self.downgraded = []
 
         self._future_rpmdbv = None
+        self._check_future_rpmdbv = None
         
     def __len__(self):
         return len(self.pkgdict)

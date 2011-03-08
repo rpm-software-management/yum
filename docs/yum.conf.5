@@ -573,8 +573,33 @@ See color_list_installed_older for possible values.
 When removing packages (by removal, update or obsoletion) go through each
 package's dependencies. If any of them are no longer required by any other 
 package then also mark them to be removed.
-Boolean (1, 0, True, False, yes,no) Defaults to False
+Boolean (1, 0, True, False, yes, no) Defaults to False
 
+.IP
+\fBexit_on_lock\fR
+Should the yum client exit immediately when something else has the lock.
+Boolean (1, 0, True, False, yes, no) Defaults to False
+
+.IP
+\fBloadts_ignoremissing\fR
+Should the load-ts command ignore packages that are missing. This includes
+packages in the TS to be removed, which aren't installed, and packages in the
+TS to be added, which aren't available.
+Boolean (1, 0, True, False, yes, no) Defaults to False
+
+.IP
+\fBloadts_ignorerpm\fR
+Should the load-ts command ignore the rpmdb version (yum version nogroups) or
+abort if there is a mismatch between the TS file and the current machine.
+Boolean (1, 0, True, False, yes, no) Defaults to False
+
+.IP
+\fBloadts_ignorenewrpm\fR
+Should the load-ts command ignore the future rpmdb version or
+abort if there is a mismatch between the TS file and what will happen on the
+current machine.
+Note that if loadts_ignorerpm is True, this option does nothing.
+Boolean (1, 0, True, False, yes, no) Defaults to False
 
 
 .SH "[repository] OPTIONS"

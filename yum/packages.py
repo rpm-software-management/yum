@@ -1283,6 +1283,13 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return misc.to_utf8(msg)
 
 
+# HACK: This is completely retarded. Don't blame me, someone just fix
+#       rpm-python already. This is almost certainly not all of the problems,
+#       but w/e.
+def _rpm_long_size_hack(hdr, size):
+    """ Rpm returns None, for certain sizes. And has a "longsize" for the real
+        values. """
+    return hdr[size] or hdr['long' + size]
 
 #  This is a tweak on YumAvailablePackage() and is a base class for packages
 # which are actual rpms.
@@ -1310,8 +1317,8 @@ class YumHeaderPackage(YumAvailablePackage):
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
             self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])
-        self.packagesize = self.hdr['archivesize']
-        self.installedsize = self.hdr['size']
+        self.packagesize = _rpm_long_size_hack(self.hdr, 'archivesize')
+        self.installedsize = _rpm_long_size_hack(self.hdr, 'size')
         self.__mode_cache = {}
         self.__prcoPopulated = False
 
@@ -1459,7 +1466,7 @@ class YumHeaderPackage(YumAvailablePackage):
         raise NotImplementedError()
 
     def _size(self):
-        return self.hdr['size']
+        return _rpm_long_size_hack(self.hdr, 'size')
 
     def _is_pre_req(self, flag):
         """check the flags for a requirement, return 1 or 0 whether or not requires

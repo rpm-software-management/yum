@@ -484,8 +484,20 @@ class YumRepository(Repository, config.RepoConf):
                                     copy_local=self.copy_local,
                                     reget='simple',
                                     **ugopts)
+        def add_mc(url):
+            host = urlparse.urlsplit(url).netloc
+            mc = self.metalink_data._host2mc.get(host)
+            if mc > 0:
+                url = {
+                    'mirror': misc.to_utf8(url),
+                    'kwargs': { 'max_connections': mc },
+                }
+            return url
+        urls = self.urls
+        if self.metalink:
+            urls = map(add_mc, urls)
 
-        self._grab = mgclass(self._grabfunc, self.urls,
+        self._grab = mgclass(self._grabfunc, urls,
                              failure_callback=self.mirror_failure_obj)
 
     def _default_grabopts(self, cache=True):

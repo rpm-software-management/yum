@@ -373,6 +373,11 @@ class YumBase(depsolve.Depsolve):
 
         self._conf = config.readMainConfig(startupconf)
 
+        # update urlgrabber defaults
+        mc = self._conf.max_connections
+        if mc > 0:
+            default_grabber.opts.max_connections = mc
+
         #  We don't want people accessing/altering preconf after it becomes
         # worthless. So we delete it, and thus. it'll raise AttributeError
         del self.preconf

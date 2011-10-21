@@ -345,6 +345,13 @@ Determines how yum resolves host names.
 `6' or `IPv6': resolve to IPv6 addresses only.
 
 .IP
+\fBmax_connections \fR
+
+The maximum number of simultaneous connections.  This overrides the urlgrabber
+default of 5 connections.  Note that there are also per-mirror limits, and the
+downloader honors these too.
+
+.IP
 \fBsslcacert \fR
 Path to the directory containing the databases of the certificate authorities
 yum should use to verify SSL certificates. Defaults to none - uses system
@@ -929,7 +936,11 @@ as greater/less than any other. defaults to 1000
 If set to True yum will continue running if this repository cannot be 
 contacted for any reason. This should be set carefully as all repos are consulted
 for any given command. Defaults to False.
+
 .IP
+\fBasync \fR
+If set (the default) and urlgrabber supports it, yum will use parallel downloader
+for packages from this repo.
 
 .SH "URL INCLUDE SYNTAX"
 .LP

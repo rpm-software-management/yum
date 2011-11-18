@@ -290,7 +290,7 @@ class InstallCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['install']
+        return ['install', 'install-n', 'install-na', 'install-nevra']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -337,7 +337,7 @@ class InstallCommand(YumCommand):
         """
         self.doneCommand(base, _("Setting up Install Process"))
         try:
-            return base.installPkgs(extcmds)
+            return base.installPkgs(extcmds, basecmd=basecmd)
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 

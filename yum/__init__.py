@@ -4088,7 +4088,7 @@ class YumBase(depsolve.Depsolve):
            be run if it will update the given package to the given
            version.  For example, if the package foo-1-2 is installed,::
 
-             updatePkgs(["foo-1-2], update_to=False)
+             updatePkgs(["foo-1-2"], update_to=False)
            will work identically to::
             
              updatePkgs(["foo"])

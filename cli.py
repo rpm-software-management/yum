@@ -1885,11 +1885,10 @@ class YumOptionParser(OptionParser):
             if opts.assumeno:
                 self.base.conf.assumeno  = 1
 
-            #  Instead of going cache-only for a non-root user, try to use a
-            # user writable cachedir. If that fails fall back to cache-only.
-            if opts.cacheonly:
+            #  Treat users like root as much as possible:
+            if not self.base.setCacheDir():
                 self.base.conf.cache = 1
-            elif not self.base.setCacheDir():
+            if opts.cacheonly:
                 self.base.conf.cache = 1
 
             if opts.obsoletes:

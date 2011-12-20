@@ -142,6 +142,7 @@ def checkCleanArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(_('Error: clean requires an option: %s') % (
             ", ".join(VALID_ARGS)))
+        raise cli.CliError
 
     for cmd in extcmds:
         if cmd not in VALID_ARGS:

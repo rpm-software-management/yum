@@ -111,6 +111,12 @@ def main(args):
             os.chdir("/")
     else:
         f.close()
+    try:
+        os.getcwd()
+    except OSError, e:
+        if e.errno == errno.ENOENT:
+            logger.critical(_('No getcwd() access in current directory, moving to /'))
+            os.chdir("/")
 
     lockerr = ""
     while True:

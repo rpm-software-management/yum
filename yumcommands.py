@@ -496,7 +496,7 @@ def _list_cmd_calc_columns(base, ypl):
 
 class InfoCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
-    update command.
+    info command.
     """
 
     def getNames(self):
@@ -1116,7 +1116,7 @@ class ProvidesCommand(YumCommand):
 
 class CheckUpdateCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
-    update command.
+    check-update command.
     """
 
     def getNames(self):
@@ -1275,7 +1275,7 @@ class SearchCommand(YumCommand):
 
 class UpgradeCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
-    update command.
+    upgrade command.
     """
 
     def getNames(self):

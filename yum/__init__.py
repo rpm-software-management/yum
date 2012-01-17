@@ -3461,7 +3461,8 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
         
         ps = ListPackageSack(pkglist)
-        result = self._bestPackageFromList(ps.returnNewestByNameArch())
+        result = self._bestPackageFromList(ps.returnNewestByNameArch(),
+                                           req=errstring)
         if result is None:
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
         
@@ -3523,18 +3524,25 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
         
         ps = ListPackageSack(pkglist)
-        result = self._bestPackageFromList(ps.returnNewestByNameArch())
+        result = self._bestPackageFromList(ps.returnNewestByNameArch(),
+                                           req=errstring)
         if result is None:
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
         
         return result
 
-    def _bestPackageFromList(self, pkglist):
+    def _bestPackageFromList(self, pkglist, req=None):
         """take list of package objects and return the best package object.
            If the list is empty, return None. 
            
            Note: this is not aware of multilib so make sure you're only
-           passing it packages of a single arch group."""
+           passing it packages of a single arch group.
+
+           :param pkglist: the list of packages to return the best
+             packages from
+           :param req: the requirement from the user
+           :return: a list of the best packages from *pkglist*
+        """
         
         
         if len(pkglist) == 0:
@@ -3543,10 +3551,11 @@ class YumBase(depsolve.Depsolve):
         if len(pkglist) == 1:
             return pkglist[0]
 
-        bestlist = self._compare_providers(pkglist, None)
+        bestlist = self._compare_providers(pkglist, reqpo=None, req=req)
         return bestlist[0][0]
 
-    def bestPackagesFromList(self, pkglist, arch=None, single_name=False):
+    def bestPackagesFromList(self, pkglist, arch=None, single_name=False,
+                             req=None):
         """Return the best packages from a list of packages.  This
         function is multilib aware, so that it will not compare
         multilib to singlelib packages.
@@ -3556,6 +3565,7 @@ class YumBase(depsolve.Depsolve):
         :param arch: packages will be selected that are compatible
            with the architecture specified by *arch*
         :param single_name: whether to return a single package name
+        :param req: the requirement from the user
         :return: a list of the best packages from *pkglist*
         """
         returnlist = []
@@ -3574,9 +3584,9 @@ class YumBase(depsolve.Depsolve):
                 singleLib.append(po)
                 
         # we now have three lists.  find the best package(s) of each
-        multi = self._bestPackageFromList(multiLib)
-        single = self._bestPackageFromList(singleLib)
-        no = self._bestPackageFromList(noarch)
+        multi = self._bestPackageFromList(multiLib, req=req)
+        single = self._bestPackageFromList(singleLib, req=req)
+        no = self._bestPackageFromList(noarch, req=req)
 
         if single_name and multi and single and multi.name != single.name:
             # Sinlge _must_ match multi, if we want a single package name
@@ -3590,7 +3600,7 @@ class YumBase(depsolve.Depsolve):
         # if there's a noarch and it's newer than the multilib, we want
         # just the noarch.  otherwise, we want multi + single
         elif multi:
-            best = self._bestPackageFromList([multi,no])
+            best = self._bestPackageFromList([multi,no], req=req)
             if best.arch == "noarch":
                 returnlist.append(no)
             else:
@@ -3598,7 +3608,7 @@ class YumBase(depsolve.Depsolve):
                 if single: returnlist.append(single)
         # similar for the non-multilib case
         elif single:
-            best = self._bestPackageFromList([single,no])
+            best = self._bestPackageFromList([single,no], req=req)
             if best.arch == "noarch":
                 returnlist.append(no)
             else:
@@ -3861,7 +3871,8 @@ class YumBase(depsolve.Depsolve):
                         #                                all of the pkgs)
                         if mypkgs and not misc.re_glob(arg):
                             mypkgs = self.bestPackagesFromList(mypkgs,
-                                                               single_name=True)
+                                                               single_name=True,
+                                                               req=arg)
                         if mypkgs:
                             pkgs.extend(mypkgs)
                         

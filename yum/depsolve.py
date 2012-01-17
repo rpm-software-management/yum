@@ -31,6 +31,7 @@ from transactioninfo import TransactionMember
 import rpm
 
 from packageSack import ListPackageSack
+from packages import PackageEVR
 from constants import *
 import logginglevels
 import Errors
@@ -1248,7 +1249,7 @@ class Depsolve(object):
         return True
     _isPackageInstalled = isPackageInstalled
 
-    def _compare_providers(self, pkgs, reqpo):
+    def _compare_providers(self, pkgs, reqpo, req=None):
         """take the list of pkgs and score them based on the requesting package
            return a dictionary of po=score"""
         self.verbose_logger.log(logginglevels.DEBUG_4,
@@ -1291,6 +1292,24 @@ class Depsolve(object):
             if y_dist == x_dist:
                 return None
             return x
+
+        def _pkg2prov_version(pkg, provname):
+            ''' This converts a package into a specific version tuple for the
+            required provide. The provide _must_ be '=' and epoch=None and
+            release=None == '0'.
+               If there is 0 or 2+ matches, return None.
+               If the req does not == the provide name, return None. '''
+            ret = None
+            for prov in pkg.provides:
+                (n, f, (e, v, r)) = prov
+                if n != provname:
+                    continue
+                if f != 'EQ':
+                    continue
+                if ret is not None:
+                    return None
+                ret = (e or '0', v, r or '0')
+            return ret
 
         #  Actual start of _compare_providers().
 
@@ -1414,6 +1433,26 @@ class Depsolve(object):
                         _('common prefix of %s between %s and %s' % (cpl, po, reqpo)))
                 
                     pkgresults[po] += cpl*2
+
+        if req is not None:
+            bestnum = max(pkgresults.values())
+            prov_depsolve = {}
+            for po in pkgs:
+                if pkgresults[po] != bestnum:
+                    continue
+                evr = _pkg2prov_version(po, req)
+                if evr is None:
+                    prov_depsolve = {}
+                    break
+                prov_depsolve[po] = evr
+            if len(prov_depsolve) > 1:
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                                        _('provides vercmp: %s') % str(req))
+                newest = sorted(prov_depsolve,
+                                key = lambda x: PackageEVR(*prov_depsolve[x]))[-1]
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                                        _(' Winner: %s') % newest)
+                pkgresults[newest] += 1
                 
         #  If we have more than one "best", see what would happen if we picked
         # each package ... ie. what things do they require that _aren't_ already

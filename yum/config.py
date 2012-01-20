@@ -48,6 +48,7 @@ __repo_gpgcheck_default__ = False
 __main_multilib_policy_default__ = 'all'
 __main_failovermethod_default__ = 'roundrobin'
 __main_installonly_limit_default__ = 0
+__group_command_default__ = 'compat'
 
 class Option(object):
     """
@@ -775,7 +776,8 @@ class YumConf(StartupConf):
     enable_group_conditionals = BoolOption(True)
     groupremove_leaf_only = BoolOption(False)
     group_package_types = ListOption(['mandatory', 'default'])
-    group_command = SelectionOption('compat', ('compat', 'objects', 'simple'))
+    group_command = SelectionOption(__group_command_default__,
+                                    ('compat', 'objects', 'simple'))
     
     timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 

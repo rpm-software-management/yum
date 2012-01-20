@@ -4009,12 +4009,12 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
                         arg)
 
-                        mypkgs = self.pkgSack.searchProvides(arg)
-                        if not misc.re_glob(arg):
-                            mypkgs = self.bestPackagesFromList(mypkgs,
-                                                               single_name=True,
-                                                               req=arg)
-                        pkgs.extend(mypkgs)
+                    mypkgs = self.pkgSack.searchProvides(arg)
+                    if not misc.re_glob(arg):
+                        mypkgs = self.bestPackagesFromList(mypkgs,
+                                                           single_name=True,
+                                                           req=arg)
+                    pkgs.extend(mypkgs)
             else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
 

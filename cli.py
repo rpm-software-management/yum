@@ -512,7 +512,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         rmpkgs = []
         stuff_to_download = False
         install_only = True
-        remove_only  = True
         for txmbr in self.tsInfo.getMembers():
             if txmbr.ts_state not in ('i', 'u'):
                 install_only = False
@@ -520,7 +519,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 if po:
                     rmpkgs.append(po)
             else:
-                remove_only = False
                 stuff_to_download = True
                 po = txmbr.po
                 if po:
@@ -868,7 +866,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             # go through the userlist - look for items that are local rpms. If we find them
             # pass them off to installLocal() and then move on
-            localupdates = []
             for item in userlist:
                 if (item.endswith('.rpm') and (yum.misc.re_remote_url(item) or
                                                os.path.exists(item))):
@@ -1015,7 +1012,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        oldcount = len(self.tsInfo)
 
         all_rms = []
         for arg in userlist:
@@ -1955,10 +1951,6 @@ class YumOptionParser(OptionParser):
                     self.logger.critical(e)
                     self.base.usage()
                     sys.exit(1)
-
-            # make sure the added repos are setup.        
-            if len(opts.repos) > 0:
-                self.base._getRepos(doSetup=True)
 
             # Disable all gpg key checking, if requested.
             if opts.nogpgcheck:

@@ -775,6 +775,7 @@ class YumConf(StartupConf):
     enable_group_conditionals = BoolOption(True)
     groupremove_leaf_only = BoolOption(False)
     group_package_types = ListOption(['mandatory', 'default'])
+    group_command = SelectionOption('compat', ('compat', 'objects', 'simple'))
     
     timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 

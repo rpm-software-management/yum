@@ -818,23 +818,38 @@ class GroupsCommand(YumCommand):
 
         if cmd in ('install', 'remove',
                    'mark-install', 'mark-remove',
-                   'mark-members', 'info', 'mark-members-sync'):
+                   'info',
+                   'mark-packages', 'mark-packages-force', 'unmark-packages',
+                   'mark-packages-sync', 'mark-packages-sync-force'):
             checkGroupArg(base, cmd, extcmds)
 
         if cmd in ('install', 'remove', 'upgrade',
                    'mark-install', 'mark-remove',
-                   'mark-members', 'mark-members-sync'):
+                   'mark-packages', 'mark-packages-force', 'unmark-packages',
+                   'mark-packages-sync', 'mark-packages-sync-force'):
             checkRootUID(base)
 
         if cmd in ('install', 'upgrade'):
             checkGPGKey(base)
 
-        cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary',
-                'mark-install', 'mark-remove',
-                'mark-members', 'mark-members-sync')
+        cmds = set(('list', 'info', 'remove', 'install', 'upgrade', 'summary'))
+        if base.conf.group_command == 'objects':
+            ocmds = ('mark-install', 'mark-remove',
+                     'mark-packages', 'mark-packages-force', 'unmark-packages',
+                     'mark-packages-sync', 'mark-packages-sync-force')
+            cmds.update(ocmds)
+
         if cmd not in cmds:
             base.logger.critical(_('Invalid groups sub-command, use: %s.'),
                                  ", ".join(cmds))
+            raise cli.CliError
+
+        if base.conf.group_command != 'objects':
+            pass
+        elif not os.path.exists(base.igroups.filename):
+            base.logger.critical(_("There is no installed groups file."))
+        elif not os.access(base.igroups.filename, os.R_OK):
+            base.logger.critical(_("You don't have access to the groups DB."))
             raise cli.CliError
 
     def doCommand(self, base, basecmd, extcmds):
@@ -870,6 +885,60 @@ class GroupsCommand(YumCommand):
             if cmd == 'remove':
                 return base.removeGroups(extcmds)
 
+            if cmd == 'mark-install':
+                for strng in extcmds:
+                    for group in base.comps.return_groups(strng):
+                        base.igroups.add_group(group.groupid, group.packages)
+                base.igroups.save()
+                return 0, ['Marked install: ' + ','.join(extcmds)]
+
+            if cmd in ('mark-packages', 'mark-packages-force'):
+                if len(extcmds) < 2:
+                    return 1, ['No group or package given']
+                igrps, grps = base._groupReturnGroups([extcmds[0]],
+                                                      ignore_case=False)
+                if igrps is not None and len(igrps) != 1:
+                    return 1, ['No group matched']
+                grp = igrps[0]
+                force = cmd == 'mark-packages-force'
+                for pkg in base.rpmdb.returnPackages(patterns=extcmds[1:]):
+                    if not force and 'group_member' in pkg.yumdb_info:
+                        continue
+                    pkg.yumdb_info.group_member = grp.gid
+                    grp.pkg_names.add(pkg.name)
+                    base.igroups.changed = True
+                base.igroups.save()
+                return 0, ['Marked packages: ' + ','.join(extcmds[1:])]
+
+            if cmd == 'unmark-packages':
+                for pkg in base.rpmdb.returnPackages(patterns=extcmds):
+                    if 'group_member' in pkg.yumdb_info:
+                        del pkg.yumdb_info.group_member
+                return 0, ['UnMarked packages: ' + ','.join(extcmds)]
+
+            if cmd in ('mark-packages-sync', 'mark-packages-sync-force'):
+                igrps, grps = base._groupReturnGroups(extcmds,ignore_case=False)
+                if not igrps:
+                    return 1, ['No group matched']
+                force = cmd == 'mark-packages-sync-force'
+                for grp in igrps:
+                    for pkg in base.rpmdb.searchNames(grp.pkg_names):
+                        if not force and 'group_member' in pkg.yumdb_info:
+                            continue
+                        pkg.yumdb_info.group_member = grp.gid
+                if force:
+                    return 0, ['Marked packages-sync-force: '+','.join(extcmds)]
+                else:
+                    return 0, ['Marked packages-sync: ' + ','.join(extcmds)]
+
+            if cmd == 'mark-remove':
+                for strng in extcmds:
+                    for group in base.comps.return_groups(strng):
+                        base.igroups.del_group(group.groupid)
+                base.igroups.save()
+                return 0, ['Marked remove: ' + ','.join(extcmds)]
+
+
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -886,6 +955,8 @@ class GroupsCommand(YumCommand):
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         if cmd in ('list', 'info', 'remove', 'summary'):
+            return False
+        if cmd.startswith('mark') or cmd.startswith('unmark'):
             return False
         return True
 

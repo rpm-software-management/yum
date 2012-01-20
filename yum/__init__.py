@@ -73,6 +73,7 @@ import logginglevels
 import yumRepo
 import callbacks
 import yum.history
+import yum.igroups
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
@@ -181,6 +182,7 @@ class YumBase(depsolve.Depsolve):
         self._up = None
         self._comps = None
         self._history = None
+        self._igroups = None
         self._pkgSack = None
         self._lockfile = None
         self._tags = None
@@ -222,6 +224,9 @@ class YumBase(depsolve.Depsolve):
         # We don't want to create the object, so we test if it's been created
         if self._history is not None:
             self.history.close()
+
+        if self._igroups is not None:
+            self.igroups.close()
 
         if self._repos:
             self._repos.close()
@@ -949,6 +954,14 @@ class YumBase(depsolve.Depsolve):
                                                    releasever=self.conf.yumvar['releasever'])
         return self._history
     
+    def _getIGroups(self):
+        """auto create the installed groups object that to access/change the
+           installed groups information. """
+        if self._igroups is None:
+            pdb_path = self.conf.persistdir + "/groups"
+            self._igroups = yum.igroups.InstalledGroups(db_path=pdb_path)
+        return self._igroups
+
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos(),
                      fset=lambda self, value: setattr(self, "_repos", value),
@@ -985,6 +998,11 @@ class YumBase(depsolve.Depsolve):
                        fset=lambda self, value: setattr(self, "_history",value),
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
+
+    igroups = property(fget=lambda self: self._getIGroups(),
+                       fset=lambda self, value: setattr(self, "_igroups",value),
+                       fdel=lambda self: setattr(self, "_igroups", None),
+                       doc="Yum Installed Groups Object")
 
     pkgtags = property(fget=lambda self: self._getTags(),
                        fset=lambda self, value: setattr(self, "_tags",value),
@@ -1671,6 +1689,8 @@ class YumBase(depsolve.Depsolve):
             if hasattr(cb, 'verify_txmbr'):
                 vTcb = cb.verify_txmbr
             self.verifyTransaction(resultobject, vTcb)
+            if self.conf.group_command == 'objects':
+                self.igroups.save()
         return resultobject
 
     def verifyTransaction(self, resultobject=None, txmbr_cb=None):
@@ -1748,6 +1768,10 @@ class YumBase(depsolve.Depsolve):
                     if md:
                         po.yumdb_info.from_repo_timestamp = str(md.timestamp)
 
+                if hasattr(txmbr, 'group_member'):
+                    # FIXME:
+                    po.yumdb_info.group_member = txmbr.group_member
+
                 loginuid = misc.getloginuid()
                 if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
                     if txmbr.updates:
@@ -1758,6 +1782,8 @@ class YumBase(depsolve.Depsolve):
                         opo = po
                     if 'installed_by' in opo.yumdb_info:
                         po.yumdb_info.installed_by = opo.yumdb_info.installed_by
+                    if 'group_member' in opo.yumdb_info:
+                        po.yumdb_info.group_member = opo.yumdb_info.group_member
                     if loginuid is not None:
                         po.yumdb_info.changed_by = str(loginuid)
                 elif loginuid is not None:
@@ -3079,6 +3105,58 @@ class YumBase(depsolve.Depsolve):
             
         return matches
 
+    def _groupInstalledData(self, group):
+        """ Return a dict of
+             pkg_name =>
+             (installed, available,
+             backlisted-installed, blacklisted-available). """
+        ret = {}
+        if not group or self.conf.group_command != 'objects':
+            return ret
+
+        pkg_names = {}
+        if group.groupid in self.igroups.groups:
+            pkg_names = self.igroups.groups[group.groupid].pkg_names
+
+        for pkg_name in set(group.packages + list(pkg_names)):
+            ipkgs = self.rpmdb.searchNames([pkg_name])
+            if pkg_name not in pkg_names and not ipkgs:
+                ret[pkg_name] = 'available'
+                continue
+
+            if not ipkgs:
+                ret[pkg_name] = 'blacklisted-available'
+                continue
+
+            for ipkg in ipkgs:
+                # Multiarch, if any are installed for the group we count "both"
+                if ipkg.yumdb_info.get('group_member', '') != group.groupid:
+                    continue
+                ret[pkg_name] = 'installed'
+                break
+            else:
+                ret[pkg_name] = 'blacklisted-installed'
+
+        return ret
+
+    def _groupReturnGroups(self, patterns=None, ignore_case=True):
+        igrps = None
+        if patterns is None:
+            grps = self.comps.groups
+            if self.conf.group_command == 'objects':
+                igrps = self.igroups.groups.values()
+            return igrps, grps
+
+        pats = ",".join(patterns)
+        cs   = not ignore_case
+        grps = self.comps.return_groups(pats, case_sensitive=cs)
+        #  Because we want name matches too, and we don't store group names
+        # we need to add the groupid's we've found:
+        if self.conf.group_command == 'objects':
+            pats += "," + ",".join([grp.groupid for grp in grps])
+            igrps = self.igroups.return_groups(pats, case_sensitive=cs)
+        return igrps, grps
+
     def doGroupLists(self, uservisible=0, patterns=None, ignore_case=True):
         """Return two lists of groups: installed groups and available
         groups.
@@ -3097,13 +3175,23 @@ class YumBase(depsolve.Depsolve):
         if self.comps.compscount == 0:
             raise Errors.GroupsError, _('No group data available for configured repositories')
         
-        if patterns is None:
-            grps = self.comps.groups
-        else:
-            grps = self.comps.return_groups(",".join(patterns),
-                                            case_sensitive=not ignore_case)
+        igrps, grps = self._groupReturnGroups(patterns, ignore_case)
+
+        if igrps is not None:
+            digrps = {}
+            for igrp in igrps:
+                digrps[igrp.gid] = igrp
+            igrps = digrps
+
         for grp in grps:
-            if grp.installed:
+            if igrps is None:
+                grp_installed = grp.installed
+            else:
+                grp_installed = grp.groupid in igrps
+                if grp_installed:
+                    del igrps[grp.groupid]
+
+            if grp_installed:
                 if uservisible:
                     if grp.user_visible:
                         installed.append(grp)
@@ -3116,8 +3204,20 @@ class YumBase(depsolve.Depsolve):
                 else:
                     available.append(grp)
             
+        if igrps is None:
+            return sorted(installed), sorted(available)
+
+        for igrp in igrps.values():
+            #  These are installed groups that aren't in comps anymore. so we
+            # create fake comps groups for them.
+            grp = comps.Group()
+            grp.installed = True
+            grp.name = grp.groupid
+            for pkg_name in igrp.pkg_names:
+                grp.mandatory_packages[pkg_name] = 1
+            installed.append(grp)
+
         return sorted(installed), sorted(available)
-    
     
     def groupRemove(self, grpid):
         """Mark all the packages in the given group to be removed.
@@ -3134,13 +3234,20 @@ class YumBase(depsolve.Depsolve):
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
+            igroup_data = self._groupInstalledData(thisgroup)
+
             thisgroup.toremove = True
             pkgs = thisgroup.packages
             for pkg in thisgroup.packages:
+                if pkg in igroup_data and igroup_data[pkg] != 'installed':
+                    continue
+
                 txmbrs = self.remove(name=pkg, silence_warnings=True)
                 txmbrs_used.extend(txmbrs)
                 for txmbr in txmbrs:
                     txmbr.groups.append(thisgroup.groupid)
+            if igroup_data:
+                self.igroups.del_group(thisgroup.groupid)
             
         return txmbrs_used
 
@@ -3172,7 +3279,8 @@ class YumBase(depsolve.Depsolve):
                             self.tsInfo.remove(txmbr.po.pkgtup)
         
         
-    def selectGroup(self, grpid, group_package_types=[], enable_group_conditionals=None):
+    def selectGroup(self, grpid, group_package_types=[],
+                    enable_group_conditionals=None, upgrade=False):
         """Mark all the packages in the given group to be installed.
 
         :param grpid: the name of the group containing the packages to
@@ -3212,12 +3320,47 @@ class YumBase(depsolve.Depsolve):
             if 'optional' in package_types:
                 pkgs.extend(thisgroup.optional_packages)
 
+            igroup_data = self._groupInstalledData(thisgroup)
+            igrp = None
+            if igroup_data:
+                if thisgroup.groupid in self.igroups.groups:
+                    igrp = self.igroups.groups[thisgroup.groupid]
+                else:
+                    self.igroups.add_group(thisgroup.groupid,thisgroup.packages)
+            pkgs.extend(list(igroup_data.keys()))
+
             old_txmbrs = len(txmbrs_used)
             for pkg in pkgs:
+                if self.conf.group_command == 'objects':
+                    assert pkg in igroup_data
+                    if (pkg not in igroup_data or
+                        igroup_data[pkg].startswith('blacklisted')):
+                        # (upgrade and igroup_data[pkg] == 'available')):
+                        msg = _('Skipping package %s from group %s'),
+                        self.verbose_logger.log(logginglevels.DEBUG_2,
+                                                msg, pkg, thisgroup.groupid)
+                        continue
+
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
+
+                if igrp is not None:
+                    igrp.pkg_names.add(pkg)
+                    self.igroups.changed = True
+
+                txmbrs = []
                 try:
-                    txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
+                    if (upgrade and
+                        (self.conf.group_command == 'simple' or
+                         (igroup_data and igroup_data[pkg] == 'installed'))):
+                        txmbrs = self.update(name = pkg)
+                    elif igroup_data and igroup_data[pkg] == 'installed':
+                        pass # Don't upgrade on install.
+                    else:
+                        txmbrs = self.install(name = pkg,
+                                              pkg_warning_level='debug2')
+                        for txmbr in txmbrs:
+                            txmbr.group_member = thisgroup.groupid
                 except Errors.InstallError, e:
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)
@@ -3231,6 +3374,7 @@ class YumBase(depsolve.Depsolve):
                 group_conditionals = enable_group_conditionals
 
             count_cond_test = 0
+            # FIXME: What do we do about group conditionals when group==objects
             if group_conditionals:
                 for condreq, cond in thisgroup.conditional_packages.iteritems():
                     if self.isPackageInstalled(cond):
@@ -3715,20 +3859,24 @@ class YumBase(depsolve.Depsolve):
             if next == slow:
                 return None
 
-    def _at_groupinstall(self, pattern):
-        " Do groupinstall via. leading @ on the cmd line, for install/update."
+    def _at_groupinstall(self, pattern, upgrade=False):
+        " Do groupinstall via. leading @ on the cmd line, for install."
         assert pattern[0] == '@'
         group_string = pattern[1:]
         tx_return = []
         for group in self.comps.return_groups(group_string):
             try:
-                txmbrs = self.selectGroup(group.groupid)
+                txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
                 tx_return.extend(txmbrs)
             except yum.Errors.GroupsError:
                 self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
         return tx_return
-        
+
+    def _at_groupupgrade(self, pattern):
+        " Do group upgrade via. leading @ on the cmd line, for update."
+        return self._at_groupinstall(pattern, upgrade=True)
+
     def _at_groupremove(self, pattern):
         " Do groupremove via. leading @ on the cmd line, for remove."
         assert pattern[0] == '@'
@@ -4117,7 +4265,7 @@ class YumBase(depsolve.Depsolve):
            be run if it will update the given package to the given
            version.  For example, if the package foo-1-2 is installed,::
 
-             updatePkgs(["foo-1-2], update_to=False)
+             updatePkgs(["foo-1-2"], update_to=False)
            will work identically to::
             
              updatePkgs(["foo"])
@@ -4169,7 +4317,12 @@ class YumBase(depsolve.Depsolve):
                     if new is None:
                         continue
                     tx_return.extend(self.update(po=new))
-            
+
+            # Upgrade the installed groups, as part of generic "yum upgrade"
+            if self.conf.group_command == 'objects':
+                for igrp in self.igroups.groups:
+                    tx_return.extend(self._at_groupupgrade(igrp))
+
             return tx_return
 
         # complications
@@ -4191,7 +4344,7 @@ class YumBase(depsolve.Depsolve):
                 return self._minus_deselect(kwargs['pattern'])
 
             if kwargs['pattern'] and kwargs['pattern'][0] == '@':
-                return self._at_groupinstall(kwargs['pattern'])
+                return self._at_groupupgrade(kwargs['pattern'])
 
             arg = kwargs['pattern']
             if not update_to:

@@ -1647,7 +1647,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         return 0, []
         
-    def installGroups(self, grouplist):
+    def installGroups(self, grouplist, upgrade=False):
         """Mark the packages in the given groups for installation.
 
         :param grouplist: a list of names or wildcards specifying
@@ -1669,7 +1669,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
             
                 try:
-                    txmbrs = self.selectGroup(group.groupid)
+                    txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
                 except yum.Errors.GroupsError:
                     self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                     continue

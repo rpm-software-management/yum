@@ -228,6 +228,28 @@ of packages in groups will be installed when 'groupinstall' is called.
 Default is: default, mandatory
 
 .IP
+\fBgroup_command\fR
+List of the following: simple, compat, objects. Tells yum what to do for
+group install/upgrade/remove commands.
+
+Simple acts like you did yum group cmd $(repoquery --group --list group).
+
+Compat. works much like simple, except that when you run "group upgrade" it
+actually runs "group install" (this means that you get any new packages added
+to the group, but you also get packages added that were there before and you
+didn't want).
+
+Objects makes groups act like a real object, seperate from the packages they
+contain. Yum keeps track of the groups you have installed, so "group upgrade"
+will install new packages for the group but not install old ones. It also knows
+about group members that are installed but weren't installed as part of the
+group, and won't remove those on "group remove".
+Running "yum upgrade" will also run "yum group upgrade" (thus. adding new
+packages for all groups).
+
+Default is: compat
+
+.IP
 \fBinstallroot \fR
 Specifies an alternative installroot, relative to which all packages will be
 installed. 

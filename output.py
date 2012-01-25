@@ -1288,7 +1288,15 @@ class YumOutput:
                 item = self._enc(item)
                 can_overflow = False
             else:
-                key = _("Other       : ")
+                provs = []
+                for prov in po.provides:
+                    if prov[0] == item:
+                        provs.append(prov)
+                if provs:
+                    key = _("Provides    : ")
+                    item = yum.misc.prco_tuple_to_string(sorted(provs)[0])
+                else:
+                    key = _("Other       : ")
 
             if matchfor:
                 item = self._sub_highlight(item, highlight, matchfor,

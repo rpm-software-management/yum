@@ -2221,7 +2221,7 @@ class YumBase(depsolve.Depsolve):
             urlgrabber.progress.text_meter_total_size(remote_size)
         beg_download = time.time()
         i = 0
-        local_size = 0
+        local_size = [0]
         done_repos = set()
         for po in remote_pkgs:
             #  Recheck if the file is there, works around a couple of weird
@@ -2234,41 +2234,41 @@ class YumBase(depsolve.Depsolve):
                     remote_size -= po.size
                     if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                         urlgrabber.progress.text_meter_total_size(remote_size,
-                                                                  local_size)
+                                                                  local_size[0])
                     continue
                 if os.path.getsize(local) >= po.size:
                     os.unlink(local)
 
-            checkfunc = (self.verifyPkg, (po, 1), {})
-            try:
-                if i == 1 and not local_size and remote_size == po.size:
-                    text = os.path.basename(po.relativepath)
-                else:
-                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                            os.path.basename(po.relativepath))
-                mylocal = po.repo.getPackage(po,
-                                   checkfunc=checkfunc,
-                                   text=text,
-                                   cache=po.repo.http_caching != 'none',
-                                   )
-                local_size += po.size
+            def checkfunc(obj, po=po):
+                self.verifyPkg(obj, po, 1)
+                local_size[0] += po.size
                 if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                     urlgrabber.progress.text_meter_total_size(remote_size,
-                                                              local_size)
+                                                              local_size[0])
                 if po.repoid not in done_repos:
+                    done_repos.add(po.repoid)
                     #  Check a single package per. repo. ... to give a hint to
                     # the user on big downloads.
                     result, errmsg = self.sigCheckPkg(po)
                     if result != 0:
                         self.verbose_logger.warn("%s", errmsg)
-                done_repos.add(po.repoid)
-
-            except Errors.RepoError, e:
-                adderror(po, exception2msg(e))
-            else:
-                po.localpath = mylocal
+                po.localpath = obj.filename
                 if po in errors:
                     del errors[po]
+
+            try:
+                if i == 1 and not local_size[0] and remote_size == po.size:
+                    text = os.path.basename(po.relativepath)
+                else:
+                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
+                                            os.path.basename(po.relativepath))
+                po.repo.getPackage(po,
+                                   checkfunc=checkfunc,
+                                   text=text,
+                                   cache=po.repo.http_caching != 'none',
+                                   )
+            except Errors.RepoError, e:
+                adderror(po, exception2msg(e))
 
         if hasattr(urlgrabber.progress, 'text_meter_total_size'):
             urlgrabber.progress.text_meter_total_size(0)

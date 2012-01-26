@@ -377,6 +377,7 @@ class YumBase(depsolve.Depsolve):
         mc = self._conf.max_connections
         if mc > 0:
             default_grabber.opts.max_connections = mc
+        default_grabber.opts.timedhosts = self._conf.cachedir + '/timedhosts'
 
         #  We don't want people accessing/altering preconf after it becomes
         # worthless. So we delete it, and thus. it'll raise AttributeError

@@ -760,7 +760,7 @@ class YumRepository(Repository, config.RepoConf):
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=None, checkfunc=None, text=None, reget='simple', 
-            cache=True, size=None):
+            cache=True, size=None, **kwargs):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -854,7 +854,8 @@ Insufficient space in download directory %s
                                            reget = reget,
                                            checkfunc=checkfunc,
                                            http_headers=headers,
-                                           size=size
+                                           size=size,
+                                           **kwargs
                                            )
             except URLGrabError, e:
                 errstr = "failure: %s from %s: %s" % (relative, self.id, e)
@@ -866,7 +867,7 @@ Insufficient space in download directory %s
         return result
     __get = _getFile
 
-    def getPackage(self, package, checkfunc=None, text=None, cache=True):
+    def getPackage(self, package, checkfunc=None, text=None, cache=True, **kwargs):
         remote = package.relativepath
         local = package.localPkg()
         basepath = package.basepath
@@ -883,6 +884,7 @@ Insufficient space in download directory %s
                         text=text,
                         cache=cache,
                         size=package.size,
+                        **kwargs
                         )
 
     def getHeader(self, package, checkfunc = None, reget = 'simple',

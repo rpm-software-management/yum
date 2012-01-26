@@ -2257,16 +2257,14 @@ class YumBase(depsolve.Depsolve):
                 if po in errors:
                     del errors[po]
 
+            text = os.path.basename(po.relativepath)
             kwargs = {}
             if async and po.repo.async:
                 kwargs['failfunc'] = lambda obj, po=po: adderror(po, exception2msg(obj.exception))
                 kwargs['async'] = True
+            elif not (i == 1 and not local_size[0] and remote_size == po.size):
+                text = '(%s/%s): %s' % (i, len(remote_pkgs), text)
             try:
-                if i == 1 and not local_size[0] and remote_size == po.size:
-                    text = os.path.basename(po.relativepath)
-                else:
-                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                            os.path.basename(po.relativepath))
                 po.repo.getPackage(po,
                                    checkfunc=checkfunc,
                                    text=text,

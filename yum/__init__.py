@@ -2223,6 +2223,7 @@ class YumBase(depsolve.Depsolve):
         i = 0
         local_size = [0]
         done_repos = set()
+        async = hasattr(urlgrabber.grabber, 'parallel_wait')
         for po in remote_pkgs:
             #  Recheck if the file is there, works around a couple of weird
             # edge cases.
@@ -2256,6 +2257,10 @@ class YumBase(depsolve.Depsolve):
                 if po in errors:
                     del errors[po]
 
+            kwargs = {}
+            if async and po.repo.async:
+                kwargs['failfunc'] = lambda obj, po=po: adderror(po, exception2msg(obj.exception))
+                kwargs['async'] = True
             try:
                 if i == 1 and not local_size[0] and remote_size == po.size:
                     text = os.path.basename(po.relativepath)
@@ -2266,9 +2271,12 @@ class YumBase(depsolve.Depsolve):
                                    checkfunc=checkfunc,
                                    text=text,
                                    cache=po.repo.http_caching != 'none',
+                                   **kwargs
                                    )
             except Errors.RepoError, e:
                 adderror(po, exception2msg(e))
+        if async:
+            urlgrabber.grabber.parallel_wait()
 
         if hasattr(urlgrabber.progress, 'text_meter_total_size'):
             urlgrabber.progress.text_meter_total_size(0)

@@ -2574,10 +2574,22 @@ class YumBase(depsolve.Depsolve):
                     key = (pkg.name, pkg.arch)
                     if pkg.pkgtup in dinst:
                         reinstall_available.append(pkg)
-                    elif key not in ndinst or pkg.verGT(ndinst[key]):
-                        available.append(pkg)
                     else:
-                        old_available.append(pkg)
+                        # if (self.allowedMultipleInstalls(pkg) or
+                        #     key not in ndinst):
+                        #  Might be because pattern specified a version, so
+                        # we need to do a search for name/arch to find any
+                        # installed. Alas. calling allowedMultipleInstalls()
+                        # is much slower than calling searchNevra(). *Sigh*
+                        ipkgs = self.rpmdb.searchNevra(pkg.name,
+                                                       arch=pkg.arch)
+                        if ipkgs:
+                            ndinst[key] = sorted(ipkgs)[-1]
+
+                        if key not in ndinst or pkg.verGT(ndinst[key]):
+                            available.append(pkg)
+                        else:
+                            old_available.append(pkg)
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':

@@ -467,7 +467,15 @@ class YumBase(depsolve.Depsolve):
 
                 thisrepo.base_persistdir = self.conf._repos_persistdir
 
-
+            # do the wildcard ones first
+            for i in self.repo_setopts:
+                if fnmatch.fnmatch(thisrepo.id, i):
+                    for opt in self.repo_setopts[i].items:
+                        if not hasattr(thisrepo, opt):
+                            msg = "Repo %s did not have a %s attr. before setopt"
+                            self.logger.warning(msg % (thisrepo.id, opt))
+                        setattr(thisrepo, opt, getattr(self.repo_setopts[i], opt))
+                
             if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
                     if not hasattr(thisrepo, opt):

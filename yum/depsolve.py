@@ -998,9 +998,12 @@ class Depsolve(object):
 
         # if this is an update, we should check what the old
         # requires were to make things faster
+        #  Note that if the rpmdb is broken, this gets annoying. So we provide
+        # a way to turn it off.
         oldreqs = []
-        for oldpo in txmbr.updates:
-            oldreqs.extend(oldpo.returnPrco('requires'))
+        if not self.conf.recheck_installed_requires:
+            for oldpo in txmbr.updates:
+                oldreqs.extend(oldpo.returnPrco('requires'))
         oldreqs = set(oldreqs)
 
         ret = []

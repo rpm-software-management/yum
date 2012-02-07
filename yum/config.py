@@ -856,6 +856,9 @@ class YumConf(StartupConf):
                                          'commands'),
                                      mapper={'cmds'          : 'commands',
                                              'default' :'single-user-commands'})
+
+    recheck_installed_requires = BoolOption(False)
+
     _reposlist = []
 
     def dump(self):

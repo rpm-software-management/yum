@@ -647,6 +647,13 @@ installed dependencies and check for an update.
 Boolean (1, 0, True, False, yes,no) Defaults to False
 
 .IP
+\fBrecheck_installed_requires \fR
+When upgrading a package do we recheck any requirements that existed in the old
+package. Turning this on shouldn't do anything but slow yum depsolving down,
+however using rpm --nodeps etc. can break the rpmdb and then this will help.
+Boolean (1, 0, True, False, yes,no) Defaults to False
+
+.IP
 \fBreset_nice \fR
 If set to true then yum will try to reset the nice value to zero, before
 running an rpm transaction. Defaults to False.

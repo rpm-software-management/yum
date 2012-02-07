@@ -1409,6 +1409,12 @@ class YumHeaderPackage(YumAvailablePackage):
                 continue
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
+            if tag == 'REQUIRE':
+                #  Rpm is a bit magic here, and if pkgA requires(pre/post): foo
+                # it will then let you remove foo _after_ pkgA has been
+                # installed. So we need to mark those deps. as "weak".
+                bits = rpm.RPMSENSE_SCRIPT_PRE | rpm.RPMSENSE_SCRIPT_POST
+                weakreqs = [bool(flag & bits) for flag in lst]
             flag = map(rpmUtils.miscutils.flagToString, lst)
             flag = map(misc.share_data, flag)
 
@@ -1419,6 +1425,10 @@ class YumHeaderPackage(YumAvailablePackage):
 
             prcotype = tag2prco[tag]
             self.prco[prcotype] = map(misc.share_data, zip(name,flag,vers))
+            if tag == 'REQUIRE':
+                weakreqs = zip(weakreqs, self.prco[prcotype])
+                strongreqs = [wreq[1] for wreq in weakreqs if not wreq[0]]
+                self.prco['strong_requires'] = strongreqs
     
     def tagByName(self, tag):
         warnings.warn("tagByName() will go away in a furture version of Yum.\n",

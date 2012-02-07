@@ -1003,7 +1003,7 @@ class Depsolve(object):
         oldreqs = []
         if not self.conf.recheck_installed_requires:
             for oldpo in txmbr.updates:
-                oldreqs.extend(oldpo.returnPrco('requires'))
+                oldreqs.extend(oldpo.returnPrco('strong_requires'))
         oldreqs = set(oldreqs)
 
         ret = []

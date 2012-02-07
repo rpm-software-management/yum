@@ -231,6 +231,29 @@ yum-list-data plugins to get/use the data the other way around (i.e. what
 groups own packages need updating). If you pass the \-v option, to enable verbose
 mode, then the package names are matched against installed/available packages
 similar to the list command.
+
+"\fBgroup summary\fP" is used to give a quick summary of how many groups
+are installed and available.
+
+"\fBgroup mark\fP" and "\fBgroup unmark\fP" are used when groups are configured
+in group_command=objects mode. These commands then allow you to alter yum's idea
+of which groups are installed, and the packages that belong to them.
+
+"\fBgroup mark install\fP" mark the group as installed. When
+installed "\fByum upgrade\fP" and "\fByum group upgrade\fP" will installing new
+packages for the group.
+
+"\fBgroup mark remove\fP" the opposite of mark install.
+
+"\fBgroup mark packages\fP" takes a group id (which must be installed) and marks
+any given installed packages (which aren't members of a group) as members of
+the group. Note that the data from the repositories does not need to specify
+the packages as a member of the group.
+
+"\fBgroup mark packages-force\fP" works like mark packages, but doesn't care if
+the packages are already members of another group.
+
+"\fBgroup unmark packages\fP" remove a package as a member from any groups.
 .IP
 .IP "\fBshell\fP"
 Is used to enter the 'yum shell', when a filename is specified the contents of

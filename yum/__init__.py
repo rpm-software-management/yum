@@ -914,7 +914,10 @@ class YumBase(depsolve.Depsolve):
         if self._comps.compscount == 0:
             raise Errors.GroupsError, _('No Groups Available in any repository')
 
-        self._comps.compile(self.rpmdb.simplePkgList())
+        #  Note that this means that grp.installed is not usable, when using
+        # groups as objects ... but that's GOOD.
+        if self.conf.group_command != 'objects':
+            self._comps.compile(self.rpmdb.simplePkgList())
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
         return self._comps
 

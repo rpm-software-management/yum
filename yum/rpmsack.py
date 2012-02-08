@@ -1635,6 +1635,7 @@ class RPMDBAdditionalDataPackage(object):
                                 'installed_by', 'changed_by',
                                 'from_repo', 'from_repo_revision',
                                 'from_repo_timestamp', 'releasever',
+                                'group_member',
                                 'command_line'])
 
     def __init__(self, conf, pkgdir, yumdb_cache=None):

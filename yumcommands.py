@@ -795,6 +795,10 @@ class GroupsCommand(YumCommand):
         else:
             cmd = 'summary'
 
+        if cmd in ('mark', 'unmark') and extcmds:
+            cmd = "%s-%s" % (cmd, extcmds[0])
+            extcmds = extcmds[1:]
+
         remap = {'update' : 'upgrade',
                  'erase' : 'remove',
                  'mark-erase' : 'mark-remove',
@@ -815,18 +819,23 @@ class GroupsCommand(YumCommand):
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         checkEnabledRepo(base)
+        ocmds_all = []
+        ocmds_arg = []
+        if base.conf.group_command == 'objects':
+            ocmds_arg = ('mark-install', 'mark-remove',
+                         'mark-packages', 'mark-packages-force',
+                         'unmark-packages',
+                         'mark-packages-sync', 'mark-packages-sync-force')
 
-        if cmd in ('install', 'remove',
-                   'mark-install', 'mark-remove',
-                   'info',
-                   'mark-packages', 'mark-packages-force', 'unmark-packages',
-                   'mark-packages-sync', 'mark-packages-sync-force'):
+            ocmds_all = ('mark-install', 'mark-remove', 'mark-convert',
+                         'mark-packages', 'mark-packages-force',
+                         'unmark-packages',
+                         'mark-packages-sync', 'mark-packages-sync-force')
+
+        if cmd in ('install', 'remove', 'info') or cmd in ocmds_arg:
             checkGroupArg(base, cmd, extcmds)
 
-        if cmd in ('install', 'remove', 'upgrade',
-                   'mark-install', 'mark-remove',
-                   'mark-packages', 'mark-packages-force', 'unmark-packages',
-                   'mark-packages-sync', 'mark-packages-sync-force'):
+        if cmd in ('install', 'remove', 'upgrade') or cmd in ocmds_all:
             checkRootUID(base)
 
         if cmd in ('install', 'upgrade'):
@@ -834,10 +843,7 @@ class GroupsCommand(YumCommand):
 
         cmds = set(('list', 'info', 'remove', 'install', 'upgrade', 'summary'))
         if base.conf.group_command == 'objects':
-            ocmds = ('mark-install', 'mark-remove',
-                     'mark-packages', 'mark-packages-force', 'unmark-packages',
-                     'mark-packages-sync', 'mark-packages-sync-force')
-            cmds.update(ocmds)
+            cmds.update(ocmds_all)
 
         if cmd not in cmds:
             base.logger.critical(_('Invalid groups sub-command, use: %s.'),
@@ -930,6 +936,54 @@ class GroupsCommand(YumCommand):
                     return 0, ['Marked packages-sync-force: '+','.join(extcmds)]
                 else:
                     return 0, ['Marked packages-sync: ' + ','.join(extcmds)]
+
+            if cmd == 'mark-convert':
+                # Convert old style info. into groups as objects.
+
+                def _convert_grp(grp):
+                    if not grp.installed:
+                        return
+                    pkg_names = grp.packages
+                    base.igroups.add_group(grp.groupid, pkg_names)
+
+                    for pkg in base.rpmdb.searchNames(pkg_names):
+                        if 'group_member' in pkg.yumdb_info:
+                            continue
+                        pkg.yumdb_info.group_member = grp.groupid
+
+                # Blank everything.
+                for gid in base.igroups.groups.keys():
+                    base.igroups.del_group(gid)
+                for pkg in base.rpmdb:
+                    if 'group_member' in pkg.yumdb_info:
+                        del pkg.yumdb_info.group_member
+
+                #  Need to do this by hand, when using objects, to setup the
+                # .installed attribute in comps.
+                base.comps.compile(base.rpmdb.simplePkgList())
+
+                #  This is kind of a hack, to work around the biggest problem
+                # with having pkgs in more than one group. Treat Fedora/EL/etc.
+                # base/core special. Maybe other groups?
+
+                #  Not 100% we want to force install "core", as that's then
+                # "different", but it is better ... so, meh.
+                special_gids = (('core', True),
+                                ('base', False))
+                for gid, force_installed in special_gids:
+                    grp = base.comps.return_group(gid)
+                    if grp is None:
+                        continue
+                    if force_installed:
+                        grp.installed = True
+                    _convert_grp(grp)
+                for grp in base.comps.get_groups():
+                    if grp.groupid in special_gids:
+                        continue
+                    _convert_grp(grp)
+                    
+                base.igroups.save()
+                return 0, ['Converted old style groups to objects.']
 
             if cmd == 'mark-remove':
                 for strng in extcmds:

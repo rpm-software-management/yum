@@ -741,6 +741,8 @@ class YumConf(StartupConf):
     username = Option()
     password = Option()
     installonlypkgs = ListOption(['kernel', 'kernel-bigmem',
+                                  'installonlypkg(kernel-module)',
+                                  'installonlypkg(vm)',
             'kernel-enterprise','kernel-smp', 'kernel-modules', 'kernel-debug',
             'kernel-unsupported', 'kernel-source', 'kernel-devel', 'kernel-PAE',
             'kernel-PAE-debug'])

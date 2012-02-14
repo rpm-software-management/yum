@@ -921,6 +921,7 @@ class YumOutput:
             0 = we're done, exit
             1 = we've errored, exit with error string
         """
+        kern_pkgtup = yum.misc.get_running_kernel_pkgtup(self.ts)
         if outputType in ['list', 'info']:
             thingslisted = 0
             if len(lst) > 0:
@@ -929,7 +930,8 @@ class YumOutput:
                 for pkg in sorted(lst):
                     key = (pkg.name, pkg.arch)
                     highlight = False
-                    if False: pass
+                    if pkg.pkgtup == kern_pkgtup:
+                        highlight = highlight_modes.get('kern','bold,underline')
                     elif key not in highlight_na:
                         highlight = highlight_modes.get('not in', 'normal')
                     elif pkg.verEQ(highlight_na[key]):

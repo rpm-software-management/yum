@@ -491,6 +491,20 @@ class YumBase(depsolve.Depsolve):
             if validate and not validate(thisrepo):
                 continue
                     
+            if thisrepo.ssl_check_cert_permissions:
+                for fn in  (thisrepo.sslcacert,
+                            thisrepo.sslclientcert, thisrepo.sslclientkey):
+                    if not fn:
+                        continue
+                    #  If we can't read the SSL certs. we need to skip the repo.
+                    # if we don't have all the data.
+                    if not os.access(fn, os.R_OK):
+                        msg="Repo %s forced skip_if_unavailable=True due to: %s"
+                        if thisrepo.enabled:
+                            # Don't spam messages for disabled repos.
+                            self.logger.warning(msg % (thisrepo.id, fn))
+                        thisrepo.skip_if_unavailable = True
+
             # Got our list of repo objects, add them to the repos
             # collection
             try:

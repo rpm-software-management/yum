@@ -837,6 +837,7 @@ class YumConf(StartupConf):
     sslverify = BoolOption(True)
     sslclientcert = Option()
     sslclientkey = Option()
+    ssl_check_cert_permissions = BoolOption(True)
 
     history_record = BoolOption(True)
     history_record_packages = ListOption(['yum', 'rpm'])
@@ -952,6 +953,7 @@ class RepoConf(BaseConfig):
     sslverify = Inherit(YumConf.sslverify)
     sslclientcert = Inherit(YumConf.sslclientcert)
     sslclientkey = Inherit(YumConf.sslclientkey)
+    ssl_check_cert_permissions = Inherit(YumConf.ssl_check_cert_permissions)
 
     skip_if_unavailable = BoolOption(False)
     

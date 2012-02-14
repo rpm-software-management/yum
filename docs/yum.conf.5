@@ -376,6 +376,15 @@ Path to the SSL client key yum should use to connect to repos/remote sites
 Defaults to none.
 
 .IP
+\fBssl_check_cert_permissions \fR
+Boolean - Whether yum should check the permissions on the paths for the
+certificates on the repository (both remote and local). If we can't read any of
+the files then yum will force skip_if_unavailable to be true.
+This is most useful for non-root processes which use yum on repos. that have
+client cert files which are readable only by root.
+Defaults to True.
+
+.IP
 \fBhistory_record \fR
 Boolean - should yum record history entries for transactions. This takes some
 disk space, and some extra time in the transactions. But it allows how to know a
@@ -843,6 +852,10 @@ repository.
 Overrides the \fBsslclientkey\fR option from the [main] section for this
 repository.
 
+.IP
+\fBssl_check_cert_permissions \fR
+Overrides the \fBssl_check_cert_permissions\fR option from the [main] section
+for this repository.
 
 .IP
 \fBmetadata_expire \fR

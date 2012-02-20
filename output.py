@@ -1331,6 +1331,13 @@ class YumOutput:
         locsize = 0
         insize  = 0
         error = False
+
+        def _call_log(*args):
+            if self.verbose_logger.isEnabledFor(yum.logginglevels.INFO_1):
+                self.verbose_logger.log(logginglevels.INFO_1, *args)
+            elif self.conf.assumeno or not self.conf.assumeyes:
+                self.logger.warn(logginglevels.INFO_1, *args)
+
         for pkg in packages:
             # Just to be on the safe side, if for some reason getting
             # the package size fails, log the error and don't report download
@@ -1359,15 +1366,12 @@ class YumOutput:
 
         if (not error):
             if locsize:
-                self.verbose_logger.log(logginglevels.INFO_1, _("Total size: %s"), 
-                                        self.format_number(totsize))
+                _call_log(_("Total size: %s"), self.format_number(totsize))
             if locsize != totsize:
-                self.verbose_logger.log(logginglevels.INFO_1, _("Total download size: %s"), 
-                                        self.format_number(totsize - locsize))
+                _call_log(_("Total download size: %s"),
+                          self.format_number(totsize - locsize))
             if installonly:
-                self.verbose_logger.log(logginglevels.INFO_1,
-                                        _("Installed size: %s"),
-                                        self.format_number(insize))
+                _call_log(_("Installed size: %s"), self.format_number(insize))
 
     def reportRemoveSize(self, packages):
         """Report the total size of packages being removed.
@@ -1388,9 +1392,14 @@ class YumOutput:
                 self.logger.error(_('There was an error calculating installed size'))
                 break
         if (not error):
-            self.verbose_logger.log(logginglevels.INFO_1,
-                                    _("Installed size: %s"),
-                                    self.format_number(totsize))
+            if self.verbose_logger.isEnabledFor(yum.logginglevels.INFO_1):
+                self.verbose_logger.log(logginglevels.INFO_1,
+                                        _("Installed size: %s"),
+                                        self.format_number(totsize))
+            elif self.conf.assumeno or not self.conf.assumeyes:
+                self.logger.warn(logginglevels.INFO_1,
+                                 _("Installed size: %s"),
+                                 self.format_number(totsize))
             
     def listTransaction(self):
         """Return a string representation of the transaction in an

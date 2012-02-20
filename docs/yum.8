@@ -97,6 +97,11 @@ like localinstall\&. If the name doesn't match a package, then package
 "provides" are searched (e.g. "_sqlitecache.so()(64bit)") as are
 filelists (Eg. "/usr/bin/yum"). Also note that for filelists, wildcards will
 match multiple packages\&.
+
+Because install does a lot of work to make it as easy as possible to use, there
+are also a few specific install commands "\fBinstall-n\fP", "\fBinstall-na\fP"
+and "\fBinstall-nevra\fP". These only work on package names, and do not process
+wildcards etc.
 .IP 
 .IP "\fBupdate\fP"
 If run without any packages, update will update every currently

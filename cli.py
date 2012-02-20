@@ -780,7 +780,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         return ret
 
-    def installPkgs(self, userlist):
+    def installPkgs(self, userlist, basecmd='install'):
         """Attempt to take the user specified list of packages or
         wildcards and install them, or if they are installed, update
         them to a newer version. If a complete version number is
@@ -815,7 +815,21 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
             try:
-                txmbrs = self.install(pattern=arg)
+                if False: pass
+                elif basecmd == 'install-n':
+                    txmbrs = self.install(name=arg)
+                elif basecmd == 'install-na':
+                    n,a = arg.split('.')
+                    txmbrs = self.install(name=n, arch=a)
+                elif basecmd == 'install-nevra':
+                    nevr,a = arg.rsplit('.', 2)
+                    n,ev,r = nevr.rsplit('-', 3)
+                    e,v    = ev.split(':', 2)
+                    txmbrs = self.install(name=n,
+                                          epoch=e, version=v, release=r, arch=a)
+                else:
+                    assert basecmd == 'install', basecmd
+                    txmbrs = self.install(pattern=arg)
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),

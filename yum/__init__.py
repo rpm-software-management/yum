@@ -4138,8 +4138,8 @@ class YumBase(depsolve.Depsolve):
                     continue
             
             # make sure this shouldn't be passed to update:
-            if (self.rpmdb.searchNames([po.name]) and
-                po.pkgtup in self.up.updating_dict):
+            ipkgs = self.rpmdb.searchNames([po.name])
+            if ipkgs and po.verGT(sorted(ipkgs)[-1]):
                 txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
                 continue
@@ -4148,7 +4148,7 @@ class YumBase(depsolve.Depsolve):
             # something else in the repo. Unless there is a obsoletion loop,
             # at which point ignore everything.
             obsoleting_pkg = None
-            if self.conf.obsoletes:
+            if self.conf.obsoletes and not isinstance(po, YumLocalPackage):
                 obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
             if obsoleting_pkg is not None:
                 # this is not a definitive check but it'll make sure we don't
@@ -4505,6 +4505,18 @@ class YumBase(depsolve.Depsolve):
                     tx_return.append(txmbr)
                         
         for available_pkg in availpkgs:
+            # "Just do it" if it's a local pkg.
+            if isinstance(available_pkg, YumLocalPackage):
+                n = available_pkg.name
+                for updated_pkg in self.rpmdb.returnNewestByName(n):
+                    updated = updated_pkg.pkgtup
+                    if self.tsInfo.getMembersWithState(updated,
+                                                       TS_REMOVE_STATES):
+                        self.tsInfo.remove(updated)
+                    txmbr = self._add_up_txmbr(requiringPo,
+                                               available_pkg, updated_pkg)
+                    tx_return.append(txmbr)
+                continue
             #  Make sure we're not installing a package which is obsoleted by
             # something else in the repo. Unless there is a obsoletion loop,
             # at which point ignore everything.

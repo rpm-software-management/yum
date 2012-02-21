@@ -87,7 +87,8 @@ class TransactionData:
         self.conditionals = {} # key = pkgname, val = list of pos to add
 
         self.rpmdb = None
-        self.pkgSack = None
+        self._pkgSack = None
+        self._pkgSackCtor = None
         self.pkgSackPackages = 0
         self.localSack = PackageSack()
         self._inSack = GetProvReqOnlyPackageSack()
@@ -114,6 +115,18 @@ class TransactionData:
             return self.getMembers().__iter__()
         else:
             return iter(self.getMembers())
+
+    def _getPkgSack(self):
+        if self._pkgSack is not None:
+            return self._pkgSack
+        if self._pkgSackCtor is not None:
+            self._pkgSack = self._pkgSackCtor()
+        return self._pkgSack
+
+    pkgSack = property(fget=lambda self: self._getPkgSack(),
+                       fset=lambda self, value: setattr(self, "_pkgSack",value),
+                       fdel=lambda self: setattr(self, "_pkgSack", None),
+                       doc="Package sack object")
 
     def debugprint(self, msg):
         if self.debug:
@@ -208,7 +221,9 @@ class TransactionData:
                 txmbrs = self.matchNaevr(na[0], na[1])
 
         if not txmbrs:
-            if self.pkgSack is None:
+            if self._inSack is not None:
+                pkgs = self._inSack.returnPackages(patterns=[pattern])
+            elif self.pkgSack is None:
                 pkgs = []
             else:
                 pkgs = self.pkgSack.returnPackages(patterns=[pattern])
@@ -547,9 +562,10 @@ class TransactionData:
         return txmbr
 
 
-    def setDatabases(self, rpmdb, pkgSack):
+    def setDatabases(self, rpmdb, pkgSack, pkgSackCtor=None):
         self.rpmdb = rpmdb
-        self.pkgSack = pkgSack
+        self._pkgSack     = pkgSack
+        self._pkgSackCtor = pkgSackCtor
 
     def getNewProvides(self, name, flag=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }

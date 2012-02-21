@@ -1126,7 +1126,7 @@ class YumBase(depsolve.Depsolve):
             # If transaction was changed by postresolve plugins then we should run skipbroken again
             (rescode, restring) = self._doSkipBroken(rescode, restring, clear_skipped=False )
 
-        if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
+        if self.tsInfo._pkgSack is not None: # Transactions have pkgSack?
             self.tsInfo.pkgSack.dropCachedData()
 
         # FIXME: This is horrible, see below and yummain. Maybe create a real
@@ -5952,7 +5952,7 @@ class YumBase(depsolve.Depsolve):
         
         msg = "%s\n" % self.rpmdb.simpleVersion(main_only=True)[0]
         msg += "%s\n" % self.ts.getTsFlags()
-        if self.tsInfo.pkgSack is None: # rm Transactions don't have pkgSack
+        if self.tsInfo._pkgSack is None: # Transactions have pkgSack?
             msg += "0\n"
         else:
             msg += "%s\n" % len(self.repos.listEnabled())

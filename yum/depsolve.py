@@ -110,9 +110,12 @@ class Depsolve(object):
             self._tsInfo = self._transactionDataFactory()
             if remove_only:
                 pkgSack = None
+                pkgSackCtor = None
             else:
-                pkgSack = self.pkgSack
-            self._tsInfo.setDatabases(self.rpmdb, pkgSack)
+                # Don't instant setup, or things like localinstall are screwed.
+                pkgSack = None
+                pkgSackCtor = self._getSacks
+            self._tsInfo.setDatabases(self.rpmdb, pkgSack, pkgSackCtor)
             self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
             # this REALLY sucks, sadly (needed for group conditionals)
             self._tsInfo.install_method = self.install

@@ -38,6 +38,8 @@ import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
+from weakref import proxy as weakref
+
 from yum import _, _rpm_ver_atleast
 
 try:
@@ -61,6 +63,45 @@ flags = {"GT": rpm.RPMSENSE_GREATER,
 _rflags = {}
 for f in flags:
     _rflags[flags[f]] = f
+
+
+class _wrap_ayum_getPkgSack:
+    """ This is a wrapper for calling YumBase.pkgSack because
+        otherwise we take a real reference through the bound method and
+        that is d00m (this applies to YumBase and TransactionInfo, hence why
+        we have a seperate class). """
+    def __init__(self, ayum):
+        self.ayum = weakref(ayum)
+    def __call__(self):
+        return self.ayum.pkgSack
+
+class _wrap_ayum_install:
+    """ This is a wrapper for calling YumBase.install because
+        otherwise we take a real reference through the bound method and
+        that is d00m (this applies to YumBase and TransactionInfo, hence why
+        we have a seperate class). """
+    def __init__(self, ayum):
+        self.ayum = weakref(ayum)
+    def __call__(self, *args, **kwargs):
+        return self.ayum.install(*args, **kwargs)
+class _wrap_ayum_remove:
+    """ This is a wrapper for calling YumBase.remove because
+        otherwise we take a real reference through the bound method and
+        that is d00m (this applies to YumBase and TransactionInfo, hence why
+        we have a seperate class). """
+    def __init__(self, ayum):
+        self.ayum = weakref(ayum)
+    def __call__(self, *args, **kwargs):
+        return self.ayum.remove(*args, **kwargs)
+class _wrap_ayum_update:
+    """ This is a wrapper for calling YumBase.update because
+        otherwise we take a real reference through the bound method and
+        that is d00m (this applies to YumBase and TransactionInfo, hence why
+        we have a seperate class). """
+    def __init__(self, ayum):
+        self.ayum = weakref(ayum)
+    def __call__(self, *args, **kwargs):
+        return self.ayum.update(*args, **kwargs)
 
 class Depsolve(object):
     """A class for resolving dependencies."""
@@ -94,7 +135,8 @@ class Depsolve(object):
         
         if self._tsInfo != None and self._ts != None:
             if not remove_only and self._tsInfo.pkgSack is None:
-                self._tsInfo.setDatabases(self.rpmdb, self.pkgSack)
+                pkgSackCtor = _wrap_ayum_getPkgSack(self)
+                self._tsInfo.setDatabases(self.rpmdb, None, pkgSackCtor)
             return
             
         if not self.conf.installroot:
@@ -114,13 +156,13 @@ class Depsolve(object):
             else:
                 # Don't instant setup, or things like localinstall are screwed.
                 pkgSack = None
-                pkgSackCtor = self._getSacks
+                pkgSackCtor = _wrap_ayum_getPkgSack(self)
             self._tsInfo.setDatabases(self.rpmdb, pkgSack, pkgSackCtor)
             self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
             # this REALLY sucks, sadly (needed for group conditionals)
-            self._tsInfo.install_method = self.install
-            self._tsInfo.update_method = self.update
-            self._tsInfo.remove_method = self.remove
+            self._tsInfo.install_method = _wrap_ayum_install(self)
+            self._tsInfo.update_method = _wrap_ayum_update(self)
+            self._tsInfo.remove_method = _wrap_ayum_remove(self)
         return self._tsInfo
 
     def _setTsInfo(self, value):

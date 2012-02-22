@@ -344,6 +344,7 @@ class InstallCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
+
 class UpdateCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     update command.

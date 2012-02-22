@@ -33,6 +33,13 @@ def _leak_tst_yb():
     yb.repos.setCacheDir(yum.misc.getCacheDir())
     yb.rpmdb.returnPackages()
     yb.pkgSack.returnPackages()
+    yb.tsInfo
+    yb.ts
+    yb.up
+    yb.comps
+    yb.history
+    yb.igroups
+    yb.pkgtags
     out_mem(os.getpid())
     time.sleep(4)
 

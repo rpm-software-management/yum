@@ -71,7 +71,7 @@ arches = {
     "armv7hl": "noarch",
 
     # arm64
-    "arm64": "noarch"
+    "arm64": "noarch",
 
     # super-h 
     "sh4a": "sh4",

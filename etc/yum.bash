@@ -166,7 +166,7 @@ _yum()
         # Recognize additional commands and aliases
         for c in ${cmds[@]} check-rpmdb distribution-synchronization erase \
             group groupinfo groupinstall grouplist groupremove groupupdate \
-            grouperase localinstall localupdate whatprovides ; do
+            grouperase install-na localinstall localupdate whatprovides ; do
             [[ ${words[i]} == $c ]] && cmd=$c && break
         done
     done
@@ -289,6 +289,11 @@ _yum()
                 _yum_binrpmfiles "$cur"
                 _yum_list available "$cur"
             fi
+            return 0
+            ;;
+
+        install-na)
+            _yum_list available "$cur"
             return 0
             ;;
 

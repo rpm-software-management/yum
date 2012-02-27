@@ -538,6 +538,11 @@ class InfoCommand(YumCommand):
         """
         try:
             highlight = base.term.MODE['bold']
+            #  If we are doing: "yum info installed blah" don't do the highlight
+            # because the usability of not accessing the repos. is still higher
+            # than providing colour for a single line. Usable updatesd/etc. FTW.
+            if basecmd == 'info' and extcmds and extcmds[0] == 'installed':
+                highlight = False
             ypl = base.returnPkgLists(extcmds, installed_available=highlight)
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]

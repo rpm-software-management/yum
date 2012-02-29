@@ -1409,23 +1409,32 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+
+        not_found = set()
         for arg in args:
             try:
                 ipkg = self.returnInstalledPackageByDep(arg)
             except yum.Errors.YumBaseError:
                 ipkg = None
             else:
+                self.verbose_logger.info("  %s:", arg)
                 self.verbose_logger.info("%s %s" % (ipkg.envra,
                                                     ipkg.ui_from_repo))
             try:
                 pkg = self.returnPackageByDep(arg)
             except yum.Errors.YumBaseError:
                 if not ipkg:
-                    self.logger.critical(_('No Package Found for %s'), arg)
+                    not_found.add(arg)
             else:
+                if not ipkg:
+                    self.verbose_logger.info("  %s:", arg)
                 if not pkg.verEQ(ipkg):
                     self.verbose_logger.info("%s %s" % (pkg.envra,
                                                         pkg.ui_from_repo))
+
+        if not_found:
+            self.logger.critical(_('Error: No Packages found for:\n  %s'),
+                                 "\n  ".join(sorted(not_found)))
 
         return 0, []
     

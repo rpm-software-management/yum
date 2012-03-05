@@ -3894,7 +3894,7 @@ class YumBase(depsolve.Depsolve):
             done = True
 
             slow = next_func(slow)
-            if next == slow:
+            if node == slow:
                 return None
 
     def _at_groupinstall(self, pattern, upgrade=False):

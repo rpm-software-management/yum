@@ -3985,6 +3985,31 @@ class YumBase(depsolve.Depsolve):
             if flag not in self.tsInfo.probFilterFlags:
                 self.tsInfo.probFilterFlags.append(flag)
 
+    def _install_is_upgrade(self, po, ipkgs):
+        """ See if po is an upgradeable version of an installed pkg.
+        Non-compat. arch differences mean no. """
+
+        if False and self._up is not None:
+            #  This is the old code, not sure it's good to have two paths. And
+            # we don't wnat to create .up. (which requires init repos.) if we
+            # don't have to.
+            return po.pkgtup in self.up.updating_dict
+
+        for ipkg in ipkgs:
+            if po.verLE(ipkg):
+                continue
+            if po.arch == ipkg.arch: # always fine.
+                return True
+            if 'noarch' in (po.arch, ipkg.arch):
+                return True
+            if not self.arch.multilib:
+                return True
+            if canCoinstall(po.arch, ipkg.arch):
+                continue
+            return True
+
+        return False
+
     def install(self, po=None, **kwargs):
         """Mark the specified item for installation.  If a package
         object is given, mark it for installation.  Otherwise, mark
@@ -4140,7 +4165,7 @@ class YumBase(depsolve.Depsolve):
             
             # make sure this shouldn't be passed to update:
             ipkgs = self.rpmdb.searchNames([po.name])
-            if ipkgs and po.verGT(sorted(ipkgs)[-1]):
+            if ipkgs and self._install_is_upgrade(po, ipkgs):
                 txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
                 continue

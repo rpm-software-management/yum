@@ -160,7 +160,7 @@ def main(args):
         for msg in resultmsgs:
             verbose_logger.log(logginglevels.INFO_2, '%s', msg)
         if unlock(): return 200
-        return 0
+        return base.exit_code
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
@@ -199,7 +199,7 @@ def main(args):
     if result == 0:
         # Normal exit
         if unlock(): return 200
-        return 0
+        return base.exit_code
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
@@ -257,7 +257,7 @@ def main(args):
         verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
 
     if unlock(): return 200
-    return return_code
+    return return_code or base.exit_code
 
 def hotshot(func, *args, **kwargs):
     """Profile the given function using the hotshot profiler.

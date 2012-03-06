@@ -210,6 +210,7 @@ class YumBase(depsolve.Depsolve):
 
         self.run_with_package_names = set()
         self._cleanup = []
+        self.exit_code = 0
 
     def __del__(self):
         self.close()

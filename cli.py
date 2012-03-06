@@ -1094,6 +1094,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         oldcount = len(self.tsInfo)
 
+        done = False
         for arg in userlist:
             if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
@@ -1120,11 +1121,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 assert False, "Shouldn't happen, but just in case"
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
             else:
+                done = True
                 self._install_upgraded_requires(txmbrs)
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package to reinstall', '%d packages to reinstall', change) % change]
+
+        if not done:
+            return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
 
     def localInstall(self, filelist, updateonly=0):

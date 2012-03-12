@@ -218,7 +218,7 @@ class YumCommand:
         :param *args: additional arguments associated with the message
         """
         if not self.done_command_once:
-            base.verbose_logger.info(msg, *args)
+            base.verbose_logger.info(logginglevels.INFO_2, msg, *args)
         self.done_command_once = True
 
     def getNames(self):

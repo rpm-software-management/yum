@@ -46,8 +46,13 @@ import operator
 import tempfile
 
 import yum.i18n
-_ = yum.i18n._
-P_ = yum.i18n.P_
+# This is required to make gaftonmode work...
+_wrap_yum_i18n__ = yum.i18n._
+def _(*args, **kwargs):
+    return _wrap_yum_i18n__(*args, **kwargs)
+_wrap_yum_i18n_P_ = yum.i18n.P_
+def P_(*args, **kwargs):
+    return _wrap_yum_i18n_P_(*args, **kwargs)
 
 import config
 from config import ParsingError, ConfigParser
@@ -334,8 +339,10 @@ class YumBase(depsolve.Depsolve):
             startupconf.uuid = uuid
         
         if startupconf.gaftonmode:
-            global _
-            _ = yum.i18n.dummy_wrapper
+            global _wrap_yum_i18n__
+            _wrap_yum_i18n__ = yum.i18n.dummy_wrapper
+            global _wrap_yum_i18n_P_
+            _wrap_yum_i18n_P_ = yum.i18n.dummyP_wrapper
 
         if debuglevel != None:
             startupconf.debuglevel = debuglevel

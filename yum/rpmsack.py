@@ -130,7 +130,7 @@ class RPMInstalledPackage(YumInstalledPackage):
 
     def required_packages(self):
         pkgset = set()
-        for (reqn, reqf, reqevr) in self.requires:
+        for (reqn, reqf, reqevr) in self.strong_requires:
             for pkg in self.rpmdb.getProvides(reqn, reqf, reqevr):
                 if pkg != self:
                     pkgset.add(pkg)
@@ -1469,7 +1469,7 @@ class RPMDBPackageSack(PackageSackBase):
         providers = set() # Speedup, as usual :)
         problems = []
         for pkg in sorted(pkgs): # The sort here is mainly for "UI"
-            for rreq in pkg.requires:
+            for rreq in pkg.strong_requires:
                 if rreq[0].startswith('rpmlib'): continue
                 if rreq in providers:            continue
 

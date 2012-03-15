@@ -5074,6 +5074,9 @@ class YumBase(depsolve.Depsolve):
                 warned_nas.add(na)
                 continue
 
+            if pkg.verEQ(lipkg):
+                continue
+
             if pkg.verGE(lipkg):
                 if na not in warned_nas:
                     msg = _('Only Upgrade available on package: %s') % pkg

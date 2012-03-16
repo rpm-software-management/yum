@@ -79,7 +79,13 @@ class UpdateNotice(object):
 
     def __getitem__(self, item):
         """ Allows scriptable metadata access (ie: un['update_id']). """
+        if type(item) is int:
+            return sorted(self._md)[item]
         return self._md.get(item) or None
+
+    def __contains__(self, item):
+        """ Allows quick tests for foo in blah. """
+        return item in self._md
 
     def __setitem__(self, item, val):
         self._md[item] = val

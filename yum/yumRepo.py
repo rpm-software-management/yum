@@ -1579,7 +1579,7 @@ Insufficient space in download directory %s
            mdtype can be 'primary', 'filelists', 'other' or 'group'."""
         return self._retrieveMD(mdtype)
 
-    def _retrieveMD(self, mdtype, retrieve_can_fail=False):
+    def _retrieveMD(self, mdtype, retrieve_can_fail=False, **kwargs):
         """ Internal function, use .retrieveMD() from outside yum. """
         #  Note that this can raise Errors.RepoMDError if mdtype doesn't exist
         # for this repo.
@@ -1617,7 +1617,9 @@ Insufficient space in download directory %s
                 return local # it's the same return the local one
 
         try:
-            checkfunc = (self.checkMD, (mdtype,), {})
+            def checkfunc(obj):
+                self.checkMD(obj, mdtype)
+                self.retrieved[mdtype] = 1
             text = "%s/%s" % (self.id, mdtype)
             if thisdata.size is None:
                 reget = None
@@ -1633,7 +1635,8 @@ Insufficient space in download directory %s
                                   checkfunc=checkfunc, 
                                   text=text,
                                   cache=self.http_caching == 'all',
-                                  size=thisdata.size)
+                                  size=thisdata.size,
+                                  **kwargs)
         except Errors.RepoError:
             if retrieve_can_fail:
                 return None
@@ -1644,7 +1647,6 @@ Insufficient space in download directory %s
             raise Errors.RepoError, \
                 "Could not retrieve %s matching remote checksum from %s" % (local, self)
         else:
-            self.retrieved[mdtype] = 1
             return local
 
 

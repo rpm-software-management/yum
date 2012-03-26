@@ -1429,7 +1429,7 @@ Insufficient space in download directory %s
             self._commonRetrieveDataMD(mdtypes)
 
     def _mdpolicy2mdtypes(self):
-        md_groups = {'instant'       : [],
+        md_groups = {'instant'       : ['__None__'],
                      'group:primary' : ['primary'],
                      'group:small'   : ["primary", "updateinfo"],
                      'group:main'    : ["primary", "group", "filelists",
@@ -1444,6 +1444,7 @@ Insufficient space in download directory %s
         if not mdtypes or 'group:all' in mdtypes:
             mdtypes = None
         else:
+            mdtypes.discard("__None__")
             mdtypes = sorted(list(mdtypes))
         return mdtypes
 

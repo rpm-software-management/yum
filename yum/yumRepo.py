@@ -1326,6 +1326,17 @@ Insufficient space in download directory %s
             into the delete list, this means metadata can change filename
             without us leaking it. """
 
+        downloading = self._commonRetrieveDataMD_list(mdtypes)
+        for (ndata, nmdtype) in downloading:
+            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
+                self._revertOldRepoXML()
+                return False
+        self._commonRetrieveDataMD_done(downloading)
+        return True
+
+    def _commonRetrieveDataMD_list(self, mdtypes):
+        """ Return a list of metadata to be retrieved """
+
         def _mdtype_eq(omdtype, odata, nmdtype, ndata):
             """ Check if two returns from _get_mdtype_data() are equal. """
             if ndata is None:
@@ -1357,8 +1368,7 @@ Insufficient space in download directory %s
 
         # Inited twice atm. ... sue me
         self._oldRepoMDData['new_MD_files'] = []
-        downloading_with_size = []
-        downloading_no_size   = []
+        downloading = []
         for mdtype in all_mdtypes:
             (nmdtype, ndata) = self._get_mdtype_data(mdtype)
 
@@ -1395,43 +1405,20 @@ Insufficient space in download directory %s
             # No old repomd data, but we might still have uncompressed MD
             if self._groupCheckDataMDValid(ndata, nmdtype, mdtype):
                 continue
+            downloading.append((ndata, nmdtype))
+        return downloading
 
-            if ndata.size is None:
-                downloading_no_size.append((ndata, nmdtype))
-            else:
-                downloading_with_size.append((ndata, nmdtype))
+    def _commonRetrieveDataMD_done(self, downloading):
+        """ Uncompress the downloaded metadata """
 
-        if len(downloading_with_size) == 1:
-            downloading_no_size.extend(downloading_with_size)
-            downloading_with_size = []
-
-        remote_size = 0
-        local_size  = 0
-        for (ndata, nmdtype) in downloading_with_size: # Get total size...
-            remote_size += int(ndata.size)
-
-        for (ndata, nmdtype) in downloading_with_size:
-            urlgrabber.progress.text_meter_total_size(remote_size, local_size)
-            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
-                self._revertOldRepoXML()
-                return False
-            local_size += int(ndata.size)
-        urlgrabber.progress.text_meter_total_size(0)
-        for (ndata, nmdtype) in downloading_no_size:
-            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
-                self._revertOldRepoXML()
-                return False
-
-        for (ndata, nmdtype) in downloading_with_size + downloading_no_size:
+        for (ndata, nmdtype) in downloading:
             local = self._get_mdtype_fname(ndata, False)
             if nmdtype.endswith("_db"): # Uncompress any compressed files
                 dl_local = local
                 local = misc.decompress(dl_local)
                 misc.unlink_f(dl_local)
             self._oldRepoMDData['new_MD_files'].append(local)
-
         self._doneOldRepoXML()
-        return True
 
     def _groupLoadRepoXML(self, text=None, mdtypes=None):
         """ Retrieve the new repomd.xml from the repository, then check it

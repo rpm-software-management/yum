@@ -322,6 +322,14 @@ class RepoStorage:
         else:
             data = [ mdtype ]
          
+        if hasattr(urlgrabber.grabber, 'parallel_wait'):
+            # download all metadata in parallel
+            for repo in myrepos:
+                if repo.async:
+                    sack = repo.getPackageSack()
+                    sack._retrieve_async(repo, data)
+            urlgrabber.grabber.parallel_wait()
+
         for repo in myrepos:
             sack = repo.getPackageSack()
             try:

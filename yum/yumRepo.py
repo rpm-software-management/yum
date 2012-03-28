@@ -124,6 +124,25 @@ class YumPackageSack(packageSack.PackageSack):
             # umm, wtf?
             pass
 
+    def _retrieve_async(self, repo, data):
+        """ Just schedule the metadata downloads """
+
+        for item in data:
+            if item in self.added.get(repo, []):
+                continue
+            if item == 'metadata':
+                mydbtype = 'primary_db'
+            elif item == 'filelists':
+                mydbtype = 'filelists_db'
+            elif item == 'otherdata':
+                mydbtype = 'other_db'
+            else:
+                continue
+
+            if self._check_db_version(repo, mydbtype):
+                if not self._check_uncompressed_db(repo, mydbtype):
+                    repo._retrieveMD(mydbtype, async=True, failfunc=None)
+
     def populate(self, repo, mdtype='metadata', callback=None, cacheonly=0):
         if mdtype == 'all':
             data = ['metadata', 'filelists', 'otherdata']

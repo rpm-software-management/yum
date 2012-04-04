@@ -74,6 +74,8 @@ def main(args):
     base.registerCommand(RepoListCompletionCommand())
     base.getOptionsConfig(args)
     base.parseCommands()
+    for repo in base.repos.listEnabled():
+        repo.skip_if_unavailable = True
     base.doCommands()
 
 if __name__ == "__main__":

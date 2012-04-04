@@ -542,6 +542,9 @@ class YumBase(depsolve.Depsolve):
 
             if os.path.isdir(reposdir):
                 for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
+                    if not os.access(repofn, os.R_OK):
+                        self.logger.warning(_("Skipping unreadable repository %s"), repr(repofn))
+                        continue
                     thisrepo_age = os.stat(repofn)[8]
                     if thisrepo_age < repo_config_age:
                         thisrepo_age = repo_config_age

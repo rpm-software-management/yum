@@ -51,7 +51,7 @@ MAILTO=root
 #SYSTEMNAME="" 
 
 # Scheduling Options (used by the default cron scripts,
-# /etc/cron.daily/yum-cleanup.cron and /etc/cron.daily/yum-update.cron)
+# /etc/cron.daily/yum-cleanup.cron and /etc/cron.daily/0yum-update.cron)
 # 
 #   Note that if you use a different cron configuration (for example,
 #   removing the default scripts and adding an entry in /etc/cron.d),

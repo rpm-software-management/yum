@@ -10,7 +10,9 @@ install:
 	mkdir -p $(DESTDIR)/usr/sbin
 	mkdir -p $(DESTDIR)/etc/sysconfig
 	mkdir -p $(DESTDIR)/usr/share/yum-cron
-	install -D -m 755 yum-update.cron.sh $(DESTDIR)/etc/cron.daily/yum-update.cron
+# Install yum-update.cron as 0yum-update.cron so it runs before items like
+# manpage update, mlocate, and prelink
+	install -D -m 755 yum-update.cron.sh $(DESTDIR)/etc/cron.daily/0yum-update.cron
 	install -D -m 755 yum-cleanup.cron.sh $(DESTDIR)/etc/cron.daily/yum-cleanup.cron
 	install -D -m 755 yum-cron.sysvinit $(DESTDIR)/etc/rc.d/init.d/yum-cron
 	install -D -m 755 yum-cron.sh $(DESTDIR)/usr/sbin/yum-cron

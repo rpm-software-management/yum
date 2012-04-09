@@ -1006,9 +1006,17 @@ def setup_locale(override_codecs=True, override_time=False):
         locale.setlocale(locale.LC_ALL, 'C')
         
     if override_codecs:
-        import codecs
-        sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
-        sys.stdout.errors = 'replace'
+        class UnicodeStream:
+            def __init__(self, stream, encoding):
+                self.stream = stream
+                self.encoding = encoding
+            def write(self, s):
+                if isinstance(s, unicode):
+                    s = s.encode(self.encoding, 'replace')
+                self.stream.write(s)
+            def __getattr__(self, name):
+                return getattr(self.stream, name)
+        sys.stdout = UnicodeStream(sys.stdout, locale.getpreferredencoding())
 
 
 def get_my_lang_code():

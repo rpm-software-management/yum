@@ -1098,8 +1098,6 @@ class MakeCacheCommand(YumCommand):
                 repo.mdpolicy = "group:all"
             base.doRepoSetup(dosack=0)
             base.repos.doSetup()
-            for repo in base.repos.listEnabled():
-                repo.repoXML
             
             # These convert the downloaded data into usable data,
             # we can't remove them until *LoadRepo() can do:

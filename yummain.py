@@ -89,18 +89,6 @@ def main(args):
     logger = logging.getLogger("yum.main")
     verbose_logger = logging.getLogger("yum.verbose.main")
 
-    # our core object for the cli
-    base = cli.YumBaseCli()
-
-    # do our cli parsing and config file setup
-    # also sanity check the things being passed on the cli
-    try:
-        base.getOptionsConfig(args)
-    except plugins.PluginYumExit, e:
-        return exPluginExit(e)
-    except Errors.YumBaseError, e:
-        return exFatal(e)
-
     # Try to open the current directory to see if we have 
     # read and execute access. If not, chdir to /
     try:
@@ -117,6 +105,18 @@ def main(args):
         if e.errno == errno.ENOENT:
             logger.critical(_('No getcwd() access in current directory, moving to /'))
             os.chdir("/")
+
+    # our core object for the cli
+    base = cli.YumBaseCli()
+
+    # do our cli parsing and config file setup
+    # also sanity check the things being passed on the cli
+    try:
+        base.getOptionsConfig(args)
+    except plugins.PluginYumExit, e:
+        return exPluginExit(e)
+    except Errors.YumBaseError, e:
+        return exFatal(e)
 
     lockerr = ""
     while True:

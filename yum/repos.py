@@ -78,7 +78,7 @@ class RepoStorage:
 
         repos = []
         for repo in self.listEnabled():
-            if repo.async and repo._commonLoadRepoXML(repo):
+            if repo._async and repo._commonLoadRepoXML(repo):
                 mdtypes = repo._mdpolicy2mdtypes()
                 downloading = repo._commonRetrieveDataMD_list(mdtypes)
                 repos.append((repo, downloading, [False]))
@@ -325,7 +325,7 @@ class RepoStorage:
         if hasattr(urlgrabber.grabber, 'parallel_wait'):
             # download all metadata in parallel
             for repo in myrepos:
-                if repo.async:
+                if repo._async:
                     sack = repo.getPackageSack()
                     sack._retrieve_async(repo, data)
             urlgrabber.grabber.parallel_wait()

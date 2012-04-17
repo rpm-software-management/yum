@@ -581,7 +581,8 @@ class YumBase(depsolve.Depsolve):
         repo.basecachedir = self.conf.cachedir
         repo.yumvar.update(self.conf.yumvar)
         repo.cfg = parser
-
+        # Enable parallel downloading
+        repo._async = repo.async
         return repo
 
     def disablePlugins(self):
@@ -2260,7 +2261,7 @@ class YumBase(depsolve.Depsolve):
 
             text = os.path.basename(po.relativepath)
             kwargs = {}
-            if async and po.repo.async:
+            if async and po.repo._async:
                 kwargs['failfunc'] = lambda obj, po=po: adderror(po, exception2msg(obj.exception))
                 kwargs['async'] = True
             elif not (i == 1 and not local_size[0] and remote_size == po.size):

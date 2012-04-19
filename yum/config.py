@@ -216,7 +216,7 @@ class UrlOption(Option):
         # Handle the "_none_" special case
         if url.lower() == '_none_':
             if self.allow_none:
-                return None
+                return '_none_'
             else:
                 raise ValueError('"_none_" is not a valid value')
 

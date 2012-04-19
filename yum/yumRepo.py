@@ -433,7 +433,7 @@ class YumRepository(Repository, config.RepoConf):
 
         self._proxy_dict = {} # zap it
         proxy_string = None
-        empty = (None, '')
+        empty = (None, '_none_', '')
         if self.proxy not in empty:
             proxy_string = '%s' % self.proxy
             if self.proxy_username not in empty:

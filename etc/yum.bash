@@ -157,8 +157,8 @@ _yum()
 
     # Commands offered as completions
     local cmds=( check check-update clean deplist distro-sync downgrade
-        groups help history info install list makecache provides reinstall
-        remove repolist search shell update upgrade version )
+        groups help history info install list load-transaction makecache provides
+        reinstall remove repolist search shell update upgrade version )
 
     local i c cmd subcmd
     for (( i=1; i < ${#words[@]}-1; i++ )) ; do
@@ -166,7 +166,7 @@ _yum()
         # Recognize additional commands and aliases
         for c in ${cmds[@]} check-rpmdb distribution-synchronization erase \
             group groupinfo groupinstall grouplist groupremove groupupdate \
-            grouperase install-na localinstall localupdate whatprovides ; do
+            grouperase install-na load-ts localinstall localupdate whatprovides ; do
             [[ ${words[i]} == $c ]] && cmd=$c && break
         done
     done
@@ -301,6 +301,11 @@ _yum()
             [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W 'all available updates installed
                     extras obsoletes recent' -- "$cur" ) )
+            return 0
+            ;;
+
+        load-transaction|load-ts)
+            COMPREPLY=( $( compgen -f -o plusdirs -X '!*.yumtx' -- "$cur" ) )
             return 0
             ;;
 

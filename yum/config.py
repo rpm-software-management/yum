@@ -735,7 +735,7 @@ class YumConf(StartupConf):
     commands = ListOption()
     exclude = ListOption()
     failovermethod = Option(__main_failovermethod_default__)
-    proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
+    proxy = UrlOption(default=False, schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()
     username = Option()

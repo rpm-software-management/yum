@@ -434,7 +434,9 @@ class YumRepository(Repository, config.RepoConf):
         self._proxy_dict = {} # zap it
         proxy_string = None
         empty = (None, '_none_', '')
-        if self.proxy not in empty:
+        if self.proxy is None:  # got 'proxy=_none_'
+            proxy_string = ''   # this disables default proxies
+        elif self.proxy:
             proxy_string = '%s' % self.proxy
             if self.proxy_username not in empty:
 

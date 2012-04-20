@@ -106,6 +106,9 @@ class TransactionData:
         self.reinstalled = []
         self.downgraded = []
         self.failed = []
+
+        self._future_rpmdbv = None
+        self._check_future_rpmdbv = None
         
     def __len__(self):
         return len(self.pkgdict)
@@ -635,6 +638,12 @@ class TransactionData:
         """ Return a simple version for the future rpmdb. Works like
             rpmdb.simpleVersion(main_only=True)[0], but for the state the rpmdb
             will be in after the transaction. """
+
+        if self._future_rpmdbv is not None:
+            sc, ret = self._future_rpmdbv
+            if sc == self.state_counter:
+                return ret
+
         pkgs = self.rpmdb.returnPackages()
         _reinstalled_pkgtups = {}
         for txmbr in self.getMembersWithState(None, TS_INSTALL_STATES):
@@ -674,6 +683,7 @@ class TransactionData:
 
         self.rpmdb.transactionCachePackageChecksums(pkg_checksum_tups)
 
+        self._future_rpmdbv = (self.state_counter, main)
         return main
     
     def findObsoletedByThisMember(self, txmbr):

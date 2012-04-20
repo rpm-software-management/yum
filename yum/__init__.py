@@ -6003,12 +6003,16 @@ class YumBase(depsolve.Depsolve):
         
         msg = "%s\n" % self.rpmdb.simpleVersion(main_only=True)[0]
         msg += "%s\n" % self.ts.getTsFlags()
+
         if self.tsInfo._pkgSack is None: # Transactions have pkgSack?
-            msg += "0\n"
+            msg += "1\n"
         else:
-            msg += "%s\n" % len(self.repos.listEnabled())
+            msg += "%s\n" % (len(self.repos.listEnabled()) + 1)
             for r in self.repos.listEnabled():
                 msg += "%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)
+
+        # Save what we think the future rpmdbv will be.
+        msg += "%s:%s\n" % ('installed', self.tsInfo.futureRpmDBVersion())
 
         msg += "%s\n" % len(self.tsInfo.getMembers())
         for txmbr in self.tsInfo.getMembers():
@@ -6024,14 +6028,16 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, str(e)))
 
         
-    def load_ts(self, filename, ignorerpm=None, ignoremissing=None):
+    def load_ts(self, filename, ignorerpm=None, ignoremissing=None,
+                ignorenewrpm=None):
         """Load a transaction from a .yumtx file.
 
         :param filename: the name of the file to load the transaction
            from
-        :param ignorerpm: whether to ignore messages from rpm
+        :param ignorerpm: whether to ignore starting rpmdb version mismatch.
         :param ignoremissing: whether to ignore that there may be
            transaction members missing
+        :param ignorenewrpm: whether to ignore ending rpmdb version mismatch.
         :return: the members of the loaded transaction
         :raises: :class:`yum.Errors.YumBaseError` if there are problems
            loading the transaction
@@ -6050,14 +6056,23 @@ class YumBase(depsolve.Depsolve):
 
         if ignorerpm is None:
             ignorerpm = self.conf.loadts_ignorerpm
+        if ignorenewrpm is None:
+            ignorenewrpm = self.conf.loadts_ignorenewrpm
         if ignoremissing is None:
             ignoremissing = self.conf.loadts_ignoremissing
+
+        #  Inherit this, because for the ending version to match the starting
+        # version must match.
+        if ignorerpm:
+            ignorenewrpm = True
             
         # data format
         # 0 == rpmdb version
         # 1 == tsflags
         # 2 == numrepos
         # 3:numrepos = repos
+        #  -- post 3.2.29 update: 'installed' repo. added with the values as the
+        #                         new rpmdb version.
         # 3+numrepos = num pkgs
         # 3+numrepos+1 -> EOF= txmembers
         
@@ -6074,7 +6089,7 @@ class YumBase(depsolve.Depsolve):
         # rpm db ver
         rpmv = data[0].strip()
         if rpmv != str(self.rpmdb.simpleVersion(main_only=True)[0]):
-            msg = _("rpmdb ver mismatched saved transaction version, ")
+            msg = _("rpmdb ver mismatched saved transaction version,")
             if ignorerpm:
                 msg += _(" ignoring, as requested.")
                 self.logger.critical(_(msg))
@@ -6097,8 +6112,17 @@ class YumBase(depsolve.Depsolve):
         numrepos = int(data[2].strip())
         repos = []
         rindex=3+numrepos
+        future_rpmdbv = None
         for r in data[3:rindex]:
-            repos.append(r.strip().split(':'))
+            repo = r.strip().split(':')
+
+            if repo and repo[0] == 'installed':
+                #  This is an update hack to list the _future_ rpmdb version.
+                # Doing it this way allows older yum's to load newer ts files.
+                future_rpmdbv = "%s:%s" % (repo[1], repo[2])
+                continue
+
+            repos.append(repo)
 
         # pkgs/txmbrs
         numpkgs = int(data[rindex].strip())
@@ -6218,6 +6242,11 @@ class YumBase(depsolve.Depsolve):
                 msg += _(" aborting.")
                 raise Errors.YumBaseError(msg)
             
+        if len(self.tsInfo) != pkgcount:
+            future_rpmdbv = None
+        if future_rpmdbv is not None:
+            self.tsInfo._check_future_rpmdbv = (pkgcount, future_rpmdbv,
+                                                ignorenewrpm)
         return self.tsInfo.getMembers()
 
     def _remove_old_deps(self):

@@ -536,6 +536,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             self.reportDownloadSize(downloadpkgs, install_only)
         
+        cfr = self.tsInfo._check_future_rpmdbv
+        if (cfr is not None and
+            cfr[0] == self.tsInfo.state_counter and
+            self.tsInfo.futureRpmDBVersion() != cfr[1]):
+            msg = _("future rpmdb ver mismatched saved transaction version,")
+            if cfr[2]:
+                msg += _(" ignoring, as requested.")
+                self.logger.critical(_(msg))
+            else:
+                msg += _(" aborting.")
+                raise yum.Errors.YumBaseError(msg)
+
         # confirm with user
         if self._promptWanted():
             if self.conf.assumeno or not self.userconfirm():

@@ -3,6 +3,8 @@
 
 import os
 import rpm
+import ctypes
+import struct
 
 _ppc64_native_is_best = False
 
@@ -31,6 +33,7 @@ arches = {
     "ia32e": "x86_64",
     
     # ppc
+    "ppc64p7": "ppc64",
     "ppc64pseries": "ppc64",
     "ppc64iseries": "ppc64",    
     "ppc64": "ppc",
@@ -80,6 +83,13 @@ arches = {
     
     #itanium
     "ia64": "noarch",
+    }
+
+#  Will contain information parsed from /proc/self/auxv via _parse_auxv().
+# Should move into rpm really.
+_aux_vector = {
+    "platform": "",
+    "hwcap": 0,
     }
 
 def legitMultiArchesInSameLib(arch=None):
@@ -222,6 +232,32 @@ def _try_read_cpuinfo():
     except:
         return []
 
+def _parse_auxv():
+    """ Read /proc/self/auxv and parse it into global dict for easier access
+        later on, very similar to what rpm does. """
+    # In case we can't open and read /proc/self/auxv, just return
+    try:
+        data = open("/proc/self/auxv", "rb").read()
+    except:
+        return
+
+    # Define values from /usr/include/elf.h
+    AT_PLATFORM = 15
+    AT_HWCAP = 16
+    fmtlen = struct.calcsize("LL")
+    offset = 0
+    platform = ctypes.c_char_p()
+
+    # Parse the data and fill in _aux_vector dict
+    while offset <= len(data) - fmtlen:
+        at_type, at_val = struct.unpack_from("LL", data, offset)
+        if at_type == AT_PLATFORM:
+            platform.value = at_val
+            _aux_vector["platform"] = platform.value
+        if at_type == AT_HWCAP:
+            _aux_vector["hwcap"] = at_val
+        offset = offset + fmtlen
+
 def getCanonX86Arch(arch):
     # 
     if arch == "i586":
@@ -260,6 +296,17 @@ def getCanonPPCArch(arch):
         if line.find("machine") != -1:
             machine = line.split(':')[1]
             break
+
+    platform = _aux_vector["platform"]
+    if machine is None and not platform:
+        return arch
+
+    try:
+        if platform.startswith("power") and int(platform[5:]) >= 7:
+            return "ppc64p7"
+    except:
+        pass
+
     if machine is None:
         return arch
 
@@ -323,6 +370,8 @@ def getCanonArch(skipRpmPlatform = 0):
             pass
         
     arch = os.uname()[4]
+
+    _parse_auxv()
 
     if (len(arch) == 4 and arch[0] == "i" and arch[2:4] == "86"):
         return getCanonX86Arch(arch)

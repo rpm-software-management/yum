@@ -165,6 +165,19 @@ class YumPackageSack(packageSack.PackageSack):
                 continue
 
             if self._check_db_version(repo, mydbtype):
+                #  Use gen decompression on DB files. Keeps exactly what we
+                # downloaded in the download dir.
+
+                db_un_fn = self._check_uncompressed_db_gen(repo, mydbtype)
+                if not db_un_fn:
+                    db_fn = repo._retrieveMD(mydbtype)
+                    if db_fn:
+                        db_un_fn = self._check_uncompressed_db_gen(repo,
+                                                                   mydbtype)
+
+                dobj = repo.cacheHandler.open_database(db_un_fn)
+
+            elif self._check_db_version(repo, mydbtype):
                 # see if we have the uncompressed db and check it's checksum vs the openchecksum
                 # if not download the compressed file
                 # decompress it
@@ -196,6 +209,25 @@ class YumPackageSack(packageSack.PackageSack):
         # get rid of all this stuff we don't need now
         del repo.cacheHandler
 
+    def _check_uncompressed_db_gen(self, repo, mdtype):
+        """return file name of db in gen/ dir if good, None if not"""
+
+        ret = self._check_uncompressed_db(repo, mdtype)
+        if ret: # Backwards compat.
+            return ret
+
+        mydbdata         = repo.repoXML.getData(mdtype)
+        (r_base, remote) = mydbdata.location
+        fname            = os.path.basename(remote)
+        compressed_fn    = repo.cachedir + '/' + fname
+        db_un_fn         = mdtype + '.sqlite'
+
+        ret = misc.repo_gen_decompress(compressed_fn, db_un_fn,
+                                       cached=repo.cache)
+        if ret:
+            return self._check_uncompressed_db_fn(repo, mdtype, ret)
+        return None
+
     def _check_uncompressed_db(self, repo, mdtype):
         """return file name of uncompressed db is good, None if not"""
         mydbdata = repo.repoXML.getData(mdtype)
@@ -204,6 +236,9 @@ class YumPackageSack(packageSack.PackageSack):
         compressed_fn = repo.cachedir + '/' + fname
         db_un_fn = misc.decompress(compressed_fn, fn_only=True)
 
+        return self._check_uncompressed_db_fn(repo, mdtype, db_un_fn)
+
+    def _check_uncompressed_db_fn(self, repo, mdtype, db_un_fn):
         result = None
 
         repo._preload_md_from_system_cache(os.path.basename(db_un_fn))
@@ -1287,11 +1322,10 @@ Insufficient space in download directory %s
             return None
 
         if not file_check:
-            compressed = dbmdtype.endswith("_db")
-            local = self._get_mdtype_fname(data, compressed)
+            local = self._get_mdtype_fname(data)
         else:
             compressed = False
-            local = self._get_mdtype_fname(data, False)
+            local = self._get_mdtype_fname(data)
             if not os.path.exists(local):
                 local = misc.decompress(local, fn_only=True)
                 compressed = True
@@ -1409,11 +1443,7 @@ Insufficient space in download directory %s
                 return False
 
         for (ndata, nmdtype) in downloading_with_size + downloading_no_size:
-            local = self._get_mdtype_fname(ndata, False)
-            if nmdtype.endswith("_db"): # Uncompress any compressed files
-                dl_local = local
-                local = misc.decompress(dl_local)
-                misc.unlink_f(dl_local)
+            local = self._get_mdtype_fname(ndata)
             self._oldRepoMDData['new_MD_files'].append(local)
 
         self._doneOldRepoXML()

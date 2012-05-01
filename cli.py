@@ -1403,6 +1403,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             paths = set(sys.path + os.environ['PATH'].split(':'))
             nargs = []
             for arg in args:
+                if not arg:
+                    continue
                 if yum.misc.re_filename(arg) or yum.misc.re_glob(arg):
                     continue
                 for path in paths:

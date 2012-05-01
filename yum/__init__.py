@@ -3039,7 +3039,7 @@ class YumBase(depsolve.Depsolve):
         def _arg_data(arg):
             if not misc.re_glob(arg):
                 isglob = False
-                if arg[0] != '/':
+                if not arg or arg[0] != '/':
                     canBeFile = False
                 else:
                     canBeFile = True

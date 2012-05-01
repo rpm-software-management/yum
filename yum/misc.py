@@ -758,6 +758,8 @@ def _decompress_chunked(source, dest, ztype):
             data = s_fn.read(1024000)
         except IOError:
             break
+        except EOFError:
+            break
         
         if not data: break
 

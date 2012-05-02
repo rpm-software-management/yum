@@ -442,8 +442,7 @@ class YumBase(depsolve.Depsolve):
         try:
             parser.readfp(confpp_obj)
         except ParsingError, e:
-            msg = str(e)
-            raise Errors.ConfigError, msg
+            raise Errors.ConfigError(exception2msg(e))
 
         # Check sections in the .repo file that was just slurped up
         for section in parser.sections():
@@ -931,7 +930,7 @@ class YumBase(depsolve.Depsolve):
             try:
                 self._comps.add(groupfile)
             except (Errors.GroupsError,Errors.CompsException), e:
-                msg = _('Failed to add groups file for repository: %s - %s') % (repo, str(e))
+                msg = _('Failed to add groups file for repository: %s - %s') % (repo, exception2msg(e))
                 self.logger.critical(msg)
             else:
                 repo.groups_added = True
@@ -973,7 +972,7 @@ class YumBase(depsolve.Depsolve):
                     # feed it into _tags.add()
                     self._tags.add(repo.id, tag_sqlite)
                 except (Errors.RepoError, Errors.PkgTagsError), e:
-                    msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, str(e))
+                    msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, exception2msg(e))
                     self.logger.critical(msg)
                     
                 
@@ -5320,7 +5319,7 @@ class YumBase(depsolve.Depsolve):
 
         except urlgrabber.grabber.URLGrabError, e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
-                                      to_unicode(str(e)))
+                                      exception2msg(e))
                                       
         # check for a .asc file accompanying it - that's our gpg sig on the key
         # suck it down and do the check
@@ -5353,7 +5352,7 @@ class YumBase(depsolve.Depsolve):
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError, e:
             raise Errors.YumBaseError(_('Invalid GPG Key from %s: %s') % 
-                                      (url, to_unicode(str(e))))
+                                      (url, exception2msg(e)))
         keys = []
         for keyinfo in keys_info:
             thiskey = {}
@@ -5927,7 +5926,7 @@ class YumBase(depsolve.Depsolve):
         try:
             cachedir = misc.getCacheDir(tmpdir, reuse)
         except (IOError, OSError), e:
-            self.logger.critical(_('Could not set cachedir: %s') % str(e))
+            self.logger.critical(_('Could not set cachedir: %s') % exception2msg(e))
             cachedir = None
             
         if cachedir is None:
@@ -6023,9 +6022,9 @@ class YumBase(depsolve.Depsolve):
         except (IOError, OSError), e:
             self._ts_save_file = None
             if auto:
-                self.logger.critical(_("Could not save transaction file %s: %s") % (filename, str(e)))
+                self.logger.critical(_("Could not save transaction file %s: %s") % (filename, exception2msg(e)))
             else:
-                raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, str(e)))
+                raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, exception2msg(e)))
 
         
     def load_ts(self, filename, ignorerpm=None, ignoremissing=None,
@@ -6051,7 +6050,7 @@ class YumBase(depsolve.Depsolve):
         try:
             data = open(filename, 'r').readlines()
         except (IOError, OSError), e:
-            raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, str(e)))
+            raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, exception2msg(e)))
             
 
         if ignorerpm is None:

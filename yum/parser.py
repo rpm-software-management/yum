@@ -73,7 +73,11 @@ class ConfigPreProcessor:
         if scheme == '':
             # check it to make sure it's not a relative file url
             if configfile[0] != '/':
-                configfile = os.getcwd() + '/' + configfile
+                try:
+                    rootdir = os.getcwd() + "/"
+                except:
+                    rootdir = "/"
+                configfile = rootdir + configfile
             url = 'file://' + configfile
         else:
             url = configfile

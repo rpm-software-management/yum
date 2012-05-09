@@ -9,8 +9,8 @@ _yum_helper()
 
 _yum_list()
 {
-    # Fail fast for things that look like paths.
-    [[ $2 == */* || $2 == [.~]* ]] && return
+    # Fail fast for things that look like paths or options.
+    [[ $2 == */* || $2 == [.~-]* ]] && return
     _yum_helper list "$@"
 }
 

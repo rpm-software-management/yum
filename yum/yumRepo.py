@@ -187,12 +187,18 @@ class YumPackageSack(packageSack.PackageSack):
                 #  Use gen decompression on DB files. Keeps exactly what we
                 # downloaded in the download dir.
 
-                db_un_fn = self._check_uncompressed_db_gen(repo, mydbtype)
+                # Backwards compat. ... try the old uncompressed version first.
+                db_un_fn = self._check_uncompressed_db(repo, mydbtype)
+                if not db_un_fn:
+                    db_un_fn = self._check_uncompressed_db_gen(repo, mydbtype)
+
                 if not db_un_fn:
                     db_fn = repo._retrieveMD(mydbtype)
                     if db_fn:
                         db_un_fn = self._check_uncompressed_db_gen(repo,
                                                                    mydbtype)
+                    if not db_un_fn: # Shouldn't happen?
+                        raise URLGrabError(-1, 'Check uncompressed DB failed')
 
                 dobj = repo.cacheHandler.open_database(db_un_fn)
 
@@ -215,7 +221,17 @@ class YumPackageSack(packageSack.PackageSack):
 
             else:
                 repo._xml2sqlite_local = True
+                # Download...
                 xml = repo_get_function()
+
+                #  Use generated dir. and handle compression types metadata
+                # parser doesn't understand.
+                gen = mymdtype + '.xml'
+                ret = misc.repo_gen_decompress(xml, gen, cached=repo.cache)
+                if not ret:
+                    raise URLGrabError(-1, 'Decompress DB failed')
+                xml = ret
+                # Convert XML => .sqlite
                 xmldata = repo.repoXML.getData(mymdtype)
                 (ctype, csum) = xmldata.checksum
                 dobj = repo_cache_function(xml, csum)
@@ -228,18 +244,18 @@ class YumPackageSack(packageSack.PackageSack):
         # get rid of all this stuff we don't need now
         del repo.cacheHandler
 
-    def _check_uncompressed_db_gen(self, repo, mdtype):
+    def _check_uncompressed_db_gen(self, repo, mdtype, fast=True):
         """return file name of db in gen/ dir if good, None if not"""
-
-        ret = self._check_uncompressed_db(repo, mdtype)
-        if ret: # Backwards compat.
-            return ret
 
         mydbdata         = repo.repoXML.getData(mdtype)
         (r_base, remote) = mydbdata.location
         fname            = os.path.basename(remote)
         compressed_fn    = repo.cachedir + '/' + fname
         db_un_fn         = mdtype + '.sqlite'
+
+        if not repo._checkMD(compressed_fn, mdtype, data=mydbdata,
+                             check_can_fail=fast, fast=fast):
+            return None
 
         ret = misc.repo_gen_decompress(compressed_fn, db_un_fn,
                                        cached=repo.cache)
@@ -260,7 +276,6 @@ class YumPackageSack(packageSack.PackageSack):
     def _check_uncompressed_db_fn(self, repo, mdtype, db_un_fn):
         result = None
 
-        repo._preload_md_from_system_cache(os.path.basename(db_un_fn))
         if os.path.exists(db_un_fn):
             if skip_old_DBMD_check and repo._using_old_MD:
                 return db_un_fn
@@ -1356,6 +1371,7 @@ Insufficient space in download directory %s
             return None
 
         if not file_check:
+            compressed = False
             local = self._get_mdtype_fname(data)
         else:
             compressed = False
@@ -1467,10 +1483,6 @@ Insufficient space in download directory %s
 
         for (ndata, nmdtype) in downloading:
             local = self._get_mdtype_fname(ndata, False)
-            if nmdtype.endswith("_db"): # Uncompress any compressed files
-                dl_local = local
-                local = misc.decompress(dl_local)
-                misc.unlink_f(dl_local)
             self._oldRepoMDData['new_MD_files'].append(local)
         self._doneOldRepoXML()
 
@@ -1575,7 +1587,7 @@ Insufficient space in download directory %s
         return self._checkMD(fn, mdtype, openchecksum)
 
     def _checkMD(self, fn, mdtype, openchecksum=False,
-                 data=None, check_can_fail=False):
+                 data=None, check_can_fail=False, fast=False):
         """ Internal function, use .checkMD() from outside yum. """
 
         thisdata = data # So the argument name is nicer
@@ -1598,6 +1610,18 @@ Insufficient space in download directory %s
         if size is not None:
             size = int(size)
 
+        if fast:
+            fsize = misc.stat_f(file)
+            if fsize is None: # File doesn't exist...
+                return None
+            if size is None:
+                return 1
+            if size == fsize.st_size:
+                return 1
+            if check_can_fail:
+                return None
+            raise URLGrabError(-1, 'Metadata file does not match size')
+
         try: # get the local checksum
             l_csum = self._checksum(r_ctype, file, datasize=size)
         except Errors.RepoError, e:
@@ -1611,8 +1635,6 @@ Insufficient space in download directory %s
             if check_can_fail:
                 return None
             raise URLGrabError(-1, 'Metadata file does not match checksum')
-
-
 
     def retrieveMD(self, mdtype):
         """base function to retrieve metadata files from the remote url

@@ -3051,10 +3051,14 @@ class YumBase(depsolve.Depsolve):
         def _arg_data(arg):
             if not misc.re_glob(arg):
                 isglob = False
+<<<<<<< HEAD
                 if not arg or arg[0] != '/':
                     canBeFile = False
                 else:
                     canBeFile = True
+=======
+                canBeFile = arg.startswith('/')
+>>>>>>> Fix the 'yum provides ""' case.  BZ 817491.
             else:
                 isglob = True
                 canBeFile = misc.re_filename(arg)

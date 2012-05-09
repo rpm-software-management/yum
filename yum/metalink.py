@@ -180,6 +180,7 @@ class MetaLinkRepoMD:
         self.repomd = None
         self.old_repomds = []
         self.mirrors = []
+        self._host2mc = {}
         if not os.path.exists(filename):
             raise MetaLinkRepoErrorParseFail, "File %s does not exist" %filename
         try:
@@ -225,8 +226,6 @@ class MetaLinkRepoMD:
         # Get the hostname from a url, stripping away any usernames/passwords
         # Borrowd from fastestmirror
         url2host = lambda url: url.split('/')[2].split('@')[-1]
-        hosts = set() # Don't want multiple urls for one host in plain mode
-                      # The list of URLs is sorted, so http is before ftp
 
         for mirror in self.mirrors:
             url = mirror.url
@@ -237,9 +236,9 @@ class MetaLinkRepoMD:
             elif (url.startswith("http:") or url.startswith("ftp:") or
                   url.startswith("https:")):
                 host = url2host(url)
-                if host in hosts:
+                if host in self._host2mc:
                     continue
-                hosts.add(host)
+                self._host2mc[host] = mirror.max_connections
             else:
                 continue
 

@@ -124,6 +124,25 @@ class YumPackageSack(packageSack.PackageSack):
             # umm, wtf?
             pass
 
+    def _retrieve_async(self, repo, data):
+        """ Just schedule the metadata downloads """
+
+        for item in data:
+            if item in self.added.get(repo, []):
+                continue
+            if item == 'metadata':
+                mydbtype = 'primary_db'
+            elif item == 'filelists':
+                mydbtype = 'filelists_db'
+            elif item == 'otherdata':
+                mydbtype = 'other_db'
+            else:
+                continue
+
+            if self._check_db_version(repo, mydbtype):
+                if not self._check_uncompressed_db(repo, mydbtype):
+                    repo._retrieveMD(mydbtype, async=True, failfunc=None)
+
     def populate(self, repo, mdtype='metadata', callback=None, cacheonly=0):
         if mdtype == 'all':
             data = ['metadata', 'filelists', 'otherdata']
@@ -323,6 +342,7 @@ class YumRepository(Repository, config.RepoConf):
 
         self._grabfunc = None
         self._grab = None
+        self._async = False
 
     def __cmp__(self, other):
         """ Sort yum repos. by cost, and then by alphanumeric on their id. """
@@ -519,8 +539,20 @@ class YumRepository(Repository, config.RepoConf):
                                     copy_local=self.copy_local,
                                     reget='simple',
                                     **ugopts)
+        def add_mc(url):
+            host = urlparse.urlsplit(url).netloc
+            mc = self.metalink_data._host2mc.get(host)
+            if mc > 0:
+                url = {
+                    'mirror': misc.to_utf8(url),
+                    'kwargs': { 'max_connections': mc },
+                }
+            return url
+        urls = self.urls
+        if self.metalink:
+            urls = map(add_mc, urls)
 
-        self._grab = mgclass(self._grabfunc, self.urls,
+        self._grab = mgclass(self._grabfunc, urls,
                              failure_callback=self.mirror_failure_obj)
 
     def _default_grabopts(self, cache=True):
@@ -783,7 +815,7 @@ class YumRepository(Repository, config.RepoConf):
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=None, checkfunc=None, text=None, reget='simple', 
-            cache=True, size=None):
+            cache=True, size=None, **kwargs):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -877,7 +909,8 @@ Insufficient space in download directory %s
                                            reget = reget,
                                            checkfunc=checkfunc,
                                            http_headers=headers,
-                                           size=size
+                                           size=size,
+                                           **kwargs
                                            )
             except URLGrabError, e:
                 errstr = "failure: %s from %s: %s" % (relative, self.id, e)
@@ -889,7 +922,7 @@ Insufficient space in download directory %s
         return result
     __get = _getFile
 
-    def getPackage(self, package, checkfunc=None, text=None, cache=True):
+    def getPackage(self, package, checkfunc=None, text=None, cache=True, **kwargs):
         remote = package.relativepath
         local = package.localPkg()
         basepath = package.basepath
@@ -906,6 +939,7 @@ Insufficient space in download directory %s
                         text=text,
                         cache=cache,
                         size=package.size,
+                        **kwargs
                         )
 
     def getHeader(self, package, checkfunc = None, reget = 'simple',
@@ -1346,6 +1380,17 @@ Insufficient space in download directory %s
             into the delete list, this means metadata can change filename
             without us leaking it. """
 
+        downloading = self._commonRetrieveDataMD_list(mdtypes)
+        for (ndata, nmdtype) in downloading:
+            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
+                self._revertOldRepoXML()
+                return False
+        self._commonRetrieveDataMD_done(downloading)
+        return True
+
+    def _commonRetrieveDataMD_list(self, mdtypes):
+        """ Return a list of metadata to be retrieved """
+
         def _mdtype_eq(omdtype, odata, nmdtype, ndata):
             """ Check if two returns from _get_mdtype_data() are equal. """
             if ndata is None:
@@ -1377,8 +1422,7 @@ Insufficient space in download directory %s
 
         # Inited twice atm. ... sue me
         self._oldRepoMDData['new_MD_files'] = []
-        downloading_with_size = []
-        downloading_no_size   = []
+        downloading = []
         for mdtype in all_mdtypes:
             (nmdtype, ndata) = self._get_mdtype_data(mdtype)
 
@@ -1415,39 +1459,20 @@ Insufficient space in download directory %s
             # No old repomd data, but we might still have uncompressed MD
             if self._groupCheckDataMDValid(ndata, nmdtype, mdtype):
                 continue
+            downloading.append((ndata, nmdtype))
+        return downloading
 
-            if ndata.size is None:
-                downloading_no_size.append((ndata, nmdtype))
-            else:
-                downloading_with_size.append((ndata, nmdtype))
+    def _commonRetrieveDataMD_done(self, downloading):
+        """ Uncompress the downloaded metadata """
 
-        if len(downloading_with_size) == 1:
-            downloading_no_size.extend(downloading_with_size)
-            downloading_with_size = []
-
-        remote_size = 0
-        local_size  = 0
-        for (ndata, nmdtype) in downloading_with_size: # Get total size...
-            remote_size += int(ndata.size)
-
-        for (ndata, nmdtype) in downloading_with_size:
-            urlgrabber.progress.text_meter_total_size(remote_size, local_size)
-            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
-                self._revertOldRepoXML()
-                return False
-            local_size += int(ndata.size)
-        urlgrabber.progress.text_meter_total_size(0)
-        for (ndata, nmdtype) in downloading_no_size:
-            if not self._retrieveMD(nmdtype, retrieve_can_fail=True):
-                self._revertOldRepoXML()
-                return False
-
-        for (ndata, nmdtype) in downloading_with_size + downloading_no_size:
-            local = self._get_mdtype_fname(ndata)
+        for (ndata, nmdtype) in downloading:
+            local = self._get_mdtype_fname(ndata, False)
+            if nmdtype.endswith("_db"): # Uncompress any compressed files
+                dl_local = local
+                local = misc.decompress(dl_local)
+                misc.unlink_f(dl_local)
             self._oldRepoMDData['new_MD_files'].append(local)
-
         self._doneOldRepoXML()
-        return True
 
     def _groupLoadRepoXML(self, text=None, mdtypes=None):
         """ Retrieve the new repomd.xml from the repository, then check it
@@ -1595,7 +1620,7 @@ Insufficient space in download directory %s
            mdtype can be 'primary', 'filelists', 'other' or 'group'."""
         return self._retrieveMD(mdtype)
 
-    def _retrieveMD(self, mdtype, retrieve_can_fail=False):
+    def _retrieveMD(self, mdtype, retrieve_can_fail=False, **kwargs):
         """ Internal function, use .retrieveMD() from outside yum. """
         #  Note that this can raise Errors.RepoMDError if mdtype doesn't exist
         # for this repo.
@@ -1633,7 +1658,9 @@ Insufficient space in download directory %s
                 return local # it's the same return the local one
 
         try:
-            checkfunc = (self.checkMD, (mdtype,), {})
+            def checkfunc(obj):
+                self.checkMD(obj, mdtype)
+                self.retrieved[mdtype] = 1
             text = "%s/%s" % (self.id, mdtype)
             if thisdata.size is None:
                 reget = None
@@ -1649,7 +1676,8 @@ Insufficient space in download directory %s
                                   checkfunc=checkfunc, 
                                   text=text,
                                   cache=self.http_caching == 'all',
-                                  size=thisdata.size)
+                                  size=thisdata.size,
+                                  **kwargs)
         except Errors.RepoError:
             if retrieve_can_fail:
                 return None
@@ -1660,7 +1688,6 @@ Insufficient space in download directory %s
             raise Errors.RepoError, \
                 "Could not retrieve %s matching remote checksum from %s" % (local, self)
         else:
-            self.retrieved[mdtype] = 1
             return local
 
 

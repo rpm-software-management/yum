@@ -22,6 +22,7 @@ import misc
 
 import Errors
 from packageSack import MetaSack
+import urlgrabber.grabber
 
 from weakref import proxy as weakref
 
@@ -67,6 +68,38 @@ class RepoStorage:
         self._cache_enabled_repos = []
         self.quick_enable_disable = {}
 
+    def retrieveAllMD(self):
+        """ Download metadata for all enabled repositories,
+            based on mdpolicy.
+        """
+
+        if not hasattr(urlgrabber.grabber, 'parallel_wait'):
+            return
+
+        repos = []
+        for repo in self.listEnabled():
+            if repo._async and repo._commonLoadRepoXML(repo):
+                mdtypes = repo._mdpolicy2mdtypes()
+                downloading = repo._commonRetrieveDataMD_list(mdtypes)
+                repos.append((repo, downloading, [False]))
+
+        # with sizes first, then without sizes..
+	for no_size in (False, True):
+            for repo, downloading, error in repos:
+                def failfunc(obj, error=error):
+                    error[0] = True
+                for (ndata, nmdtype) in downloading:
+                    if (ndata.size is None) == no_size:
+                        repo._retrieveMD(nmdtype, async=True, failfunc=failfunc)
+            urlgrabber.grabber.parallel_wait()
+
+        # done or revert
+        for repo, downloading, error in repos:
+            if error[0]: # some MD failed?
+                repo._revertOldRepoXML()
+            else:
+                repo._commonRetrieveDataMD_done(downloading)
+
     def doSetup(self, thisrepo = None):
         
         self.ayum.plugins.run('prereposetup')
@@ -89,6 +122,7 @@ class RepoStorage:
                 self.disableRepo(repo.id)
                 
         self._setup = True
+        self.retrieveAllMD()
         self.ayum.plugins.run('postreposetup')
         
     def __str__(self):
@@ -288,6 +322,14 @@ class RepoStorage:
         else:
             data = [ mdtype ]
          
+        if hasattr(urlgrabber.grabber, 'parallel_wait'):
+            # download all metadata in parallel
+            for repo in myrepos:
+                if repo._async:
+                    sack = repo.getPackageSack()
+                    sack._retrieve_async(repo, data)
+            urlgrabber.grabber.parallel_wait()
+
         for repo in myrepos:
             sack = repo.getPackageSack()
             try:

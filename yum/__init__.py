@@ -373,6 +373,12 @@ class YumBase(depsolve.Depsolve):
 
         self._conf = config.readMainConfig(startupconf)
 
+        # update urlgrabber defaults
+        mc = self._conf.max_connections
+        if mc > 0:
+            default_grabber.opts.max_connections = mc
+        default_grabber.opts.timedhosts = self._conf.cachedir + '/timedhosts'
+
         #  We don't want people accessing/altering preconf after it becomes
         # worthless. So we delete it, and thus. it'll raise AttributeError
         del self.preconf
@@ -442,8 +448,7 @@ class YumBase(depsolve.Depsolve):
         try:
             parser.readfp(confpp_obj)
         except ParsingError, e:
-            msg = str(e)
-            raise Errors.ConfigError, msg
+            raise Errors.ConfigError(exception2msg(e))
 
         # Check sections in the .repo file that was just slurped up
         for section in parser.sections():
@@ -576,7 +581,8 @@ class YumBase(depsolve.Depsolve):
         repo.basecachedir = self.conf.cachedir
         repo.yumvar.update(self.conf.yumvar)
         repo.cfg = parser
-
+        # Enable parallel downloading
+        repo._async = repo.async
         return repo
 
     def disablePlugins(self):
@@ -931,7 +937,7 @@ class YumBase(depsolve.Depsolve):
             try:
                 self._comps.add(groupfile)
             except (Errors.GroupsError,Errors.CompsException), e:
-                msg = _('Failed to add groups file for repository: %s - %s') % (repo, str(e))
+                msg = _('Failed to add groups file for repository: %s - %s') % (repo, exception2msg(e))
                 self.logger.critical(msg)
             else:
                 repo.groups_added = True
@@ -973,7 +979,7 @@ class YumBase(depsolve.Depsolve):
                     # feed it into _tags.add()
                     self._tags.add(repo.id, tag_sqlite)
                 except (Errors.RepoError, Errors.PkgTagsError), e:
-                    msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, str(e))
+                    msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, exception2msg(e))
                     self.logger.critical(msg)
                     
                 
@@ -2217,8 +2223,9 @@ class YumBase(depsolve.Depsolve):
             urlgrabber.progress.text_meter_total_size(remote_size)
         beg_download = time.time()
         i = 0
-        local_size = 0
+        local_size = [0]
         done_repos = set()
+        async = hasattr(urlgrabber.grabber, 'parallel_wait')
         for po in remote_pkgs:
             #  Recheck if the file is there, works around a couple of weird
             # edge cases.
@@ -2230,41 +2237,46 @@ class YumBase(depsolve.Depsolve):
                     remote_size -= po.size
                     if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                         urlgrabber.progress.text_meter_total_size(remote_size,
-                                                                  local_size)
+                                                                  local_size[0])
                     continue
                 if os.path.getsize(local) >= po.size:
                     os.unlink(local)
 
-            checkfunc = (self.verifyPkg, (po, 1), {})
-            try:
-                if i == 1 and not local_size and remote_size == po.size:
-                    text = os.path.basename(po.relativepath)
-                else:
-                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                            os.path.basename(po.relativepath))
-                mylocal = po.repo.getPackage(po,
-                                   checkfunc=checkfunc,
-                                   text=text,
-                                   cache=po.repo.http_caching != 'none',
-                                   )
-                local_size += po.size
+            def checkfunc(obj, po=po):
+                self.verifyPkg(obj, po, 1)
+                local_size[0] += po.size
                 if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                     urlgrabber.progress.text_meter_total_size(remote_size,
-                                                              local_size)
+                                                              local_size[0])
                 if po.repoid not in done_repos:
+                    done_repos.add(po.repoid)
                     #  Check a single package per. repo. ... to give a hint to
                     # the user on big downloads.
                     result, errmsg = self.sigCheckPkg(po)
                     if result != 0:
                         self.verbose_logger.warn("%s", errmsg)
-                done_repos.add(po.repoid)
-
-            except Errors.RepoError, e:
-                adderror(po, exception2msg(e))
-            else:
-                po.localpath = mylocal
+                po.localpath = obj.filename
                 if po in errors:
                     del errors[po]
+
+            text = os.path.basename(po.relativepath)
+            kwargs = {}
+            if async and po.repo._async:
+                kwargs['failfunc'] = lambda obj, po=po: adderror(po, exception2msg(obj.exception))
+                kwargs['async'] = True
+            elif not (i == 1 and not local_size[0] and remote_size == po.size):
+                text = '(%s/%s): %s' % (i, len(remote_pkgs), text)
+            try:
+                po.repo.getPackage(po,
+                                   checkfunc=checkfunc,
+                                   text=text,
+                                   cache=po.repo.http_caching != 'none',
+                                   **kwargs
+                                   )
+            except Errors.RepoError, e:
+                adderror(po, exception2msg(e))
+        if async:
+            urlgrabber.grabber.parallel_wait()
 
         if hasattr(urlgrabber.progress, 'text_meter_total_size'):
             urlgrabber.progress.text_meter_total_size(0)
@@ -5320,7 +5332,7 @@ class YumBase(depsolve.Depsolve):
 
         except urlgrabber.grabber.URLGrabError, e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
-                                      to_unicode(str(e)))
+                                      exception2msg(e))
                                       
         # check for a .asc file accompanying it - that's our gpg sig on the key
         # suck it down and do the check
@@ -5353,7 +5365,7 @@ class YumBase(depsolve.Depsolve):
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError, e:
             raise Errors.YumBaseError(_('Invalid GPG Key from %s: %s') % 
-                                      (url, to_unicode(str(e))))
+                                      (url, exception2msg(e)))
         keys = []
         for keyinfo in keys_info:
             thiskey = {}
@@ -5927,7 +5939,7 @@ class YumBase(depsolve.Depsolve):
         try:
             cachedir = misc.getCacheDir(tmpdir, reuse)
         except (IOError, OSError), e:
-            self.logger.critical(_('Could not set cachedir: %s') % str(e))
+            self.logger.critical(_('Could not set cachedir: %s') % exception2msg(e))
             cachedir = None
             
         if cachedir is None:
@@ -6023,9 +6035,9 @@ class YumBase(depsolve.Depsolve):
         except (IOError, OSError), e:
             self._ts_save_file = None
             if auto:
-                self.logger.critical(_("Could not save transaction file %s: %s") % (filename, str(e)))
+                self.logger.critical(_("Could not save transaction file %s: %s") % (filename, exception2msg(e)))
             else:
-                raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, str(e)))
+                raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, exception2msg(e)))
 
         
     def load_ts(self, filename, ignorerpm=None, ignoremissing=None,
@@ -6051,7 +6063,7 @@ class YumBase(depsolve.Depsolve):
         try:
             data = open(filename, 'r').readlines()
         except (IOError, OSError), e:
-            raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, str(e)))
+            raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, exception2msg(e)))
             
 
         if ignorerpm is None:

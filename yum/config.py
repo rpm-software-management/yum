@@ -788,6 +788,7 @@ class YumConf(StartupConf):
     ip_resolve = CaselessSelectionOption(
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
+    max_connections = IntOption(0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
@@ -957,6 +958,7 @@ class RepoConf(BaseConfig):
     ssl_check_cert_permissions = Inherit(YumConf.ssl_check_cert_permissions)
 
     skip_if_unavailable = BoolOption(False)
+    async = BoolOption(True)
     
 class VersionGroupConf(BaseConfig):
     """Option definitions for version groups."""

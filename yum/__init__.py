@@ -5672,6 +5672,7 @@ class YumBase(depsolve.Depsolve):
         ts = self.rpmdb.readOnlyTS()
         (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(ts)
         install_only_names = set(self.conf.installonlypkgs)
+        found = {}
         for m in self.tsInfo.getMembers():
             if m.ts_state not in ('i', 'u'):
                 continue
@@ -5682,12 +5683,21 @@ class YumBase(depsolve.Depsolve):
             if not po_names.intersection(install_only_names):
                 continue
 
-            installed = self.rpmdb.searchNevra(name=m.name)
-            installed = _sort_and_filter_installonly(installed)
-            if len(installed) < self.conf.installonly_limit - 1:
-                continue # we're adding one
+            if m.name not in found:
+                found[m.name] = 1
+            else:
+                found[m.name] += 1
 
-            numleft = len(installed) - self.conf.installonly_limit + 1
+        for name in found:
+            installed = self.rpmdb.searchNevra(name=name)
+            installed = _sort_and_filter_installonly(installed)
+
+            total = len(installed) + found[name]
+            if total <= self.conf.installonly_limit:
+                continue # Not adding enough to trigger.
+
+            # Number left to try and remove...
+            numleft = total - self.conf.installonly_limit
             for po in installed:
                 if (po.version, po.release) == (cur_kernel_v, cur_kernel_r): 
                     # don't remove running

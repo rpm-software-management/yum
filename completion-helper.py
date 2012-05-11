@@ -64,7 +64,8 @@ class RepoListCompletionCommand(yumcommands.RepoListCommand):
 
 def get_pattern(extcmds):
     if len(extcmds) > 1 and extcmds[-1]:
-        return shlex.split(extcmds[-1])[0] + "*"
+        try: return shlex.split(extcmds[-1])[0] + "*"
+        except ValueError: pass
     return "*"
 
 def main(args):

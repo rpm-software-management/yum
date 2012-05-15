@@ -382,6 +382,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
 
     def returnPrco(self, prcotype, printable=False):
         prcotype = _share_data(prcotype)
+        if prcotype == 'strong_requires':
+            # pkg not installed so we don't know require flags yet
+            # returning all requires should work in most cases
+            prcotype = 'requires'
         if isinstance(self.prco[prcotype], tuple):
             sql = "SELECT name, version, release, epoch, flags " \
                   "FROM %s WHERE pkgKey = ?" % prcotype

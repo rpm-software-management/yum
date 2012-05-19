@@ -6298,18 +6298,6 @@ class YumBase(depsolve.Depsolve):
                     if requiring == required: # if they are self-requiring skip them
                         continue
                         
-                # go through the stuff in the ts to be installed - make sure none of that needs the required pkg, either.
-                for (provn,provf,provevr) in required.provides:
-                    if self.tsInfo.getNewRequires(provn, provf, provevr).keys():
-                        still_needed = True
-                        okay_to_remove[required] = False
-                        break
-                for fn in required.filelist + required.dirlist:
-                    if self.tsInfo.getNewRequires(fn, None,(None,None,None)).keys():
-                        okay_to_remove[required] = False
-                        still_needed = True
-                        break
-                            
                     #for tbi_pkg in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
                     #   for reqtuple in tbi_pkg.po.requires:
                     #        if required.provides_for(reqtuple):
@@ -6361,7 +6349,24 @@ class YumBase(depsolve.Depsolve):
                     # Debugging output
                     self.verbose_logger.log(logginglevels.DEBUG_2, _("%s has revdep %s which was user-installed."), pkg, curpkg)
                     ok_to_remove[pkg] = False
+                    ok_to_remove[curpkg] = False
                     return True
+
+                #  Go through the stuff in the ts to be installed - make sure
+                # none of that needs the required pkg, either.
+                for (provn,provf,provevr) in curpkg.provides:
+                    if self.tsInfo.getNewRequires(provn, provf, provevr).keys():
+                        ok_to_remove[pkg] = False
+                        ok_to_remove[curpkg] = False
+                        self.verbose_logger.log(logginglevels.DEBUG_2, _("%s is needed by a package to be installed."), curpkg)
+                        return True
+                for fn in curpkg.filelist + curpkg.dirlist:
+                    if self.tsInfo.getNewRequires(fn, None,(None,None,None)).keys():
+                        ok_to_remove[pkg] = False
+                        ok_to_remove[curpkg] = False
+                        self.verbose_logger.log(logginglevels.DEBUG_2, _("%s is needed by a package to be installed."), curpkg)
+                        return True
+
                 visited[curpkg] = True
             all_leaves_visited = True
             leaves = curpkg.requiring_packages()
@@ -6375,4 +6380,3 @@ class YumBase(depsolve.Depsolve):
         # Debugging output
         self.verbose_logger.log(logginglevels.DEBUG_2, _("%s has no user-installed revdeps."), pkg)
         return False
-

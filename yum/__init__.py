@@ -578,6 +578,7 @@ class YumBase(depsolve.Depsolve):
         repo.name = to_unicode(repo.name)
 
         # Set attributes not from the config file
+        repo.old_base_cache_dir = getattr(self, '_old_cachedir', '')
         repo.basecachedir = self.conf.cachedir
         repo.yumvar.update(self.conf.yumvar)
         repo.cfg = parser
@@ -5957,6 +5958,7 @@ class YumBase(depsolve.Depsolve):
             self.prerepoconf.cachedir = cachedir
         else:
             self.repos.setCacheDir(cachedir)
+        self._old_cachedir = self.conf.cachedir
         self.conf.cachedir = cachedir
         return True # We got a new cache dir
 

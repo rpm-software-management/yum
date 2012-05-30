@@ -257,8 +257,9 @@ class RepoStorage:
         
         self._cachedir = cachedir
         for repo in self.repos.values():
-            repo.old_base_cache_dir = repo.basecachedir
-            repo.basecachedir = cachedir
+            if cachedir != repo.basecachedir:
+                repo.old_base_cache_dir = repo.basecachedir
+                repo.basecachedir = cachedir
 
 
     def setProgressBar(self, obj):

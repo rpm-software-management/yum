@@ -1139,9 +1139,13 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
             if fi and fo and fo.st_mtime == fi.st_mtime:
                 return out
 
-        _decompress_chunked(filename, out, ztype)
-        if check_timestamps and fi:
-            os.utime(out, (fi.st_mtime, fi.st_mtime))
+        try:
+            _decompress_chunked(filename, out, ztype)
+            if check_timestamps and fi:
+                os.utime(out, (fi.st_mtime, fi.st_mtime))
+        except:
+            unlink_f(out)
+            raise
         
     return out
     

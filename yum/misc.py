@@ -1129,16 +1129,19 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
             out = filename.replace('.xz', '')
         
     else:
-        out = filename # returning the same file since it is not compressed
-        ztype = None
+        return filename # returning the same file since it is not compressed
     
-    if ztype and not fn_only:
-        if check_timestamps:
-            fi = stat_f(filename)
-            fo = stat_f(out)
-            if fi and fo and fo.st_mtime == fi.st_mtime:
+    if check_timestamps:
+        fi = stat_f(filename)
+        fo = stat_f(out)
+        if fi and fo:
+            if fo.st_mtime == fi.st_mtime:
                 return out
+            if fn_only:
+                # out exists but not valid
+                return None
 
+    if not fn_only:
         try:
             _decompress_chunked(filename, out, ztype)
             if check_timestamps and fi:

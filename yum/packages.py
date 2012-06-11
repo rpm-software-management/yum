@@ -106,14 +106,16 @@ def buildPkgRefDict(pkgs, casematch=True):
     return pkgdict
        
 def parsePackages(pkgs, usercommands, casematch=0,
-                  unique='repo-epoch-name-version-release-arch'):
+                  unique='repo-epoch-name-version-release-arch',
+                  pkgdict=None):
     """matches up the user request versus a pkg list:
        for installs/updates available pkgs should be the 'others list' 
        for removes it should be the installed list of pkgs
        takes an optional casematch option to determine if case should be matched
        exactly. Defaults to not matching."""
 
-    pkgdict = buildPkgRefDict(pkgs, bool(casematch))
+    if pkgdict is None:
+        pkgdict = buildPkgRefDict(pkgs, bool(casematch))
     exactmatch = []
     matched = []
     unmatched = []

@@ -84,7 +84,7 @@ class RepoStorage:
                 repos.append((repo, downloading, [False]))
 
         # with sizes first, then without sizes..
-	for no_size in (False, True):
+        for no_size in (False, True):
             for repo, downloading, error in repos:
                 def failfunc(obj, error=error):
                     error[0] = True

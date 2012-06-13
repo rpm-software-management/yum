@@ -624,6 +624,28 @@ class SimpleObsoletesTests(OperationsTests):
         # self.assert_(res=='err', msg)
         self.assertResult([])
 
+    def testRLOpenSSLMess1(self):
+        osl1  = FakePackage('openssl',      '1.0.0', '1', arch='i386')
+        osl1.addProvides('libssl.1', 'EQ', ('0', '1', '1'))
+        osl2  = FakePackage('openssl',      '1.0.1', '1', arch='i386')
+        osll2 = FakePackage('openssl-libs', '1.0.1', '1', arch='i386')
+        osll2.addProvides('libssl.2', 'EQ', ('0', '2', '1'))
+        osll2.addObsoletes('openssl', 'LT', (None, '1.0.1', None))
+
+        oc1   = FakePackage('openconnect',  '2.0.1', '1', arch='i386')
+        oc1.addRequires('openssl', 'GE', ('0', '0.9.9', '1'))
+        oc2   = FakePackage('openconnect',  '2.0.2', '1', arch='i386')
+        oc2.addRequires('openssl', 'GE', ('0', '0.9.9', '1'))
+
+        res, msg = self.runOperation(['upgrade', 'openssl'],
+                                     [oc1, osl1],
+                                     [oc1, oc2, osl1, osl2, osll2])
+
+        # In theory don't need to upgrade oc1 => oc2
+        self.assertResult((oc2, osl2, osll2))
+
+
+
 class GitMetapackageObsoletesTests(OperationsTests):
 
     @staticmethod

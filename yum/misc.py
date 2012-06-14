@@ -1135,7 +1135,9 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
         fi = stat_f(filename)
         fo = stat_f(out)
         if fi and fo:
-            if fo.st_mtime == fi.st_mtime:
+            # Eliminate sub second precision in mtime before comparision,
+            # see http://bugs.python.org/issue14127
+            if int(fo.st_mtime) == int(fi.st_mtime):
                 return out
             if fn_only:
                 # out exists but not valid

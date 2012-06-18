@@ -141,6 +141,7 @@ class FakePackage(packages.YumAvailablePackage):
         self.yumdb_info = FakeYumDBInfo()
 
         self.prco['provides'].append((name, 'EQ', (epoch, version, release)))
+        self.prco['strong_requires'] = []
 
         # Just a unique integer
         self.id = self.__hash__()
@@ -152,6 +153,7 @@ class FakePackage(packages.YumAvailablePackage):
         self.prco['provides'].append((name, flag, evr))
     def addRequires(self, name, flag=None, evr=(None, None, None)):
         self.prco['requires'].append((name, flag, evr))
+        self.prco['strong_requires'].append((name, flag, evr))
     def addRequiresPkg(self, pkg):
         self.required_pkgs.append(pkg)
     def addRequiringPkg(self, pkg):

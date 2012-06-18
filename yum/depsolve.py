@@ -485,12 +485,30 @@ class Depsolve(object):
             # try to update the requiring package in hopes that all this problem goes away :(
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Trying to update %s to resolve dep'), requiringPo)
             txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
+            fixed = False
             if not txmbrs:
                 msg = self._err_missing_requires(requiringPo, requirement)
-                self.verbose_logger.log(logginglevels.DEBUG_2, _('No update paths found for %s. Failure!'), requiringPo)
+                self.verbose_logger.log(logginglevels.DEBUG_2, _('No update paths found for %s. Failure due to requirement: %s!'), requiringPo, msg)
+            else:
+                req_lookup = (needname, needflags,
+                              rpmUtils.miscutils.stringToVersion(needversion))
+
+            for txmbr in txmbrs:
+                #  This works for upgrades, and for obsoletes, on one side.
+                # Also catches upgrades that don't work on the other.
+                if txmbr.output_state in TS_INSTALL_STATES:
+                    if txmbr.po.checkPrco('requires', req_lookup):
+                        fixed = False
+                        break
+                    else:
+                        fixed = True
+            if txmbrs and not fixed:
+                msg = self._err_missing_requires(requiringPo, requirement)
+                self.verbose_logger.log(logginglevels.DEBUG_2, _("Update for %s. Doesn't fix requirement: %s!"), requiringPo, msg)
+
+            if not fixed:
                 return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             checkdeps = 1
-
             
         if needmode in ['e']:
             self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: %s package requiring %s marked as erase'),

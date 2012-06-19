@@ -93,12 +93,6 @@ def get_process_info(pid):
     except ValueError, e:
         return
         
-    # Maybe true if /proc isn't mounted, or not Linux ... or something.
-    if (not os.path.exists("/proc/%d/status" % pid) or
-        not os.path.exists("/proc/stat") or
-        not os.path.exists("/proc/%d/stat" % pid)):
-        return
-
     ps = {}
     for line in open("/proc/%d/status" % pid):
         if line[-1] != '\n':
@@ -146,7 +140,11 @@ def show_lock_owner(pid, logger):
        This is the same as the dictionary returned by
        :func:`get_process_info`.
     """
-    ps = get_process_info(pid)
+    try:
+        ps = get_process_info(pid)
+    except IOError, e:
+        logger.critical("%s", exception2msg(e))
+        ps = None
     if not ps:
         return None
 

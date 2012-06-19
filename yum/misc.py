@@ -22,6 +22,7 @@ import fnmatch
 import bz2
 import gzip
 import shutil
+import urllib
 _available_compression = ['gz', 'bz2']
 try:
     import lzma
@@ -623,6 +624,8 @@ def getCacheDir(tmpdir='/var/tmp', reuse=True, prefix='yum-'):
     try:
         usertup = pwd.getpwuid(uid)
         username = usertup[0]
+        # we prefer ascii-only paths
+        username = urllib.quote(username)
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 

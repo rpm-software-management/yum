@@ -793,7 +793,7 @@ class YumRepository(Repository, config.RepoConf):
             local = self.metalink_filename + '.tmp'
             if not self._metalinkCurrent():
                 url = misc.to_utf8(self.metalink)
-                ugopts = self._default_grabopts()
+                ugopts = self._default_grabopts(cache=self.http_caching=='all')
                 try:
                     ug = URLGrabber(progress_obj = self.callback, **ugopts)
                     result = ug.urlgrab(url, local, text=self.id + "/metalink")

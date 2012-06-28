@@ -324,9 +324,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                    self.term.MODE['normal'])
                 print _("  Installed: %s-%s at %s") %(name, ver,
                                                    sm_ui_time(pkg.installtime))
-                print _("  Built    : %s at %s") % (pkg.packager,
+                print _("  Built    : %s at %s") % (to_unicode(pkg.packager),
                                                     sm_ui_time(pkg.buildtime))
-                print _("  Committed: %s at %s") % (pkg.committer,
+                print _("  Committed: %s at %s") % (to_unicode(pkg.committer),
                                                     sm_ui_date(pkg.committime))
             sys.exit(0)
 

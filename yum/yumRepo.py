@@ -947,6 +947,9 @@ Insufficient space in download directory %s
                 return local
             misc.unlink_f(local)
 
+        if checkfunc is None:
+            checkfunc = (package.verifyLocalPkg, (), {})
+
         ret = self._getFile(url=basepath,
                         relative=remote,
                         local=local,
@@ -956,6 +959,7 @@ Insufficient space in download directory %s
                         size=package.size,
                         **kwargs
                         )
+
         if not package.verifyLocalPkg(): # Don't return as "success" when bad.
             msg = "Downloaded package %s, from %s, but it was invalid."
             msg = msg % (package, pacakge.repo.id)

@@ -1712,9 +1712,16 @@ Insufficient space in download directory %s
 
     def getGroups(self):
         """gets groups and returns group file path for the repository, if there
-           is none it returns None"""
+           is none or retrieve/decompress fails, it returns None"""
         if 'group_gz' in self.repoXML.fileTypes():
-            return self._retrieveMD('group_gz', retrieve_can_fail=True)
+            fn = self._retrieveMD('group_gz', retrieve_can_fail=True)
+            if fn:
+                try:
+                    fn = misc.repo_gen_decompress(fn, 'comps.xml')
+                except IOError, e:
+                    logger.warning(e)
+                    fn = None
+            return fn
         return self._retrieveMD('group', retrieve_can_fail=True)
 
     def setCallback(self, callback):

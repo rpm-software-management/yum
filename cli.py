@@ -1922,6 +1922,9 @@ class YumOptionParser(OptionParser):
         try:
             # config file is parsed and moving us forward
             # set some things in it.
+
+            if opts.tolerant or self.base.conf.tolerant: # Make it slower capt.
+                self.base.conf.recheck_installed_requires = True
                 
             # Handle remaining options
             if opts.assumeyes:

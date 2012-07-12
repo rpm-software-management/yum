@@ -569,7 +569,8 @@ option will corrupt your cache (and you can use $releasever in your cachedir
 configuration to stop this).
 .PP 
 .IP "\fB\-t, \-\-tolerant\fP"
-This option currently does nothing.
+This option makes yum go slower, checking for things that shouldn't be possible
+making it more tolerant of external errors.
 .br
 .IP "\fB\-\-setopt=option=value\fP"
 Set any config option in yum config or repo files. For options in the global 

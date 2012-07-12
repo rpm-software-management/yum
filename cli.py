@@ -1024,7 +1024,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             return 0, [_('No Packages marked for Distribution Synchronization')]
 
-    def erasePkgs(self, userlist):
+    def erasePkgs(self, userlist, pos=False):
         """Take user commands and populate a transaction wrapper with
         packages to be erased.
 
@@ -1041,6 +1041,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         all_rms = []
         for arg in userlist:
+            if pos:
+                rms = self.remove(po=arg)
+                if rms:
+                    all_rms.extend(rms)
+                continue
+
             rms = self.remove(pattern=arg)
             if not rms:
                 self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)

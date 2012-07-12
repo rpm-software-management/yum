@@ -681,7 +681,7 @@ class EraseCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['erase', 'remove']
+        return ['erase', 'remove', 'autoremove']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -708,6 +708,8 @@ class EraseCommand(YumCommand):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkRootUID(base)
+        if basecmd == 'autoremove':
+            return
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
@@ -724,11 +726,30 @@ class EraseCommand(YumCommand):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+
+        pos = False
+        if basecmd == 'autoremove':
+            #  We have to alter this, as it's used in resolving stage. Which
+            # sucks. Just be careful in "yum shell".
+            base.conf.clean_requirements_on_remove = True
+
+            if not extcmds:
+                pos = True
+                extcmds = []
+                for pkg in sorted(base.rpmdb.returnLeafNodes()):
+                    if 'reason' not in pkg.yumdb_info:
+                        continue
+                    if pkg.yumdb_info.reason != 'dep':
+                        continue
+                    extcmds.append(pkg)
+
         self.doneCommand(base, _("Setting up Remove Process"))
         try:
-            return base.erasePkgs(extcmds)
+            ret = base.erasePkgs(extcmds, pos=pos)
         except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+            ret = (1, [exception2msg(e)])
+
+        return ret
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this

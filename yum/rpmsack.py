@@ -628,7 +628,7 @@ class RPMDBPackageSack(PackageSackBase):
             for hdr, idx in self._get_packages():
                 if self._match_repattern(rpats, hdr, ignore_case):
                     self._makePackageObject(hdr, idx)
-            self._completely_loaded = patterns is None
+            self._completely_loaded = rpats is None
 
         pkgobjlist = self._idx2pkg.values()
         # Remove gpg-pubkeys, as no sane callers expects/likes them...

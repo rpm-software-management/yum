@@ -166,6 +166,11 @@ the "install" command\&.(See \fBSpecifying package names\fP for more information
 
 Note that "yum" is included in the protected_packages configuration, by default.
 So you can't accidentally remove yum itself.
+
+Because remove does a lot of work to make it as easy as possible to use, there
+are also a few specific remove commands "\fBremove-n\fP", "\fBremove-na\fP"
+and "\fBremove-nevra\fP". These only work on package names, and do not process
+wildcards etc.
 .IP 
 .IP "\fBlist\fP"
 Is used to list various information about available

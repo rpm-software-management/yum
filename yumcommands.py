@@ -681,7 +681,9 @@ class EraseCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['erase', 'remove', 'autoremove']
+        return ['erase', 'remove', 'autoremove',
+                'erase-n', 'erase-na', 'erase-nevra',
+                'remove-n', 'remove-na', 'remove-nevra']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -745,7 +747,7 @@ class EraseCommand(YumCommand):
 
         self.doneCommand(base, _("Setting up Remove Process"))
         try:
-            ret = base.erasePkgs(extcmds, pos=pos)
+            ret = base.erasePkgs(extcmds, pos=pos, basecmd=basecmd)
         except yum.Errors.YumBaseError, e:
             ret = (1, [exception2msg(e)])
 

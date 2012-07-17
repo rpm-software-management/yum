@@ -831,12 +831,22 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 elif basecmd == 'install-n':
                     txmbrs = self.install(name=arg)
                 elif basecmd == 'install-na':
-                    n,a = arg.split('.')
+                    try:
+                        n,a = arg.rsplit('.', 1)
+                    except:
+                        self.verbose_logger.warning(_('Bad %s argument %s.'),
+                                                    basecmd, arg)
+                        continue
                     txmbrs = self.install(name=n, arch=a)
                 elif basecmd == 'install-nevra':
-                    nevr,a = arg.rsplit('.', 2)
-                    n,ev,r = nevr.rsplit('-', 3)
-                    e,v    = ev.split(':', 2)
+                    try:
+                        nevr,a = arg.rsplit('.', 1)
+                        n,ev,r = nevr.rsplit('-', 2)
+                        e,v    = ev.split(':', 1)
+                    except:
+                        self.verbose_logger.warning(_('Bad %s argument %s.'),
+                                                    basecmd, arg)
+                        continue
                     txmbrs = self.install(name=n,
                                           epoch=e, version=v, release=r, arch=a)
                 else:
@@ -1024,7 +1034,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         else:
             return 0, [_('No Packages marked for Distribution Synchronization')]
 
-    def erasePkgs(self, userlist, pos=False):
+    def erasePkgs(self, userlist, pos=False, basecmd='remove'):
         """Take user commands and populate a transaction wrapper with
         packages to be erased.
 
@@ -1047,7 +1057,31 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     all_rms.extend(rms)
                 continue
 
-            rms = self.remove(pattern=arg)
+            if False: pass
+            elif basecmd in ('erase-n', 'remove-n'):
+                rms = self.remove(name=arg)
+            elif basecmd in ('erase-na', 'remove-na'):
+                try:
+                    n,a = arg.rsplit('.', 1)
+                except:
+                    self.verbose_logger.warning(_('Bad %s argument %s.'),
+                                                basecmd, arg)
+                    continue
+                rms = self.remove(name=n, arch=a)
+            elif basecmd in ('erase-nevra', 'remove-nevra'):
+                try:
+                    nevr,a = arg.rsplit('.', 1)
+                    n,ev,r = nevr.rsplit('-', 2)
+                    e,v    = ev.split(':', 1)
+                except:
+                    self.verbose_logger.warning(_('Bad %s argument %s.'),
+                                                basecmd, arg)
+                    continue
+                rms = self.remove(name=n, epoch=e, version=v, release=r, arch=a)
+            else:
+                assert basecmd in ('erase', 'remove'), basecmd
+                rms = self.remove(pattern=arg)
+
             if not rms:
                 self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
             all_rms.extend(rms)

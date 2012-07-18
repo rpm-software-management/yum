@@ -272,6 +272,128 @@ class Group(CompsObj):
         return msg      
 
 
+class InstallClass(CompsObj):
+    """ Installation class object parsed from group data in each repo, and merged """
+
+    def __init__(self, elem=None):
+        self.name = ""
+        self.classid = None
+        self.description = ""
+        self.translated_name = {}
+        self.translated_description = {}
+        self.display_order = 1024
+        self._groups = {}
+        self._options = {}
+
+        if elem:
+            self.parse(elem)
+
+    def _groupiter(self):
+        return self._groups.keys()
+
+    groups = property(_groupiter)
+
+    def _optioniter(self):
+        return self._options.keys()
+
+    options = property(_optioniter)
+
+    def parse(self, elem):
+        for child in elem:
+            if child.tag == 'id':
+                myid = child.text
+                if self.classid is not None:
+                    raise CompsException
+                self.classid = myid
+
+            elif child.tag == 'name':
+                text = child.text
+                if text:
+                    text = text.encode('utf8')
+
+                lang = child.attrib.get(lang_attr)
+                if lang:
+                    self.translated_name[lang] = text
+                else:
+                    self.name = text
+
+            elif child.tag == 'description':
+                text = child.text
+                if text:
+                    text = text.encode('utf8')
+
+                lang = child.attrib.get(lang_attr)
+                if lang:
+                    self.translated_description[lang] = text
+                else:
+                    self.description = text
+
+            elif child.tag == 'grouplist':
+                self.parse_group_list(child)
+
+            elif child.tag == 'optionlist':
+                self.parse_option_list(child)
+
+            elif child.tag == 'display_order':
+                self.display_order = parse_number(child.text)
+
+    def parse_group_list(self, grouplist_elem):
+        for child in grouplist_elem:
+            if child.tag == 'groupid':
+                groupid = child.text
+                self._groups[groupid] = 1
+
+    def parse_option_list(self, optionlist_elem):
+        for child in optionlist_elem:
+            if child.tag == 'groupid':
+                optionid = child.text
+                self._options[optionid] = 1
+
+    def add(self, obj):
+        """Add another category object to this object"""
+
+        for grp in obj.groups:
+            self._groups[grp] = 1
+
+        for grp in obj.options:
+            self._options[grp] = 1
+
+        # name and description translations
+        for lang in obj.translated_name:
+            if lang not in self.translated_name:
+                self.translated_name[lang] = obj.translated_name[lang]
+
+        for lang in obj.translated_description:
+            if lang not in self.translated_description:
+                self.translated_description[lang] = obj.translated_description[lang]
+
+    def xml(self):
+        """write out an xml stanza for the installclass object"""
+        msg ="""
+  <installclass>
+   <id>%s</id>
+   <display_order>%s</display_order>\n""" % (self.classid, self.display_order)
+
+        msg +="""   <name>%s</name>\n""" % self.name
+        for (lang, val) in self.translated_name.items():
+            msg += """   <name xml:lang="%s">%s</name>\n""" % (lang, val)
+
+        msg += """   <description>%s</description>\n""" % self.description
+        for (lang, val) in self.translated_description.items():
+            msg += """    <description xml:lang="%s">%s</description>\n""" % (lang, val)
+
+        msg += """    <grouplist>\n"""
+        for grp in self.groups:
+            msg += """     <groupid>%s</groupid>\n""" % grp
+        msg += """    </grouplist>\n"""
+        msg += """    <optionlist>\n"""
+        for grp in self.options:
+            msg += """     <optionid>%s</optionid>\n""" % grp
+        msg += """    </optionlist>\n"""
+        msg += """  </installclass>\n"""
+
+        return msg
+
 class Category(CompsObj):
     """ Category object parsed from group data in each repo. and merged. """
 
@@ -376,6 +498,7 @@ class Category(CompsObj):
 class Comps(object):
     def __init__(self, overwrite_groups=False):
         self._groups = {}
+        self._installclasses = {}
         self._categories = {}
         self.compscount = 0
         self.overwrite_groups = overwrite_groups
@@ -388,12 +511,18 @@ class Comps(object):
         grps.sort(key=lambda x: (x.display_order, x.name))
         return grps
         
+    def get_installclasses(self):
+        classes = self._installclasses.values()
+        classes.sort(key=lambda x: (x.display_order, x.name))
+        return classes
+
     def get_categories(self):
         cats = self._categories.values()
         cats.sort(key=lambda x: (x.display_order, x.name))
         return cats
     
     groups = property(get_groups)
+    installclasses = property(get_installclasses)
     categories = property(get_categories)
     
     def has_group(self, grpid):
@@ -447,6 +576,57 @@ class Comps(object):
 
         return returns.values()
 
+    def has_installclass(self, classid):
+        exists = self.return_installclasses(classid)
+
+        if exists:
+            return True
+
+        return False
+
+    def return_installclass(self, classid):
+        """Return the first group which matches"""
+        classes = self.return_installclasses(classid)
+        if classes:
+            return classes[0]
+
+        return None
+
+    def return_installclasses(self, class_pattern, case_sensitive=False):
+        """return all installclasses which match either by glob or exact match"""
+        returns = {}
+
+        for item in class_pattern.split(','):
+            item = item.strip()
+            if item in self._installclasses:
+                thisclass = self._installclasses[item]
+                returns[thisclass.classid] = thisclass
+                continue
+
+            if case_sensitive:
+                match = re.compile(fnmatch.translate(item)).match
+            else:
+                match = re.compile(fnmatch.translate(item), flags=re.I).match
+
+            done = False
+            for aclass in self.installclasses:
+                for name in aclass.name, aclass.classid, aclass.ui_name:
+                    if match(name):
+                        done = True
+                        returns[aclass.classid] = aclass
+                        break
+            if done:
+                continue
+
+            # If we didn't match to anything in the current locale, try others
+            for aclass in self.installclasses:
+                for name in aclass.translated_name.values():
+                    if match(name):
+                        returns[aclass.classid] = aclass
+                        break
+
+        return returns.values()
+
     #  This is close to returnPackages() etc. API ... need to std. these names
     # the above return_groups uses different, but equal, API.
     def return_categories(self, pattern, ignore_case=True):
@@ -490,6 +670,13 @@ class Comps(object):
         else:
             self._groups[group.groupid] = group
 
+    def add_installclass(self, installclass):
+        if installclass.classid in self._installclasses:
+            thatclass = self._installclasses[installclass.classid]
+            thatclass.add(installclass)
+        else:
+            self._installclasses[installclass.classid] = installclass
+
     def add_category(self, category):
         if category.categoryid in self._categories:
             thatcat = self._categories[category.categoryid]
@@ -520,6 +707,9 @@ class Comps(object):
                 if elem.tag == "group":
                     group = Group(elem)
                     self.add_group(group)
+                if elem.tag == "installclass":
+                    installclass = InstallClass(elem)
+                    self.add_installclass(installclass)
                 if elem.tag == "category":
                     category = Category(elem)
                     self.add_category(category)
@@ -595,6 +785,13 @@ def main():
             for pkg in group.packages:
                 print '  ' + pkg
         
+        for installclass in p.installclasses:
+            print installclass.name
+            for group in installclass.groups:
+                print '  ' + group
+            for group in installclass.options:
+                print '  *' + group
+
         for category in p.categories:
             print category.name
             for group in category.groups:

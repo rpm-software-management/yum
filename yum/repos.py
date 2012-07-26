@@ -80,7 +80,14 @@ class RepoStorage:
         for repo in self.listEnabled():
             if repo.cache:
                 continue
-            if repo._async and repo._commonLoadRepoXML(repo):
+            try:
+                dl = repo._async and repo._commonLoadRepoXML(repo)
+            except Errors.RepoError, e:
+                if not repo.skip_if_unavailable:
+                    raise
+                self.disableRepo(repo.id)
+                dl = False
+            if dl:
                 mdtypes = repo._mdpolicy2mdtypes()
                 downloading = repo._commonRetrieveDataMD_list(mdtypes)
                 repos.append((repo, downloading, [False]))

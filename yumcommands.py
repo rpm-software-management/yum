@@ -1128,6 +1128,18 @@ class MakeCacheCommand(YumCommand):
             # 2. Download a .xml.gz and convert to .xml.gz.sqlite
             base.repos.populateSack(mdtype='all', cacheonly=1)
 
+            # Now decompress stuff, so that -C works, sigh.
+            fname_map = {'group_gz'   : 'groups.xml',
+                         'pkgtags'    : 'pkgtags.sqlite',
+                         'updateinfo' : 'updateinfo.xml',
+                         }
+            for repo in base.repos.listEnabled():
+                for MD in repo.repoXML.fileTypes():
+                    if MD not in fname_map:
+                        continue
+                    misc.repo_gen_decompress(repo.retrieveMD(MD),
+                                             fname_map[MD],
+                                             cached=repo.cache)
 
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]

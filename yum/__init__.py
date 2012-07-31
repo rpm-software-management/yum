@@ -1184,6 +1184,37 @@ class YumBase(depsolve.Depsolve):
                 if first.verEQ(other):
                     continue
                 msg = _('Protected multilib versions: %s != %s')
+                if not xrestring:
+                    #  People are confused about protected mutilib ... so give
+                    # them a nicer message.
+                    bigmsg = _("""\
+ Multilib version problems found. This often means that the root
+cause is something else and multilib version checking is just
+pointing it that there is a problem. Eg.:
+
+  1. You have an upgrade for %(name)s which is missing some
+     dependency that another package requires. Yum is trying to
+     solve this by installing an older version of %(name)s of the
+     different architecture. If you exclude the bad architecture
+     yum will tell you what the root cause is (which package
+     requires what).
+
+  2. You have multiple architectures of %(name)s installed, but
+     yum can only see an upgrade for one of those arcitectures.
+     If you don't want/need both architectures anymore then you
+     can remove the one with the missing update and everything
+     will work.
+
+  3. You have duplicate versions of %(name)s installed already.
+     You can use "yum check" to get yum show these errors.
+
+...you can also use --setopt=protected_multilib=false to remove
+this checking, however this is almost never the correct thing to
+do as something else is very likely to go wrong (often causing
+much more problems).
+
+""") % {'name' : pkgname}
+                    msg = bigmsg + msg
                 xrestring.append(msg % (first, other))
         if xrestring:
             rescode = 1

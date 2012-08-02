@@ -332,7 +332,7 @@ class YumRepository(Repository, config.RepoConf):
         self.copy_local = 0
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0,
-                           'updateinfo':0, 'prestodelta' : 0}
+                           'updateinfo':0}
 
         # callbacks
         self.callback = None  # for the grabber
@@ -1436,6 +1436,14 @@ Insufficient space in download directory %s
             return True
 
         all_mdtypes = self.retrieved.keys()
+        # Add in any extra stuff we don't know about.
+        for mdtype in self.repoXML.fileTypes():
+            if mdtype in all_mdtypes:
+                continue
+            if mdtype in ('primary_db', 'filelists_db', 'other_db'):
+                continue
+            all_mdtypes.append(mdtype)
+
         if mdtypes is None:
             mdtypes = all_mdtypes
 

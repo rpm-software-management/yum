@@ -1059,3 +1059,24 @@ class SimpleUpdateTests(OperationsTests):
         # Ideal:
         # self.assertResult((foo11, bar12, cbar11))
         self.assertResult((foo12, bar12, cbar11))
+
+    def testInstallOtherArch1(self):
+        #  Installing something with dep. on newer version should upgrade older
+        # version with other arch.
+        # Eg. BZ 791326
+        pax1 = FakePackage('inst', '1', '1', '0', 'x86_64')
+        pai1 = FakePackage('inst', '1', '1', '0', 'i686')
+        pax2 = FakePackage('inst', '2', '1', '0', 'x86_64')
+        pax2.addProvides('foo-x', 'EQ', ('0', '2', '1'))
+        pai2 = FakePackage('inst', '2', '1', '0', 'i686')
+        pai2.addProvides('foo-i', 'EQ', ('0', '2', '1'))
+
+        pa2 = FakePackage('bar', '1', '1', '0', 'i386')
+        pa2.addRequires('foo-i', 'EQ', ('0', '2', '1'))
+
+        res, msg = self.runOperation(['install', 'bar'],
+                                     [pax1],
+                                     [pax1, pai1, pax2, pai2, pa2])
+        self.assert_(res=='ok', msg)
+        self.assertResult((pax2, pai2, pa2))
+

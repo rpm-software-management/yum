@@ -272,12 +272,12 @@ class Group(CompsObj):
         return msg      
 
 
-class InstallClass(CompsObj):
-    """ Installation class object parsed from group data in each repo, and merged """
+class Environment(CompsObj):
+    """ Environment object parsed from group data in each repo, and merged """
 
     def __init__(self, elem=None):
         self.name = ""
-        self.classid = None
+        self.environmentid = None
         self.description = ""
         self.translated_name = {}
         self.translated_description = {}
@@ -302,9 +302,9 @@ class InstallClass(CompsObj):
         for child in elem:
             if child.tag == 'id':
                 myid = child.text
-                if self.classid is not None:
+                if self.environmentid is not None:
                     raise CompsException
-                self.classid = myid
+                self.environmentid = myid
 
             elif child.tag == 'name':
                 text = child.text
@@ -368,11 +368,11 @@ class InstallClass(CompsObj):
                 self.translated_description[lang] = obj.translated_description[lang]
 
     def xml(self):
-        """write out an xml stanza for the installclass object"""
+        """write out an xml stanza for the environment object"""
         msg ="""
-  <installclass>
+  <environment>
    <id>%s</id>
-   <display_order>%s</display_order>\n""" % (self.classid, self.display_order)
+   <display_order>%s</display_order>\n""" % (self.environmentid, self.display_order)
 
         msg +="""   <name>%s</name>\n""" % self.name
         for (lang, val) in self.translated_name.items():
@@ -390,7 +390,7 @@ class InstallClass(CompsObj):
         for grp in self.options:
             msg += """     <optionid>%s</optionid>\n""" % grp
         msg += """    </optionlist>\n"""
-        msg += """  </installclass>\n"""
+        msg += """  </environment>\n"""
 
         return msg
 
@@ -498,7 +498,7 @@ class Category(CompsObj):
 class Comps(object):
     def __init__(self, overwrite_groups=False):
         self._groups = {}
-        self._installclasses = {}
+        self._environments = {}
         self._categories = {}
         self.compscount = 0
         self.overwrite_groups = overwrite_groups
@@ -511,10 +511,10 @@ class Comps(object):
         grps.sort(key=lambda x: (x.display_order, x.name))
         return grps
         
-    def get_installclasses(self):
-        classes = self._installclasses.values()
-        classes.sort(key=lambda x: (x.display_order, x.name))
-        return classes
+    def get_environments(self):
+        environments = self._environments.values()
+        environments.sort(key=lambda x: (x.display_order, x.name))
+        return environments
 
     def get_categories(self):
         cats = self._categories.values()
@@ -522,7 +522,7 @@ class Comps(object):
         return cats
     
     groups = property(get_groups)
-    installclasses = property(get_installclasses)
+    environments = property(get_environments)
     categories = property(get_categories)
     
     def has_group(self, grpid):
@@ -576,31 +576,31 @@ class Comps(object):
 
         return returns.values()
 
-    def has_installclass(self, classid):
-        exists = self.return_installclasses(classid)
+    def has_environment(self, environmentid):
+        exists = self.return_environments(environmentid)
 
         if exists:
             return True
 
         return False
 
-    def return_installclass(self, classid):
+    def return_environment(self, environmentid):
         """Return the first group which matches"""
-        classes = self.return_installclasses(classid)
-        if classes:
-            return classes[0]
+        environments = self.return_environments(environmentid)
+        if environments:
+            return environments[0]
 
         return None
 
-    def return_installclasses(self, class_pattern, case_sensitive=False):
-        """return all installclasses which match either by glob or exact match"""
+    def return_environments(self, env_pattern, case_sensitive=False):
+        """return all environments which match either by glob or exact match"""
         returns = {}
 
-        for item in class_pattern.split(','):
+        for item in env_pattern.split(','):
             item = item.strip()
-            if item in self._installclasses:
-                thisclass = self._installclasses[item]
-                returns[thisclass.classid] = thisclass
+            if item in self._environments:
+                env = self._environments[item]
+                returns[env.environmentid] = env
                 continue
 
             if case_sensitive:
@@ -609,20 +609,20 @@ class Comps(object):
                 match = re.compile(fnmatch.translate(item), flags=re.I).match
 
             done = False
-            for aclass in self.installclasses:
-                for name in aclass.name, aclass.classid, aclass.ui_name:
+            for env in self.environments:
+                for name in env.name, env.environmentid, env.ui_name:
                     if match(name):
                         done = True
-                        returns[aclass.classid] = aclass
+                        returns[env.environmentid] = env
                         break
             if done:
                 continue
 
             # If we didn't match to anything in the current locale, try others
-            for aclass in self.installclasses:
-                for name in aclass.translated_name.values():
+            for env in self.environments:
+                for name in env.translated_name.values():
                     if match(name):
-                        returns[aclass.classid] = aclass
+                        returns[env.environmentid] = env
                         break
 
         return returns.values()
@@ -670,12 +670,12 @@ class Comps(object):
         else:
             self._groups[group.groupid] = group
 
-    def add_installclass(self, installclass):
-        if installclass.classid in self._installclasses:
-            thatclass = self._installclasses[installclass.classid]
-            thatclass.add(installclass)
+    def add_environment(self, environment):
+        if environment.environmentid in self._environments:
+            env = self._environments[environment.environmentid]
+            env.add(environment)
         else:
-            self._installclasses[installclass.classid] = installclass
+            self._environments[environment.environmentid] = environment
 
     def add_category(self, category):
         if category.categoryid in self._categories:
@@ -707,9 +707,9 @@ class Comps(object):
                 if elem.tag == "group":
                     group = Group(elem)
                     self.add_group(group)
-                if elem.tag == "installclass":
-                    installclass = InstallClass(elem)
-                    self.add_installclass(installclass)
+                if elem.tag == "environment":
+                    environment = Environment(elem)
+                    self.add_environment(environment)
                 if elem.tag == "category":
                     category = Category(elem)
                     self.add_category(category)
@@ -785,11 +785,11 @@ def main():
             for pkg in group.packages:
                 print '  ' + pkg
         
-        for installclass in p.installclasses:
-            print installclass.name
-            for group in installclass.groups:
+        for environment in p.environments:
+            print environment.name
+            for group in environment.groups:
                 print '  ' + group
-            for group in installclass.options:
+            for group in environment.options:
                 print '  *' + group
 
         for category in p.categories:

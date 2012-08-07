@@ -1754,7 +1754,7 @@ Insufficient space in download directory %s
                 print "Could not read mirrorlist %s, error was \n%s" %(url, e)
                 content = []
             for line in content:
-                if re.match('\s*(#|$)', line):
+                if not re.match('\w+://\S+\s*$', line):
                     continue
                 mirror = line.rstrip() # no more trailing \n's
                 mirror = mirror.replace('$ARCH', '$BASEARCH')

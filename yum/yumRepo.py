@@ -160,8 +160,6 @@ class YumPackageSack(packageSack.PackageSack):
                 if item in self.added[repo]:
                     continue
 
-            db_fn = None
-
             if item == 'metadata':
                 mydbtype = 'primary_db'
                 mymdtype = 'primary'
@@ -199,23 +197,6 @@ class YumPackageSack(packageSack.PackageSack):
                                                                    mydbtype)
                     if not db_un_fn: # Shouldn't happen?
                         raise URLGrabError(-1, 'Check uncompressed DB failed')
-
-                dobj = repo.cacheHandler.open_database(db_un_fn)
-
-            elif self._check_db_version(repo, mydbtype):
-                # see if we have the uncompressed db and check it's checksum vs the openchecksum
-                # if not download the compressed file
-                # decompress it
-                # unlink it
-
-                db_un_fn = self._check_uncompressed_db(repo, mydbtype)
-                if not db_un_fn:
-                    db_fn = repo._retrieveMD(mydbtype)
-                    if db_fn:
-                        if not repo.cache:
-                            db_un_fn = misc.decompress(db_fn)
-                            misc.unlink_f(db_fn)
-                            db_un_fn = self._check_uncompressed_db(repo, mydbtype)
 
                 dobj = repo.cacheHandler.open_database(db_un_fn)
 
@@ -1749,9 +1730,16 @@ Insufficient space in download directory %s
 
     def getGroups(self):
         """gets groups and returns group file path for the repository, if there
-           is none it returns None"""
+           is none or retrieve/decompress fails, it returns None"""
         if 'group_gz' in self.repoXML.fileTypes():
-            return self._retrieveMD('group_gz', retrieve_can_fail=True)
+            fn = self._retrieveMD('group_gz', retrieve_can_fail=True)
+            if fn:
+                try:
+                    fn = misc.repo_gen_decompress(fn, 'comps.xml')
+                except IOError, e:
+                    logger.warning(e)
+                    fn = None
+            return fn
         return self._retrieveMD('group', retrieve_can_fail=True)
 
     def setCallback(self, callback):
@@ -1784,7 +1772,7 @@ Insufficient space in download directory %s
                 print "Could not read mirrorlist %s, error was \n%s" %(url, e)
                 content = []
             for line in content:
-                if re.match('\s*(#|$)', line):
+                if not re.match('\w+://\S+\s*$', line):
                     continue
                 mirror = line.rstrip() # no more trailing \n's
                 mirror = mirror.replace('$ARCH', '$BASEARCH')

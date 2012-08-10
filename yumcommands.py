@@ -858,12 +858,18 @@ class GroupsCommand(YumCommand):
             ocmds_arg = ('mark-install', 'mark-remove',
                          'mark-packages', 'mark-packages-force',
                          'unmark-packages',
-                         'mark-packages-sync', 'mark-packages-sync-force')
+                         'mark-packages-sync', 'mark-packages-sync-force',
+                         'mark-groups', 'mark-groups-force',
+                         'unmark-groups',
+                         'mark-groups-sync', 'mark-groups-sync-force')
 
             ocmds_all = ('mark-install', 'mark-remove', 'mark-convert',
                          'mark-packages', 'mark-packages-force',
                          'unmark-packages',
-                         'mark-packages-sync', 'mark-packages-sync-force')
+                         'mark-packages-sync', 'mark-packages-sync-force',
+                         'mark-groups', 'mark-groups-force',
+                         'unmark-groups',
+                         'mark-groups-sync', 'mark-groups-sync-force')
 
         if cmd in ('install', 'remove', 'info') or cmd in ocmds_arg:
             checkGroupArg(base, cmd, extcmds)
@@ -925,18 +931,23 @@ class GroupsCommand(YumCommand):
                 return base.removeGroups(extcmds)
 
             if cmd == 'mark-install':
-                for strng in extcmds:
-                    for group in base.comps.return_groups(strng):
-                        base.igroups.add_group(group.groupid, group.packages)
+                gRG = base._groupReturnGroups(extcmds,ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
+                for evgrp in evgrps:
+                    base.igroups.add_environment(evgrp.environmentid,
+                                                 evgrp.allgroups)
+                for grp in grps:
+                    base.igroups.add_group(grp.groupid, grp.packages)
                 base.igroups.save()
                 return 0, ['Marked install: ' + ','.join(extcmds)]
 
             if cmd in ('mark-packages', 'mark-packages-force'):
                 if len(extcmds) < 2:
                     return 1, ['No group or package given']
-                igrps, grps = base._groupReturnGroups([extcmds[0]],
-                                                      ignore_case=False)
-                if igrps is not None and len(igrps) != 1:
+                gRG = base._groupReturnGroups([extcmds[0]],
+                                              ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
+                if igrps is None or len(igrps) != 1:
                     return 1, ['No group matched']
                 grp = igrps[0]
                 force = cmd == 'mark-packages-force'
@@ -956,7 +967,8 @@ class GroupsCommand(YumCommand):
                 return 0, ['UnMarked packages: ' + ','.join(extcmds)]
 
             if cmd in ('mark-packages-sync', 'mark-packages-sync-force'):
-                igrps, grps = base._groupReturnGroups(extcmds,ignore_case=False)
+                gRG = base._groupReturnGroups(extcmds,ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
                 if not igrps:
                     return 1, ['No group matched']
                 force = cmd == 'mark-packages-sync-force'
@@ -970,6 +982,60 @@ class GroupsCommand(YumCommand):
                 else:
                     return 0, ['Marked packages-sync: ' + ','.join(extcmds)]
 
+            if cmd in ('mark-groups', 'mark-groups-force'):
+                if len(extcmds) < 2:
+                    return 1, ['No environment or group given']
+                gRG = base._groupReturnGroups([extcmds[0]],
+                                              ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
+                if ievgrps is None or len(ievgrps) != 1:
+                    return 1, ['No environment matched']
+                evgrp = ievgrps[0]
+                force = cmd == 'mark-groups-force'
+                gRG = base._groupReturnGroups(extcmds[1:], ignore_case=False)
+                for grp in gRG[1]:
+                    # Packages full or empty?
+                    self.igroups.add_group(grp.groupid,
+                                           grp.packages, ievgrp)
+                if force:
+                    for grp in gRG[0]:
+                        grp.environment = evgrp.evgid
+                        base.igroups.changed = True
+                base.igroups.save()
+                return 0, ['Marked groups: ' + ','.join(extcmds[1:])]
+
+            if cmd == 'unmark-groups':
+                gRG = base._groupReturnGroups([extcmds[0]],
+                                              ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
+                if igrps is None:
+                    return 1, ['No groups matched']
+                for grp in igrps:
+                    grp.environment = None
+                    base.igroups.changed = True
+                base.igroups.save()
+                return 0, ['UnMarked groups: ' + ','.join(extcmds)]
+
+            if cmd in ('mark-groups-sync', 'mark-groups-sync-force'):
+                gRG = base._groupReturnGroups(extcmds,ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
+                if not ievgrps:
+                    return 1, ['No environment matched']
+                force = cmd == 'mark-groups-sync-force'
+                for evgrp in ievgrps:
+                    grp_names = ",".join(sorted(evgrp.grp_names))
+                    for grp in base.igroups.return_groups(grp_names):
+                        if not force and grp.environment is not None:
+                            continue
+                        grp.environment = evgrp.evgid
+                        base.igroups.changed = True
+                base.igroups.save()
+                if force:
+                    return 0, ['Marked groups-sync-force: '+','.join(extcmds)]
+                else:
+                    return 0, ['Marked groups-sync: ' + ','.join(extcmds)]
+
+            # FIXME: This doesn't do environment groups atm.
             if cmd == 'mark-convert':
                 # Convert old style info. into groups as objects.
 
@@ -1019,9 +1085,12 @@ class GroupsCommand(YumCommand):
                 return 0, ['Converted old style groups to objects.']
 
             if cmd == 'mark-remove':
-                for strng in extcmds:
-                    for group in base.comps.return_groups(strng):
-                        base.igroups.del_group(group.groupid)
+                gRG = base._groupReturnGroups(extcmds,ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
+                for evgrp in ievgrps:
+                    base.igroups.del_environment(evgrp.evgid)
+                for grp in igrps:
+                    base.igroups.del_group(grp.gid)
                 base.igroups.save()
                 return 0, ['Marked remove: ' + ','.join(extcmds)]
 

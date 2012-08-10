@@ -1092,8 +1092,8 @@ class YumOutput:
         print _('\nGroup: %s') % group.ui_name
 
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
-        if verb:
-            print _(' Group-Id: %s') % to_unicode(group.groupid)
+        if True:
+            print _(' Group-Id: %s') % to_unicode(group.compsid)
 
         igroup_data = self._groupInstalledData(group)
         igrp_only   = set()
@@ -1143,6 +1143,63 @@ class YumOutput:
             self._displayPkgsFromNames(igrp_only, verb, pkg_names2pkgs,
                                        columns=columns,
                                        igroup_data=igroup_data)
+
+    def displayGrpsInEnvironments(self, evgroup):
+        """Output information about the groups in a given evgroup
+
+        :param group: an Environment object to output information about
+        """
+        print _('\nEnvironment Group: %s') % evgroup.ui_name
+        print _(' Environment-Id: %s') % to_unicode(evgroup.compsid)
+
+        igroup_data = self._groupInstalledEnvData(evgroup)
+        igrp_only   = set()
+        for grp_name in igroup_data:
+            if igroup_data[grp_name] == 'installed':
+                igrp_only.add(grp_name)
+        igrp_only.difference_update(evgroup.allgroups)
+        all_grps = evgroup.allgroups + list(igrp_only)
+
+        if evgroup.ui_description:
+            print _(' Description: %s') % to_unicode(evgroup.ui_description)
+
+        def _get_igrp_data(item, indent):
+            if not igroup_data:
+                return indent
+
+            assert item in igroup_data
+            if item not in igroup_data or igroup_data[item] == 'available':
+                indent += '+' # Group up/in will install i
+            elif igroup_data[item] == 'installed':
+                indent += '=' # Installed via. group
+            elif igroup_data[item] == 'blacklisted-installed':
+                if False: # Not sure it's worth listing these...
+                    return None # On the other hand, there's mark-packages
+                indent += ' ' # Installed, not via. group
+            else:
+                assert igroup_data[item] == 'blacklisted-available'
+                if False: # Not sure it's worth listing these...
+                    return None
+                indent += '-' # Not installed, and won't be
+            return indent
+
+        sections = ((_(' Mandatory Groups:'), evgroup.groups),
+                    (_(' Optional Groups:'),  evgroup.options))
+
+        for (section_name, grp_names) in sections:
+            if len(grp_names) > 0:
+                print section_name
+                for grp_name in sorted(grp_names):
+                    pindent = _get_igrp_data(grp_name, "   ")
+                    if pindent is None:
+                        continue
+
+                    print "%s%s" % (pindent, grp_name)
+
+        if igrp_only:
+            print _(' Installed Groups:')
+            for grp_name in sorted(igrp_only):
+                print "%s%s", "  ", grp_name
 
     def depListOutput(self, results):
         """Format and output a list of findDeps results

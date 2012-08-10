@@ -1596,56 +1596,125 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage        
         """
-        uservisible=1
+        return self._returnGroupLists(userlist)
+
+    def _returnGroupLists(self, userlist, summary=False):
+        # What data are we showing...
+        wts_map = {'hidden' : 'hidden',
+                   'language' : 'lang',
+                   'languages' : 'lang',
+                   'lang' : 'lang',
+                   'langs' : 'lang',
+                   'environment' : 'env',
+                   'environments' : 'env',
+                   'env' : 'env',
+                   'envs' : 'env',
+                   'package' : 'pkg',
+                   'packages' : 'pkg',
+                   'pkg' : 'pkg',
+                   'pkgs' : 'pkg',
+                   'available' : 'avail',
+                   'avail' : 'avail',
+                   'installed' : 'inst',
+                   'inst' : 'inst',
+                   'id' : 'id',
+                   'ids' : 'id',
+                   }
+        verb = self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3)
+        wts = {'hidden' : False,
+               'lang'   : False,
+               'env'    : True,
+               'pkg'    : True,
+               'inst'   : True,
+               'avail'  : True,
+               'id'     : verb}
             
-        if len(userlist) > 0:
-            if userlist[0] == 'hidden':
-                uservisible=0
-                userlist.pop(0)
+        while userlist:
+            arg = userlist[0]
+            val = True
+            if arg.startswith('no'):
+                arg = arg[2:]
+                val = False
+            if arg not in wts_map:
+                break
+            wts[wts_map[arg]] = val
+            userlist.pop(0)
         if not userlist:
             userlist = None # Match everything...
 
-        installed, available = self.doGroupLists(uservisible=uservisible,
-                                                 patterns=userlist)
+        uv  = not wts['hidden']
+        dGL = self.doGroupLists(patterns=userlist,
+                                uservisible=uv, return_evgrps=True)
+
+        installed, available, ievgrps, evgrps = dGL
+
+        if not wts['env']:
+            ievgrps = []
+            evgrps  = []
+
+        if not wts['inst']:
+            installed = []
+            ievgrps   = []
+        if not wts['avail']:
+            available = []
+            evgrps    = []
         
-        if not installed and not available:
-            self.logger.error(_('Warning: No groups match: %s'),
+        done = []
+        def _out_grp(sect, groups):
+            if not groups:
+                return
+
+            done.append(sect)
+            if summary:
+                self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                        "%s %u", sect, len(groups))
+                return
+
+            self.verbose_logger.log(yum.logginglevels.INFO_2, sect)
+
+            for group in groups:
+                msg = '   %s' % group.ui_name
+                if wts['id']:
+                    msg += ' (%s)' % group.compsid
+                if group.langonly:
+                    msg += ' [%s]' % group.langonly
+                self.verbose_logger.info('%s', msg)
+
+        _out_grp(_('Installed Environment Groups:'), ievgrps)
+        _out_grp(_('Available Environment Groups:'), evgrps)
+
+        groups = []
+        for group in installed:
+            if group.langonly: continue
+            if not wts['pkg']: continue
+            groups.append(group)
+        _out_grp(_('Installed Groups:'), groups)
+
+        groups = []
+        for group in installed:
+            if not group.langonly: continue
+            if not wts['lang']: continue
+            groups.append(group)
+        _out_grp(_('Installed Language Groups:'), groups)
+
+        groups = []
+        for group in available:
+            if group.langonly: continue
+            if not wts['pkg']: continue
+            groups.append(group)
+        _out_grp(_('Available Groups:'), groups)
+
+        groups = []
+        for group in available:
+            if not group.langonly: continue
+            if not wts['lang']: continue
+            groups.append(group)
+        _out_grp(_('Available Language Groups:'), groups)
+
+        if not done:
+            self.logger.error(_('Warning: No Environments/Groups match: %s'),
                               ", ".join(userlist))
             return 0, []
-
-        def _out_grp(sect, group):
-            if not done:
-                self.verbose_logger.log(yum.logginglevels.INFO_2, sect)
-            msg = '   %s' % group.ui_name
-            if self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3):
-                msg += ' (%s)' % group.groupid
-            if group.langonly:
-                msg += ' [%s]' % group.langonly
-            self.verbose_logger.info('%s', msg)
-
-        done = False
-        for group in installed:
-            if group.langonly: continue
-            _out_grp(_('Installed Groups:'), group)
-            done = True
-
-        done = False
-        for group in installed:
-            if not group.langonly: continue
-            _out_grp(_('Installed Language Groups:'), group)
-            done = True
-
-        done = False
-        for group in available:
-            if group.langonly: continue
-            _out_grp(_('Available Groups:'), group)
-            done = True
-
-        done = False
-        for group in available:
-            if not group.langonly: continue
-            _out_grp(_('Available Language Groups:'), group)
-            done = True
 
         return 0, [_('Done')]
 
@@ -1664,47 +1733,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        uservisible=1
-            
-        if len(userlist) > 0:
-            if userlist[0] == 'hidden':
-                uservisible=0
-                userlist.pop(0)
-        if not userlist:
-            userlist = None # Match everything...
-
-        installed, available = self.doGroupLists(uservisible=uservisible,
-                                                 patterns=userlist)
-        
-        def _out_grp(sect, num):
-            if not num:
-                return
-            self.verbose_logger.log(yum.logginglevels.INFO_2, '%s %u', sect,num)
-        done = 0
-        for group in installed:
-            if group.langonly: continue
-            done += 1
-        _out_grp(_('Installed Groups:'), done)
-
-        done = 0
-        for group in installed:
-            if not group.langonly: continue
-            done += 1
-        _out_grp(_('Installed Language Groups:'), done)
-
-        done = False
-        for group in available:
-            if group.langonly: continue
-            done += 1
-        _out_grp(_('Available Groups:'), done)
-
-        done = False
-        for group in available:
-            if not group.langonly: continue
-            done += 1
-        _out_grp(_('Available Language Groups:'), done)
-
-        return 0, [_('Done')]
+        return self._returnGroupLists(userlist, summary=True)
     
     def returnGroupInfo(self, userlist):
         """Print complete information about the groups that match the
@@ -1722,12 +1751,27 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """
         for strng in userlist:
             group_matched = False
-            for group in self.comps.return_groups(strng):
-                self.displayPkgsInGroups(group)
-                group_matched = True
+
+            pkg_grp = True
+            grp_grp = True
+            if strng.startswith('@^'):
+                strng = strng[2:]
+                pkg_grp = False
+            elif strng.startswith('@'):
+                strng = strng[1:]
+                grp_grp = False
+
+            if grp_grp:
+                for evgroup in self.comps.return_environments(strng):
+                    self.displayGrpsInEnvironments(evgroup)
+                    group_matched = True
+            if pkg_grp:
+                for group in self.comps.return_groups(strng):
+                    self.displayPkgsInGroups(group)
+                    group_matched = True
 
             if not group_matched:
-                self.logger.error(_('Warning: Group %s does not exist.'), strng)
+                self.logger.error(_('Warning: Group/Environment %s does not exist.'), strng)
         
         return 0, []
         
@@ -1747,10 +1791,37 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         pkgs_used = []
         
         for group_string in grouplist:
+
+            grp_grp = True
+            pkg_grp = True
+            if group_string.startswith('@^'):
+                pkg_grp = False
+                group_string = group_string[2:]
+            elif group_string.startswith('@'):
+                grp_grp = False
+                group_string = group_string[1:]
+
             group_matched = False
-            for group in self.comps.return_groups(group_string):
+            groups = []
+            if grp_grp:
+                groups = self.comps.return_environments(group_string)
+            for group in groups:
                 group_matched = True
 
+                try:
+                    txmbrs = self.selectEnvironment(group.environmentid,
+                                                    upgrade=upgrade)
+                except yum.Errors.GroupsError:
+                    self.logger.critical(_('Warning: Environment %s does not exist.'), group_string)
+                    continue
+                else:
+                    pkgs_used.extend(txmbrs)
+
+            groups = []
+            if pkg_grp:
+                groups = self.comps.return_groups(group_string)
+            for group in groups:
+                group_matched = True
             
                 try:
                     txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
@@ -1784,13 +1855,47 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """
         pkgs_used = []
         for group_string in grouplist:
-            try:
-                txmbrs = self.groupRemove(group_string)
-            except yum.Errors.GroupsError:
-                self.logger.critical(_('No group named %s exists'), group_string)
-                continue
-            else:
-                pkgs_used.extend(txmbrs)
+
+            grp_grp = True
+            pkg_grp = True
+            if group_string.startswith('@^'):
+                pkg_grp = False
+                group_string = group_string[2:]
+            elif group_string.startswith('@'):
+                grp_grp = False
+                group_string = group_string[1:]
+
+            groups = []
+            if grp_grp:
+                if self.conf.group_command == 'objects':
+                    groups = self.igroups.return_environments(group_string)
+                else:
+                    groups = self.comps.return_environments(group_string)
+                if not groups:
+                    self.logger.critical(_('No Environment named %s exists'), group_string)
+            for group in groups:
+                try:
+                    txmbrs = self.environmentRemove(group.environmentid)
+                except yum.Errors.GroupsError:
+                    continue
+                else:
+                    pkgs_used.extend(txmbrs)
+
+            groups = []
+            if pkg_grp:
+                if self.conf.group_command == 'objects':
+                    groups = self.igroups.return_groups(group_string)
+                else:
+                    groups = self.comps.return_groups(group_string)
+                if not groups:
+                    self.logger.critical(_('No group named %s exists'), group_string)
+            for group in groups:
+                try:
+                    txmbrs = self.groupRemove(group.groupid)
+                except yum.Errors.GroupsError:
+                    continue
+                else:
+                    pkgs_used.extend(txmbrs)
                 
         if not pkgs_used:
             return 0, [_('No packages to remove from groups')]

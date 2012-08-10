@@ -3228,25 +3228,81 @@ much more problems).
 
         return ret
 
+    def _groupInstalledEnvData(self, evgroup):
+        """ Return a dict of
+             grp_name =>
+             (installed, available,
+             backlisted-installed, blacklisted-available). """
+        ret = {}
+        if not evgroup or self.conf.group_command != 'objects':
+            return ret
+
+        grp_names = {}
+        if evgroup.environmentid in self.igroups.groups:
+            grp_names = self.igroups.environments[evgroup.environmentid]
+            grp_names = grp_names.grp_names
+
+        for grp_name in set(evgroup.allgroups + list(grp_names)):
+            igrp = self.igroups.groups.get(grp_name)
+            if grp_name not in grp_names and not igrp:
+                ret[grp_name] = 'available'
+                continue
+
+            if not igrp:
+                ret[grp_name] = 'blacklisted-available'
+                continue
+
+            if igrp.environment == evgroup.environmentid:
+                ret[grp_name] = 'installed'
+                break
+            else:
+                ret[grp_name] = 'blacklisted-installed'
+
+        return ret
+
     def _groupReturnGroups(self, patterns=None, ignore_case=True):
         igrps = None
+        ievgrps = None
         if patterns is None:
             grps = self.comps.groups
             if self.conf.group_command == 'objects':
                 igrps = self.igroups.groups.values()
-            return igrps, grps
+            evgrps = self.comps.environments
+            if False and self.conf.group_command == 'objects':
+                # FIXME: Environment groups.
+                ievgrps = self.igroups.environments.values()
+            return igrps, grps, ievgrps, evgrps
 
-        pats = ",".join(patterns)
+        gpats = []
+        epats = []
+        for pat in patterns:
+            if pat.startswith('@^'):
+                epats.append(pat[2:])
+            elif pat.startswith('@'):
+                gpats.append(pat[1:])
+            else:
+                epats.append(pat)
+                gpats.append(pat)
+
+        epats = ",".join(epats)
+        gpats = ",".join(gpats)
+
         cs   = not ignore_case
-        grps = self.comps.return_groups(pats, case_sensitive=cs)
+        grps = self.comps.return_groups(gpats, case_sensitive=cs)
         #  Because we want name matches too, and we don't store group names
         # we need to add the groupid's we've found:
         if self.conf.group_command == 'objects':
-            pats += "," + ",".join([grp.groupid for grp in grps])
-            igrps = self.igroups.return_groups(pats, case_sensitive=cs)
-        return igrps, grps
+            gpats = gpats + "," + ",".join([grp.groupid for grp in grps])
+            igrps = self.igroups.return_groups(gpats, case_sensitive=cs)
 
-    def doGroupLists(self, uservisible=0, patterns=None, ignore_case=True):
+        evgrps = self.comps.return_environments(epats, case_sensitive=cs)
+        if self.conf.group_command == 'objects':
+            epats = epats+ "," + ",".join([grp.environmentid for grp in evgrps])
+            ievgrps = self.igroups.return_environments(epats, case_sensitive=cs)
+        return igrps, grps, ievgrps, evgrps
+
+    def doGroupLists(self, uservisible=0, patterns=None, ignore_case=True,
+                     return_evgrps=False):
         """Return two lists of groups: installed groups and available
         groups.
 
@@ -3257,20 +3313,31 @@ much more problems).
            lists.  If not given, all groups will be included
         :param ignore_case: whether to ignore case when determining
            whether group names match the strings in *patterns*
+        :param return_evgrps: whether to return environment groups as well as
+           package groups
         """
         installed = []
         available = []
+        einstalled = []
+        eavailable = []
 
         if self.comps.compscount == 0:
             raise Errors.GroupsError, _('No group data available for configured repositories')
         
-        igrps, grps = self._groupReturnGroups(patterns, ignore_case)
+        igrps, grps, ievgrps, evgrps = self._groupReturnGroups(patterns,
+                                                               ignore_case)
 
         if igrps is not None:
             digrps = {}
             for igrp in igrps:
                 digrps[igrp.gid] = igrp
             igrps = digrps
+
+        if ievgrps is not None:
+            digrps = {}
+            for ievgrp in ievgrps:
+                digrps[ievgrp.evgid] = ievgrp
+            ievgrps = digrps
 
         for grp in grps:
             if igrps is None:
@@ -3292,20 +3359,49 @@ much more problems).
                         available.append(grp)
                 else:
                     available.append(grp)
+
+        for evgrp in evgrps:
+            if ievgrps is None:
+                evgrp_installed = evgrp.installed
+            else:
+                evgrp_installed = evgrp.environmentid in ievgrps
+                if evgrp_installed:
+                    del ievgrps[evgrp.environmentid]
+
+            if evgrp_installed:
+                einstalled.append(evgrp)
+            else:
+                eavailable.append(evgrp)
             
         if igrps is None:
-            return sorted(installed), sorted(available)
+            igrps = {}
+        if ievgrps is None:
+            ievgrps = {}
 
         for igrp in igrps.values():
             #  These are installed groups that aren't in comps anymore. so we
             # create fake comps groups for them.
             grp = comps.Group()
+            grp.groupid = igrp.gid
             grp.installed = True
             grp.name = grp.groupid
             for pkg_name in igrp.pkg_names:
                 grp.mandatory_packages[pkg_name] = 1
             installed.append(grp)
 
+        for ievgrp in ievgrps.values():
+            #  These are installed evgroups that aren't in comps anymore. so we
+            # create fake comps evgroups for them.
+            evgrp = comps.Environment()
+            grp.environmentid = ievgrp.evgid
+            evgrp.installed = True
+            evgrp.name = evgrp.environmentid
+            evgrp._groups = list(ievgrp.groups)
+            einstalled.append(evgrp)
+
+        if return_evgrps:
+            return (sorted(installed), sorted(available),
+                    sorted(einstalled), sorted(eavailable))
         return sorted(installed), sorted(available)
     
     def groupRemove(self, grpid):
@@ -3317,8 +3413,11 @@ much more problems).
            transaction set by this function
         """
         txmbrs_used = []
-        
-        thesegroups = self.comps.return_groups(grpid)
+
+        if self.conf.group_command == 'objects':
+            thesegroups = self.igroups.return_groups(grpid)
+        else:
+            thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
@@ -3326,17 +3425,24 @@ much more problems).
             igroup_data = self._groupInstalledData(thisgroup)
 
             thisgroup.toremove = True
-            pkgs = thisgroup.packages
-            for pkg in thisgroup.packages:
+
+            if self.conf.group_command == 'objects':
+                pkgs = thisgroup.pkg_names
+                gid  = thisgroup.gid
+            else:
+                pkgs = thisgroup.packages
+                gid  = thisgroup.groupid
+
+            for pkg in pkgs:
                 if pkg in igroup_data and igroup_data[pkg] != 'installed':
                     continue
 
                 txmbrs = self.remove(name=pkg, silence_warnings=True)
                 txmbrs_used.extend(txmbrs)
                 for txmbr in txmbrs:
-                    txmbr.groups.append(thisgroup.groupid)
+                    txmbr.groups.append(gid)
             if igroup_data:
-                self.igroups.del_group(thisgroup.groupid)
+                self.igroups.del_group(gid)
             
         return txmbrs_used
 
@@ -3368,8 +3474,48 @@ much more problems).
                             self.tsInfo.remove(txmbr.po.pkgtup)
         
         
+    def environmentRemove(self, evgrpid):
+        """Mark all the packages in the given group to be removed.
+
+        :param evgrpid: the name of the environment containing the groups to
+           mark for removal
+        :return: a list of transaction members added to the
+           transaction set by this function
+        """
+        txmbrs_used = []
+
+        if self.conf.group_command == 'objects':
+            thesegroups = self.igroups.return_environments(evgrpid)
+        else:
+            thesegroups = self.comps.return_environments(evgrpid)
+        if not thesegroups:
+            raise Errors.GroupsError, _("No Environment named %s exists") % to_unicode(evgrpid)
+
+        for thisgroup in thesegroups:
+            igroup_data = self._groupInstalledEnvData(thisgroup)
+
+            if self.conf.group_command == 'objects':
+                grps  = thisgroup.grp_names
+                evgid = thisgroup.evgid
+            else:
+                grps  = thisgroup.allgroups
+                evgid = thisgroup.environmentid
+
+            for grp in grps:
+                if grp in igroup_data and igroup_data[grp] != 'installed':
+                    continue
+
+                txmbrs = self.groupRemove(grp)
+                txmbrs_used.extend(txmbrs)
+                for txmbr in txmbrs:
+                    txmbr.environments.append(evgid)
+            if igroup_data:
+                self.igroups.del_environment(evgid)
+
+        return txmbrs_used
+
     def selectGroup(self, grpid, group_package_types=[],
-                    enable_group_conditionals=None, upgrade=False):
+                    enable_group_conditionals=None, upgrade=False, ievgrp=None):
         """Mark all the packages in the given group to be installed.
 
         :param grpid: the name of the group containing the packages to
@@ -3395,6 +3541,9 @@ much more problems).
         if group_package_types:
             package_types = group_package_types
 
+        if self.conf.group_command == 'compat':
+            upgrade = False
+
         for thisgroup in thesegroups:
             if thisgroup.selected:
                 continue
@@ -3415,7 +3564,8 @@ much more problems).
                 if thisgroup.groupid in self.igroups.groups:
                     igrp = self.igroups.groups[thisgroup.groupid]
                 else:
-                    self.igroups.add_group(thisgroup.groupid,thisgroup.packages)
+                    self.igroups.add_group(thisgroup.groupid,
+                                           thisgroup.packages, ievgrp)
             pkgs.extend(list(igroup_data.keys()))
 
             old_txmbrs = len(txmbrs_used)
@@ -3442,7 +3592,8 @@ much more problems).
                     if (upgrade and
                         (self.conf.group_command == 'simple' or
                          (igroup_data and igroup_data[pkg] == 'installed'))):
-                        txmbrs = self.update(name = pkg)
+                        txmbrs = self.update(name = pkg,
+                                             pkg_warning_level='debug2')
                     elif igroup_data and igroup_data[pkg] == 'installed':
                         pass # Don't upgrade on install.
                     else:
@@ -3464,7 +3615,8 @@ much more problems).
 
             count_cond_test = 0
             # FIXME: What do we do about group conditionals when group==objects
-            if group_conditionals:
+            #        or group upgrade for group_command=simple?
+            if not upgrade and group_conditionals:
                 for condreq, cond in thisgroup.conditional_packages.iteritems():
                     if self.isPackageInstalled(cond):
                         try:
@@ -3501,8 +3653,9 @@ much more problems).
                         if cond not in self.tsInfo.conditionals:
                             self.tsInfo.conditionals[cond] = []
                         self.tsInfo.conditionals[cond].extend(pkgs)
-            if len(txmbrs_used) == old_txmbrs:
-                self.logger.critical(_('Warning: Group %s does not have any packages.'), thisgroup.groupid)
+
+            if not upgrade and len(txmbrs_used) == old_txmbrs:
+                self.logger.critical(_('Warning: Group %s does not have any packages to install.'), thisgroup.groupid)
                 if count_cond_test:
                     self.logger.critical(_('Group %s does have %u conditional packages, which may get installed.'), count_cond_test)
         return txmbrs_used
@@ -3523,7 +3676,8 @@ much more problems).
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
-        
+
+        # FIXME: Do something with groups as objects, and env. groups.
         for thisgroup in thesegroups:
             thisgroup.selected = False
             
@@ -3549,6 +3703,86 @@ much more problems).
                         for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
                             self.tsInfo.remove(pkg.pkgtup)
         
+    def selectEnvironment(self, evgrpid, group_package_types=[],
+                          enable_group_conditionals=None, upgrade=False):
+        """Mark all the groups in the given environment group to be installed.
+
+        :param evgrpid: the name of the env. group containing the groups to
+           mark for installation
+        :param group_package_types: a list of the types of groups to
+           work with.  This overrides self.conf.group_package_types
+        :param enable_group_conditionals: overrides
+           self.conf.enable_group_conditionals
+        :return: a list of transaction members added to the
+           transaction set by this function
+        """
+        evgrps = self.comps.return_environments(evgrpid)
+        if not evgrps:
+            raise Errors.GroupsError, _("No Environment named %s exists") % to_unicode(evgrpid)
+
+        ret = []
+        for evgrp in evgrps:
+
+            ievgrp = None
+            if self.conf.group_command == 'compat':
+                grps = ",".join(sorted(evgrp.groups))
+            elif self.conf.group_command == 'simple':
+                if not upgrade:
+                    grps = ",".join(sorted(evgrp.groups))
+                else: # Only upgrade the installed groups...
+                    grps = []
+                    for grpid in evgrp.groups:
+                        grp = self.comps.return_group(grpid)
+                        if grp is None:
+                            continue
+                        if not grp.installed:
+                            continue
+                        grps.append(grpid)
+                    grps = ",".join(sorted(grps))
+            elif self.conf.group_command == 'objects':
+                igroup_data = self._groupInstalledEnvData(evgrp)
+ 
+                grps = []
+                for grpid in evgrp.groups:
+                    if (grpid not in igroup_data or
+                        igroup_data[grpid].startswith('blacklisted')):
+                        msg = _('Skipping group %s from environment %s'),
+                        self.verbose_logger.log(logginglevels.DEBUG_2,
+                                                msg, grpid, evgrp.environmentid)
+                        continue
+                    grps.apped(grp)
+                if evgrp.environmentid in self.igroups.environments:
+                    ievgrp = self.igroups.environments[evgrp.environmentid]
+                else:
+                    self.igroups.add_environment(evgrp.environmentid,
+                                                 evgrp.allgroups)
+                grps = ",".join(sorted(grps))
+
+            txs = self.selectGroup(grps,
+                                   group_package_types,
+                                   enable_group_conditionals, upgrade,
+                                   ievgrp=ievgrp)
+            ret.extend(txs)
+        return ret
+
+    def deselectEnvironment(self, evgrpid, force=False):
+        """Unmark the groups in the given environment group from being
+        installed.
+
+        :param evgrpid: the name of the environment group containing the
+           groups to unmark from installation
+        :param force: if True, force remove all the packages in the
+           given groups from the transaction
+        """
+        evgrps = self.comps.return_environments(evgrpid)
+        if not thesegroups:
+            raise Errors.GroupsError, _("No Environment named %s exists") % to_unicode(evgrpid)
+
+        for evgrp in evgrps:
+            grps = ",".join(sorted(evgrp.groups))
+            self.deselectGroup(grps, force)
+            # FIXME: env. needs to be marked not-to-be-installed, etc.
+
     def getPackageObject(self, pkgtup, allow_missing=False):
         """Return a package object that corresponds to the given
         package tuple.
@@ -3953,6 +4187,20 @@ much more problems).
         assert pattern[0] == '@'
         group_string = pattern[1:]
         tx_return = []
+
+        if group_string and group_string[0] == '^':
+            group_string = group_string[1:]
+            # Actually dealing with "environment groups".
+            for env_grp in self.comps.return_environments(group_string):
+                try:
+                    txmbrs = self.selectEnvironment(env_grp.environmentid,
+                                                    upgrade=upgrade)
+                    tx_return.extend(txmbrs)
+                except yum.Errors.GroupsError:
+                    self.logger.critical(_('Warning: Environment Group %s does not exist.'), group_string)
+                    continue
+            return tx_return
+
         for group in self.comps.return_groups(group_string):
             try:
                 txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
@@ -3971,6 +4219,18 @@ much more problems).
         assert pattern[0] == '@'
         group_string = pattern[1:]
         tx_return = []
+
+        if group_string and group_string[0] == '^':
+            group_string = group_string[1:]
+            # Actually dealing with "environment groups".
+            try:
+                txmbrs = self.environmentRemove(group_string)
+            except yum.Errors.GroupsError:
+                self.logger.critical(_('Warning: Environment Group %s does not exist.'), group_string)
+            else:
+                tx_return.extend(txmbrs)
+            return tx_return
+
         try:
             txmbrs = self.groupRemove(group_string)
         except yum.Errors.GroupsError:
@@ -3986,6 +4246,8 @@ much more problems).
         assert pattern[0] == '@'
         grpid = pattern[1:]
 
+        # FIXME: **** environment groups and groups as objects... ****
+
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
@@ -3998,6 +4260,10 @@ much more problems).
         """ Remove things from the transaction, like kickstart. """
         assert pattern[0] == '-'
         pat = pattern[1:].strip()
+
+        if pat and pat.startswith('@^'):
+            pat = pat[2:]
+            return self.deselectEnvironment(pat)
 
         if pat and pat[0] == '@':
             pat = pat[1:]
@@ -4389,6 +4655,15 @@ much more problems).
         # if no po do kwargs
         # uninstalled pkgs called for update get returned with errors in a list, maybe?
 
+        pkg_warn = kwargs.get('pkg_warning_level', 'flibble')
+        def _dbg2(*args, **kwargs):
+            self.verbose_logger.log(logginglevels.DEBUG_2, *args, **kwargs)
+        level2func = {'debug2' : _dbg2,
+                      'warning' : self.verbose_logger.warning}
+        if pkg_warn not in level2func:
+            pkg_warn = 'warning'
+        pkg_warn = level2func[pkg_warn]
+
         tx_return = []
         if not po and not kwargs: # update everything (the easy case)
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Updating Everything'))
@@ -4505,7 +4780,7 @@ much more problems).
                     availpkgs = self._compare_providers(availpkgs, requiringPo)
                     availpkgs = map(lambda x: x[0], availpkgs)
                 elif not availpkgs:
-                    self.logger.warning(_("No package matched to upgrade: %s"), self._ui_nevra_dict(nevra_dict))
+                    pkg_warn(_("No package matched to upgrade: %s"), self._ui_nevra_dict(nevra_dict))
        
         # for any thing specified
         # get the list of available pkgs matching it (or take the po)

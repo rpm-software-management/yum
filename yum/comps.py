@@ -43,6 +43,16 @@ class CompsObj(object):
         return self.name
 
     @property
+    def compsid(self):
+        """ Return the "id": categoryid, groupid, environmentid. """
+
+        for idT in ('categoryid', 'groupid', 'environmentid'):
+            if hasattr(self, idT):
+                return getattr(self, idT)
+
+        return None
+
+    @property
     def ui_name(self):
         """ Return the "name" of the object for the current locale. """
         return self.nameByLang(get_my_lang_code())
@@ -108,7 +118,7 @@ class Group(CompsObj):
         self.optional_packages = {}
         self.default_packages = {}
         self.conditional_packages = {}
-        self.langonly = None ## what the hell is this?
+        self.langonly = None
         self.groupid = None
         self.display_order = 1024
         self.installed = False
@@ -282,11 +292,20 @@ class Environment(CompsObj):
         self.translated_name = {}
         self.translated_description = {}
         self.display_order = 1024
+        self.langonly = None
+        self.installed = False
         self._groups = {}
         self._options = {}
 
         if elem:
             self.parse(elem)
+
+    def _allgroupiter(self):
+        lst = self._groups.keys() + \
+              self._options.keys()
+        return lst
+
+    allgroups = property(_allgroupiter)
 
     def _groupiter(self):
         return self._groups.keys()
@@ -746,6 +765,24 @@ class Comps(object):
                 for pkgname in check_pkgs:
                     if pkgname in inst_pkg_names:
                         group.installed = True
+                        break
+
+        # Now do basically the same thing for evgroups.
+        inst_grp_names = {}
+        for group in self.groups:
+            inst_grp_names[group.groupid] = group.installed
+        for evgroup in self.environments:
+            if evgroup.groups:
+                evgroup.installed = True
+                for grpname in evgroup.groups:
+                    if not inst_grp_names.get(grpname):
+                        evgroup.installed = False
+                        break
+            else:
+                evgroup.installed = False
+                for grpname in evgroup.optional:
+                    if grpname in inst_grp_names:
+                        evgroup.installed = True
                         break
         
         self.compiled = True

@@ -96,6 +96,8 @@ class TransactionData:
         # lists of txmbrs in their states - just placeholders
         self.instgroups = []
         self.removedgroups = []
+        self.instenvironments = []
+        self.removedenvironments = []
         self.removed = []
         self.installed = []
         self.updated = []
@@ -352,6 +354,8 @@ class TransactionData:
            
         self.instgroups = []
         self.removedgroups = []
+        self.instenvironments = []
+        self.removedenvironments = []
         self.removed = []
         self.installed = []
         self.updated = []
@@ -383,6 +387,10 @@ class TransactionData:
                     for g in txmbr.groups:
                         if g not in self.instgroups:
                             self.instgroups.append(g)
+                if txmbr.environments:
+                    for evg in txmbr.environments:
+                        if evg not in self.instenvironments:
+                            self.instenvironments.append(evg)
                 if txmbr.isDep:
                     self.depinstalled.append(txmbr)
                 else:
@@ -395,6 +403,9 @@ class TransactionData:
                 for g in txmbr.groups:
                     if g not in self.instgroups:
                         self.removedgroups.append(g)
+                for evg in txmbr.environments:
+                    if evg not in self.instenvironments:
+                        self.removedenvironments.append(evg)
                 if txmbr.isDep:
                     self.depremoved.append(txmbr)
                 else:
@@ -420,6 +431,8 @@ class TransactionData:
         self.depremoved.sort()
         self.instgroups.sort()
         self.removedgroups.sort()
+        self.instenvironments.sort()
+        self.removedenvironments.sort()
         self.reinstalled.sort()
         self.downgraded.sort()
         self.failed.sort()
@@ -778,6 +791,7 @@ class TransactionMember:
         self.downgraded_by = []
         self.reinstall = False
         self.groups = [] # groups it's in
+        self.environments = [] # Env. groups it's in
         self._poattr = ['pkgtup', 'repoid', 'name', 'arch', 'epoch', 'version',
                         'release']
 
@@ -851,5 +865,7 @@ class TransactionMember:
                 
         if self.groups:
             msg += "  groups: %s\n" % ' '.join(self.groups)
+        if self.environments:
+            msg += "  environments: %s\n" % ' '.join(self.environments)
 
         return msg

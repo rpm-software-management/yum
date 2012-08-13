@@ -475,6 +475,11 @@ class RPMTransaction:
         # SCRIPT_ERROR is only in rpm >= 4.6.0
         elif hasattr(rpm, "RPMCALLBACK_SCRIPT_ERROR") and what == rpm.RPMCALLBACK_SCRIPT_ERROR:
             self._scriptError(bytes, total, h)
+        # SCRIPT_START and SCRIPT_STOP are only in rpm >= 4.10
+        elif hasattr(rpm, "RPMCALLBACK_SCRIPT_START") and what == rpm.RPMCALLBACK_SCRIPT_START:
+            self._scriptStart(bytes, total, h);
+        elif hasattr(rpm, "RPMCALLBACK_SCRIPT_STOP") and what == rpm.RPMCALLBACK_SCRIPT_STOP:
+            self._scriptStop(bytes, total, h);
     
     
     def _transStart(self, bytes, total, h):
@@ -633,6 +638,13 @@ class RPMTransaction:
         self.display.errorlog(msg)
         # FIXME - what else should we do here? raise a failure and abort?
     
+    def _scriptStart(self, bytes, total, h):
+        pass
+
+    def _scriptStop(self, bytes, total, h):
+        name, txmbr = self._getTxmbr(h)
+        self._scriptout(txmbr or name)
+
     def verify_txmbr(self, txmbr, count):
         " Callback for post transaction when we are in verifyTransaction(). "
         if not hasattr(self.display, 'verify_txmbr'):

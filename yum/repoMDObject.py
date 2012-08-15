@@ -226,12 +226,11 @@ class RepoMD:
                 tag = """   <repo>%s</repo>\n""" % (to_xml(item))
                 tags += tag
             for (cpeid, item) in self.tags['distro']:
-                itemlist = list(item) # frellingsets.
                 if cpeid:
                     tag = """   <distro cpeid="%s">%s</distro>\n""" % (
-                                to_xml(cpeid, attrib=True), to_xml(itemlist[0]))
+                                to_xml(cpeid, attrib=True), to_xml(item))
                 else:
-                    tag = """   <distro>%s</distro>\n""" % (to_xml(itemlist[0]))
+                    tag = """   <distro>%s</distro>\n""" % (to_xml(item))
                 tags += tag
             tags += """ </tags>\n"""
             msg += tags

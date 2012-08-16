@@ -3750,7 +3750,7 @@ much more problems).
                         self.verbose_logger.log(logginglevels.DEBUG_2,
                                                 msg, grpid, evgrp.environmentid)
                         continue
-                    grps.apped(grp)
+                    grps.append(grpid)
                 if evgrp.environmentid in self.igroups.environments:
                     ievgrp = self.igroups.environments[evgrp.environmentid]
                 else:
@@ -4700,8 +4700,10 @@ much more problems).
 
             # Upgrade the installed groups, as part of generic "yum upgrade"
             if self.conf.group_command == 'objects':
+                for ievgrp in self.igroups.environments:
+                    tx_return.extend(self._at_groupupgrade('@^' + ievgrp))
                 for igrp in self.igroups.groups:
-                    tx_return.extend(self._at_groupupgrade(igrp))
+                    tx_return.extend(self._at_groupupgrade('@'  + igrp))
 
             return tx_return
 

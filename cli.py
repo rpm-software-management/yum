@@ -1622,13 +1622,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                    }
         verb = self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3)
         wts = {'hidden' : False,
-               'lang'   : False,
-               'env'    : True,
-               'pkg'    : True,
-               'inst'   : True,
-               'avail'  : True,
+               'lang'   : None,
+               'env'    : None,
+               'pkg'    : None,
+               'inst'   : None,
+               'avail'  : None,
                'id'     : verb}
             
+        ouserlist = userlist[:]
         while userlist:
             arg = userlist[0]
             val = True
@@ -1641,6 +1642,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             userlist.pop(0)
         if not userlist:
             userlist = None # Match everything...
+
+        if wts['inst'] is None and wts['avail'] is None:
+            wts['inst']  = True
+            wts['avail'] = True
+
+        if wts['lang'] is None and wts['pkg'] is None and wts['env'] is None:
+            wts['env'] = True
+            wts['pkg'] = True
 
         uv  = not wts['hidden']
         dGL = self.doGroupLists(patterns=userlist,
@@ -1713,7 +1722,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if not done:
             self.logger.error(_('Warning: No Environments/Groups match: %s'),
-                              ", ".join(userlist))
+                              ", ".join(ouserlist))
             return 0, []
 
         return 0, [_('Done')]

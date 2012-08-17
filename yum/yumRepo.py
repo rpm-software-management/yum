@@ -943,7 +943,7 @@ Insufficient space in download directory %s
 
         if not package.verifyLocalPkg(): # Don't return as "success" when bad.
             msg = "Downloaded package %s, from %s, but it was invalid."
-            msg = msg % (package, pacakge.repo.id)
+            msg = msg % (package, package.repo.id)
             raise Errors.RepoError, msg
 
         return ret

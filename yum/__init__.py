@@ -684,7 +684,8 @@ class YumBase(depsolve.Depsolve):
             prerepoconf = self.prerepoconf
             del self.prerepoconf
 
-            self.repos.setProgressBar(prerepoconf.progressbar)
+            self.repos.setProgressBar(prerepoconf.progressbar,
+                                      prerepoconf.multi_progressbar)
             self.repos.callback = prerepoconf.callback
             self.repos.setFailureCallback(prerepoconf.failure_callback)
             self.repos.setInterruptCallback(prerepoconf.interrupt_callback)

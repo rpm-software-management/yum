@@ -317,6 +317,7 @@ class YumRepository(Repository, config.RepoConf):
 
         # callbacks
         self.callback = None  # for the grabber
+        self.multi_callback = None
         self.failure_obj = None
         self.mirror_failure_obj = None
         self.interrupt_callback = None
@@ -432,7 +433,7 @@ class YumRepository(Repository, config.RepoConf):
                         'basecachedir', 'http_headers', 'metadata_cookie',
                         'metadata_cookie_fn', 'quick_enable_disable',
                         'repoMDFile', 'timestamp_check', 'urls', 'mirrorurls',
-                        'yumvar', 'repofile')
+                        'yumvar', 'repofile', 'multi_callback')
         for attr in dir(self):
             if attr.startswith('_'):
                 continue
@@ -530,6 +531,7 @@ class YumRepository(Repository, config.RepoConf):
 
         ugopts = self._default_grabopts()
         self._grabfunc = URLGrabber(progress_obj=self.callback,
+                                    multi_progress_obj=self.multi_callback,
                                     failure_callback=self.failure_obj,
                                     interrupt_callback=self.interrupt_callback,
                                     copy_local=self.copy_local,
@@ -1742,8 +1744,9 @@ Insufficient space in download directory %s
             return fn
         return self._retrieveMD('group', retrieve_can_fail=True)
 
-    def setCallback(self, callback):
+    def setCallback(self, callback, multi_callback=None):
         self.callback = callback
+        self.multi_callback = multi_callback
         self._callbacks_changed = True
 
     def setFailureObj(self, failure_obj):

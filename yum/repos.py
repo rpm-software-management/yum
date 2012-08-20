@@ -271,11 +271,11 @@ class RepoStorage:
                 repo.basecachedir = cachedir
 
 
-    def setProgressBar(self, obj):
+    def setProgressBar(self, obj, multi_obj=None):
         """sets the progress bar for downloading files from repos"""
         
         for repo in self.repos.values():
-            repo.setCallback(obj)
+            repo.setCallback(obj, multi_obj)
 
     def setFailureCallback(self, obj):
         """sets the failure callback for all repos"""

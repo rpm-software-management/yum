@@ -29,7 +29,7 @@ import re # For YumTerm
 
 from weakref import proxy as weakref
 
-from urlgrabber.progress import TextMeter
+from urlgrabber.progress import TextMeter, TextMultiFileMeter
 import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
 from yum.misc import prco_tuple_to_string
@@ -87,6 +87,11 @@ class YumTextMeter(TextMeter):
         """
         checkSignals()
         TextMeter.update(self, amount_read, now)
+
+class YumTextMultiFileMeter(TextMultiFileMeter):
+    def update_meter(self, meter, now):
+        checkSignals()
+        TextMultiFileMeter.update_meter(self, meter, now)
 
 class YumTerm:
     """A class to provide some terminal "UI" helpers based on curses."""
@@ -1697,9 +1702,11 @@ Transaction Summary
         # One of these is a download
         if self.conf.debuglevel < 2 or not sys.stdout.isatty():
             progressbar = None
+            multi_progressbar = None
             callback = None
         else:
             progressbar = YumTextMeter(fo=sys.stdout)
+            multi_progressbar = YumTextMultiFileMeter(fo=sys.stdout)
             callback = CacheProgressCallback()
 
         # setup our failure report for failover
@@ -1710,13 +1717,14 @@ Transaction Summary
         interrupt_callback = self.interrupt_callback
         if hasattr(self, 'prerepoconf'):
             self.prerepoconf.progressbar = progressbar
+            self.prerepoconf.multi_progressbar = multi_progressbar
             self.prerepoconf.callback = callback
             self.prerepoconf.failure_callback = failure_callback
             self.prerepoconf.interrupt_callback = interrupt_callback
         else:
             #  Just in case some API user decides to do self.repos before
             # calling us.
-            self.repos.setProgressBar(progressbar)
+            self.repos.setProgressBar(progressbar, multi_progressbar)
             self.repos.callback = callback
             self.repos.setFailureCallback(failure_callback)
             self.repos.setInterruptCallback(interrupt_callback)

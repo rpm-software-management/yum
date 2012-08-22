@@ -929,7 +929,7 @@ Insufficient space in download directory %s
             misc.unlink_f(local)
 
         if checkfunc is None:
-            checkfunc = (package.verifyLocalPkg, (), {})
+            checkfunc = lambda obj: package.verifyLocalPkg()
 
         ret = self._getFile(url=basepath,
                         relative=remote,

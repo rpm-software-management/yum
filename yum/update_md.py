@@ -90,6 +90,20 @@ class UpdateNotice(object):
     def __setitem__(self, item, val):
         self._md[item] = val
 
+    def __eq__(self, other):
+        #  Tests to see if it's "the same data", which means that the
+        # packages can be different (see add_notice).
+
+        if not other or not hasattr(other, '_md'):
+            return False
+
+        for data in ('type', 'update_id', 'status', 'rights',
+                     'issued', 'updated', 'version', 'pushcount',
+                     'from', 'title', 'summary', 'description', 'solution'):
+            if self._md[data] != other._md[data]:
+                return False
+        return True
+
     def text(self, skip_data=('files', 'summary', 'rights', 'solution')):
         head = """
 ===============================================================================
@@ -429,8 +443,41 @@ class UpdateMetadata(object):
     def add_notice(self, un):
         """ Add an UpdateNotice object. This should be fully populated with
             data, esp. update_id and pkglist/packages. """
-        if not un or not un["update_id"] or un['update_id'] in self._notices:
+        if not un or not un["update_id"]:
             return
+
+        #  This is "special", the main thing we want to deal with here is
+        # having one errata that has multiple packages in it rpmA and rpmB, but
+        # the packages are in repos. repoA and repoB. So instead of doing a
+        # single errata pointing to both rpmA and rpmB and put the same thing
+        # in both repodata (which is legal, and works fine) people want to have
+        # just the packages from repoA in the repodata for repoA and vice versa.
+        if un['update_id'] in self._notices:
+            oun = self._notices[un['update_id']]
+            if oun != un:
+                return
+
+            # Ok, main parts of errata are the same, so now merge references:
+            seen = set()
+            for ref in oun['references']:
+                seen.add(ref['id'])
+            for ref in un['references']:
+                if ref['id'] in seen:
+                    continue
+                seen.add(ref['id'])
+                oun['references'].append(ref)
+
+            # ...and pkglist (this assumes that a pkglist name XYZ is the same):
+            seen = set()
+            for pkg in oun['pkglist']:
+                seen.add(pkg['name'])
+            for pkg in un['pkglist']:
+                if pkg['name'] in seen:
+                    continue
+                seen.add(pkg['name'])
+                oun['pkglist'].append(pkg)
+
+            un = oun
 
         self._notices[un['update_id']] = un
         for pkg in un['pkglist']:

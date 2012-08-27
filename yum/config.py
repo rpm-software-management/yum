@@ -1169,6 +1169,20 @@ def _getsysver(installroot, distroverpkg):
     del ts
     return releasever
 
+def _readRawRepoFile(repo):
+    if not _use_iniparse:
+        return None
+
+    ini = INIConfig(open(repo.repofile))
+    # b/c repoids can have $values in them we need to map both ways to figure
+    # out which one is which
+    section_id = repo.id
+    if repo.id not in ini._sections:
+        for sect in ini._sections.keys():
+            if varReplace(sect, repo.yumvar) == repo.id:
+                section_id = sect
+    return ini, section_id
+
 def writeRawRepoFile(repo,only=None):
     """Write changes in a repo object back to a .repo file.
 
@@ -1179,14 +1193,7 @@ def writeRawRepoFile(repo,only=None):
     if not _use_iniparse:
         return
 
-    ini = INIConfig(open(repo.repofile))
-    # b/c repoids can have $values in them we need to map both ways to figure
-    # out which one is which
-    section_id = repo.id
-    if repo.id not in ini._sections:
-        for sect in ini._sections.keys():
-            if varReplace(sect, repo.yumvar) == repo.id:
-                section_id = sect
+    ini, section_id = _readRawRepoFile(repo)
     
     # Updated the ConfigParser with the changed values    
     cfgOptions = repo.cfg.options(repo.id)

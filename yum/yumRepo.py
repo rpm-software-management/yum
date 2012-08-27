@@ -366,6 +366,35 @@ class YumRepository(Repository, config.RepoConf):
         return self._sack
     sack = property(_getSack)
 
+    def _ui_id(self):
+        """ Show self.id, but include any $releasever/$basearch/etc. data. """
+        if hasattr(self, '__cached_ui_id'):
+            return getattr(self, '__cached_ui_id')
+
+        val = config._readRawRepoFile(self)
+        if not val:
+            val = ''
+        else:
+            ini, section_id = val
+            ini = ini[section_id]
+            if 'metalink' in ini:
+                val = ini['metalink']
+            elif 'mirrorlist' in ini:
+                val = ini['mirrorlist']
+            else:
+                val = ini['baseurl']
+        ret = self.id
+        if '$releasever' in val:
+            ret += '/'
+            ret += str(self.yumvar['releasever'])
+        if '$basearch' in val:
+            ret += '/'
+            ret += str(self.yumvar['basearch'])
+        # Could maybe list some other things here too?
+        setattr(self, '__cached_ui_id', ret)
+        return ret
+    ui_id = property(_ui_id)
+
     def close(self):
         if self._sack is not None:
             self.sack.close()
@@ -405,7 +434,7 @@ class YumRepository(Repository, config.RepoConf):
         return thisdata.location
 
     def __str__(self):
-        return self.id
+        return self.ui_id
 
     def _checksum(self, sumtype, file, CHUNK=2**16, checksum_can_fail=False,
                   datasize=None):
@@ -779,7 +808,7 @@ class YumRepository(Repository, config.RepoConf):
                 ugopts = self._default_grabopts(cache=self.http_caching=='all')
                 try:
                     ug = URLGrabber(progress_obj = self.callback, **ugopts)
-                    result = ug.urlgrab(url, local, text=self.id + "/metalink")
+                    result = ug.urlgrab(url, local, text=self + "/metalink")
 
                 except urlgrabber.grabber.URLGrabError, e:
                     if not os.path.exists(self.metalink_filename):
@@ -830,7 +859,7 @@ class YumRepository(Repository, config.RepoConf):
 
         if local is None or relative is None:
             raise Errors.RepoError, \
-                  "get request for Repo %s, gave no source or dest" % self.id
+                  "get request for Repo %s, gave no source or dest" % self
 
         if self.cache == 1:
             if os.path.exists(local): # FIXME - we should figure out a way
@@ -887,7 +916,7 @@ Insufficient space in download directory %s
                                     range=(start, end),
                                     )
             except URLGrabError, e:
-                errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self.id, e)
+                errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self, e)
                 if self.mirrorurls:
                     errstr +="\n  You could try running: yum clean expire-cache"
                     errstr +="\n  To get a new set of mirrors."
@@ -911,7 +940,7 @@ Insufficient space in download directory %s
                                            **kwargs
                                            )
             except URLGrabError, e:
-                errstr = "failure: %s from %s: %s" % (relative, self.id, e)
+                errstr = "failure: %s from %s: %s" % (relative, self, e)
                 if e.errno == 256:
                     raise Errors.NoMoreMirrorsRepoError, errstr
                 else:
@@ -1554,7 +1583,7 @@ Insufficient space in download directory %s
                 result = self._getFile(relative='repodata/repomd.xml.asc',
                                        copy_local=1,
                                        local = sigfile,
-                                       text='%s/signature' % self.id,
+                                       text='%s/signature' % self,
                                        reget=None,
                                        checkfunc=None,
                                        cache=self.http_caching == 'all',
@@ -1684,7 +1713,7 @@ Insufficient space in download directory %s
             def checkfunc(obj):
                 self.checkMD(obj, mdtype)
                 self.retrieved[mdtype] = 1
-            text = "%s/%s" % (self.id, mdtype)
+            text = "%s/%s" % (self, mdtype)
             if thisdata.size is None:
                 reget = None
             else:

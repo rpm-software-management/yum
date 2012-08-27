@@ -1418,7 +1418,7 @@ Insufficient space in download directory %s
         for mdtype in self.repoXML.fileTypes():
             if mdtype in all_mdtypes:
                 continue
-            if mdtype in ('primary_db', 'filelists_db', 'other_db'):
+            if mdtype in ('primary_db', 'filelists_db', 'other_db', 'group_gz'):
                 continue
             all_mdtypes.append(mdtype)
 

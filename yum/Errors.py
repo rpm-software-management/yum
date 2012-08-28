@@ -79,9 +79,20 @@ class RepoError(YumBaseError):
 class DuplicateRepoError(RepoError):
     pass
 
+# Have our own custom .value with all the mirror errors.
 class NoMoreMirrorsRepoError(RepoError):
-    pass
-    
+    def __init__(self, value=None, errors=None):
+        Exception.__init__(self)
+        self._value = value
+        self.errors = errors
+
+    @property
+    def value(self):
+        ret = self._value
+        for url, msg in self.errors or []:
+            ret += '\n%s: %s' % (url, msg)
+        return ret
+
 class ConfigError(YumBaseError):
     pass
     

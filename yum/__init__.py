@@ -141,6 +141,7 @@ class _YumPreRepoConf:
     """
     def __init__(self):
         self.progressbar = None
+        self.multi_progressbar = None
         self.callback = None
         self.failure_callback = None
         self.interrupt_callback = None

@@ -920,10 +920,7 @@ Insufficient space in download directory %s
                 if self.mirrorurls:
                     errstr +="\n  You could try running: yum clean expire-cache"
                     errstr +="\n  To get a new set of mirrors."
-                if e.errno == 256:
-                    raise Errors.NoMoreMirrorsRepoError, errstr
-                else:
-                    raise Errors.RepoError, errstr
+                raise Errors.RepoError, errstr
 
 
         else:
@@ -941,10 +938,8 @@ Insufficient space in download directory %s
                                            )
             except URLGrabError, e:
                 errstr = "failure: %s from %s: %s" % (relative, self, e)
-                if e.errno == 256:
-                    raise Errors.NoMoreMirrorsRepoError, errstr
-                else:
-                    raise Errors.RepoError, errstr
+                errors = getattr(e, 'errors', None)
+                raise Errors.NoMoreMirrorsRepoError(errstr, errors)
 
         return result
     __get = _getFile
@@ -1452,7 +1447,7 @@ Insufficient space in download directory %s
         for mdtype in self.repoXML.fileTypes():
             if mdtype in all_mdtypes:
                 continue
-            if mdtype in ('primary_db', 'filelists_db', 'other_db'):
+            if mdtype in ('primary_db', 'filelists_db', 'other_db', 'group_gz'):
                 continue
             all_mdtypes.append(mdtype)
 

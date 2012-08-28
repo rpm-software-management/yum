@@ -790,7 +790,8 @@ class Comps(object):
     def xml(self):
         """returns the xml of the comps files in this class, merged"""
 
-        if not self._groups and not self._categories:
+        if not self._groups and not self._categories and \
+            not self._environments:
             return ""
             
         msg = """<?xml version="1.0" encoding="UTF-8"?>
@@ -802,6 +803,8 @@ class Comps(object):
             msg += g.xml()
         for c in self.get_categories():
             msg += c.xml()
+        for e in self.get_environments():
+            msg += e.xml()
 
         msg += """\n</comps>\n"""
         

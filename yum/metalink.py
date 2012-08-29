@@ -238,7 +238,7 @@ class MetaLinkRepoMD:
                 host = url2host(url)
                 if host in self._host2mc:
                     continue
-                self._host2mc[host] = mirror.max_connections
+                self._host2mc[host] = mirror
             else:
                 continue
 

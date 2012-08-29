@@ -808,7 +808,7 @@ class YumRepository(Repository, config.RepoConf):
                 ugopts = self._default_grabopts(cache=self.http_caching=='all')
                 try:
                     ug = URLGrabber(progress_obj = self.callback, **ugopts)
-                    result = ug.urlgrab(url, local, text=self + "/metalink")
+                    result = ug.urlgrab(url, local, text="%s/metalink" % self)
 
                 except urlgrabber.grabber.URLGrabError, e:
                     if not os.path.exists(self.metalink_filename):

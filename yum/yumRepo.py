@@ -567,12 +567,16 @@ class YumRepository(Repository, config.RepoConf):
                                     reget='simple',
                                     **ugopts)
         def add_mc(url):
-            host = urlparse.urlsplit(url).netloc
+            host = urlparse.urlsplit(url).netloc.split('@')[-1]
             mc = self.metalink_data._host2mc.get(host)
-            if mc > 0:
+            if mc:
                 url = {
                     'mirror': misc.to_utf8(url),
-                    'kwargs': { 'max_connections': mc },
+                    'kwargs': {
+                        'max_connections': mc.max_connections,
+                        'preference': mc.preference,
+                        'private': mc.private,
+                    },
                 }
             return url
         urls = self.urls

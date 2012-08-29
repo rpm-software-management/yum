@@ -759,10 +759,9 @@ def _decompress_chunked(source, dest, ztype):
     while True:
         try:
             data = s_fn.read(1024000)
-        except IOError:
-            break
-        except EOFError:
-            break
+        except (OSError, IOError, EOFError), e:
+            msg = "Error reading from file %s: %s" % (source, str(e))
+            raise Errors.MiscError, msg
         
         if not data: break
 

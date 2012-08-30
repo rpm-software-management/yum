@@ -1173,7 +1173,14 @@ def _readRawRepoFile(repo):
     if not _use_iniparse:
         return None
 
-    ini = INIConfig(open(repo.repofile))
+    if not hasattr(repo, 'repofile') or not repo.repofile:
+        return None
+
+    try:
+        ini = INIConfig(open(repo.repofile))
+    except:
+        return None
+
     # b/c repoids can have $values in them we need to map both ways to figure
     # out which one is which
     section_id = repo.id

@@ -2252,6 +2252,9 @@ class YumOptionParser(OptionParser):
         group.add_option("--showduplicates", dest="showdupesfromrepos",
                         action="store_true",
                 help=_("show duplicates, in repos, in list/search commands"))
+        group.add_option("--show-duplicates", dest="showdupesfromrepos",
+                         action="store_true",
+                         help=SUPPRESS_HELP)
         group.add_option("-e", "--errorlevel", dest="errorlevel", default=None,
                 help=_("error output level"), type='int',
                 metavar='[error level]')

@@ -891,7 +891,8 @@ class YumRepository(Repository, config.RepoConf):
             except Errors.MediaError, e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
 
-        if size:
+        if size and (self.copy_local or not url or
+                     not (url.startswith("/") or url.startswith("file:"))):
             dirstat = os.statvfs(os.path.dirname(local))
             avail = dirstat.f_bavail * dirstat.f_bsize
             if avail < long(size):

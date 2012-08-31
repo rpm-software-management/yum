@@ -844,6 +844,19 @@ class YumRepository(Repository, config.RepoConf):
                                                               value),
                              fdel=lambda self: setattr(self, "_metalink", None))
 
+    def _all_urls_are_files(self, url):
+        if url:
+            return url.startswith("/") or url.startswith("file:")
+
+        if not self.urls: # WTF ... but whatever.
+            return False
+
+        # Not an explicit url ... so make sure all mirrors/etc. are file://
+        for url in self.urls:
+            if not self._all_urls_are_files(url):
+                return False
+        return True
+
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=None, checkfunc=None, text=None, reget='simple', 
             cache=True, size=None, **kwargs):
@@ -891,8 +904,7 @@ class YumRepository(Repository, config.RepoConf):
             except Errors.MediaError, e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
 
-        if size and (copy_local or not url or
-                     not (url.startswith("/") or url.startswith("file:"))):
+        if size and (copy_local or not self._all_urls_are_files(url)):
             dirstat = os.statvfs(os.path.dirname(local))
             avail = dirstat.f_bavail * dirstat.f_bsize
             if avail < long(size):

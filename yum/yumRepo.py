@@ -814,7 +814,7 @@ class YumRepository(Repository, config.RepoConf):
                     ug = URLGrabber(progress_obj = self.callback, **ugopts)
                     result = ug.urlgrab(url, local, text="%s/metalink" % self)
 
-                except urlgrabber.grabber.URLGrabError, e:
+                except URLGrabError, e:
                     if not os.path.exists(self.metalink_filename):
                         msg = ("Cannot retrieve metalink for repository: %s. "
                                "Please verify its path and try again" % self )
@@ -1848,7 +1848,7 @@ Insufficient space in download directory %s
             ugopts = self._default_grabopts()
             try:
                 fo = urlgrabber.grabber.urlopen(url, **ugopts)
-            except urlgrabber.grabber.URLGrabError, e:
+            except URLGrabError, e:
                 print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
                 fo = None
 
@@ -2012,7 +2012,7 @@ def getMirrorList(mirrorlist, pdict = None):
 
     try:
         fo = urlresolver.urlopen(url, proxies=pdict)
-    except urlgrabber.grabber.URLGrabError, e:
+    except URLGrabError, e:
         print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
         fo = None
 

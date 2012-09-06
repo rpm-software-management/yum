@@ -196,7 +196,7 @@ class YumPackageSack(packageSack.PackageSack):
                         db_un_fn = self._check_uncompressed_db_gen(repo,
                                                                    mydbtype)
                     if not db_un_fn: # Shouldn't happen?
-                        raise URLGrabError(-1, 'Check uncompressed DB failed')
+                        raise Errors.RepoError, '%s: Check uncompressed DB failed' % repo
 
                 dobj = repo.cacheHandler.open_database(db_un_fn)
 
@@ -210,7 +210,7 @@ class YumPackageSack(packageSack.PackageSack):
                 gen = mymdtype + '.xml'
                 ret = misc.repo_gen_decompress(xml, gen, cached=repo.cache)
                 if not ret:
-                    raise URLGrabError(-1, 'Decompress DB failed')
+                    raise Errors.RepoError, '%s: Decompress DB failed' % repo
                 xml = ret
                 # Convert XML => .sqlite
                 xmldata = repo.repoXML.getData(mymdtype)

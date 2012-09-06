@@ -69,7 +69,7 @@ def _parse_pkg_n(match, regexp_match, n):
     if not regexp_match:
         return False
 
-    if (match and n and match[0] not in ('?', '*') and match[0] != n[0]):
+    if (match and n and match[0] not in ('?', '*', '[') and match[0] != n[0]):
         return False
     if regexp_match(n):
         return True
@@ -82,7 +82,7 @@ def _parse_pkg(match, regexp_match, data, e,v,r,a):
     # Worthless speed hacks?
     if match == n:
         return True
-    if (match and n and match[0] not in ('?', '*') and
+    if (match and n and match[0] not in ('?', '*', '[') and
         match[0] != n[0] and match[0] != e[0]):
         return False
 

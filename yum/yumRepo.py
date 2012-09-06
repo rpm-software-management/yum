@@ -1778,7 +1778,7 @@ Insufficient space in download directory %s
             fn = self._retrieveMD('group_gz', retrieve_can_fail=True)
             if fn:
                 try:
-                    fn = misc.repo_gen_decompress(fn, 'comps.xml')
+                    fn = misc.repo_gen_decompress(fn, 'comps.xml', cached=self.cache)
                 except IOError, e:
                     logger.warning(e)
                     fn = None

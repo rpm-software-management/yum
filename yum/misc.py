@@ -1163,6 +1163,8 @@ def repo_gen_decompress(filename, generated_name, cached=False):
     dest = os.path.dirname(filename)
     dest += '/gen'
     if not os.path.exists(dest):
+        if cached:
+            return None
         os.makedirs(dest, mode=0755)
     dest += '/' + generated_name
     return decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)

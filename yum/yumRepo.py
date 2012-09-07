@@ -107,7 +107,7 @@ class YumPackageSack(packageSack.PackageSack):
             if repo in self.added:
                 if 'metadata' not in self.added[repo]:
                     raise Errors.RepoError, '%s md for %s imported before primary' \
-                           % (datatype, repo.id)
+                           % (datatype, repo.ui_id)
             current = 0
             for pkgid in dataobj:
                 current += 1
@@ -510,7 +510,7 @@ class YumRepository(Repository, config.RepoConf):
            on then raise a repo error"""
         if len(self._urls) < 1 and not self.mediaid:
             raise Errors.RepoError, \
-             'Cannot find a valid baseurl for repo: %s' % self.id
+             'Cannot find a valid baseurl for repo: %s' % self.ui_id
 
     def doProxyDict(self):
         if self._proxy_dict:
@@ -816,12 +816,12 @@ class YumRepository(Repository, config.RepoConf):
                 ugopts = self._default_grabopts(cache=self.http_caching=='all')
                 try:
                     ug = URLGrabber(progress_obj = self.callback, **ugopts)
-                    result = ug.urlgrab(url, local, text="%s/metalink" % self)
+                    result = ug.urlgrab(url, local, text="%s/metalink" % self.ui_id)
 
                 except urlgrabber.grabber.URLGrabError, e:
                     if not os.path.exists(self.metalink_filename):
                         msg = ("Cannot retrieve metalink for repository: %s. "
-                               "Please verify its path and try again" % self )
+                               "Please verify its path and try again" % self.ui_id )
                         raise Errors.RepoError, msg
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
@@ -880,7 +880,7 @@ class YumRepository(Repository, config.RepoConf):
 
         if local is None or relative is None:
             raise Errors.RepoError, \
-                  "get request for Repo %s, gave no source or dest" % self
+                  "get request for Repo %s, gave no source or dest" % self.ui_id
 
         if self.cache == 1:
             if os.path.exists(local): # FIXME - we should figure out a way
@@ -890,7 +890,7 @@ class YumRepository(Repository, config.RepoConf):
                 raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,
 
-                           self)
+                           self.ui_id)
 
         if url:
             (scheme, netloc, path, query, fragid) = urlparse.urlsplit(url)
@@ -1120,7 +1120,7 @@ Insufficient space in download directory %s
     def _cachingRepoXML(self, local):
         """ Should we cache the current repomd.xml """
         if self.cache and not os.path.exists(local):
-            raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % self
+            raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % self.ui_id
         if self.cache or self.metadataCurrent():
             return True
         return False
@@ -1176,7 +1176,7 @@ Insufficient space in download directory %s
                 parse_can_fail = 'old_repo_XML' in self._oldRepoMDData
             if parse_can_fail:
                 return None
-            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self, e)
+            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self.ui_id, e)
 
     def _saveOldRepoXML(self, local):
         """ If we have an older repomd.xml file available, save it out. """
@@ -1203,7 +1203,7 @@ Insufficient space in download directory %s
         #  We still want the old data, so we don't download twice. So we
         # pretend everything is good until the revert.
         if not self.timestamp_check:
-            raise Errors.RepoError, "Can't download or revert repomd.xml"
+            raise Errors.RepoError, "Can't download or revert repomd.xml for:" % self.ui_id
 
         if 'old_repo_XML' not in self._oldRepoMDData:
             self._oldRepoMDData = {}
@@ -1570,12 +1570,12 @@ Insufficient space in download directory %s
         except KeyboardInterrupt:
             self._revertOldRepoXML() # Undo metadata cookie?
             raise
-        raise Errors.RepoError, 'Bad loadRepoXML policy: %s' % (self.mdpolicy)
+        raise Errors.RepoError, 'Bad loadRepoXML policy (for %s): %s' % (self.ui_id, self.mdpolicy)
 
     def _getRepoXML(self):
         if self._repoXML:
             return self._repoXML
-        self._loadRepoXML(text=self)
+        self._loadRepoXML(text=self.ui_id)
         return self._repoXML
 
 
@@ -1599,7 +1599,7 @@ Insufficient space in download directory %s
                 result = self._getFile(relative='repodata/repomd.xml.asc',
                                        copy_local=1,
                                        local = sigfile,
-                                       text='%s/signature' % self,
+                                       text='%s/signature' % self.ui_id,
                                        reget=None,
                                        checkfunc=None,
                                        cache=self.http_caching == 'all',
@@ -1717,7 +1717,7 @@ Insufficient space in download directory %s
             else: # ain't there - raise
                 raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,
-                           self)
+                           self.ui_id)
 
         if (os.path.exists(local) or
             self._preload_md_from_system_cache(os.path.basename(local))):
@@ -1754,7 +1754,7 @@ Insufficient space in download directory %s
             if retrieve_can_fail:
                 return None
             raise Errors.RepoError, \
-                "Could not retrieve %s matching remote checksum from %s" % (local, self)
+                "Could not retrieve %s matching remote checksum from %s" % (local, self.ui_id)
         else:
             return local
 

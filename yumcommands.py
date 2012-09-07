@@ -1968,7 +1968,7 @@ class RepoListCommand(YumCommand):
                 ui_endis_wid = utf8_width(_('disabled'))
 
             if not verbose:
-                rid = str(repo)
+                rid = repo.ui_id # can't use str()
                 if enabled and repo.metalink:
                     mdts = repo.metalink_data.repomd.timestamp
                     if mdts > repo.repoXML.timestamp:

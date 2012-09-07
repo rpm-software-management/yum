@@ -1837,7 +1837,7 @@ class RepoListCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ('repolist',)
+        return ('repolist', 'repoinfo')
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1893,7 +1893,10 @@ class RepoListCommand(YumCommand):
             arg = 'enabled'
         extcmds = map(lambda x: x.lower(), extcmds)
 
-        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        if basecmd == 'repoinfo':
+            verbose = True
+        else:
+            verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if arg != 'disabled' or extcmds:
             try:
                 # Setup so len(repo.sack) is correct
@@ -1980,7 +1983,7 @@ class RepoListCommand(YumCommand):
                     md = repo.repoXML
                 else:
                     md = None
-                out = [base.fmtKeyValFill(_("Repo-id      : "), repo),
+                out = [base.fmtKeyValFill(_("Repo-id      : "), repo.ui_id),
                        base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
 
                 if force_show or extcmds:
@@ -2067,7 +2070,7 @@ class RepoListCommand(YumCommand):
                     out += [base.fmtKeyValFill(_("Repo-filename: "),
                                                repo.repofile)]
 
-                base.verbose_logger.log(logginglevels.DEBUG_3, "%s\n",
+                base.verbose_logger.info("%s\n",
                                         "\n".join(map(misc.to_unicode, out)))
 
         if not verbose and cols:

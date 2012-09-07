@@ -434,7 +434,11 @@ class YumRepository(Repository, config.RepoConf):
         return thisdata.location
 
     def __str__(self):
-        return self.ui_id
+        # Note: You might expect this to be .ui_id, except people got used to
+        # the fact that str(repo) == repo.id and used the former instead of
+        # the later when they wanted just the .id. So we have to live with it
+        # and use .ui_id explicitly.
+        return self.id
 
     def _checksum(self, sumtype, file, CHUNK=2**16, checksum_can_fail=False,
                   datasize=None):

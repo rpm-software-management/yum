@@ -225,6 +225,10 @@ class FakeRepository:
     def __str__(self):
         return self.id
 
+    def _ui_id(self):
+        return self.id
+    ui_id = property(fget=lambda self: self._ui_id())
+
 
 #  Goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available

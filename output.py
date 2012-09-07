@@ -820,7 +820,7 @@ class YumOutput:
         print _("Version     : %s") % to_unicode(pkg.version)
         print _("Release     : %s") % to_unicode(pkg.release)
         print _("Size        : %s") % self.format_number(float(pkg.size))
-        print _("Repo        : %s") % to_unicode(pkg.repoid)
+        print _("Repo        : %s") % to_unicode(pkg.repo.ui_id)
         if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
             print _("From repo   : %s") % to_unicode(pkg.yumdb_info.from_repo)
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):

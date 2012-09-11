@@ -407,7 +407,7 @@ class Environment(CompsObj):
         msg += """    </grouplist>\n"""
         msg += """    <optionlist>\n"""
         for grp in self.options:
-            msg += """     <optionid>%s</optionid>\n""" % grp
+            msg += """     <groupid>%s</groupid>\n""" % grp
         msg += """    </optionlist>\n"""
         msg += """  </environment>\n"""
 

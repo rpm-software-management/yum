@@ -2194,7 +2194,7 @@ class YumOptionParser(OptionParser):
         self._checkAbsInstallRoot(opts)
         # If the conf file is inside the  installroot - use that.
         # otherwise look for it in the normal root
-        if opts.installroot:
+        if opts.installroot and opts.installroot.lstrip('/'):
             if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
                 opts.conffile = opts.installroot+'/'+opts.conffile
             elif opts.conffile == '/etc/yum/yum.conf':

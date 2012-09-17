@@ -538,7 +538,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         cfr = self.tsInfo._check_future_rpmdbv
         if (cfr is not None and
-            cfr[0] == self.tsInfo.state_counter and
             self.tsInfo.futureRpmDBVersion() != cfr[1]):
             msg = _("future rpmdb ver mismatched saved transaction version,")
             if cfr[2]:

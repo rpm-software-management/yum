@@ -6491,7 +6491,7 @@ much more problems).
                     if not ignoremissing:
                         raise Errors.YumBaseError(msg)
                     else:
-                        ignorenewrpm = False
+                        ignorenewrpm = True
                         self.logger.critical(msg)
                 else:
                     pkgcount += 1
@@ -6568,7 +6568,7 @@ much more problems).
         if pkgprob:
             msg = _("Transaction members, relations are missing or ts has been modified,")
             if ignoremissing:
-                ignorenewrpm = False
+                ignorenewrpm = True
                 msg += _(" ignoring, as requested. You must redepsolve!")
                 self.logger.critical(msg)
             else:

@@ -976,7 +976,10 @@ Insufficient space in download directory %s
             misc.unlink_f(local)
 
         if checkfunc is None:
-            checkfunc = lambda obj: package.verifyLocalPkg()
+            def checkfunc(obj):
+                if not package.verifyLocalPkg():
+                    misc.unlink_f(local)
+                    raise URLGrabError(-1, _('Package does not match intended download.'))
 
         ret = self._getFile(url=basepath,
                         relative=remote,

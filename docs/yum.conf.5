@@ -696,12 +696,15 @@ Boolean (1, 0, True, False, yes, no) Defaults to False
 Should the load-ts command ignore packages that are missing. This includes
 packages in the TS to be removed, which aren't installed, and packages in the
 TS to be added, which aren't available.
+If this is set to true, and an rpm is missing then loadts_ignorenewrpm is
+automatically set to true.
 Boolean (1, 0, True, False, yes, no) Defaults to False
 
 .IP
 \fBloadts_ignorerpm\fR
 Should the load-ts command ignore the rpmdb version (yum version nogroups) or
 abort if there is a mismatch between the TS file and the current machine.
+If this is set to true, then loadts_ignorenewrpm is automatically set to true.
 Boolean (1, 0, True, False, yes, no) Defaults to False
 
 .IP

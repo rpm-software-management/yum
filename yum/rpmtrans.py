@@ -636,6 +636,7 @@ class RPMTransaction:
             msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
                    (scriptlet_name, package_name))
         self.display.errorlog(msg)
+        self._scriptout(package_name)
         # FIXME - what else should we do here? raise a failure and abort?
     
     def _scriptStart(self, bytes, total, h):

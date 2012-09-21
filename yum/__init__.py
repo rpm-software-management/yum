@@ -931,12 +931,6 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
-            # open it up as a file object so iterparse can cope with our compressed file
-            if groupfile:
-                groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml',
-                                                     cached=repo.cache)
-                # Do we want a RepoError here?
-                
             try:
                 self._comps.add(groupfile)
             except (Errors.GroupsError,Errors.CompsException), e:

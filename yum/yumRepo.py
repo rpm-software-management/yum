@@ -660,7 +660,7 @@ class YumRepository(Repository, config.RepoConf):
         cookie = self.cachedir + '/' + self.metadata_cookie_fn
         self.setAttribute('_dir_setup_metadata_cookie', cookie)
 
-        for dir in [self.cachedir, self.pkgdir]:
+        for dir in [self.cachedir, self.cachedir + '/gen', self.pkgdir]:
             self._dirSetupMkdir_p(dir)
 
         # persistdir is really root-only but try the make anyway and just

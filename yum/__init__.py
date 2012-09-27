@@ -1190,14 +1190,16 @@ class YumBase(depsolve.Depsolve):
                     bigmsg = _("""\
  Multilib version problems found. This often means that the root
 cause is something else and multilib version checking is just
-pointing it that there is a problem. Eg.:
+pointing out that there is a problem. Eg.:
 
   1. You have an upgrade for %(name)s which is missing some
      dependency that another package requires. Yum is trying to
      solve this by installing an older version of %(name)s of the
      different architecture. If you exclude the bad architecture
      yum will tell you what the root cause is (which package
-     requires what).
+     requires what). You can try redoing the upgrade with
+     --exclude %(name)s.otherarch ... this should give you an error
+     message showing the root cause of the problem.
 
   2. You have multiple architectures of %(name)s installed, but
      yum can only see an upgrade for one of those arcitectures.

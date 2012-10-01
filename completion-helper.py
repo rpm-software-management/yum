@@ -23,7 +23,7 @@ import sys
 
 import cli
 import yumcommands
-from yum.Errors import GroupsError
+from yum.Errors import GroupsError, ConfigError
 
 
 class GroupsCompletionCommand(yumcommands.GroupsCommand):
@@ -76,11 +76,11 @@ def main(args):
     base.registerCommand(RepoListCompletionCommand())
     base.getOptionsConfig(args)
     base.parseCommands()
-    for repo in base.repos.listEnabled():
-        repo.skip_if_unavailable = True
     try:
+        for repo in base.repos.listEnabled():
+            repo.skip_if_unavailable = True
         base.doCommands()
-    except GroupsError, e:
+    except (GroupsError, ConfigError), e:
         base.logger.error(e)
 
 if __name__ == "__main__":

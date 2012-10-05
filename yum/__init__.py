@@ -21,6 +21,7 @@ The Yum RPM software updater.
 import os
 import os.path
 import rpm
+import sys
 
 def _rpm_ver_atleast(vertup):
     """ Check if rpm is at least the current vertup. Can return False/True/None
@@ -2219,6 +2220,7 @@ much more problems).
         self.history.close()
 
         self.plugins.run('predownload', pkglist=pkglist)
+        downloadonly = getattr(self.conf, 'downloadonly', False)
         repo_cached = False
         remote_pkgs = []
         remote_size = 0
@@ -2245,7 +2247,6 @@ much more problems).
             # way to save this, report the error and return
             if (self.conf.cache or repo_cached) and errors:
                 return errors
-                
 
         remote_pkgs.sort(mediasort)
         #  This is kind of a hack and does nothing in non-Fedora versions,
@@ -2321,6 +2322,9 @@ much more problems).
         if hasattr(urlgrabber.grabber, 'reset_curl_obj'):
             urlgrabber.grabber.reset_curl_obj()
 
+        if downloadonly and not errors: # caller handles errors
+            self.verbose_logger.info(_('exiting because --downloadonly specified'))
+            sys.exit(self.exit_code)
         return errors
 
     def verifyHeader(self, fo, po, raiseError):

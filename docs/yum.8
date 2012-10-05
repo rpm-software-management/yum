@@ -586,6 +586,12 @@ configuration to stop this).
 This option makes yum go slower, checking for things that shouldn't be possible
 making it more tolerant of external errors.
 .br
+.IP "\fB\-\-downloadonly\fP"
+Don't update, just download.
+.br
+.IP "\fB\-\-downloaddir=directory\fP"
+Specifies an alternate directory to store packages.
+.br
 .IP "\fB\-\-setopt=option=value\fP"
 Set any config option in yum config or repo files. For options in the global 
 config just use: \-\-setopt=option=value for repo options use: \-\-setopt=repoid.option=value

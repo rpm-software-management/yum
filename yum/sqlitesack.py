@@ -1563,6 +1563,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             patterns = tmp
         return (need_full, patterns, fields, False)
 
+    # @catchSqliteException has no effect on generators
     def _yieldSQLDataList(self, repoid, patterns, fields, ignore_case):
         """Yields all the package data for the given params. Excludes are done
            at this stage. """

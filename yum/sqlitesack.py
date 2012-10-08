@@ -1563,7 +1563,6 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             patterns = tmp
         return (need_full, patterns, fields, False)
 
-    @catchSqliteException
     def _yieldSQLDataList(self, repoid, patterns, fields, ignore_case):
         """Yields all the package data for the given params. Excludes are done
            at this stage. """
@@ -1596,6 +1595,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 for x in cur:
                     yield (repo, x)
 
+    @catchSqliteException
     def _buildPkgObjList(self, repoid=None, patterns=None, ignore_case=False):
         """Builds a list of packages, only containing nevra information.
            Excludes are done at this stage. """
@@ -1669,6 +1669,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         return returnList
 
+    @catchSqliteException
     def simplePkgList(self, patterns=None, ignore_case=False):
         """Returns a list of pkg tuples (n, a, e, v, r), optionally from a
            single repoid. Note that the packages are always filtered to those

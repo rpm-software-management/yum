@@ -282,11 +282,7 @@ class PackageSackBase(object):
 
         specs = {}
         for p in pkgspecs:
-            if misc.re_glob(p):
-                restring = fnmatch.translate(p)
-                specs[p] = re.compile(restring)
-            else:
-                specs[p] = p
+            specs[p] = misc.compile_pattern(p)
 
         #  We don't use simplePkgList() here because that loads all of the
         # rpmdb, if we are Eg. doing a "remove PackageKit".
@@ -304,13 +300,12 @@ class PackageSackBase(object):
                 ))
                 
             for (term,query) in specs.items():
-                if term == query:
-                    if query in names:
-                        exactmatch.append(self.searchPkgTuple(pkgtup)[0])
-                        unmatched.discard(term)
+                if term in names:
+                    exactmatch.append(self.searchPkgTuple(pkgtup)[0])
+                    unmatched.discard(term)
                 else:
                     for n in names:
-                        if query.match(n):
+                        if query(n):
                             matched.append(self.searchPkgTuple(pkgtup)[0])
                             unmatched.discard(term)
         return misc.unique(exactmatch), misc.unique(matched), list(unmatched)

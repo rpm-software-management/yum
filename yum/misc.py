@@ -97,6 +97,19 @@ def re_glob(s):
         _re_compiled_glob_match = re.compile('[*?]|\[.+\]').search
     return _re_compiled_glob_match(s)
 
+def compile_pattern(pat, ignore_case=False):
+    """ Compile shell wildcards, return a 'match' function. """
+    if re_glob(pat):
+        try:
+            flags = ignore_case and re.I or 0
+            return re.compile(fnmatch.translate(pat), flags).match
+        except re.error:
+            pass # fall back to exact match
+    if ignore_case:
+        pat = pat.lower()
+        return lambda s: s.lower() == pat
+    return lambda s: s == pat
+
 _re_compiled_filename_match = None
 def re_filename(s):
     """ Tests if a string could be a filename. We still get negated character

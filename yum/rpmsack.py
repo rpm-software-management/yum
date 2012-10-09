@@ -546,13 +546,11 @@ class RPMDBPackageSack(PackageSackBase):
             qpat = pat[0]
             if qpat in ('?', '*', '['):
                 qpat = None
-            if ignore_case:
-                if qpat is not None:
-                    qpat = qpat.lower()
-                ret.append((qpat, re.compile(fnmatch.translate(pat), re.I)))
-            else:
-                ret.append((qpat, re.compile(fnmatch.translate(pat))))
+            elif ignore_case:
+                qpat = qpat.lower()
+            ret.append((qpat, misc.compile_pattern(pat, ignore_case)))
         return ret
+
     @staticmethod
     def _match_repattern(repatterns, hdr, ignore_case):
         """ This is basically parsePackages() but for rpm hdr objects. """
@@ -570,20 +568,20 @@ class RPMDBPackageSack(PackageSackBase):
                 qname = qname.lower()
             if qpat is not None and qpat != qname and qpat != epoch[0]:
                 continue
-            if repat.match(hdr['name']):
+            if repat(hdr['name']):
                 return True
-            if repat.match("%(name)s-%(version)s-%(release)s.%(arch)s" % hdr):
+            if repat("%(name)s-%(version)s-%(release)s.%(arch)s" % hdr):
                 return True
-            if repat.match("%(name)s.%(arch)s" % hdr):
+            if repat("%(name)s.%(arch)s" % hdr):
                 return True
-            if repat.match("%(name)s-%(version)s" % hdr):
+            if repat("%(name)s-%(version)s" % hdr):
                 return True
-            if repat.match("%(name)s-%(version)s-%(release)s" % hdr):
+            if repat("%(name)s-%(version)s-%(release)s" % hdr):
                 return True
-            if repat.match(epoch + ":%(name)s-%(version)s-%(release)s.%(arch)s"
+            if repat(epoch + ":%(name)s-%(version)s-%(release)s.%(arch)s"
                            % hdr):
                 return True
-            if repat.match("%(name)s-%(epoch)s:%(version)s-%(release)s.%(arch)s"
+            if repat("%(name)s-%(epoch)s:%(version)s-%(release)s.%(arch)s"
                            % hdr):
                 return True
         return False

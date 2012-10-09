@@ -132,11 +132,10 @@ def parsePackages(pkgs, usercommands, casematch=0,
                 trylist = pkgdict.keys()
                 # command and pkgdict are already lowered if not casematch
                 # so case sensitive is always fine
-                restring = fnmatch.translate(command)
-                regex = re.compile(restring)
+                regex = misc.compile_pattern(command)
                 foundit = 0
                 for item in trylist:
-                    if regex.match(item):
+                    if regex(item):
                         matched.extend(pkgdict[item])
                         del pkgdict[item]
                         foundit = 1

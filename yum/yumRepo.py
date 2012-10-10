@@ -1206,7 +1206,7 @@ Insufficient space in download directory %s
         #  We still want the old data, so we don't download twice. So we
         # pretend everything is good until the revert.
         if not self.timestamp_check:
-            raise Errors.RepoError, "Can't download or revert repomd.xml for:" % self.ui_id
+            raise Errors.RepoError, "Can't download or revert repomd.xml for %s" % self.ui_id
 
         if 'old_repo_XML' not in self._oldRepoMDData:
             self._oldRepoMDData = {}

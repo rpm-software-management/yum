@@ -931,6 +931,10 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
+            if not groupfile:
+                msg = _('Failed to retrieve group file for repository: %s') % repo
+                self.logger.critical(msg)
+                continue
             try:
                 self._comps.add(groupfile)
             except (Errors.GroupsError,Errors.CompsException), e:

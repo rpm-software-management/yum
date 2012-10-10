@@ -1712,12 +1712,16 @@ Insufficient space in download directory %s
                 try:
                     self.checkMD(local, mdtype)
                 except URLGrabError, e:
+                    if retrieve_can_fail:
+                        return None
                     raise Errors.RepoError, \
                         "Caching enabled and local cache: %s does not match checksum" % local
                 else:
                     return local
 
             else: # ain't there - raise
+                if retrieve_can_fail:
+                    return None
                 raise Errors.RepoError, \
                     "Caching enabled but no local cache of %s from %s" % (local,
                            self.ui_id)

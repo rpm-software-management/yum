@@ -2239,6 +2239,14 @@ much more problems).
                     self.verbose_logger.debug(_("using local copy of %s") %(po,))
                     continue
                         
+            if downloadonly:
+                # download to temp file
+                rpmfile = po.localpath
+                po.localpath += '.%d.tmp' % os.getpid()
+                try: os.rename(rpmfile, po.localpath)
+                except OSError: pass
+                po.basepath # prefetch now; fails when repos are closed
+
             remote_pkgs.append(po)
             remote_size += po.size
             
@@ -2247,6 +2255,11 @@ much more problems).
             # way to save this, report the error and return
             if (self.conf.cache or repo_cached) and errors:
                 return errors
+        if downloadonly:
+            # close DBs, unlock
+            self.repos.close()
+            self.closeRpmDB()
+            self.doUnlock()
 
         remote_pkgs.sort(mediasort)
         #  This is kind of a hack and does nothing in non-Fedora versions,
@@ -2316,7 +2329,21 @@ much more problems).
         if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
 
-        self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
+        if downloadonly:
+            for po in remote_pkgs:
+                rpmfile = po.localpath.rsplit('.', 2)[0]
+                if po in errors:
+                    # we may throw away partial file here- but we don't lock,
+                    # so can't rename tempfile to rpmfile safely
+                    misc.unlink_f(po.localpath)
+                if po not in errors:
+                    # verifyPkg() didn't complain, so (potentially)
+                    # overwriting another copy should not be a problem
+                    os.rename(po.localpath, rpmfile)
+                po.localpath = rpmfile
+        else:
+            # XXX: Run unlocked?  Skip this for now..
+            self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 
         # Close curl object after we've downloaded everything.
         if hasattr(urlgrabber.grabber, 'reset_curl_obj'):

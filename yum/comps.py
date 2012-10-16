@@ -16,14 +16,14 @@
 
 import types
 import sys
-from constants import *
-from Errors import CompsException
+from yum.constants import *
+from yum.Errors import CompsException
 #FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
 # switch all compsexceptions to grouperrors after api break
 import fnmatch
 import re
 from yum.i18n import to_unicode
-from misc import get_my_lang_code
+from yum.misc import get_my_lang_code
 from yum.misc import cElementTree_iterparse as iterparse 
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
@@ -281,7 +281,6 @@ class Group(CompsObj):
 
         return msg      
 
-
 class Environment(CompsObj):
     """ Environment object parsed from group data in each repo, and merged """
 
@@ -512,13 +511,61 @@ class Category(CompsObj):
         msg += """  </category>\n"""
 
         return msg                
-        
+
+class Langpacks(CompsObj):
+    def __init__(self, elem=None):
+        self.langpacks = []
+        self.name = "" # prevent CompsObj.__str__() throwing an AttributeError
+        if elem is not None:
+            self.parse(elem)
+
+    def __getitem__(self, indx):
+        return self.langpacks[indx]
+
+    def __iter__(self):
+        for i in self.langpacks:
+            yield i
+
+    def __len__(self):
+        return len(self.langpacks)
+
+    def add(self, name, install):
+        langpack = {
+            "name": name,
+            "install": install,
+        }
+        self.langpacks.append(langpack)
+
+    def parse(self, elem):
+        for child in elem:
+            if child.tag == "match":
+                langpack = {
+                    "name": child.attrib.get("name"),
+                    "install": child.attrib.get("install"),
+                }
+                self.langpacks.append(langpack)
+            else:
+                raise CompsException("Unexpected element in <langpacks>: %s" % child.tag)
+
+        self.name = elem.attrib.get("name")
+        self.install = elem.attrib.get("install")
+
+    def xml(self):
+        """write out an xml stanza for the Langpacks object"""
+        if not self.langpacks:
+            return ''
+        msg  = '  <langpacks>\n'
+        for i in self:
+            msg += '    <match name="%s" install="%s"/>\n' % (i["name"], i["install"])
+        msg += '  </langpacks>\n'
+        return msg
 
 class Comps(object):
     def __init__(self, overwrite_groups=False):
         self._groups = {}
         self._environments = {}
         self._categories = {}
+        self._langpacks = Langpacks()
         self.compscount = 0
         self.overwrite_groups = overwrite_groups
         self.compiled = False # have groups been compiled into avail/installed 
@@ -529,7 +576,7 @@ class Comps(object):
         grps = self._groups.values()
         grps.sort(key=lambda x: (x.display_order, x.name))
         return grps
-        
+
     def get_environments(self):
         environments = self._environments.values()
         environments.sort(key=lambda x: (x.display_order, x.name))
@@ -539,10 +586,14 @@ class Comps(object):
         cats = self._categories.values()
         cats.sort(key=lambda x: (x.display_order, x.name))
         return cats
+
+    def get_langpacks(self):
+        return self._langpacks
     
     groups = property(get_groups)
     environments = property(get_environments)
     categories = property(get_categories)
+    langpacks = property(get_langpacks)
     
     def has_group(self, grpid):
         exists = self.return_groups(grpid)
@@ -703,6 +754,9 @@ class Comps(object):
         else:
             self._categories[category.categoryid] = category
 
+    def add_langpack(self, name, install):
+        self._langpacks.add(name, install)
+
     def add(self, srcfile = None):
         if not srcfile:
             raise CompsException
@@ -732,6 +786,8 @@ class Comps(object):
                 if elem.tag == "category":
                     category = Category(elem)
                     self.add_category(category)
+                if elem.tag == "langpacks":
+                    self._langpacks.parse(elem)
         except SyntaxError, e:
             raise CompsException, "comps file is empty/damaged"
             
@@ -791,7 +847,7 @@ class Comps(object):
         """returns the xml of the comps files in this class, merged"""
 
         if not self._groups and not self._categories and \
-            not self._environments:
+            not self._environments and not len(self._langpacks):
             return ""
             
         msg = """<?xml version="1.0" encoding="UTF-8"?>
@@ -805,7 +861,7 @@ class Comps(object):
             msg += c.xml()
         for e in self.get_environments():
             msg += e.xml()
-
+        msg += self.get_langpacks().xml()
         msg += """\n</comps>\n"""
         
         return msg
@@ -820,23 +876,34 @@ def main():
         for srcfile in sys.argv[1:]:
             p.add(srcfile)
 
+        print
+        print "===== GROUPS ====="
         for group in p.groups:
-            print group
+            print "%s (id: %s)" % (group, group.groupid)
             for pkg in group.packages:
                 print '  ' + pkg
-        
+
+        print
+        print "===== ENVIRONMENTS ====="
         for environment in p.environments:
-            print environment.name
+            print "%s (id: %s)" % (environment.name, environment.environmentid)
             for group in environment.groups:
                 print '  ' + group
             for group in environment.options:
                 print '  *' + group
 
+        print
+        print "===== CATEGORIES ====="
         for category in p.categories:
-            print category.name
+            print "%s (id: %s)" % (category.name, category.categoryid)
             for group in category.groups:
                 print '  ' + group
-                
+
+        print
+        print "===== LANGPACKS ====="
+        for langpack in p.langpacks:
+            print '  %s (%s)' % (langpack["name"], langpack["install"])
+
     except IOError:
         print >> sys.stderr, "newcomps.py: No such file:\'%s\'" % sys.argv[1]
         sys.exit(1)

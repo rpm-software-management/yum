@@ -4329,6 +4329,28 @@ much more problems).
 
         return False
 
+    def _valid_install_arch(self, po, ipkgs=None):
+        ''' See if we can install this arch of package, mainly for
+            i386 vs. i586 or ppc64 vs. ppc64 etc. '''
+        if not ipkgs:
+            ipkgs = self.rpmdb.searchNames([po.name])
+            for txmbr in self.tsInfo.matchNaevr(po.name):
+                if txmbr.output_state not in TS_INSTALL_STATES:
+                    continue
+                ipkgs.append(txmbr.po)
+
+        for ipkg in ipkgs:
+            if po.arch == ipkg.arch:
+                continue
+            if not po.verEQ(ipkg):
+                continue
+            if canCoinstall(po.arch, ipkg.arch):
+                continue
+            self.verbose_logger.log(logginglevels.INFO_2,
+                    _("Package: %s - can't co-install with %s"), po, ipkg)
+            return False
+        return True
+
     def install(self, po=None, **kwargs):
         """Mark the specified item for installation.  If a package
         object is given, mark it for installation.  Otherwise, mark
@@ -4487,6 +4509,9 @@ much more problems).
             if ipkgs and self._install_is_upgrade(po, ipkgs):
                 txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
+                continue
+
+            if not self._valid_install_arch(po, ipkgs):
                 continue
             
             #  Make sure we're not installing a package which is obsoleted by
@@ -4861,6 +4886,9 @@ much more problems).
                     tx_return.append(txmbr)
                         
         for available_pkg in availpkgs:
+            if not self._valid_install_arch(available_pkg):
+                continue
+
             # "Just do it" if it's a local pkg.
             if isinstance(available_pkg, YumLocalPackage):
                 n = available_pkg.name
@@ -5373,6 +5401,10 @@ much more problems).
         # installed version. Indexed fromn the latest installed pkgtup.
         downgrade_apkgs = {}
         for pkg in sorted(apkgs):
+            # We are cleverer here, I think...
+            # if not self._valid_install_arch(pkg, ipkgs):
+            # continue
+
             na  = (pkg.name, pkg.arch)
 
             # Here we allow downgrades from .i386 => .noarch, or .i586 => .i386

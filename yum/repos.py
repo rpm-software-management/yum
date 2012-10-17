@@ -129,6 +129,10 @@ class RepoStorage:
             # so nothing else touches us
             if not repo.enabled:
                 self.disableRepo(repo.id)
+            else:
+                pkgdir = getattr(self.ayum.conf, 'downloaddir', None)
+                if pkgdir:
+                    repo.pkgdir = pkgdir
                 
         self._setup = True
         self.retrieveAllMD()

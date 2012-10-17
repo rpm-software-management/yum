@@ -2084,6 +2084,8 @@ class YumOptionParser(OptionParser):
                 self.base.conf.assumeyes = 1
             if opts.assumeno:
                 self.base.conf.assumeno  = 1
+            self.base.conf.downloadonly = opts.dlonly
+            self.base.conf.downloaddir = opts.dldir
 
             #  Treat users like root as much as possible:
             if not self.base.setCacheDir():
@@ -2305,6 +2307,10 @@ class YumOptionParser(OptionParser):
                 help=_("control whether color is used"))
         group.add_option("", "--releasever", dest="releasever", default=None, 
                 help=_("set value of $releasever in yum config and repo files"))
+        group.add_option("--downloadonly", dest="dlonly", action="store_true",
+                help=_("don't update, just download"))
+        group.add_option("--downloaddir", dest="dldir", default=None,
+                help=_("specifies an alternate directory to store packages"))
         group.add_option("", "--setopt", dest="setopts", default=[],
                 action="append", help=_("set arbitrary config and repo options"))
 

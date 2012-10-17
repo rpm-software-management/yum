@@ -41,7 +41,8 @@ _yum_baseopts()
         --debuglevel --showduplicates --errorlevel --rpmverbosity --quiet
         --verbose --assumeyes --assumeno --version --installroot --enablerepo
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
-        --nogpgcheck --skip-broken --color --releasever --setopt'
+        --nogpgcheck --skip-broken --color --releasever --setopt --downloadonly
+        --downloaddir'
     [[ $COMP_LINE == *--noplugins* ]] || \
         opts+=" --disableplugin --enableplugin"
     printf %s "$opts"

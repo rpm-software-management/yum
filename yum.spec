@@ -45,6 +45,8 @@ Requires: python-sqlite
 Requires: python-urlgrabber >= 3.9.0-8
 Requires: yum-metadata-parser >= 1.1.0
 Requires: pygpgme
+# rawhide is >= 0.5.3-7.fc18 ... as this is added.
+Requires: pyliblzma
 
 Conflicts: rpm >= 5-0
 # Zif is a re-implementation of yum in C, however:

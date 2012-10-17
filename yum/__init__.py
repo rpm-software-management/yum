@@ -4365,10 +4365,14 @@ much more problems).
             i386 vs. i586 or ppc64 vs. ppc64 etc. '''
         if not ipkgs:
             ipkgs = self.rpmdb.searchNames([po.name])
-            for txmbr in self.tsInfo.matchNaevr(po.name):
-                if txmbr.output_state not in TS_INSTALL_STATES:
-                    continue
-                ipkgs.append(txmbr.po)
+        else:
+            ipkgs = ipkgs[:]
+
+        # Add these anyway, just to be sure.
+        for txmbr in self.tsInfo.matchNaevr(po.name):
+            if txmbr.output_state not in TS_INSTALL_STATES:
+                continue
+            ipkgs.append(txmbr.po)
 
         for ipkg in ipkgs:
             if po.arch == ipkg.arch:

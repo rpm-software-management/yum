@@ -79,7 +79,7 @@ Obsoletes: yum-plugin-protect-packages < 1.1.27-0
 Provides: yum-protect-packages = 1.1.27-0.yum
 Provides: yum-plugin-protect-packages = 1.1.27-0.yum
 Obsoletes: yum-plugin-download-order <= 0.2-2
-Obsoletes: yum-plugin-downloadonly <= 3.4.3-44
+Obsoletes: yum-plugin-downloadonly <= 1.1.31-6.fc19
 Provides: yum-plugin-downloadonly = 3.4.3-44.yum
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 

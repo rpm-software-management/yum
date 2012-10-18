@@ -15,6 +15,7 @@
 # Copyright 2006 Duke University
 
 from yum.misc import cElementTree_iterparse as iterparse 
+from yum.misc import _available_compression, stat_f
 from Errors import RepoMDError
 
 import sys
@@ -133,6 +134,7 @@ class RepoMD:
         else:
             # srcfile is a file object
             infile = srcfile
+            srcfile = None
 
         # We trust any of these to mean the repomd.xml is valid.
         infile = AutoFileChecksums(infile, ['sha256', 'sha512'],
@@ -145,6 +147,13 @@ class RepoMD:
                 
                 if elem_name == "data":
                     thisdata = RepoData(elem=elem)
+                    old = self.repoData.get(thisdata.type)
+                    if (old and old.size and old.size < thisdata.size
+                        and old.location[1].rsplit('.', 1)[1] in _available_compression
+                        and srcfile and stat_f(srcfile.rsplit('/', 1)[0] +'/'+
+                                               thisdata.location[1].rsplit('/', 1)[1]) is None):
+                        # previous is smaller, can unzip it, and next is not cached
+                        thisdata = old
                     self.repoData[thisdata.type] = thisdata
                     try:
                         nts = int(thisdata.timestamp)

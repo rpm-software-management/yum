@@ -41,14 +41,19 @@ class GroupsCompletionCommand(yumcommands.GroupsCommand):
 
 class ListCompletionCommand(yumcommands.ListCommand):
     def doCommand(self, base, basecmd, extcmds):
+        def printPkgs(pkgs):
+            for pkg in pkgs:
+                if base.allowedMultipleInstalls(pkg):
+                    print pkg.nvra
+                else:
+                    print pkg.na
+
         ypl = base.doPackageLists(pkgnarrow=extcmds[0],
                                   patterns=[get_pattern(extcmds)])
         if extcmds[0] in ("installed", "all"):
-            for pkg in ypl.installed:
-                print pkg.na
+            printPkgs(ypl.installed)
         if extcmds[0] in ("available", "all"):
-            for pkg in ypl.available:
-                print pkg.na
+            printPkgs(ypl.available)
 
 class RepoListCompletionCommand(yumcommands.RepoListCommand):
     def doCommand(self, base, basecmd, extcmds):

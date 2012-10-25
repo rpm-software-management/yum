@@ -1,7 +1,6 @@
 #!/usr/bin/python -tt
 import os
 import sys
-import time
 import gzip
 from socket import gethostname
 
@@ -23,7 +22,7 @@ from time import sleep
 sys.path.append('/usr/share/yum-cli')
 import callback
 
-default_config_file = '/home/nick/yum/new-yum-cron/yum-cron.conf'
+default_config_file = '/etc/yum/yum-cron.conf'
 
 class UpdateEmitter(object):
     """Abstract class for implementing different types of emitters.
@@ -648,7 +647,7 @@ class EmailEmitter(UpdateEmitter):
         :param errmsgs: a string that contains the error message
         """
         self.subject = "Yum: Failed to download updates on %s" % self.opts.system_name
-        super(EmailEmitter, self).lockFailed(errmsg)
+        super(EmailEmitter, self).downloadFailed(errmsg)
 
     def updatesFailed(self, errmsg):
         """Append a message to the output list stating that installing
@@ -694,7 +693,6 @@ class YumCronConfig(BaseConfig):
     """Class to parse configuration information from the config file, and
     to store this information.
     """
-    nonroot_workdir = Option("/var/tmp/yum-cron")
     system_name = Option(gethostname())
     output_width = IntOption(80)
     random_sleep = IntOption(0)
@@ -795,9 +793,7 @@ class YumCronBase(yum.YumBase):
 
             # if we are not root do the special subdir thing
             if os.geteuid() != 0:
-                if not os.path.exists(self.opts.nonroot_workdir):
-                    os.makedirs(self.opts.nonroot_workdir)
-                self.repos.setCacheDir(self.opts.nonroot_workdir)
+                self.setCacheDir()
 
             # Create the configuration
             self.conf

@@ -281,7 +281,7 @@ exit 0
 %files cron
 %defattr(-,root,root)
 %doc COPYING
-%config(noreplace) %{_sysconfdir}/cron.daily/0yum-update.cron
+%{_sysconfdir}/cron.daily/0yum-update.cron
 %config(noreplace) %{_sysconfdir}/yum/yum-cron.conf
 %{_sysconfdir}/rc.d/init.d/yum-cron
 %{_sbindir}/yum-cron

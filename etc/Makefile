@@ -24,9 +24,7 @@ install:
 
 	mkdir -p $(DESTDIR)/etc/dbus-1/system.d/
 	install -m 755 yum-updatesd-dbus.conf $(DESTDIR)/etc/dbus-1/system.d/yum-updatesd.conf
-
-	install -m 755 yum-updatesd.conf $(DESTDIR)/etc/yum/yum-updatesd.conf
-
+	install -m 644 yum-updatesd.conf $(YUMETC)
 	mkdir -p $(DESTDIR)/etc/bash_completion.d
 	install -m 644 yum.bash $(DESTDIR)/etc/bash_completion.d
 	install -m 644 yum-cron.conf $(YUMETC)

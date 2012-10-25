@@ -281,14 +281,11 @@ exit 0
 %files cron
 %defattr(-,root,root)
 %doc COPYING
-%config(noreplace) %{_sysconfdir}/cron.daily/0yum-update.cron
-%config(noreplace) %{_sysconfdir}/cron.daily/yum-cleanup.cron
+%{_sysconfdir}/cron.daily/0yum-update.cron
+%config(noreplace) %{_sysconfdir}/yum/yum-cron.conf
 %{_sysconfdir}/rc.d/init.d/yum-cron
 %{_sbindir}/yum-cron
-%config(noreplace) %{_sysconfdir}/sysconfig/yum-cron
-%dir %{_datadir}/yum-cron   
-%{_datadir}/yum-cron/update.yum
-%{_datadir}/yum-cron/cleanup.yum
+%{_mandir}/man*/yum-cron.*
 
 %if %{yum_updatesd}
 %files updatesd

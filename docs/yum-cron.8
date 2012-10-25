@@ -1,0 +1,49 @@
+.\" yum-cron - cron interface for yum
+.TH "yum-cron" "8" ""  "Nick Jacek" ""
+.SH "NAME"
+yum-cron \- an interface to convieniently call yum from cron
+
+.SH "SYNOPSIS"
+\fByum-cron\fP [config-file]
+
+.SH "DESCRIPTION"
+.PP 
+\fByum-cron\fP is an alternate interface to yum that is optimised to
+be convenient to call from cron.  It provides methods to keep
+repository metadata up to date, and to check for, download, and apply
+updates.  Rather than accepting many different command line arguments,
+the different functions of yum-cron can be accessed through config
+files.
+.PP 
+\fIconfig-file\fP is used to optionally specify the path to the
+configuration file to use.  If it is not given, the default
+configuration file will be used.  It is useful to be able to specify
+different configuration files for different use cases.  For example,
+one configuration file might be set to update the repository metadata,
+and a line could be added to the crontab to run yum-cron frequently
+using this file.  Then, another configuration file might be set to
+install updates, and yum-cron could be run from cron using this file
+just once each day.
+
+.SH "FILES"
+.nf
+/etc/yum-cron.conf
+.fi 
+
+.PP
+.SH "SEE ALSO"
+.nf
+.I yum (8)
+.fi
+
+.PP
+.SH "AUTHORS"
+.nf
+See the Authors file included with this program.
+.fi
+
+.PP
+.SH "BUGS"
+There of course aren't any bugs, but if you find any, you should email
+ the mailing list, yum@lists.baseurl.org, or consult bugzilla.
+.fi

@@ -29,3 +29,4 @@ install:
 
 	mkdir -p $(DESTDIR)/etc/bash_completion.d
 	install -m 644 yum.bash $(DESTDIR)/etc/bash_completion.d
+	install -m 644 yum-cron.conf $(YUMETC)

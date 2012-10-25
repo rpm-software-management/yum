@@ -932,16 +932,17 @@ class YumCronBase(yum.YumBase):
                                             self.tsInfo.getMembers()))
         try:
             # Download the updates
+            self.conf.download_only = not self.opts.apply_updates
             self.downloadPkgs(dlpkgs)
         except Exception, e:
             self.emitDownloadFailed("%s" % e)
             sys.exit(1)
-        else :
-            # Emit a message that the packages have been downloaded
-            # successfully
-            if emit :
+        except SystemExit, e:
+            if e.code == 0:
+                # Emit a message that the packages have been downloaded
                 self.emitDownloaded()
                 self.emitMessages()
+            raise
 
     def installUpdates(self, emit):
         """Apply the available updates.

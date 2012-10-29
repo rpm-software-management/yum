@@ -381,8 +381,10 @@ class YumRepository(Repository, config.RepoConf):
                 val = ini['metalink']
             elif 'mirrorlist' in ini:
                 val = ini['mirrorlist']
-            else:
+            elif 'baseurl' in ini:
                 val = ini['baseurl']
+            else:
+                val = ''
         ret = self.id
         if '$releasever' in val:
             ret += '/'

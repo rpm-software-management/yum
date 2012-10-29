@@ -644,6 +644,67 @@ class SimpleObsoletesTests(OperationsTests):
         # In theory don't need to upgrade oc1 => oc2
         self.assertResult((oc2, osl2, osll2))
 
+    def testCircObs1(self):
+        c1 = FakePackage('test-ccc', '0.1', '1')
+        c2 = FakePackage('test-ccc', '0.2', '2')
+        c2.addObsoletes('test-ddd', None, (None, None, None))
+
+        d1 = FakePackage('test-ddd', '0.1', '1')
+        d2 = FakePackage('test-ddd', '0.2', '2')
+        d2.addObsoletes('test-ccc', None, (None, None, None))
+
+        res, msg = self.runOperation(['upgrade'],
+                                     [c1, d1],
+                                     [c1, d1, c2, d2])
+
+        self.assertResult((c2, d2))
+
+    def testCircObs2(self):
+        c1 = FakePackage('test-ccc', '0.1', '1')
+        c2 = FakePackage('test-ccc', '0.2', '2')
+        c2.addObsoletes('test-ddd', None, (None, None, None))
+
+        d1 = FakePackage('test-ddd', '0.1', '1')
+        d2 = FakePackage('test-ddd', '0.2', '2')
+        d2.addObsoletes('test-ccc', None, (None, None, None))
+
+        res, msg = self.runOperation(['upgrade', 'test-ccc', 'test-ddd'],
+                                     [c1, d1],
+                                     [c1, d1, c2, d2])
+
+        self.assertResult((c2, d2))
+
+    def testCircObs3(self):
+        c1 = FakePackage('test-ccc', '0.1', '1')
+        c2 = FakePackage('test-ccc', '0.2', '2')
+        c2.addObsoletes('test-ddd', None, (None, None, None))
+
+        d1 = FakePackage('test-ddd', '0.1', '1')
+        d2 = FakePackage('test-ddd', '0.2', '2')
+        d2.addObsoletes('test-ccc', None, (None, None, None))
+
+        res, msg = self.runOperation(['upgrade', 'test-ccc'],
+                                     [c1, d1],
+                                     [c1, d1, c2, d2])
+
+        # Just c2 is fine too, although less likely what the user wants
+        self.assertResult((c2,d2))
+
+    def testCircObs4(self):
+        c1 = FakePackage('test-ccc', '0.1', '1')
+        c2 = FakePackage('test-ccc', '0.2', '2')
+        c2.addObsoletes('test-ddd', None, (None, None, None))
+
+        d1 = FakePackage('test-ddd', '0.1', '1')
+        d2 = FakePackage('test-ddd', '0.2', '2')
+        d2.addObsoletes('test-ccc', None, (None, None, None))
+
+        res, msg = self.runOperation(['upgrade', 'test-ddd'],
+                                     [c1, d1],
+                                     [c1, d1, c2, d2])
+
+        # Just d2 is fine too, although less likely what the user wants
+        self.assertResult((c2,d2))
 
 
 class GitMetapackageObsoletesTests(OperationsTests):

@@ -911,6 +911,9 @@ class Depsolve(object):
                             if otxmbr.output_state not in TS_INSTALL_STATES:
                                 continue
                             if otxmbr.po.obsoletedBy([txmbr.po]):
+                                if txmbr.po.obsoletedBy([otxmbr.po]):
+                                    # Have to deal with loops!
+                                    continue
                                 self.tsInfo.remove(otxmbr.pkgtup)
                                 #  We need to remove an obsoleted entry that
                                 # was maybe used to resolve something ... ?

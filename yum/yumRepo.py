@@ -140,7 +140,7 @@ class YumPackageSack(packageSack.PackageSack):
                 continue
 
             if self._check_db_version(repo, mydbtype):
-                if not self._check_uncompressed_db(repo, mydbtype):
+                if not self._check_uncompressed_db_gen(repo, mydbtype):
                     repo._retrieveMD(mydbtype, async=True, failfunc=None)
 
     def populate(self, repo, mdtype='metadata', callback=None, cacheonly=0):

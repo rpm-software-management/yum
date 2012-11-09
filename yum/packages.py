@@ -2027,7 +2027,7 @@ class YumInstalledPackage(YumHeaderPackage):
                             my_csum = digest_type + ':' + my_csum
                             my_st_size = fp.read_size
 
-                    if pf.verify_digest and my_csum != csum:
+                    if pf.verify_digest and my_csum != csum and my_csum:
                         prob = _PkgVerifyProb('checksum',
                                               'checksum does not match', ftypes)
                         prob.database_value = csum

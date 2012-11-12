@@ -1558,6 +1558,8 @@ much more problems).
             for txmbr in self.tsInfo.getMembers(dep.pkgtup):
                 for pkg in (txmbr.updates + txmbr.obsoletes):
                     toRemove.add(pkg)
+            if dep in toRemove: #  If this is true we inf. recurse, so check
+                continue        # even though it shouldn't happen. bz#874065
             toRemove.add(dep)
             self._getDepsToRemove(dep, deptree, toRemove)
 

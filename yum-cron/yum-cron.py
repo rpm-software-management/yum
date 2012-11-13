@@ -707,6 +707,7 @@ class YumCronConfig(BaseConfig):
     yum_config_file = Option("/etc/yum.conf")
     group_list = ListOption([])
     group_package_types = ListOption(['mandatory', 'default'])
+    skip_broken = BoolOption()
 
 
 class YumCronBase(yum.YumBase):
@@ -803,6 +804,10 @@ class YumCronBase(yum.YumBase):
             # and return False
             self.emitSetupFailed('%s' % e)
             sys.exit(1)
+
+        # override yum options
+        if self.opts.skip_broken is not None:
+            self.conf.skip_broken = self.opts.skip_broken
 
     def acquireLock(self):
         """ Wrapper method around doLock to emit errors correctly."""

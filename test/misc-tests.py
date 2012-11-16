@@ -114,6 +114,39 @@ class MiscTests(DepsolveTests):
         res, msg = solver.buildTransaction()
         return self.res[res], msg
 
+    def testXML(self):
+        import yum.misc
+        for i in (
+
+# valid utf8 and unicode
+('\xc4\x9b\xc5\xa1\xc4\x8d', '\xc4\x9b\xc5\xa1\xc4\x8d'),
+(u'\u011b\u0161\u010d',      '\xc4\x9b\xc5\xa1\xc4\x8d'),
+
+# invalid utf8
+('\xc3\x28', '\xc3\x83\x28'),
+('\xa0\xa1', '\xc2\xa0\xc2\xa1'),
+('Skytt\xe4', 'Skytt\xc3\xa4'),
+
+# entity expansion
+('&<>', '&amp;&lt;&gt;'),
+
+# removal of invalid bytes
+('\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f', '\t\n\r'),
+
+# attr flag
+('&"\'', '&amp;"\''),
+('&"\'', True, '&amp;&quot;&apos;'),
+
+# weirdness
+(None, ''),
+('abc ', 'abc'),
+
+        ):
+            i = list(i); ok = i.pop()
+            ret = yum.misc.to_xml(*i)
+            self.assertEqual(type(ret), str)
+            self.assertEqual(ret, ok)
+
 def setup_logging():
     logging.basicConfig()    
     plainformatter = logging.Formatter("%(message)s")    

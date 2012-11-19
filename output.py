@@ -1973,6 +1973,8 @@ to exit.
         """
         tids, printall = self._history_list_transactions(extcmds)
         if tids is None:
+            if not extcmds: # This is not a real error...
+                return 0, ['No accessible history to list']
             return 1, ['Failed history list']
 
         limit = 20

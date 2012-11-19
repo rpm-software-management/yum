@@ -116,7 +116,7 @@ class MiscTests(DepsolveTests):
 
     def testXML(self):
         import yum.misc
-        for i in (
+        for args in (
 
 # valid utf8 and unicode
 ('\xc4\x9b\xc5\xa1\xc4\x8d', '\xc4\x9b\xc5\xa1\xc4\x8d'),
@@ -142,10 +142,13 @@ class MiscTests(DepsolveTests):
 ('abc ', 'abc'),
 
         ):
-            i = list(i); ok = i.pop()
-            ret = yum.misc.to_xml(*i)
-            self.assertEqual(type(ret), str)
-            self.assertEqual(ret, ok)
+            # last item is the expected result
+            args, expected = args[:-1], args[-1]
+            actual = yum.misc.to_xml(*args)
+
+            # actual vs expected
+            self.assertEqual(type(actual), type(expected))
+            self.assertEqual(actual, expected)
 
 def setup_logging():
     logging.basicConfig()    

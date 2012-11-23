@@ -857,22 +857,14 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if hasattr(self, '_committer_ret'):
             return self._committer_ret
 
-        def _nf2ascii(x):
-            """ does .encode("ascii", "replace") but it never fails. """
-            ret = []
-            for val in x:
-                if ord(val) >= 128:
-                    val = '?'
-                ret.append(val)
-            return "".join(ret)
-
         if not len(self.changelog): # Empty changelog is _possible_ I guess
             self._committer_ret = self.packager
             return self._committer_ret
         val = self.changelog[0][1]
         # Chagnelog data is in multiple locale's, so we convert to ascii
         # ignoring "bad" chars.
-        val = _nf2ascii(val)
+        val = misc.to_unicode(val, errors='replace')
+        val = val.encode('ascii', 'replace')
         # Hacky way to get rid of version numbers...
         ix = val.find('> ')
         if ix != -1:
@@ -1123,10 +1115,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         packager = url = ''
         if self.packager:
-            packager = misc.to_unicode(misc.to_xml(self.packager))
+            packager = misc.to_xml(self.packager)
         
         if self.url:
-            url = misc.to_unicode(misc.to_xml(self.url))
+            url = misc.to_xml(self.url)
         (csum_type, csum, csumid) = self.checksums[0]
         msg = """
   <name>%s</name>
@@ -1140,8 +1132,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
   <time file="%s" build="%s"/>
   <size package="%s" installed="%s" archive="%s"/>\n""" % (self.name, 
          self.arch, self.epoch, self.ver, self.rel, csum_type, csum, 
-         misc.to_unicode(misc.to_xml(self.summary)), 
-         misc.to_unicode(misc.to_xml(self.description)), 
+         misc.to_xml(self.summary),
+         misc.to_xml(self.description),
          packager, url, self.filetime, 
          self.buildtime, self.packagesize, self.installedsize, self.archivesize)
         
@@ -1314,25 +1306,28 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
     def xml_dump_primary_metadata(self):
         msg = """\n<package type="rpm">"""
-        msg += misc.to_unicode(self._dump_base_items())
-        msg += misc.to_unicode(self._dump_format_items())
+        msg += self._dump_base_items()
+        msg += self._dump_format_items()
         msg += """\n</package>"""
-        return misc.to_utf8(msg)
+        assert type(msg) is str
+        return msg
 
     def xml_dump_filelists_metadata(self):
         msg = """\n<package pkgid="%s" name="%s" arch="%s">
     <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
                                      self.arch, self.epoch, self.ver, self.rel)
-        msg += misc.to_unicode(self._dump_files())
+        msg += self._dump_files()
         msg += "</package>\n"
-        return misc.to_utf8(msg)
+        assert type(msg) is str
+        return msg
 
     def xml_dump_other_metadata(self, clog_limit=0):
         msg = """\n<package pkgid="%s" name="%s" arch="%s">
     <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
                                      self.arch, self.epoch, self.ver, self.rel)
-        msg += "%s\n</package>\n" % misc.to_unicode(self._dump_changelog(clog_limit))
-        return misc.to_utf8(msg)
+        msg += "%s\n</package>\n" % self._dump_changelog(clog_limit)
+        assert type(msg) is str
+        return msg
 
 
 # HACK: This is completely retarded. Don't blame me, someone just fix
@@ -1519,9 +1514,9 @@ class YumHeaderPackage(YumAvailablePackage):
         # then create a _loadChangelog() method to put them into the 
         # self._changelog attr
         if len(self.hdr['changelogname']) > 0:
-            return zip(misc.to_unicode(self.hdr['changelogtime'], errors='replace'),
-                       misc.to_unicode(self.hdr['changelogname'], errors='replace'),
-                       misc.to_unicode(self.hdr['changelogtext'], errors='replace'))
+            return zip(self.hdr['changelogtime'],
+                       self.hdr['changelogname'],
+                       self.hdr['changelogtext'])
         return []
 
     def returnChecksums(self):

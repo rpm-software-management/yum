@@ -1203,25 +1203,14 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return msg
     
     def _dump_files(self, primary=False):
-        msg ="\n"
-        if not primary:
-            files = self.returnFileEntries('file')
-            dirs = self.returnFileEntries('dir')
-            ghosts = self.returnFileEntries('ghost')
-        else:
-            files = self.returnFileEntries('file', primary_only=True)
-            dirs = self.returnFileEntries('dir', primary_only=True)
-            ghosts = self.returnFileEntries('ghost', primary_only=True)
-                
-        for fn in sorted(files):
-            msg += """    <file>%s</file>\n""" % misc.to_xml(fn)
-        for fn in sorted(dirs):
-            msg += """    <file type="dir">%s</file>\n""" % misc.to_xml(fn)
-        for fn in sorted(ghosts):
-            msg += """    <file type="ghost">%s</file>\n""" % misc.to_xml(fn)
-        
-        return msg
-
+        msg = []
+        for fn in sorted(self.returnFileEntries('file', primary)):
+            msg.append('\n  <file>%s</file>' % misc.to_xml(fn))
+        for fn in sorted(self.returnFileEntries('dir', primary)):
+            msg.append('\n  <file type="dir">%s</file>' % misc.to_xml(fn))
+        for fn in sorted(self.returnFileEntries('ghost', primary)):
+            msg.append('\n  <file type="ghost">%s</file>' % misc.to_xml(fn))
+        return ''.join(msg)
 
     def _requires_with_pre(self):
         raise NotImplementedError()
@@ -1284,7 +1273,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def _dump_changelog(self, clog_limit):
         if not self.changelog:
             return ""
-        msg = "\n"
+        msg = []
         # We need to output them "backwards", so the oldest is first
         if not clog_limit:
             clogs = self.changelog
@@ -1299,10 +1288,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
                 hack_ts += 1
             last_ts = ts
             ts += hack_ts
-            msg += """<changelog author="%s" date="%s">%s</changelog>\n""" % (
+            msg.append('\n  <changelog author="%s" date="%s">%s</changelog>' % (
                         misc.to_xml(author, attrib=True), misc.to_xml(str(ts)), 
-                        misc.to_xml(content))
-        return msg
+                        misc.to_xml(content)))
+        return ''.join(msg)
 
     def xml_dump_primary_metadata(self):
         msg = """\n<package type="rpm">"""
@@ -1313,22 +1302,24 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return msg
 
     def xml_dump_filelists_metadata(self):
-        msg = """\n<package pkgid="%s" name="%s" arch="%s">
-    <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
-                                     self.arch, self.epoch, self.ver, self.rel)
-        msg += self._dump_files()
-        msg += "</package>\n"
+        msg = """
+<package pkgid="%s" name="%s" arch="%s">
+  <version epoch="%s" ver="%s" rel="%s"/>%s
+</package>""" % (self.checksum, self.name, self.arch,
+                 self.epoch, self.ver, self.rel,
+                 self._dump_files())
         assert type(msg) is str
         return msg
 
     def xml_dump_other_metadata(self, clog_limit=0):
-        msg = """\n<package pkgid="%s" name="%s" arch="%s">
-    <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name, 
-                                     self.arch, self.epoch, self.ver, self.rel)
-        msg += "%s\n</package>\n" % self._dump_changelog(clog_limit)
+        msg = """
+<package pkgid="%s" name="%s" arch="%s">
+  <version epoch="%s" ver="%s" rel="%s"/>%s
+</package>""" % (self.checksum, self.name, self.arch,
+                 self.epoch, self.ver, self.rel,
+                 self._dump_changelog(clog_limit))
         assert type(msg) is str
         return msg
-
 
 # HACK: This is completely retarded. Don't blame me, someone just fix
 #       rpm-python already. This is almost certainly not all of the problems,
@@ -2196,11 +2187,11 @@ class YumLocalPackage(YumHeaderPackage):
             relpath = self.localpath
 
         if self._baseurl:
-            msg = """<location xml:base="%s" href="%s"/>\n""" % (
+            msg = """  <location xml:base="%s" href="%s"/>\n""" % (
                                      misc.to_xml(self._baseurl, attrib=True),
                                      misc.to_xml(relpath, attrib=True))
         else:
-            msg = """<location href="%s"/>\n""" % misc.to_xml(relpath, attrib=True)
+            msg = """  <location href="%s"/>\n""" % misc.to_xml(relpath, attrib=True)
 
         return msg
 

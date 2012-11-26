@@ -298,13 +298,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                            "WHERE  packages.pkgId = ?", (self.pkgId,))
         for ob in cur:
             dirname = ob['dirname']
+            if dirname == '.':
+                dirname = ''
+            elif dirname != '/':
+                dirname += '/'
             filetypes = decodefiletypelist(ob['filetypes'])
             filenames = decodefilenamelist(ob['filenames'])
             while(filetypes):
-                if dirname:
-                    filename = dirname+'/'+filenames.pop()
-                else:
-                    filename = filenames.pop()
+                filename = dirname + filenames.pop()
                 filetype = _share_data(filetypes.pop())
                 result.setdefault(filetype,[]).append(filename)
         self._loadedfiles = True

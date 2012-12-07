@@ -117,6 +117,8 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         return exFatal(e)
+    except (OSError, IOError), e:
+        return exIOError(e)
 
     lockerr = ""
     while True:

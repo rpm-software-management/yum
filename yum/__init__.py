@@ -3692,7 +3692,8 @@ much more problems).
             if not upgrade and len(txmbrs_used) == old_txmbrs:
                 self.logger.critical(_('Warning: Group %s does not have any packages to install.'), thisgroup.groupid)
                 if count_cond_test:
-                    self.logger.critical(_('Group %s does have %u conditional packages, which may get installed.'), count_cond_test)
+                    self.logger.critical(_('Group %s does have %u conditional packages, which may get installed.'),
+                                         thisgroup.groupid, count_cond_test)
         return txmbrs_used
 
     def deselectGroup(self, grpid, force=False):

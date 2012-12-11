@@ -6012,7 +6012,7 @@ much more problems).
             New in 3.2.24: Obey yumdb_info.installonly data. """
 
         def _sort_and_filter_installonly(pkgs):
-            """ Allow the admin to specify some overrides fo installonly pkgs.
+            """ Allow the admin to specify some overrides for installonly pkgs.
                 using the yumdb. """
             ret_beg = []
             ret_mid = []

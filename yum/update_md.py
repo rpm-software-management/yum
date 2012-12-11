@@ -104,6 +104,9 @@ class UpdateNotice(object):
                 return False
         return True
 
+    def __ne__(self, other):
+        return not (self == other)
+
     def text(self, skip_data=('files', 'summary', 'rights', 'solution')):
         head = """
 ===============================================================================

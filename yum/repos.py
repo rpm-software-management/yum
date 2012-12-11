@@ -19,6 +19,7 @@ import fnmatch
 import types
 import logging
 import misc
+import os
 
 import Errors
 from packageSack import MetaSack
@@ -120,6 +121,17 @@ class RepoStorage:
 
         if len(repos) < 1:
             self.logger.debug('No Repositories Available to Set Up')
+
+        if hasattr(urlgrabber.grabber, 'pycurl'):
+            # Must do basename checking, on cert. files...
+            cert_basenames = {}
+            for repo in self.listEnabled():
+                if repo.sslclientcert:
+                    bn = os.path.basename(repo.sslclientcert)
+                    other = cert_basenames.setdefault(bn, repo)
+                    if repo.sslclientcert != other.sslclientcert:
+                        msg = 'sslclientcert basename shared between %s and %s'
+                        raise Errors.ConfigError, msg % (repo, other)
 
         for repo in repos:
             repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber,

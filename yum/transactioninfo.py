@@ -256,6 +256,8 @@ class TransactionData:
         # happens IRL.
         return txmember.ts_state in ('u', 'i') and not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite))
 
+    # NOTE: This is a copy of Depsolve.allowedMultipleInstalls() because
+    #       we can't get to YumBase from here. Use that as the main/public API.
     def _allowedMultipleInstalls(self, po):
         """takes a packageObject, returns 1 or 0 depending on if the package 
            should/can be installed multiple times with different vers

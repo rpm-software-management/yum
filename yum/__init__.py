@@ -6031,16 +6031,13 @@ much more problems).
         # so self.rpmdb.ts should be valid.
         ts = self.rpmdb.readOnlyTS()
         (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(ts)
-        install_only_names = set(self.conf.installonlypkgs)
         found = {}
         for m in self.tsInfo.getMembers():
             if m.ts_state not in ('i', 'u'):
                 continue
             if m.reinstall:
                 continue
-
-            po_names = set([m.name] + m.po.provides_names)
-            if not po_names.intersection(install_only_names):
+            if not self.allowedMultipleInstalls(m.po):
                 continue
 
             if m.name not in found:

@@ -371,7 +371,7 @@ class UpdateNotice(object):
                                 to_xml(pkg['version'], attrib=True),
                                 to_xml(pkg['filename']))
                 msg += """    </collection>\n"""
-                msg += """  </pkglist>\n"""
+            msg += """  </pkglist>\n"""
         msg += """</update>\n"""
         return msg
 

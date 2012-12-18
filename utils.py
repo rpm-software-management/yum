@@ -261,30 +261,6 @@ class YumUtilBase(YumBaseCli):
         """
         return self._option_group    
     
-    def waitForLock(self):
-        """Establish the yum lock.  If another process is already
-        holding the yum lock, by default this method will keep trying
-        to establish the lock until it is successful.  However, if
-        :attr:`self.conf.exit_on_lock` is set to True, it will
-        raise a :class:`Errors.YumBaseError`.
-        """
-        lockerr = ""
-        while True:
-            try:
-                self.doLock()
-            except Errors.LockError, e:
-                if exception2msg(e) != lockerr:
-                    lockerr = exception2msg(e)
-                    self.logger.critical(lockerr)
-                if not self.conf.exit_on_lock:
-                    self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")  
-                    show_lock_owner(e.pid, self.logger)
-                    time.sleep(2)
-                else:
-                    raise Errors.YumBaseError, _("Another app is currently holding the yum lock; exiting as configured by exit_on_lock")
-            else:
-                break
-        
     def _printUtilVersion(self):
         print "%s - %s (yum - %s)" % (self._utilName,self._utilVer,yum.__version__)
         

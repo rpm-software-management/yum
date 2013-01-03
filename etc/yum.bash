@@ -180,7 +180,7 @@ _yum()
             return 0
             ;;
 
-        check-update|makecache|provides|whatprovides|resolvedep|search)
+        check-update|makecache|resolvedep|search)
             return 0
             ;;
 
@@ -312,6 +312,11 @@ _yum()
 
         localinstall|localupdate)
             _yum_binrpmfiles "$cur"
+            return 0
+            ;;
+
+        provides|whatprovides)
+            COMPREPLY=( $( compgen -f -o plusdirs -- "$cur" ) )
             return 0
             ;;
 

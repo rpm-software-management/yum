@@ -332,7 +332,7 @@ class UpdateNotice(object):
                 to_xml(self._md['description']))
         if self._md['updated']:
             # include the updated date in the generated xml
-            msg += """ <updated date="%s"\n""" % (to_xml(self._md['updated'], attrib=True))
+            msg += """ <updated date="%s">\n""" % (to_xml(self._md['updated'], attrib=True))
         if self._md['summary']:
             msg += """  <summary>%s</summary>\n""" % (to_xml(self._md['summary']))
         if self._md['solution']:

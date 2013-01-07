@@ -499,6 +499,31 @@ It's also possible to use the word "never", meaning that the metadata will
 never expire. Note that when using a metalink file the metalink must always
 be newer than the metadata for the repository, due to the validation, so this
 timeout also applies to the metalink file.
+Also note that "never" does not override "yum clean expire-cache"
+
+.IP
+\fBmetadata_expire_filter \fR
+Filter the metadata_expire time, allowing a trade of speed for accuracy if
+a command doesn't require it. Each yum command can specify that it requires a
+certain level of timeliness quality from the remote repos. from "I'm about to
+install/upgrade, so this better be current" to "Anything that's available
+is good enough".
+
+'never' - Nothing is filtered, always obey metadata_expire.
+
+'read-only:past' - Commands that only care about past information
+are filtered from metadata expiring.
+Eg. yum history info (if history needs to lookup anything about a previous
+transaction, then by definition the remote package was available in the past).
+
+'read-only:present' - Commands that are balanced between past and future.
+This is the default.
+Eg. yum list yum
+
+'read-only:future' - Commands that are likely to result in running other
+commands which will require the latest metadata. Eg. yum check-update
+
+Note that this option does not override "yum clean expire-cache".
 
 .IP
 \fBmirrorlist_expire \fR
@@ -909,6 +934,11 @@ for this repository.
 \fBmetadata_expire \fR
 Overrides the \fBmetadata_expire\fR option from the [main] section for this
 repository.
+
+.IP
+\fBmetadata_expire_filter \fR
+Overrides the \fBmetadata_expire_filter\fR option from the [main] section for
+this repository.
 
 .IP
 \fBmirrorlist_expire \fR

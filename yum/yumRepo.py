@@ -1068,7 +1068,7 @@ Insufficient space in download directory %s
             self._metadataCurrent = False
         return self._metadataCurrent
 
-    def withinCacheAge(self, myfile, expiration_time):
+    def withinCacheAge(self, myfile, expiration_time, expire_req_filter=True):
         """check if any file is older than a certain amount of time. Used for
            the cachecookie and the mirrorlist
            return True if w/i the expiration time limit
@@ -1077,6 +1077,24 @@ Insufficient space in download directory %s
            Additionally compare the file to age of the newest .repo or yum.conf
            file. If any of them are newer then invalidate the cache
            """
+
+        # Never/write means we just skip this...
+        if (expire_req_filter and hasattr(self, '_metadata_cache_req') and
+            self._metadata_cache_req.startswith("read-only:") and
+            self.metadata_expire_filter.startswith("read-only:")):
+
+            cache_filt = self.metadata_expire_filter[len("read-only:"):]
+            cache_req  = self._metadata_cache_req[len("read-only:"):]
+
+            if cache_filt == 'future':
+                assert cache_req in ('past', 'present', 'future')
+                expiration_time = -1
+            if cache_filt == 'present':
+                if cache_req in ('past', 'present'):
+                    expiration_time = -1
+            if cache_filt == 'past':
+                if cache_req == 'past':
+                    expiration_time = -1
 
         # -1 is special and should never get refreshed
         if expiration_time == -1 and os.path.exists(myfile):
@@ -1850,7 +1868,8 @@ Insufficient space in download directory %s
         fo = None
 
         cacheok = False
-        if self.withinCacheAge(self.mirrorlist_file, self.mirrorlist_expire):
+        if self.withinCacheAge(self.mirrorlist_file, self.mirrorlist_expire,
+                               expire_req_filter=False):
             cacheok = True
             fo = open(self.mirrorlist_file, 'r')
             url = 'file://' + self.mirrorlist_file # just to keep self._readMirrorList(fo,url) happy

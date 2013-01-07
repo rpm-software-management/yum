@@ -509,6 +509,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.YumBaseError, e:
                 return 1, [exception2msg(e)]
 
+        cacheReq = 'write'
+        if hasattr(cmd, 'cacheRequirement'):
+            cacheReq = cmd.cacheRequirement(self, self.basecmd, self.extcmds)
+        for repo in self.repos.listEnabled():
+            repo._metadata_cache_req = cacheReq
+
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 
     def doTransaction(self):

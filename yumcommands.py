@@ -280,7 +280,35 @@ class YumCommand:
         :return: True if a transaction set is needed, False otherwise
         """
         return True
+
+    #  Some of this is subjective, esp. between past/present, but roughly use:
+    #
+    # write = I'm using package data to alter the rpmdb in anyway.
+    # read-only:future  = I'm providing data that is likely to result in a
+    #                     future write, so we might as well do it now.
+    #                     Eg. yum check-update && yum update -q -y
+    # read-only:present = I'm providing data about the present state of
+    #                     packages in the repo.
+    #                     Eg. yum list yum
+    # read-only:past    = I'm providing context data about past writes, or just
+    #                     anything that is available is good enough for me
+    #                     (speed is much better than quality).
+    #                     Eg. yum history info
+    #                     Eg. TAB completion
+    #
+    # ...default is write, which does the same thing we always did (obey
+    # metadata_expire and live with it).
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'write'
         
+
 class InstallCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     install command.
@@ -647,6 +675,19 @@ class InfoCommand(YumCommand):
             return False
         
         return True
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        if len(extcmds) and extcmds[0] in ('updates', 'obsoletes'):
+            return 'read-only:future'
+        return 'read-only:present'
+
 
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
@@ -1349,6 +1390,17 @@ class ProvidesCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
 
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:past'
+
+
 class CheckUpdateCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     check-update command.
@@ -1440,6 +1492,17 @@ class CheckUpdateCommand(YumCommand):
         else:
             return result, []
 
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:future'
+
+
 class SearchCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     search command.
@@ -1507,6 +1570,17 @@ class SearchCommand(YumCommand):
         :return: True if a transaction set is needed, False otherwise
         """
         return False
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:present'
+
 
 class UpgradeCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
@@ -1698,6 +1772,17 @@ class ResolveDepCommand(YumCommand):
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
 
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:past'
+
+
 class ShellCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     shell command.
@@ -1824,6 +1909,16 @@ class DepListCommand(YumCommand):
             return base.deplist(extcmds)
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:past' # read-only ?
 
 
 class RepoListCommand(YumCommand):
@@ -2140,6 +2235,16 @@ class RepoListCommand(YumCommand):
         :return: True if a transaction set is needed, False otherwise
         """
         return False
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:past'
 
 
 class HelpCommand(YumCommand):
@@ -2583,6 +2688,16 @@ class VersionCommand(YumCommand):
             return True
         return vcmd in ('available', 'all', 'group-available', 'group-all')
 
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:present'
+
 
 class HistoryCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
@@ -2820,6 +2935,21 @@ class HistoryCommand(YumCommand):
         if extcmds:
             vcmd = extcmds[0]
         return vcmd in ('repeat', 'redo', 'undo', 'rollback')
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        vcmd = 'list'
+        if extcmds:
+            vcmd = extcmds[0]
+        if vcmd in ('repeat', 'redo', 'undo', 'rollback'):
+            return 'write'
+        return 'read-only:past'
 
 
 class CheckRpmdbCommand(YumCommand):

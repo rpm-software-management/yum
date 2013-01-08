@@ -452,7 +452,7 @@ class UpdateMetadata(object):
         """ Add an UpdateNotice object. This should be fully populated with
             data, esp. update_id and pkglist/packages. """
         if not un or not un["update_id"]:
-            return
+            return False
 
         #  This is "special", the main thing we want to deal with here is
         # having one errata that has multiple packages in it rpmA and rpmB, but
@@ -463,7 +463,7 @@ class UpdateMetadata(object):
         if un['update_id'] in self._notices:
             oun = self._notices[un['update_id']]
             if oun != un:
-                return
+                return False
 
             # Ok, main parts of errata are the same, so now merge references:
             seen = set()
@@ -496,6 +496,8 @@ class UpdateMetadata(object):
                 no = self._no_cache.setdefault(filedata['name'], set())
                 no.add(un)
 
+        return True
+
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
         if not obj:
@@ -525,7 +527,8 @@ class UpdateMetadata(object):
                     print >> sys.stderr, "An update notice is broken, skipping."
                     # what else should we do?
                     continue
-                self.add_notice(un)
+                if not self.add_notice(un):
+                    print >> sys.stderr, "An update notice is broken, or duplicate, skipping:", un['update_id']
 
     def __unicode__(self):
         ret = u''

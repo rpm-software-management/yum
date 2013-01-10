@@ -97,6 +97,25 @@ def checkPackageArg(base, basecmd, extcmds):
         _err_mini_usage(base, basecmd)
         raise cli.CliError
 
+def checkSwapPackageArg(base, basecmd, extcmds):
+    """Verify that *extcmds* contains the name of at least two packages for
+    *basecmd* to act on.
+
+    :param base: a :class:`yum.Yumbase` object.
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`
+    """
+    min_args = 2
+    if '--' in extcmds:
+        min_args = 3
+    if len(extcmds) < min_args:
+        base.logger.critical(
+                _('Error: Need at least two packages to %s') % basecmd)
+        _err_mini_usage(base, basecmd)
+        raise cli.CliError
+
+
 def checkItemArg(base, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one item for
     *basecmd* to act on.  Generally, the items are command-line
@@ -3017,6 +3036,7 @@ class CheckRpmdbCommand(YumCommand):
         """
         return False
 
+
 class LoadTransactionCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     load-transaction command.
@@ -3083,3 +3103,96 @@ class LoadTransactionCommand(YumCommand):
         """
         return True
 
+
+class SwapCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    swap command.
+    """
+
+    def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
+        return ['swap']
+
+    def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
+        return "[remove|cmd] <pkg|arg(s)> [-- install|cmd] <pkg|arg(s)>"
+
+    def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
+        return _("Simple way to swap packages, isntead of using shell")
+
+    def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that the program is being run by the root user,
+        that there are enabled repositories with gpg keys, and that
+        this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
+        checkRootUID(base)
+        checkGPGKey(base)
+        checkSwapPackageArg(base, basecmd, extcmds)
+        checkEnabledRepo(base, extcmds)
+
+    def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+
+        if '--' in extcmds:
+            off = extcmds.index('--')
+            rextcmds = extcmds[:off]
+            iextcmds = extcmds[off+1:]
+        else:
+            rextcmds = extcmds[:1]
+            iextcmds = extcmds[1:]
+
+        if not (rextcmds and iextcmds):
+            return 1, ['swap'] # impossible
+
+        if rextcmds[0] not in base.yum_cli_commands:
+            rextcmds = ['remove'] + rextcmds
+        if iextcmds[0] not in base.yum_cli_commands:
+            iextcmds = ['install'] + iextcmds
+
+        # Very similar to what the shell command does...
+        ocmds = base.cmds
+        oline = base.cmdstring
+        for cmds in (rextcmds, iextcmds):
+            base.cmdstring = " ".join(cmds)
+            base.cmds = cmds
+            #  Don't call this atm. as the line has gone through it already,
+            # also makes it hard to do the "is ?extcmds[0] a cmd" check.
+            # base.plugins.run('args', args=base.cmds)
+
+            # We don't catch exceptions, just pass them up and fail...
+            base.parseCommands()
+            cmdret = base.doCommands()
+            if cmdret[0] != 2:
+                return cmdret[0], ['%s %s' % (basecmd, " ".join(cmds))]
+        base.cmds      = ocmds
+        base.cmdstring = oline
+
+        return 2, ['%s %s' % (basecmd, " ".join(extcmds))]

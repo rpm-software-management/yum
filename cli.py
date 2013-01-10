@@ -107,6 +107,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.CheckRpmdbCommand())
         self.registerCommand(yumcommands.DistroSyncCommand())
         self.registerCommand(yumcommands.LoadTransactionCommand())
+        self.registerCommand(yumcommands.SwapCommand())
 
     def registerCommand(self, command):
         """Register a :class:`yumcommands.YumCommand` so that it can be called by

@@ -108,6 +108,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.DistroSyncCommand())
         self.registerCommand(yumcommands.LoadTransactionCommand())
         self.registerCommand(yumcommands.SwapCommand())
+        self.registerCommand(yumcommands.RepoPkgsCommand())
 
     def registerCommand(self, command):
         """Register a :class:`yumcommands.YumCommand` so that it can be called by
@@ -825,7 +826,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         return ret
 
-    def installPkgs(self, userlist, basecmd='install'):
+    def installPkgs(self, userlist, basecmd='install', repoid=None):
         """Attempt to take the user specified list of packages or
         wildcards and install them, or if they are installed, update
         them to a newer version. If a complete version number is

@@ -4420,9 +4420,14 @@ much more problems).
                 if kwargs['pattern'] and kwargs['pattern'][0] == '@':
                     return self._at_groupinstall(kwargs['pattern'])
 
+                repo = None # All of them
+                if 'repoid' in kwargs:
+                    repoid = kwargs['repoid']
+
                 was_pattern = True
                 pats = [kwargs['pattern']]
                 mypkgs = self.pkgSack.returnPackages(patterns=pats,
+                                                     repoid=repoid,
                                                       ignore_case=False)
                 pkgs.extend(mypkgs)
                 # if we have anything left unmatched, let's take a look for it
@@ -4441,6 +4446,10 @@ much more problems).
                     pkgs.extend(mypkgs)
             else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
+
+                repo = None # All of them
+                if 'repoid' in kwargs:
+                    repoid = kwargs['repoid']
 
                 pkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
                      epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
@@ -5016,6 +5025,20 @@ much more problems).
                     return self._at_groupremove(kwargs['pattern'])
 
                 (e,m,u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
+                if 'repoid' in kwargs:
+                    def _filter_repoid(pkgs):
+                        ret = []
+                        for pkg in pkgs:
+                            if 'from_repo' not in pkg.yumdb_info:
+                                continue
+                            if pkg.yumdb_info.from_repo != kwargs['repoid']:
+                                continue
+                            ret.append(pkg)
+                        return ret
+
+                    e = _filter_repoid(e)
+                    m = _filter_repoid(m)
+
                 pkgs.extend(e)
                 pkgs.extend(m)
                 if u:
@@ -5026,6 +5049,9 @@ much more problems).
                     except yum.Errors.YumBaseError, e:
                         self.logger.critical(_('%s') % e)
                     
+                    if 'repoid' in kwargs:
+                        depmatches = _filter_repoid(depmatches)
+
                     if not depmatches:
                         arg = to_unicode(arg)
                         self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))

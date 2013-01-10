@@ -22,7 +22,7 @@ Classes for subcommands of the yum command line interface.
 import os
 import cli
 from yum import logginglevels
-from yum import _
+from yum import _, P_
 from yum import misc
 import yum.Errors
 import operator
@@ -112,6 +112,39 @@ def checkSwapPackageArg(base, basecmd, extcmds):
     if len(extcmds) < min_args:
         base.logger.critical(
                 _('Error: Need at least two packages to %s') % basecmd)
+        _err_mini_usage(base, basecmd)
+        raise cli.CliError
+
+def checkRepoPackageArg(base, basecmd, extcmds):
+    """Verify that *extcmds* contains the name of at least one package for
+    *basecmd* to act on.
+
+    :param base: a :class:`yum.Yumbase` object.
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`
+    """
+    if len(extcmds) < 2: # <repoid> install|remove [pkgs]
+        base.logger.critical(
+                _('Error: Need to pass a repoid. and command to %s') % basecmd)
+        _err_mini_usage(base, basecmd)
+        raise cli.CliError
+
+    repos = base.repos.findRepos(extcmds[0])
+    if not repos:
+        base.logger.critical(
+                _('Error: Need to pass a single valid repoid. to %s') % basecmd)
+        _err_mini_usage(base, basecmd)
+        raise cli.CliError
+
+    if len(repos) != 1 or repos[0].id != extcmds[0]:
+        base.logger.critical(
+                _('Error: Need to pass a single valid repoid. to %s') % basecmd)
+        _err_mini_usage(base, basecmd)
+        raise cli.CliError
+    if not repos[0].isEnabled():
+        base.logger.critical(
+                _('Error: Repo %s is not enabled') % extcmds[0])
         _err_mini_usage(base, basecmd)
         raise cli.CliError
 
@@ -3196,3 +3229,142 @@ class SwapCommand(YumCommand):
         base.cmdstring = oline
 
         return 2, ['%s %s' % (basecmd, " ".join(extcmds))]
+
+
+class RepoPkgsCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    repo command.
+    """
+
+    def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
+        return ['repo-pkgs',
+                'repo-packages', 'repository-pkgs', 'repository-packages']
+
+    def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
+        return "<enabled-repoid> <install|remove|remove-or-reinstall> [pkg(s)]"
+
+    def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
+        return _("Treat a repo. as a group of packages, so we can install/remove all of them")
+
+    def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that the program is being run by the root user,
+        that there are enabled repositories with gpg keys, and that
+        this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
+        checkRootUID(base)
+        checkGPGKey(base)
+        checkRepoPackageArg(base, basecmd, extcmds)
+        checkEnabledRepo(base, extcmds)
+
+    def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+
+        repoid = extcmds[0]
+        cmd = extcmds[1]
+        args = extcmds[2:]
+        if not args:
+            args = ['*']
+        num = 0
+        if False: pass
+        elif cmd == 'install': # install is simpler version of installPkgs...
+            for arg in args:
+                txmbrs = base.install(pattern=arg, repoid=repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to install', '%d packages to install',
+                             num)
+
+        elif cmd == 'remove': # Also mostly the same...
+            for arg in args:
+                txmbrs = base.remove(pattern=arg, repoid=repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to remove', '%d packages to remove',
+                             num)
+
+        elif cmd == 'remove-or-reinstall': # More complicated...
+            for arg in args:
+                txmbrs = base.remove(pattern=arg, repoid=repoid)
+                # Add an install() if it's in another repo.
+                for txmbr in txmbrs[:]:
+                    pkgs = base.pkgSack.searchPkgTuple(txmbr.pkgtup)
+                    for pkg in sorted(pkgs):
+                        if pkg.repoid == repoid:
+                            continue
+                        txmbrs += base.install(po=pkg)
+                        break
+
+                num += len(txmbrs)
+
+        elif cmd == 'remove-or-sync': # Even more complicated...
+            for arg in args:
+                txmbrs = base.remove(pattern=arg, repoid=repoid)
+                #  Add an install/upgrade/downgrade if a version is in another
+                # repo.
+                for txmbr in txmbrs[:]:
+                    pkgs = base.pkgSack.searchNames([txmbr.name])
+                    toinst = None
+                    for pkg in sorted(pkgs):
+                        if pkg.repoid == repoid:
+                            continue
+                        if toinst is None:
+                            toinst = pkg
+                        if toinst.verLT(pkg):
+                            if toinst.verEQ(txmbr.po):
+                                break
+                            toinst = pkg
+                        if toinst.verEQ(txmbr.po) and toinst.arch == txmbr.arch:
+                            break
+
+                    if toinst is not None:
+                        if toinst.verEQ(txmbr.po):
+                            txmbrs += base.install(po=toinst)
+                        elif toinst.verGT(txmbr.po):
+                            txmbrs += base.update(po=toinst)
+                        else:
+                            base.tsInfo.remove(txmbr.pkgtup)
+                            txmbrs.remove(txmbr)
+                            txmbrs += base.downgrade(po=toinst)
+
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to remove/reinstall',
+                             '%d packages to remove/reinstall', num)
+
+        else:
+            return 1, [_('Not a valid sub-command of %s') % basecmd]
+
+        return 0, [_('Nothing to do')]

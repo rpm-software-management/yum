@@ -101,6 +101,7 @@ class UpdateNotice(object):
             return False
 
         for data in ('type', 'update_id', 'status', 'rights',
+                     'severity', 'release',
                      'issued', 'updated', 'version', 'pushcount',
                      'from', 'title', 'summary', 'description', 'solution'):
             if self._md[data] != other._md[data]:

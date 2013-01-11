@@ -2827,17 +2827,18 @@ class DepSolveProgressCallBack:
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             po)
     
-    def groupRemoveReq(self, po, hits):
+    def removeReq(self, po, deppo, hits):
         """Output a message stating that the given package will not be
-        removed. This method is used during leaf-only group remove
-        commands to indicate that the package will be kept.
+        removed. This method is used during leaf-only group remove, leaf-only
+        repo-pkg remove and normal remove commands to indicate that the
+        package will be kept.
 
         :param po: the :class:`yum.packages.PackageObject` that will
            not be removed
         :param hits: unused
         """
         self.verbose_logger.log(logginglevels.INFO_2,
-            _('---> Keeping package: %s'), po)
+            _('---> Keeping package: %s due to %s'), po, deppo)
 
     def unresolved(self, msg):
         """Output a message stating that there is an unresolved

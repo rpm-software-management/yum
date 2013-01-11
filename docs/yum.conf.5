@@ -201,12 +201,32 @@ Default is `true'.
 Command-line option: \fB\-\-obsoletes\fP
 
 .IP
+\fBremove_leaf_only \fR
+Either `0' or `1'. Used to determine yum's behaviour when a package is removed.
+If \fBremove_leaf_only\fR is `0' (default) then
+packages, and their deps, will be removed.  If \fBremove_leaf_only\fR is
+`1' then only those packages that aren't required by another
+package will be removed.
+
+.IP
+\fBrepopkgsremove_leaf_only \fR
+Either `0' or `1'. Used to determine yum's behaviour when the repo-pkg remove
+command is run.  If \fBrepopkgremove_leaf_only\fR is `0' (default) then
+all packages in the repo. will be removed.  If \fBrepopkgremove_leaf_only\fR is
+`1' then only those packages in the repo. that aren't required by another
+package will be removed.
+Note that this option does not override remove_leaf_only, so enabling that
+option means this has almost no affect.
+
+.IP
 \fBoverwrite_groups \fR
 Either `0' or `1'. Used to determine yum's behaviour if two or more
 repositories offer the package groups with the same name. If
 \fBoverwrite_groups\fR is `1' then the group packages of the last matching
 repository will be used. If \fBoverwrite_groups\fR is `0' then the groups
 from all matching repositories will be merged together as one large group.
+Note that this option does not override remove_leaf_only, so enabling that
+option means this has almost no affect.
 
 .IP
 \fBgroupremove_leaf_only \fR

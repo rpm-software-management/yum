@@ -794,6 +794,7 @@ class TransactionMember:
         self.reinstall = False
         self.groups = [] # groups it's in
         self.environments = [] # Env. groups it's in
+        self.repopkg = None # repo pkg "group" it was removed/installed by
         self._poattr = ['pkgtup', 'repoid', 'name', 'arch', 'epoch', 'version',
                         'release']
 

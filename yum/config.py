@@ -774,6 +774,8 @@ class YumConf(StartupConf):
     obsoletes = BoolOption(True)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
+    remove_leaf_only = BoolOption(False)
+    repopkgsremove_leaf_only = BoolOption(False)
     enablegroups = BoolOption(True)
     enable_group_conditionals = BoolOption(True)
     groupremove_leaf_only = BoolOption(False)

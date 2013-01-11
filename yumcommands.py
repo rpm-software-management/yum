@@ -3289,6 +3289,10 @@ class RepoPkgsCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
 
+        def _add_repopkg2txmbrs(txmbrs, repoid):
+            for txmbr in txmbrs:
+                txmbr.repopkg = repoid
+
         repoid = extcmds[0]
         cmd = extcmds[1]
         args = extcmds[2:]
@@ -3299,6 +3303,7 @@ class RepoPkgsCommand(YumCommand):
         elif cmd == 'install': # install is simpler version of installPkgs...
             for arg in args:
                 txmbrs = base.install(pattern=arg, repoid=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
 
             if num:
@@ -3308,6 +3313,7 @@ class RepoPkgsCommand(YumCommand):
         elif cmd == 'remove': # Also mostly the same...
             for arg in args:
                 txmbrs = base.remove(pattern=arg, repoid=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
 
             if num:
@@ -3326,6 +3332,7 @@ class RepoPkgsCommand(YumCommand):
                         txmbrs += base.install(po=pkg)
                         break
 
+                _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
 
         elif cmd == 'remove-or-sync': # Even more complicated...
@@ -3358,6 +3365,7 @@ class RepoPkgsCommand(YumCommand):
                             txmbrs.remove(txmbr)
                             txmbrs += base.downgrade(po=toinst)
 
+                _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
 
             if num:

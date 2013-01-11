@@ -1,0 +1,10 @@
+[Unit]
+Description=Run automatic yum updates as a cron job
+
+[Service]
+Type=simple
+ExecStart=/bin/touch /var/lock/subsys/yum-cron
+ExecStop=/bin/rm -f /var/lock/subsys/yum-cron
+
+[Install]
+WantedBy=multi-user.target

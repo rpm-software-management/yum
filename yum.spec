@@ -114,11 +114,10 @@ can notify you when they are available via email, syslog or dbus.
 Summary: Files needed to run yum updates as a cron job
 Group: System Environment/Base
 Requires: yum >= 3.0 cronie crontabs findutils
-Requires(post): /sbin/chkconfig
-Requires(post): /sbin/service
-Requires(preun): /sbin/chkconfig
-Requires(preun): /sbin/service
-Requires(postun): /sbin/service
+BuildRequires: systemd-units
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
 
 %description cron
 These are the files needed to run yum updates as a cron job.
@@ -198,45 +197,13 @@ exit 0
 
 
 %post cron
-# Make sure chkconfig knows about the service
-/sbin/chkconfig --add yum-cron
-# if an upgrade:
-if [ "$1" -ge "1" ]; then
-# if there's a /etc/rc.d/init.d/yum file left, assume that there was an
-# older instance of yum-cron which used this naming convention.  Clean 
-# it up, do a conditional restart
- if [ -f /etc/init.d/yum ]; then 
-# was it on?
-  /sbin/chkconfig yum
-  RETVAL=$?
-  if [ $RETVAL = 0 ]; then
-# if it was, stop it, then turn on new yum-cron
-   /sbin/service yum stop 1> /dev/null 2>&1
-   /sbin/service yum-cron start 1> /dev/null 2>&1
-   /sbin/chkconfig yum-cron on
-  fi
-# remove it from the service list
-  /sbin/chkconfig --del yum
- fi
-fi 
-exit 0
+%systemd_post yum-cron.service
 
 %preun cron
-# if this will be a complete removeal of yum-cron rather than an upgrade,
-# remove the service from chkconfig control
-if [ $1 = 0 ]; then
- /sbin/chkconfig --del yum-cron
- /sbin/service yum-cron stop 1> /dev/null 2>&1
-fi
-exit 0
+%systemd_preun yum-cron.service
 
 %postun cron
-# If there's a yum-cron package left after uninstalling one, do a
-# conditional restart of the service
-if [ "$1" -ge "1" ]; then
- /sbin/service yum-cron condrestart 1> /dev/null 2>&1
-fi
-exit 0
+%systemd_postun_with_restart yum-cron.service
 
 
 
@@ -283,7 +250,7 @@ exit 0
 %doc COPYING
 %{_sysconfdir}/cron.daily/0yum-update.cron
 %config(noreplace) %{_sysconfdir}/yum/yum-cron.conf
-%{_sysconfdir}/rc.d/init.d/yum-cron
+%{_unitdir}/yum-cron.service
 %{_sbindir}/yum-cron
 %{_mandir}/man*/yum-cron.*
 

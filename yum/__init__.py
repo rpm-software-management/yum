@@ -2050,7 +2050,7 @@ much more problems).
         except OSError, msg:
             if not msg.errno == errno.EEXIST: 
                 # Whoa. What the heck happened?
-                errmsg = _('Could not create lock at %s: %s ') % (filename, str(msg))
+                errmsg = _('Could not create lock at %s: %s ') % (filename, exception2msg(msg))
                 raise Errors.LockError(msg.errno, errmsg, int(contents))
             return 0
     

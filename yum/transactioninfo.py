@@ -870,5 +870,7 @@ class TransactionMember:
             msg += "  groups: %s\n" % ' '.join(self.groups)
         if self.environments:
             msg += "  environments: %s\n" % ' '.join(self.environments)
+        if self.repopkg:
+            msg += "  repopkg: %s\n" % self.repopkg
 
         return msg

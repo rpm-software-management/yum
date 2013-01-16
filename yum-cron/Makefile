@@ -1,3 +1,5 @@
+UNITDIR=/lib/systemd/system
+
 all:
 	echo "Nothing to do"
 
@@ -11,5 +13,5 @@ install:
 # Install yum-update.cron as 0yum-update.cron so it runs before items like
 # manpage update, mlocate, and prelink
 	install -D -m 755 yum-update.cron.sh $(DESTDIR)/etc/cron.daily/0yum-update.cron
-	install -D -m 644 yum-cron.service $(DESTDIR)/usr/lib/systemd/system/yum-cron.service
+	install -D -m 644 yum-cron.service $(DESTDIR)/$(UNITDIR)/yum-cron.service
 	install -D -m 755 yum-cron.py $(DESTDIR)/usr/sbin/yum-cron

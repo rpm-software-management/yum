@@ -4420,7 +4420,7 @@ much more problems).
                 if kwargs['pattern'] and kwargs['pattern'][0] == '@':
                     return self._at_groupinstall(kwargs['pattern'])
 
-                repo = None # All of them
+                repoid = None # All of them
                 if 'repoid' in kwargs:
                     repoid = kwargs['repoid']
 
@@ -4447,15 +4447,21 @@ much more problems).
             else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
 
-                repo = None # All of them
-                if 'repoid' in kwargs:
-                    repoid = kwargs['repoid']
-
                 pkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
                      epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                      ver=nevra_dict['version'], rel=nevra_dict['release'])
                 self._add_not_found_a(pkgs, nevra_dict)
                 
+                if 'repoid' in kwargs:
+                    def _filter_repoid(pkgs):
+                        ret = []
+                        for pkg in pkgs:
+                            if pkg.repoid != kwargs['repoid']:
+                                continue
+                            ret.append(pkg)
+                        return ret
+                    pkgs = _filter_repoid(pkgs)
+
             if pkgs:
                 # if was_pattern or nevra-dict['arch'] is none, take the list
                 # of arches based on our multilib_compat config and 

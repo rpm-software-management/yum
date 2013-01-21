@@ -70,6 +70,8 @@ gnome\-packagekit application\&.
 .br
 .I \fR * repoinfo [all|enabled|disabled] 
 .br
+.I \fR * repository-packages <enabled-repoid> <install|remove|remove-or-reinstall|remove-or-distribution-synchronization> [package2] [\&.\&.\&.]
+.br
 .I \fR * version [ all | installed | available | group-* | nogroups* | grouplist | groupinfo ]
 .br
 .I \fR * history [info|list|packages-list|packages-info|summary|addon-info|redo|undo|rollback|new|sync|stats] 
@@ -356,6 +358,27 @@ package counts/etc. will be zeroed out).
 .IP "\fBrepoinfo\fP"
 .IP
 This command works exactly like repolist -v.
+.IP
+.IP "\fBrepository\-packages\fP"
+Treat a repo. as a collection of packages (like "yum groups") allowing the user
+to install or remove them as a single entity.
+
+"repository\-packages <repo> install" - Install all of the packages in the repository, basicallly the same as: yum install $(repoquery --repoid=<repo> -a).
+
+"repo\-pkgs <repo> remove" - Remove all of the packages in the repository, very
+similar to: yum remove $(repoquery --repoid=<repo> -a). However the
+repopkgsremove_leaf_only option is obeyed.
+
+"repo\-pkgs <repo> remove-or-reinstall" - Works like remove for any package
+that doesn't have the exact same version in another repository. For any package
+that does have the exact NEVRA in another repoitory then that version will be
+reinstalled.
+
+"repo\-pkgs <repo> remove-or-distro-sync" - Works like remove for any package
+that doesn't exist in another repository. For any package that does exist
+another version will be reinstalled, upgraded or downgraded to (in that order
+of preference).
+
 .IP
 .IP "\fBversion\fP"
 Produces a "version" of the rpmdb, and of the enabled repositories if "all" is

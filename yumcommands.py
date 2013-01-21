@@ -3250,7 +3250,7 @@ class RepoPkgsCommand(YumCommand):
 
         :return: a usage string for this command
         """
-        return "<enabled-repoid> <install|remove|remove-or-reinstall> [pkg(s)]"
+        return "<enabled-repoid> <install|remove|remove-or-reinstall|remove-or-sync> [pkg(s)]"
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -3299,6 +3299,17 @@ class RepoPkgsCommand(YumCommand):
         if not args:
             args = ['*']
         num = 0
+
+        remap = {'erase' : 'remove',
+                 'erase-or-reinstall' : 'remove-or-reinstall',
+                 'erase-or-sync' : 'remove-or-sync',
+                 'erase-or-distro-sync' : 'remove-or-sync',
+                 'remove-or-distro-sync' : 'remove-or-sync',
+                 'erase-or-distribution-synchronization' : 'remove-or-sync',
+                 'remove-or-distribution-synchronization' : 'remove-or-sync',
+                 }
+        cmd = remap.get(cmd, cmd)
+
         if False: pass
         elif cmd == 'install': # install is simpler version of installPkgs...
             for arg in args:

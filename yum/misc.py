@@ -1146,7 +1146,11 @@ def repo_gen_decompress(filename, generated_name, cached=False):
         generated name, and use check_timestamps. filename _must_ be from
         a repo. and generated_name is the type of the file. """
     dest = os.path.dirname(filename) + '/gen/' + generated_name
-    return decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)
+    ret = decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)
+
+    if cached and ret and not os.path.exists(ret):
+        return None
+    return ret
     
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """takes a glob of a dir (like /etc/foo.d/*.foo)

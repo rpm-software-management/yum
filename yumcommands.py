@@ -3364,7 +3364,7 @@ class RepoPkgsCommand(YumCommand):
                     pkgs = base.pkgSack.searchNames([txmbr.name])
                     toinst = None
                     for pkg in sorted(pkgs):
-                        if pkg.repoid == repoid:
+                        if pkg.repoid == repoid: # Backwrds filter_pkgs_repoid
                             continue
                         if toinst is None:
                             toinst = pkg

@@ -1197,3 +1197,22 @@ def cElementTree_xmlparse(filename):
     """ Lazily load/run: cElementTree.parse """
     _cElementTree_import()
     return __cached_cElementTree.parse(filename)
+
+def filter_pkgs_repoid(pkgs, repoid):
+    """ Given a list of packages, filter them for those "in" the repoid.
+    uses from_repo for installed packages, used by repo-pkgs commands. """
+
+    if repoid is None:
+        return pkgs
+
+    ret = []
+    for pkg in pkgs:
+        if pkg.repoid == 'installed':
+            if 'from_repo' not in pkg.yumdb_info:
+                continue
+            if pkg.yumdb_info.from_repo != repoid:
+                continue
+        elif pkg.repoid != repoid:
+            continue
+        ret.append(pkg)
+    return ret

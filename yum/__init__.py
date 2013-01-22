@@ -2637,27 +2637,6 @@ much more problems).
         recent = []
         extras = []
 
-        def _filter_ipkgs_repoid(pkgs):
-            if not repoid: return pkgs
-
-            ret = []
-            for pkg in pkgs:
-                if 'from_repo' not in pkg.yumdb_info:
-                    continue
-                if pkg.yumdb_info.from_repo != repoid:
-                    continue
-                ret.append(pkg)
-            return ret
-        def _filter_apkgs_repoid(pkgs):
-            if not repoid: return pkgs
-
-            ret = []
-            for pkg in pkgs:
-                if pkg.repoid != repoid:
-                    continue
-                ret.append(pkg)
-            return ret
-
         ic = ignore_case
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
@@ -2665,7 +2644,7 @@ much more problems).
             ndinst = {} # Newest versions by name.arch
             for po in self.rpmdb.returnPackages(patterns=patterns,
                                                 ignore_case=ic):
-                if not _filter_ipkgs_repoid([po]):
+                if not misc.filter_pkgs_repoid([po], repoid):
                     continue
                 dinst[po.pkgtup] = po
                 if showdups:
@@ -2723,7 +2702,7 @@ much more problems).
                 matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
                                                    ver=v, rel=r)
                 # This is kind of wrong, depending on how you look at it.
-                matches = _filter_apkgs_repoid(matches)
+                matches = misc.filter_pkgs_repoid(matches, repoid)
                 if len(matches) > 1:
                     updates.append(matches[0])
                     self.verbose_logger.log(logginglevels.DEBUG_1,
@@ -2743,7 +2722,7 @@ much more problems).
         elif pkgnarrow == 'installed':
             installed = self.rpmdb.returnPackages(patterns=patterns,
                                                   ignore_case=ic)
-            installed = _filter_ipkgs_repoid(installed)
+            installed = misc.filter_pkgs_repoid(installed, repoid)
         
         # available in a repository
         elif pkgnarrow == 'available':
@@ -2789,7 +2768,7 @@ much more problems).
             avail = set(avail)
             for po in self.rpmdb.returnPackages(patterns=patterns,
                                                 ignore_case=ic):
-                if not _filter_ipkgs_repoid([po]):
+                if not misc.filter_pkgs_repoid([po], repoid):
                     continue
                 if po.pkgtup not in avail:
                     extras.append(po)
@@ -2801,7 +2780,7 @@ much more problems).
             for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
-                pkgs = _filter_apkgs_repoid(pkgs)
+                pkgs = misc.filter_pkgs_repoid(pkgs, repoid)
                 instpo = self.getInstalledPackageObject(instTup)
                 for po in pkgs:
                     obsoletes.append(po)
@@ -4497,15 +4476,7 @@ much more problems).
                      ver=nevra_dict['version'], rel=nevra_dict['release'])
                 self._add_not_found_a(pkgs, nevra_dict)
                 
-                if 'repoid' in kwargs:
-                    def _filter_repoid(pkgs):
-                        ret = []
-                        for pkg in pkgs:
-                            if pkg.repoid != kwargs['repoid']:
-                                continue
-                            ret.append(pkg)
-                        return ret
-                    pkgs = _filter_repoid(pkgs)
+                pkgs = misc.filter_pkgs_repoid(pkgs, kwargs.get('repoid'))
 
             if pkgs:
                 # if was_pattern or nevra-dict['arch'] is none, take the list
@@ -4587,7 +4558,7 @@ much more problems).
             # make sure this shouldn't be passed to update:
             ipkgs = self.rpmdb.searchNames([po.name])
             if ipkgs and self._install_is_upgrade(po, ipkgs):
-                txmbrs = self.update(po=po)
+                txmbrs = self.update(po=po, repoid=kwargs.get('repoid'))
                 tx_return.extend(txmbrs)
                 continue
 
@@ -4597,6 +4568,7 @@ much more problems).
             #  Make sure we're not installing a package which is obsoleted by
             # something else in the repo. Unless there is a obsoletion loop,
             # at which point ignore everything.
+            # NOTE: This is broken wrt. repoid...
             obsoleting_pkg = None
             if self.conf.obsoletes and not isinstance(po, YumLocalPackage):
                 obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
@@ -4642,7 +4614,7 @@ much more problems).
                         break
                 if not found:
                     pkg_warn(_('Package matching %s already installed. Checking for update.'), po)            
-                    txmbrs = self.update(po=po)
+                    txmbrs = self.update(po=po, repoid=kwargs.get('repoid'))
                     tx_return.extend(txmbrs)
                     continue
 
@@ -4838,8 +4810,11 @@ much more problems).
             arg = kwargs['pattern']
             if not update_to:
                 instpkgs  = self.rpmdb.returnPackages(patterns=[arg])
+                instpkgs  = misc.filter_pkgs_repoid(instpkgs,
+                                                    kwargs.get('repoid'))
             else:
-                availpkgs = self.pkgSack.returnPackages(patterns=[arg])
+                availpkgs = self.pkgSack.returnPackages(patterns=[arg],
+                                                        repoid=kwargs.get('repoid'))
 
             if not instpkgs and not availpkgs:
                 depmatches = []
@@ -4851,6 +4826,8 @@ much more problems).
                 except yum.Errors.YumBaseError, e:
                     self.logger.critical(_('%s') % e)
 
+                 depmatches = misc.filter_pkgs_repoid(depmatches,
+                                                      kwargs.get('repoid'))
                 if update_to:
                     availpkgs.extend(depmatches)
                 else:
@@ -4864,7 +4841,6 @@ much more problems).
                     m = []
                 else:
                     pats = [kwargs['pattern']]
-                    # pats += list(set([pkg.name for pkg in instpkgs]))
                     m = self.pkgSack.returnNewestByNameArch(patterns=pats)
             except Errors.PackageSackError:
                 m = []
@@ -4925,6 +4901,7 @@ much more problems).
                     if obsoleting_pkg is None:
                         continue
                     obs_pkgs.append(obsoleting_pkg)
+                # NOTE: Broekn wrt. repoid
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
@@ -5077,18 +5054,8 @@ much more problems).
 
                 (e,m,u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
                 if 'repoid' in kwargs:
-                    def _filter_repoid(pkgs):
-                        ret = []
-                        for pkg in pkgs:
-                            if 'from_repo' not in pkg.yumdb_info:
-                                continue
-                            if pkg.yumdb_info.from_repo != kwargs['repoid']:
-                                continue
-                            ret.append(pkg)
-                        return ret
-
-                    e = _filter_repoid(e)
-                    m = _filter_repoid(m)
+                    e = misc.filter_pkgs_repoid(e, kwargs['repoid'])
+                    m = misc.filter_pkgs_repoid(m, kwargs['repoid'])
 
                 pkgs.extend(e)
                 pkgs.extend(m)
@@ -5101,7 +5068,8 @@ much more problems).
                         self.logger.critical(_('%s') % e)
                     
                     if 'repoid' in kwargs:
-                        depmatches = _filter_repoid(depmatches)
+                        depmatches = misc.filter_pkgs_repoid(depmatches,
+                                                             kwargs['repoid'])
 
                     if not depmatches:
                         arg = to_unicode(arg)

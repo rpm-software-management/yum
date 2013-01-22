@@ -738,6 +738,9 @@ class InfoCommand(YumCommand):
         """
         if len(extcmds) and extcmds[0] in ('updates', 'obsoletes'):
             return 'read-only:future'
+        if len(extcmds) and extcmds[0] in ('installed', 'extras', 'recent'):
+            return 'read-only:past'
+        # available/all
         return 'read-only:present'
 
 

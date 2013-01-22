@@ -3254,7 +3254,7 @@ class RepoPkgsCommand(YumCommand):
 
         :return: a usage string for this command
         """
-        return "<enabled-repoid> <list|info|install|remove|remove-or-reinstall|remove-or-sync> [pkg(s)]"
+        return "<repoid> <list|info|install|remove|upgrade|remove-or-*> [pkg(s)]"
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -3311,6 +3311,7 @@ class RepoPkgsCommand(YumCommand):
                  'remove-or-distro-sync' : 'remove-or-sync',
                  'erase-or-distribution-synchronization' : 'remove-or-sync',
                  'remove-or-distribution-synchronization' : 'remove-or-sync',
+                 'upgrade' : 'update', # Hack, but meh.
                  }
         cmd = remap.get(cmd, cmd)
 
@@ -3328,6 +3329,16 @@ class RepoPkgsCommand(YumCommand):
 
             if num:
                 return 2, P_('%d package to install', '%d packages to install',
+                             num)
+
+        elif cmd == 'update': # update is basically the same as install...
+            for arg in args:
+                txmbrs = base.update(pattern=arg, repoid=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to update', '%d packages to update',
                              num)
 
         elif cmd == 'remove': # Also mostly the same...
@@ -3355,6 +3366,10 @@ class RepoPkgsCommand(YumCommand):
                 _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
 
+            if num:
+                return 2, P_('%d package to remove/reinstall',
+                             '%d packages to remove/reinstall', num)
+
         elif cmd == 'remove-or-sync': # Even more complicated...
             for arg in args:
                 txmbrs = base.remove(pattern=arg, repoid=repoid)
@@ -3362,20 +3377,26 @@ class RepoPkgsCommand(YumCommand):
                 # repo.
                 for txmbr in txmbrs[:]:
                     pkgs = base.pkgSack.searchNames([txmbr.name])
-                    toinst = None
+                    apkgs = None
                     for pkg in sorted(pkgs):
-                        if pkg.repoid == repoid: # Backwrds filter_pkgs_repoid
+                        if pkg.repoid == repoid: # Backwards filter_pkgs_repoid
                             continue
-                        if toinst is None:
-                            toinst = pkg
-                        if toinst.verLT(pkg):
-                            if toinst.verEQ(txmbr.po):
-                                break
-                            toinst = pkg
-                        if toinst.verEQ(txmbr.po) and toinst.arch == txmbr.arch:
-                            break
+                        if apkgs and pkg.verEQ(apkgs[0]):
+                            apkgs.append(pkg)
+                        else:
+                            apkgs = [pkg]
 
-                    if toinst is not None:
+                    if apkgs:
+                        for pkg in apkgs:
+                            if pkg.arch != txmbr.arch:
+                                continue
+                            apkgs = [pkg]
+                            break
+                        if len(apkgs) != 1:
+                            apkgs = base.bestPackagesFromList(apkgs)
+
+                    for toinst in apkgs:
+                        n,a,e,v,r = toinst.pkgtup
                         if toinst.verEQ(txmbr.po):
                             txmbrs += base.install(po=toinst)
                         elif toinst.verGT(txmbr.po):
@@ -3389,8 +3410,8 @@ class RepoPkgsCommand(YumCommand):
                 num += len(txmbrs)
 
             if num:
-                return 2, P_('%d package to remove/reinstall',
-                             '%d packages to remove/reinstall', num)
+                return 2, P_('%d package to remove/sync',
+                             '%d packages to remove/sync', num)
 
         else:
             return 1, [_('Not a valid sub-command of %s') % basecmd]

@@ -4826,8 +4826,8 @@ much more problems).
                 except yum.Errors.YumBaseError, e:
                     self.logger.critical(_('%s') % e)
 
-                 depmatches = misc.filter_pkgs_repoid(depmatches,
-                                                      kwargs.get('repoid'))
+                depmatches = misc.filter_pkgs_repoid(depmatches,
+                                                     kwargs.get('repoid'))
                 if update_to:
                     availpkgs.extend(depmatches)
                 else:
@@ -4844,6 +4844,7 @@ much more problems).
                     m = self.pkgSack.returnNewestByNameArch(patterns=pats)
             except Errors.PackageSackError:
                 m = []
+            m = misc.filter_pkgs_repoid(m, kwargs.get('repoid'))
             availpkgs.extend(m)
 
             if not availpkgs and not instpkgs:

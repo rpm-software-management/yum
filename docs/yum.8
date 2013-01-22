@@ -372,6 +372,9 @@ only shows packages from the givien repository.
 "repository\-packages <repo> install" - Install all of the packages in the
 repository, basicallly the same as: yum install $(repoquery --repoid=<repo> -a).
 
+"repository\-packages <repo> upgrade" - Update all of the packages in the
+repository, basicallly the same as: yum upgrade $(repoquery --repoid=<repo> -a).
+
 "repo\-pkgs <repo> remove" - Remove all of the packages in the repository, very
 similar to: yum remove $(repoquery --repoid=<repo> -a). However the
 repopkgsremove_leaf_only option is obeyed.
@@ -383,8 +386,7 @@ reinstalled.
 
 "repo\-pkgs <repo> remove-or-distro-sync" - Works like remove for any package
 that doesn't exist in another repository. For any package that does exist
-another version will be reinstalled, upgraded or downgraded to (in that order
-of preference).
+it tries to work as if distro-sync was called (with the repo. disabled).
 
 .IP
 .IP "\fBversion\fP"

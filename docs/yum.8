@@ -363,7 +363,14 @@ This command works exactly like repolist -v.
 Treat a repo. as a collection of packages (like "yum groups") allowing the user
 to install or remove them as a single entity.
 
-"repository\-packages <repo> install" - Install all of the packages in the repository, basicallly the same as: yum install $(repoquery --repoid=<repo> -a).
+"repository\-packages <repo> list" - Works like the "yum list" command, but
+only shows packages from the givien repository.
+
+"repository\-packages <repo> info" - Works like the "yum info" command, but
+only shows packages from the givien repository.
+
+"repository\-packages <repo> install" - Install all of the packages in the
+repository, basicallly the same as: yum install $(repoquery --repoid=<repo> -a).
 
 "repo\-pkgs <repo> remove" - Remove all of the packages in the repository, very
 similar to: yum remove $(repoquery --repoid=<repo> -a). However the

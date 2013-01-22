@@ -1259,7 +1259,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 2, [_('Package(s) to install')]
         return 0, [_('Nothing to do')]
 
-    def returnPkgLists(self, extcmds, installed_available=False):
+    def returnPkgLists(self, extcmds, installed_available=False, repoid=None):
         """Return a :class:`yum.misc.GenericHolder` object containing
         lists of package objects that match the given names or wildcards.
 
@@ -1268,6 +1268,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         :param installed_available: whether the available package list
            is present as .hidden_available when doing all, available,
            or installed
+        :param repoid: a repoid that all packages should belong to
 
         :return: a :class:`yum.misc.GenericHolder` instance with the
            following lists defined::
@@ -1296,7 +1297,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 pkgnarrow = extcmds.pop(0)
             
         ypl = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=extcmds,
-                                  ignore_case=True)
+                                  ignore_case=True, repoid=repoid)
         if self.conf.showdupesfromrepos:
             ypl.available += ypl.reinstall_available
 

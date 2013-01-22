@@ -2598,7 +2598,7 @@ much more problems).
         return 0, [msg]
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
-                       ignore_case=False):
+                       ignore_case=False, repoid=None):
         """Return a :class:`yum.misc.GenericHolder` containing
         lists of package objects.  The contents of the lists are
         specified in various ways by the arguments.
@@ -2612,6 +2612,7 @@ much more problems).
            lists
         :param ignore_case: whether to ignore case when searching by
            package names
+        :param repoid: repoid that all pkgs will belong to
         :return: a :class:`yum.misc.GenericHolder` instance with the
            following lists defined::
 
@@ -2636,6 +2637,27 @@ much more problems).
         recent = []
         extras = []
 
+        def _filter_ipkgs_repoid(pkgs):
+            if not repoid: return pkgs
+
+            ret = []
+            for pkg in pkgs:
+                if 'from_repo' not in pkg.yumdb_info:
+                    continue
+                if pkg.yumdb_info.from_repo != repoid:
+                    continue
+                ret.append(pkg)
+            return ret
+        def _filter_apkgs_repoid(pkgs):
+            if not repoid: return pkgs
+
+            ret = []
+            for pkg in pkgs:
+                if pkg.repoid != repoid:
+                    continue
+                ret.append(pkg)
+            return ret
+
         ic = ignore_case
         # list all packages - those installed and available, don't 'think about it'
         if pkgnarrow == 'all': 
@@ -2643,6 +2665,8 @@ much more problems).
             ndinst = {} # Newest versions by name.arch
             for po in self.rpmdb.returnPackages(patterns=patterns,
                                                 ignore_case=ic):
+                if not _filter_ipkgs_repoid([po]):
+                    continue
                 dinst[po.pkgtup] = po
                 if showdups:
                     continue
@@ -2652,8 +2676,13 @@ much more problems).
             installed = dinst.values()
                         
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=patterns,
+                avail = self.pkgSack.returnPackages(repoid=repoid,
+                                                    patterns=patterns,
                                                     ignore_case=ic)
+            elif repoid:
+                avail = self.pkgSack.sacks[repoid]
+                avail = avail.returnNewestByNameArch(patterns=patterns,
+                                                     ignore_case=ic)
             else:
                 try:
                     avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
@@ -2693,6 +2722,8 @@ much more problems).
             for (n,a,e,v,r) in self.up.getUpdatesList():
                 matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
                                                    ver=v, rel=r)
+                # This is kind of wrong, depending on how you look at it.
+                matches = _filter_apkgs_repoid(matches)
                 if len(matches) > 1:
                     updates.append(matches[0])
                     self.verbose_logger.log(logginglevels.DEBUG_1,
@@ -2712,13 +2743,19 @@ much more problems).
         elif pkgnarrow == 'installed':
             installed = self.rpmdb.returnPackages(patterns=patterns,
                                                   ignore_case=ic)
+            installed = _filter_ipkgs_repoid(installed)
         
         # available in a repository
         elif pkgnarrow == 'available':
 
             if showdups:
                 avail = self.pkgSack.returnPackages(patterns=patterns,
-                                                    ignore_case=ic)
+                                                    ignore_case=ic,
+                                                    repoid=repoid)
+            elif repoid:
+                avail = self.pkgSack.sacks[repoid]
+                avail = avail.returnNewestByNameArch(patterns=patterns,
+                                                     ignore_case=ic)
             else:
                 try:
                     avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
@@ -2752,6 +2789,8 @@ much more problems).
             avail = set(avail)
             for po in self.rpmdb.returnPackages(patterns=patterns,
                                                 ignore_case=ic):
+                if not _filter_ipkgs_repoid([po]):
+                    continue
                 if po.pkgtup not in avail:
                     extras.append(po)
 
@@ -2762,6 +2801,7 @@ much more problems).
             for (pkgtup, instTup) in self.up.getObsoletesTuples():
                 (n,a,e,v,r) = pkgtup
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
+                pkgs = _filter_apkgs_repoid(pkgs)
                 instpo = self.getInstalledPackageObject(instTup)
                 for po in pkgs:
                     obsoletes.append(po)
@@ -2793,7 +2833,12 @@ much more problems).
             recentlimit = now-(self.conf.recent*86400)
             if showdups:
                 avail = self.pkgSack.returnPackages(patterns=patterns,
-                                                    ignore_case=ic)
+                                                    ignore_case=ic,
+                                                    repoid=repoid)
+            elif repoid:
+                avail = self.pkgSack.sacks[repoid]
+                avail = avail.returnNewestByNameArch(patterns=patterns,
+                                                     ignore_case=ic)
             else:
                 try:
                     avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,

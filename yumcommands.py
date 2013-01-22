@@ -602,7 +602,7 @@ class InfoCommand(YumCommand):
         """
         return _("Display details about a package or group of packages")
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, base, basecmd, extcmds, repoid=None):
         """Execute this command.
 
         :param base: a :class:`yum.Yumbase` object
@@ -623,7 +623,8 @@ class InfoCommand(YumCommand):
             # than providing colour for a single line. Usable updatesd/etc. FTW.
             if basecmd == 'info' and extcmds and extcmds[0] == 'installed':
                 highlight = False
-            ypl = base.returnPkgLists(extcmds, installed_available=highlight)
+            ypl = base.returnPkgLists(extcmds, installed_available=highlight,
+                                      repoid=repoid)
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
         else:
@@ -700,7 +701,7 @@ class InfoCommand(YumCommand):
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
                     base.updatesObsoletesList(obtup, 'obsoletes',
-                                              columns=columns)
+                                              columns=columns, repoid=repoid)
             else:
                 rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
                                     basecmd, columns=columns)
@@ -3253,7 +3254,7 @@ class RepoPkgsCommand(YumCommand):
 
         :return: a usage string for this command
         """
-        return "<enabled-repoid> <install|remove|remove-or-reinstall|remove-or-sync> [pkg(s)]"
+        return "<enabled-repoid> <list|info|install|remove|remove-or-reinstall|remove-or-sync> [pkg(s)]"
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -3314,6 +3315,11 @@ class RepoPkgsCommand(YumCommand):
         cmd = remap.get(cmd, cmd)
 
         if False: pass
+        elif cmd == 'list': # list/info is easiest...
+            return ListCommand().doCommand(base, cmd, args, repoid=repoid)
+        elif cmd == 'info':
+            return InfoCommand().doCommand(base, cmd, args, repoid=repoid)
+
         elif cmd == 'install': # install is simpler version of installPkgs...
             for arg in args:
                 txmbrs = base.install(pattern=arg, repoid=repoid)
@@ -3390,3 +3396,35 @@ class RepoPkgsCommand(YumCommand):
             return 1, [_('Not a valid sub-command of %s') % basecmd]
 
         return 0, [_('Nothing to do')]
+
+    def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
+        cmd = 'install'
+        if len(extcmds) > 1:
+            cmd = extcmds[1]
+        if cmd in ('info', 'list'):
+            return InfoCommand().cacheRequirement(base, cmd, extcmds[2:])
+
+        return True
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        cmd = 'install'
+        if len(extcmds) > 1:
+            cmd = extcmds[1]
+        if cmd in ('info', 'list'):
+            return InfoCommand().cacheRequirement(base, cmd, extcmds[2:])
+        return 'write'

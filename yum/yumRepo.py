@@ -1908,7 +1908,11 @@ Insufficient space in download directory %s
         if os.path.exists(destfn):
             if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
                 return False
-        shutil.copy2(fn, destfn)
+        try:
+            # IOError is the main culprit, with mode=600. But ignore everything.
+            shutil.copy2(fn, destfn)
+        except:
+            return False
         return True
 
     def _preload_file_from_system_cache(self, filename, subdir='',

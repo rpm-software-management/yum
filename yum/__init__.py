@@ -2322,7 +2322,10 @@ much more problems).
                     # we may throw away partial file here- but we don't lock,
                     # so can't rename tempfile to rpmfile safely
                     misc.unlink_f(po.localpath)
-                if po not in errors:
+
+                #  Note that for file:// repos. urlgrabber won't "download"
+                # so we have to check that po.localpath exists.
+                if po not in errors and os.path.exists(po.localpath):
                     # verifyPkg() didn't complain, so (potentially)
                     # overwriting another copy should not be a problem
                     os.rename(po.localpath, rpmfile)

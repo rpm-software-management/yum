@@ -193,6 +193,8 @@ class YumPackageSack(packageSack.PackageSack):
                 if not db_un_fn:
                     db_fn = repo._retrieveMD(mydbtype)
                     if db_fn:
+                        # unlink the decompressed file, we know it's not valid
+                        misc.unlink_f(repo.cachedir +'/gen/%s.sqlite' % mydbtype)
                         db_un_fn = self._check_uncompressed_db_gen(repo,
                                                                    mydbtype)
                     if not db_un_fn: # Shouldn't happen?

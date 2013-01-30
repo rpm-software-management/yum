@@ -790,8 +790,8 @@ class YumConf(StartupConf):
     ip_resolve = CaselessSelectionOption(
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
-    max_connections = IntOption(0)
-    deltarpm = IntOption(4)
+    max_connections = IntOption(0, range_min=0)
+    deltarpm = IntOption(4, range_min=-2)
     deltarpm_percentage = IntOption(75, range_min=1, range_max=100)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))

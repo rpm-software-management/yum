@@ -60,7 +60,7 @@ msgstr "ਮੁੜ-ਪੈਕੇਜ"
 #: ../callback.py:201
 #, python-format
 msgid "Error: invalid output state: %s for %s"
-msgstr "ਗਲਤੀ: ਗਲਤ ਆਉਟਪੁੱਟ ਸਥਿਤੀ: %2$s ਲਈ %1$s"
+msgstr "ਗਲਤੀ: ਗਲਤ ਆਉਟਪੁੱਟ ਸਥਿਤੀ: %s ਲਈ %s"
 
 #: ../callback.py:224
 #, python-format
@@ -2273,7 +2273,7 @@ msgstr "ਇੰਸਟਾਲ ਕਰਨ ਲਈ %s ਬਦਲਿਆ"
 #: ../yum/depsolve.py:295
 #, python-format
 msgid "Adding Package %s in mode %s"
-msgstr "%2$s ਮੋਡ ਵਿੱਚ ਪੈਕੇਜ %1$s ਜੋੜਿਆ ਜਾ ਰਿਹਾ ਹੈ"
+msgstr "%s ਮੋਡ ਵਿੱਚ ਪੈਕੇਜ %s ਜੋੜਿਆ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../yum/depsolve.py:311
 #, python-format
@@ -2877,7 +2877,7 @@ msgstr "ਪੈਕੇਜ %s ਗਰੁੱਪ %s ਵਿੱਚ ਨਿਸ਼ਾਨਬ
 #: ../yum/__init__.py:3622
 #, python-format
 msgid "Skipping package %s from group %s"
-msgstr "%2$s ਗਰੁੱਪ ਵਿੱਚੋਂ %1$s ਪੈਕੇਜ ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹੈ"
+msgstr "%s ਗਰੁੱਪ ਵਿੱਚੋਂ %s ਪੈਕੇਜ ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../yum/__init__.py:3628
 #, python-format

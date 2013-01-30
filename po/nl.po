@@ -1,0 +1,3308 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Richard E. van der Luit <nippur@fedoraproject.org>, 2011, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: Yum\n"
+"Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
+"POT-Creation-Date: 2012-03-01 16:05-0500\n"
+"PO-Revision-Date: 2012-03-03 10:07+0000\n"
+"Last-Translator: Richard E. van der Luit <nippur@fedoraproject.org>\n"
+"Language-Team: Dutch (http://www.transifex.com/projects/p/yum/language/nl/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../callback.py:45 ../output.py:1440 ../yum/rpmtrans.py:73
+msgid "Updating"
+msgstr "Bijwerken"
+
+#: ../callback.py:46 ../yum/rpmtrans.py:74
+msgid "Erasing"
+msgstr "Wissen"
+
+#: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1439
+#: ../output.py:2854 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
+#: ../yum/rpmtrans.py:78
+msgid "Installing"
+msgstr "Installeren"
+
+#: ../callback.py:49 ../callback.py:55 ../output.py:2312 ../yum/rpmtrans.py:77
+msgid "Obsoleted"
+msgstr "Aangemerkt als verouderd"
+
+#: ../callback.py:51 ../output.py:1608 ../output.py:2155 ../output.py:2319
+msgid "Updated"
+msgstr "Bijgewerkt"
+
+#: ../callback.py:52 ../output.py:2154
+msgid "Erased"
+msgstr "Gewist"
+
+#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1606
+#: ../output.py:2154 ../output.py:2156 ../output.py:2826
+msgid "Installed"
+msgstr "Geïnstalleerd"
+
+#: ../callback.py:142
+msgid "No header - huh?"
+msgstr "Geen header - huh?"
+
+#: ../callback.py:180
+msgid "Repackage"
+msgstr "Opnieuw verpakken"
+
+#: ../callback.py:201
+#, python-format
+msgid "Error: invalid output state: %s for %s"
+msgstr "Fout: ongeldige out-put status: %s voor %s"
+
+#: ../callback.py:224
+#, python-format
+msgid "Erased: %s"
+msgstr "Verwijderd: %s"
+
+#: ../callback.py:229 ../output.py:1441 ../output.py:2829
+msgid "Removing"
+msgstr "Verwijderen"
+
+#: ../callback.py:231 ../yum/rpmtrans.py:79
+msgid "Cleanup"
+msgstr "Opruimen"
+
+#: ../cli.py:120
+#, python-format
+msgid "Command \"%s\" already defined"
+msgstr "Opdracht \"%s\" is al gedefinieerd"
+
+#: ../cli.py:135
+msgid "Setting up repositories"
+msgstr "Opzetten "
+
+#: ../cli.py:146
+msgid "Reading repository metadata in from local files"
+msgstr "Repository metadata inlezen van lokale bestanden"
+
+#: ../cli.py:271 ../cli.py:275 ../utils.py:346
+#, python-format
+msgid "Config Error: %s"
+msgstr "Configuratiefout: %s"
+
+#: ../cli.py:278 ../cli.py:1987 ../utils.py:349
+#, python-format
+msgid "Options Error: %s"
+msgstr "Optiefout: %s"
+
+#: ../cli.py:325
+#, python-format
+msgid "  Installed: %s-%s at %s"
+msgstr "  Geïnstalleerd: %s-%s op %s"
+
+#: ../cli.py:327
+#, python-format
+msgid "  Built    : %s at %s"
+msgstr "  Gebouwd    : %s op %s"
+
+#: ../cli.py:329
+#, python-format
+msgid "  Committed: %s at %s"
+msgstr "  Ingediend: %s op %s"
+
+#: ../cli.py:370
+msgid "You need to give some command"
+msgstr "Je moet een commando ingeven"
+
+#: ../cli.py:384
+#, python-format
+msgid "No such command: %s. Please use %s --help"
+msgstr "Een dergelijk commando bestaat niet: %s. Gebruik a.u.b. %s - help"
+
+#: ../cli.py:442
+msgid "Disk Requirements:\n"
+msgstr "Hardeschijf-vereisten:\n"
+
+#: ../cli.py:444
+#, python-format
+msgid "  At least %dMB more space needed on the %s filesystem.\n"
+msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
+msgstr[0] "  Minstens %d MB meer ruimte nodig op het bestandssysteem %s.\n"
+msgstr[1] "  Minstens %d MB meer ruimte nodig op  bestandssysteem  %s.\n"
+
+#. TODO: simplify the dependency errors?
+#. Fixup the summary
+#: ../cli.py:449
+msgid ""
+"Error Summary\n"
+"-------------\n"
+msgstr "Samenvatting Fouten\n-------------\n"
+
+#: ../cli.py:497
+msgid "Trying to run the transaction but nothing to do. Exiting."
+msgstr "Aan het proberen de transactie uit te voeren, maar er is niets te doen. Ik hou er mee op."
+
+#: ../cli.py:542
+msgid "Exiting on user Command"
+msgstr "Ophouden op commando van gebruiker "
+
+#: ../cli.py:546
+msgid "Downloading Packages:"
+msgstr "Downloaden Pakketten:"
+
+#: ../cli.py:551
+msgid "Error Downloading Packages:\n"
+msgstr "Fout Downloaden Pakketten:\n"
+
+#: ../cli.py:570 ../yum/__init__.py:5748
+msgid "Running Transaction Check"
+msgstr "Uitvoeren Transactie Check"
+
+#: ../cli.py:579 ../yum/__init__.py:5757
+msgid "ERROR You need to update rpm to handle:"
+msgstr "FOUT U moet rpm bijwerken om het op te lossen:"
+
+#: ../cli.py:581 ../yum/__init__.py:5760
+msgid "ERROR with transaction check vs depsolve:"
+msgstr "FOUT bij transactiecheck ten opzichte van afhankelijkheidsoplossing:"
+
+#: ../cli.py:587
+msgid "RPM needs to be updated"
+msgstr "RPM moet worden bijgewerkt"
+
+#: ../cli.py:588
+#, python-format
+msgid "Please report this error in %s"
+msgstr "Meld deze fout in %s a.u.b."
+
+#: ../cli.py:594
+msgid "Running Transaction Test"
+msgstr "Uitvoeren Transactie Test"
+
+#: ../cli.py:606
+msgid "Transaction Check Error:\n"
+msgstr "Transactie Check Fout:\n"
+
+#: ../cli.py:613
+msgid "Transaction Test Succeeded"
+msgstr "Transactie Test geslaagd"
+
+#: ../cli.py:645
+msgid "Running Transaction"
+msgstr "Uitvoeren Transactie"
+
+#: ../cli.py:678
+msgid ""
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
+msgstr "Weiger om automatisch sleutels te importeren tijdens onbewaakt uitvoeren. \nGebruik \"-y\" om dit te overrulen."
+
+#: ../cli.py:697 ../cli.py:740
+msgid "  * Maybe you meant: "
+msgstr "  * Misschien heb je hier bedoeld: "
+
+#: ../cli.py:723 ../cli.py:731
+#, python-format
+msgid "Package(s) %s%s%s available, but not installed."
+msgstr "Pakket(ten) %s %s %s beschikbaar, maar niet geïnstalleerd."
+
+#: ../cli.py:737 ../cli.py:835 ../cli.py:1071
+#, python-format
+msgid "No package %s%s%s available."
+msgstr "Geen pakket %s %s %s beschikbaar."
+
+#: ../cli.py:844
+#, python-format
+msgid "%d package to install"
+msgid_plural "%d packages to install"
+msgstr[0] "%d pakket om te installeren"
+msgstr[1] "%d pakketten om te installeren"
+
+#: ../cli.py:847 ../cli.py:848 ../cli.py:1078 ../cli.py:1128 ../cli.py:1163
+#: ../yumcommands.py:271
+msgid "Nothing to do"
+msgstr "Niets te doen"
+
+#: ../cli.py:897
+#, python-format
+msgid "%d package marked for Update"
+msgid_plural "%d packages marked for Update"
+msgstr[0] "%d pakket gemarkeerd voor update"
+msgstr[1] "%d pakketten gemarkeerd voor update"
+
+#: ../cli.py:899
+msgid "No Packages marked for Update"
+msgstr "Geen pakketten gemarkeerd voor Bijwerken"
+
+#: ../cli.py:1011
+#, python-format
+msgid "%d package marked for Distribution Synchronization"
+msgid_plural "%d packages marked for Distribution Synchronization"
+msgstr[0] "%d pakket gemarkeerd voor Distributie Synchronisatie"
+msgstr[1] "%d pakketten gemarkeerd voor Distributie Synchronisatie"
+
+#: ../cli.py:1013
+msgid "No Packages marked for Distribution Synchronization"
+msgstr "Geen pakketten gemarkeerd voor Distributie Synchronisatie"
+
+#: ../cli.py:1038
+#, python-format
+msgid "%d package marked for removal"
+msgid_plural "%d packages marked for removal"
+msgstr[0] "%d pakketten gemarkeerd voor verwijdering"
+msgstr[1] "%d pakketten gemarkeerd voor verwijdering"
+
+#: ../cli.py:1040
+msgid "No Packages marked for removal"
+msgstr "Geen pakketten gemarkeerd voor verwijdering"
+
+#: ../cli.py:1077
+#, python-format
+msgid "%d package to downgrade"
+msgid_plural "%d packages to downgrade"
+msgstr[0] "%d pakket te downgraden"
+msgstr[1] "%d pakketten te downgraden"
+
+#: ../cli.py:1114
+#, python-format
+msgid " (from %s)"
+msgstr " (van %s)"
+
+#: ../cli.py:1115
+#, python-format
+msgid "Installed package %s%s%s%s not available."
+msgstr "Geïnstalleerd pakket %s %s %s %s niet beschikbaar."
+
+#: ../cli.py:1127
+#, python-format
+msgid "%d package to reinstall"
+msgid_plural "%d packages to reinstall"
+msgstr[0] "%d pakket te herinstalleren"
+msgstr[1] "%d pakketten te herinstalleren"
+
+#: ../cli.py:1149
+msgid "No Packages Provided"
+msgstr "Geen Pakketten Opgeleverd"
+
+#: ../cli.py:1162
+msgid "Package(s) to install"
+msgstr "Pakket(ten) te installeren"
+
+#: ../cli.py:1269
+#, python-format
+msgid "N/S Matched: %s"
+msgstr "N/S Matched: %s"
+
+#: ../cli.py:1286
+#, python-format
+msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
+msgstr "  Naam en opsomming matches %sonly%s, gebruik \"search all\" voor alles."
+
+#: ../cli.py:1288
+#, python-format
+msgid ""
+"  Full name and summary matches %sonly%s, use \"search all\" for everything."
+msgstr "  Volledige naam en opsomming matches %sonly%s, gebruik \"search all\" voor alles."
+
+#: ../cli.py:1306
+#, python-format
+msgid "Matched: %s"
+msgstr "Passend: %s"
+
+#: ../cli.py:1313
+#, python-format
+msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
+msgstr "  Naam en opsomming matches %smostly%s, gebruik \"search all\" voor alles."
+
+#: ../cli.py:1317
+#, python-format
+msgid "Warning: No matches found for: %s"
+msgstr "Waarschuwing: Er zijn geen resultaten gevonden voor: %s"
+
+#: ../cli.py:1320
+msgid "No Matches found"
+msgstr "Geen resultaten gevonden"
+
+#: ../cli.py:1436
+#, python-format
+msgid ""
+"Error: No Packages found for:\n"
+"  %s"
+msgstr "Fout: Geen pakketten gevonden voor:\n  %s"
+
+#: ../cli.py:1472
+msgid "Cleaning repos: "
+msgstr "Opschonen repo's:"
+
+#: ../cli.py:1477
+msgid "Cleaning up Everything"
+msgstr "Alles opruimen"
+
+#: ../cli.py:1493
+msgid "Cleaning up Headers"
+msgstr "Headers opruimen"
+
+#: ../cli.py:1496
+msgid "Cleaning up Packages"
+msgstr "Pakketten opruimen"
+
+#: ../cli.py:1499
+msgid "Cleaning up xml metadata"
+msgstr "Xml metadata "
+
+#: ../cli.py:1502
+msgid "Cleaning up database cache"
+msgstr "Database cache schonen"
+
+#: ../cli.py:1505
+msgid "Cleaning up expire-cache metadata"
+msgstr "Expire-cache metadata "
+
+#: ../cli.py:1508
+msgid "Cleaning up cached rpmdb data"
+msgstr "Cache rpmdb data "
+
+#: ../cli.py:1511
+msgid "Cleaning up plugins"
+msgstr "Plugins schonen"
+
+#: ../cli.py:1547
+#, python-format
+msgid "Warning: No groups match: %s"
+msgstr "Waarschuwing: Geen groep komt overeen: %s"
+
+#: ../cli.py:1564 ../cli.py:1622
+msgid "Installed Groups:"
+msgstr "Geïnstalleerd Groepen:"
+
+#: ../cli.py:1570 ../cli.py:1628
+msgid "Installed Language Groups:"
+msgstr "Geïnstalleerde Taalgroepen:"
+
+#: ../cli.py:1576 ../cli.py:1634
+msgid "Available Groups:"
+msgstr "Beschikbare groepen:"
+
+#: ../cli.py:1582 ../cli.py:1640
+msgid "Available Language Groups:"
+msgstr "Beschikbare Taal Groepen:"
+
+#: ../cli.py:1585 ../cli.py:1642
+msgid "Done"
+msgstr "Klaar"
+
+#: ../cli.py:1665 ../cli.py:1693 ../cli.py:1699 ../yum/__init__.py:3909
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr "Waarschuwing: Groep %s bestaat niet."
+
+#: ../cli.py:1703
+msgid "No packages in any requested group available to install or update"
+msgstr "Geen pakketten in welke gewenste groep dan ook beschikbaar om te installeren of bij te werken"
+
+#: ../cli.py:1705
+#, python-format
+msgid "%d package to Install"
+msgid_plural "%d packages to Install"
+msgstr[0] "%d pakket te installeren"
+msgstr[1] "%d pakketten te installeren"
+
+#: ../cli.py:1725 ../yum/__init__.py:3925
+#, python-format
+msgid "No group named %s exists"
+msgstr "Geen enkele groep met de naam %s bestaat"
+
+#: ../cli.py:1731
+msgid "No packages to remove from groups"
+msgstr "Geen pakketten om uit de groepen te verwijderen"
+
+#: ../cli.py:1733
+#, python-format
+msgid "%d package to remove"
+msgid_plural "%d packages to remove"
+msgstr[0] "%d pakket te verwijderen"
+msgstr[1] "%d pakketten te verwijderen"
+
+#: ../cli.py:1774
+#, python-format
+msgid "Package %s is already installed, skipping"
+msgstr "Pakket %s is reeds geïnstalleerd, overslaan"
+
+#: ../cli.py:1785
+#, python-format
+msgid "Discarding non-comparable pkg %s.%s"
+msgstr "Afwijzen van niet-vergelijkbare pkg %s.%s"
+
+#. we've not got any installed that match n or n+a
+#: ../cli.py:1811
+#, python-format
+msgid "No other %s installed, adding to list for potential install"
+msgstr "Geen ander %s geïnstalleerd, wordt toegevoegd aan de lijst van potentieel te installeren"
+
+#: ../cli.py:1831
+msgid "Plugin Options"
+msgstr "Plugin Opties"
+
+#: ../cli.py:1843
+#, python-format
+msgid "Command line error: %s"
+msgstr "Command line error: %s"
+
+#: ../cli.py:1865
+#, python-format
+msgid ""
+"\n"
+"\n"
+"%s: %s option requires an argument"
+msgstr "\n\n%s: %s optie vereist een argument"
+
+#: ../cli.py:1928
+msgid "--color takes one of: auto, always, never"
+msgstr "--color   kies uit: auto, always, never"
+
+#. We have a relative installroot ... haha
+#: ../cli.py:1999
+#, python-format
+msgid "--installroot must be an absolute path: %s"
+msgstr "--installroot moet een absoluut pad zijn: %s"
+
+#: ../cli.py:2053
+msgid "show this help message and exit"
+msgstr "Dit helpbericht tonen en afsluiten"
+
+#: ../cli.py:2057
+msgid "be tolerant of errors"
+msgstr "fout-tolerant zijn"
+
+#: ../cli.py:2060
+msgid "run entirely from system cache, don't update cache"
+msgstr "draai volledig uit systeemcache, werk cachegeheugen niet bij"
+
+#: ../cli.py:2063
+msgid "config file location"
+msgstr "locatie config-bestand"
+
+#: ../cli.py:2066
+msgid "maximum command wait time"
+msgstr "maximale wachttijd commando"
+
+#: ../cli.py:2068
+msgid "debugging output level"
+msgstr "debugging output niveau"
+
+#: ../cli.py:2072
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "laat dubbelen zien, in de repo's, in lijst/zoek-opdrachten"
+
+#: ../cli.py:2074
+msgid "error output level"
+msgstr "fouten output niveau"
+
+#: ../cli.py:2077
+msgid "debugging output level for rpm"
+msgstr "debugging output level voor rpm"
+
+#: ../cli.py:2080
+msgid "quiet operation"
+msgstr "stille uitvoering"
+
+#: ../cli.py:2082
+msgid "verbose operation"
+msgstr "verbose uitvoering"
+
+#: ../cli.py:2084
+msgid "answer yes for all questions"
+msgstr "antwoord ja op alle vragen"
+
+#: ../cli.py:2086
+msgid "answer no for all questions"
+msgstr "antwoord nee voor alle vragen"
+
+#: ../cli.py:2090
+msgid "show Yum version and exit"
+msgstr "Toon Yum versie en sluit af"
+
+#: ../cli.py:2091
+msgid "set install root"
+msgstr "installatie root instellen"
+
+#: ../cli.py:2095
+msgid "enable one or more repositories (wildcards allowed)"
+msgstr "aanzetten één of meerdere repositories (wildcards toegestaan)"
+
+#: ../cli.py:2099
+msgid "disable one or more repositories (wildcards allowed)"
+msgstr "uitschakelen één of meerdere repositories (wildcards toegestaan)"
+
+#: ../cli.py:2102
+msgid "exclude package(s) by name or glob"
+msgstr "uitsluiten pakket(ten) op naam of globaal"
+
+#: ../cli.py:2104
+msgid "disable exclude from main, for a repo or for everything"
+msgstr "uitschakelen Uitsluiting van 'main', voor een repo of voor alles"
+
+#: ../cli.py:2107
+msgid "enable obsoletes processing during updates"
+msgstr "aanzetten Verwerking verouderde pakketten tijdens updates"
+
+#: ../cli.py:2109
+msgid "disable Yum plugins"
+msgstr "uitschakelen Yum plug-ins"
+
+#: ../cli.py:2111
+msgid "disable gpg signature checking"
+msgstr "uitschakelen GPG signature controleren"
+
+#: ../cli.py:2113
+msgid "disable plugins by name"
+msgstr "uitschakelen plugins op naam"
+
+#: ../cli.py:2116
+msgid "enable plugins by name"
+msgstr "aanzetten plugins op naam"
+
+#: ../cli.py:2119
+msgid "skip packages with depsolving problems"
+msgstr "sla pakketten met afhankelijkheidsproblemen over"
+
+#: ../cli.py:2121
+msgid "control whether color is used"
+msgstr "bepalen of kleur wordt gebruikt"
+
+#: ../cli.py:2123
+msgid "set value of $releasever in yum config and repo files"
+msgstr "instellen waarde van $releasever in yum config en repo-bestanden"
+
+#: ../cli.py:2125
+msgid "set arbitrary config and repo options"
+msgstr "instellen arbitraire config en repo-opties"
+
+#: ../output.py:453
+msgid "Jan"
+msgstr "Jan"
+
+#: ../output.py:453
+msgid "Feb"
+msgstr "Feb"
+
+#: ../output.py:453
+msgid "Mar"
+msgstr "Mrt"
+
+#: ../output.py:453
+msgid "Apr"
+msgstr "Apr"
+
+#: ../output.py:453
+msgid "May"
+msgstr "Mei"
+
+#: ../output.py:453
+msgid "Jun"
+msgstr "Jun"
+
+#: ../output.py:454
+msgid "Jul"
+msgstr "Jul"
+
+#: ../output.py:454
+msgid "Aug"
+msgstr "Aug"
+
+#: ../output.py:454
+msgid "Sep"
+msgstr "Sep"
+
+#: ../output.py:454
+msgid "Oct"
+msgstr "Okt"
+
+#: ../output.py:454
+msgid "Nov"
+msgstr "Nov"
+
+#: ../output.py:454
+msgid "Dec"
+msgstr "Dec"
+
+#: ../output.py:468
+msgid "Trying other mirror."
+msgstr "Proberen andere mirror..."
+
+#: ../output.py:811
+#, python-format
+msgid "Name        : %s%s%s"
+msgstr "Naam        : %s %s %s"
+
+#: ../output.py:812
+#, python-format
+msgid "Arch        : %s"
+msgstr "Arch        : %s"
+
+#: ../output.py:814
+#, python-format
+msgid "Epoch       : %s"
+msgstr "Epoch       : %s"
+
+#: ../output.py:815
+#, python-format
+msgid "Version     : %s"
+msgstr "Versie      : %s"
+
+#: ../output.py:816
+#, python-format
+msgid "Release     : %s"
+msgstr "Release     : %s"
+
+#: ../output.py:817
+#, python-format
+msgid "Size        : %s"
+msgstr "Grootte     : %s"
+
+#: ../output.py:818 ../output.py:1267
+#, python-format
+msgid "Repo        : %s"
+msgstr "Repo        : %s"
+
+#: ../output.py:820
+#, python-format
+msgid "From repo   : %s"
+msgstr "Van  repo   : %s"
+
+#: ../output.py:822
+#, python-format
+msgid "Committer   : %s"
+msgstr "Indiener    : %s"
+
+#: ../output.py:823
+#, python-format
+msgid "Committime  : %s"
+msgstr "Ingediend op: %s"
+
+#: ../output.py:824
+#, python-format
+msgid "Buildtime   : %s"
+msgstr "Bouwtijd    : %s"
+
+#: ../output.py:826
+#, python-format
+msgid "Install time: %s"
+msgstr "Installeertijd    : %s"
+
+#: ../output.py:834
+#, python-format
+msgid "Installed by: %s"
+msgstr "Geïnstalleerd door: %s"
+
+#: ../output.py:841
+#, python-format
+msgid "Changed by  : %s"
+msgstr "Gewijzigd door    : %s"
+
+#: ../output.py:842
+msgid "Summary     : "
+msgstr "Samenvatting: "
+
+#: ../output.py:844 ../output.py:1283
+#, python-format
+msgid "URL         : %s"
+msgstr "URL         : %s"
+
+#: ../output.py:845
+msgid "License     : "
+msgstr "Licentie    : "
+
+#: ../output.py:846 ../output.py:1280
+msgid "Description : "
+msgstr "Beschrijving: "
+
+#: ../output.py:964
+msgid "y"
+msgstr "y"
+
+#: ../output.py:964
+msgid "yes"
+msgstr "yes"
+
+#: ../output.py:965
+msgid "n"
+msgstr "n"
+
+#: ../output.py:965
+msgid "no"
+msgstr "no"
+
+#: ../output.py:969
+msgid "Is this ok [y/N]: "
+msgstr "Is dit ok [y / N]:"
+
+#: ../output.py:1092
+#, python-format
+msgid ""
+"\n"
+"Group: %s"
+msgstr "\nGroep: %s"
+
+#: ../output.py:1096
+#, python-format
+msgid " Group-Id: %s"
+msgstr " Group-Id: %s"
+
+#: ../output.py:1117
+#, python-format
+msgid " Description: %s"
+msgstr " Beschrijving: %s"
+
+#: ../output.py:1119
+#, python-format
+msgid " Language: %s"
+msgstr " Taal: %s"
+
+#: ../output.py:1121
+msgid " Mandatory Packages:"
+msgstr " Verplichte pakketten:"
+
+#: ../output.py:1122
+msgid " Default Packages:"
+msgstr "Standaard Pakketten:"
+
+#: ../output.py:1123
+msgid " Optional Packages:"
+msgstr " Optionele pakketten:"
+
+#: ../output.py:1124
+msgid " Conditional Packages:"
+msgstr " Voorwaardelijke Pakketten:"
+
+#: ../output.py:1142
+msgid " Installed Packages:"
+msgstr " Geïnstalleerde Pakketten:"
+
+#: ../output.py:1155
+#, python-format
+msgid "package: %s"
+msgstr "pakket: %s"
+
+#: ../output.py:1157
+msgid "  No dependencies for this package"
+msgstr "  Geen afhankelijkheden voor dit pakket"
+
+#: ../output.py:1162
+#, python-format
+msgid "  dependency: %s"
+msgstr "  afhankelijkheid: %s"
+
+#: ../output.py:1164
+msgid "   Unsatisfied dependency"
+msgstr "   Onvervulde afhankelijkheid"
+
+#: ../output.py:1275
+msgid "Matched from:"
+msgstr "Match uit:"
+
+#: ../output.py:1286
+#, python-format
+msgid "License     : %s"
+msgstr "Licentie    : %s"
+
+#: ../output.py:1289
+#, python-format
+msgid "Filename    : %s"
+msgstr "Bestandsnaam: %s"
+
+#: ../output.py:1298
+msgid "Provides    : "
+msgstr "Levert    : "
+
+#: ../output.py:1301
+msgid "Other       : "
+msgstr "Andere      : "
+
+#: ../output.py:1364
+msgid "There was an error calculating total download size"
+msgstr "Er is een fout opgetreden bij de berekening van de totale download-grootte"
+
+#: ../output.py:1369
+#, python-format
+msgid "Total size: %s"
+msgstr "Totale grootte: %s"
+
+#: ../output.py:1371
+#, python-format
+msgid "Total download size: %s"
+msgstr "Totale download grootte: %s"
+
+#: ../output.py:1374 ../output.py:1397 ../output.py:1401
+#, python-format
+msgid "Installed size: %s"
+msgstr "Geïnstalleerde grootte: %s"
+
+#: ../output.py:1392
+msgid "There was an error calculating installed size"
+msgstr "Er was een fout bij het berekenen van geïnstalleerde grootte"
+
+#: ../output.py:1442
+msgid "Reinstalling"
+msgstr "Herinstalleren"
+
+#: ../output.py:1443
+msgid "Downgrading"
+msgstr "Downgrading"
+
+#: ../output.py:1444
+msgid "Installing for dependencies"
+msgstr "Installeren vanwege afhankelijkheden"
+
+#: ../output.py:1445
+msgid "Updating for dependencies"
+msgstr "Updaten vanwege afhankelijkheden"
+
+#: ../output.py:1446
+msgid "Removing for dependencies"
+msgstr "Verwijderen vanwege afhankelijkheden"
+
+#: ../output.py:1453 ../output.py:1514 ../output.py:1610
+msgid "Skipped (dependency problems)"
+msgstr "Overgeslagen (afhankelijkheidsproblemen)"
+
+#: ../output.py:1455 ../output.py:1515 ../output.py:2156
+msgid "Not installed"
+msgstr "Niet geïnstalleerd"
+
+#: ../output.py:1456 ../output.py:1516
+msgid "Not available"
+msgstr "Niet beschikbaar"
+
+#: ../output.py:1478 ../output.py:1526 ../output.py:1542 ../output.py:2514
+msgid "Package"
+msgid_plural "Packages"
+msgstr[0] "Pakket"
+msgstr[1] "Pakketten"
+
+#: ../output.py:1478
+msgid "Arch"
+msgstr "Arch"
+
+#: ../output.py:1479
+msgid "Version"
+msgstr "Versie"
+
+#: ../output.py:1479
+msgid "Repository"
+msgstr "Repository"
+
+#: ../output.py:1480
+msgid "Size"
+msgstr "Grootte"
+
+#: ../output.py:1492
+#, python-format
+msgid "     replacing  %s%s%s.%s %s\n"
+msgstr "    vervangen van %s%s%s.%s%s\n"
+
+#: ../output.py:1501
+#, python-format
+msgid ""
+"\n"
+"Transaction Summary\n"
+"%s\n"
+msgstr "\nTransactie Samenvatting\n%s\n"
+
+#: ../output.py:1506 ../output.py:2309 ../output.py:2310
+msgid "Install"
+msgstr "Installeren"
+
+#: ../output.py:1508
+msgid "Upgrade"
+msgstr "Upgrade"
+
+#: ../output.py:1510
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: ../output.py:1512 ../output.py:2315
+msgid "Reinstall"
+msgstr "Herinstalleren"
+
+#: ../output.py:1513 ../output.py:2316
+msgid "Downgrade"
+msgstr "Downgrade"
+
+#: ../output.py:1544
+msgid "Dependent package"
+msgid_plural "Dependent packages"
+msgstr[0] "Afhankelijk pakket"
+msgstr[1] "Afhankelijke pakketten"
+
+#: ../output.py:1604
+msgid "Removed"
+msgstr "Verwijderd"
+
+#: ../output.py:1605
+msgid "Dependency Removed"
+msgstr "Afhankelijkheid verwijderd"
+
+#: ../output.py:1607
+msgid "Dependency Installed"
+msgstr "Afhankelijkheid geïnstalleerd"
+
+#: ../output.py:1609
+msgid "Dependency Updated"
+msgstr "Afhankelijkheid bijgewerkt"
+
+#: ../output.py:1611
+msgid "Replaced"
+msgstr "Vervangen"
+
+#: ../output.py:1612
+msgid "Failed"
+msgstr "Mislukt"
+
+#. Delta between C-c's so we treat as exit
+#: ../output.py:1699
+msgid "two"
+msgstr "twee"
+
+#. For translators: This is output like:
+#. Current download cancelled, interrupt (ctrl-c) again within two seconds
+#. to exit.
+#. Where "interupt (ctrl-c) again" and "two" are highlighted.
+#: ../output.py:1710
+#, python-format
+msgid ""
+"\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
+"to exit.\n"
+msgstr "\nHuidige download geannuleerd, %sinterrupt (ctrl-c) nogmaals%s binnen %s%s%s seconden \nom af te sluiten.\n"
+
+#: ../output.py:1721
+msgid "user interrupt"
+msgstr "onderbreking door gebruiker"
+
+#: ../output.py:1747
+msgid "Total"
+msgstr "Totaal"
+
+#: ../output.py:1769
+msgid "I"
+msgstr "I"
+
+#: ../output.py:1770
+msgid "O"
+msgstr "O"
+
+#: ../output.py:1771
+msgid "E"
+msgstr "E"
+
+#: ../output.py:1772
+msgid "R"
+msgstr "R"
+
+#: ../output.py:1773
+msgid "D"
+msgstr "D"
+
+#: ../output.py:1774
+msgid "U"
+msgstr "U"
+
+#: ../output.py:1788
+msgid "<unset>"
+msgstr "<unset>"
+
+#: ../output.py:1789
+msgid "System"
+msgstr "Systeem"
+
+#: ../output.py:1858
+#, python-format
+msgid "Skipping merged transaction %d to %d, as it overlaps"
+msgstr "Overslaan van samengevoegde transactie %d tot %d, omdat dat overlapt"
+
+#: ../output.py:1868 ../output.py:2058
+msgid "No transactions"
+msgstr "Geen transacties"
+
+#: ../output.py:1893 ../output.py:2503 ../output.py:2593
+msgid "Bad transaction IDs, or package(s), given"
+msgstr "Slechte transactie-ID's, of pakket(ten), gegeven"
+
+#: ../output.py:1940
+msgid "Command line"
+msgstr "Commando lijn"
+
+#: ../output.py:1942 ../output.py:2391
+msgid "Login user"
+msgstr "Login gebruiker"
+
+#. REALLY Needs to use columns!
+#: ../output.py:1943 ../output.py:2512
+msgid "ID"
+msgstr "ID"
+
+#: ../output.py:1945
+msgid "Date and time"
+msgstr "Datum en tijd"
+
+#: ../output.py:1946 ../output.py:2393 ../output.py:2513
+msgid "Action(s)"
+msgstr "Actie(s)"
+
+#: ../output.py:1947 ../output.py:2394
+msgid "Altered"
+msgstr "Veranderd"
+
+#: ../output.py:1994
+msgid "No transaction ID given"
+msgstr "Geen transactie-ID opgegeven"
+
+#: ../output.py:2020 ../output.py:2459
+msgid "Bad transaction ID given"
+msgstr "Onjuiste transactie-ID opgegeven"
+
+#: ../output.py:2025
+msgid "Not found given transaction ID"
+msgstr "Opgegeven transactie-ID niet gevonden"
+
+#: ../output.py:2033
+msgid "Found more than one transaction ID!"
+msgstr "Vond meer dan één transactie ID!"
+
+#: ../output.py:2084 ../output.py:2467
+msgid "No transaction ID, or package, given"
+msgstr "Geen transactie-ID, of pakket, opgegeven"
+
+#: ../output.py:2155 ../output.py:2317
+msgid "Downgraded"
+msgstr "Downgraded"
+
+#: ../output.py:2157
+msgid "Older"
+msgstr "Ouder"
+
+#: ../output.py:2157
+msgid "Newer"
+msgstr "Nieuwer"
+
+#: ../output.py:2194 ../output.py:2196 ../output.py:2614
+msgid "Transaction ID :"
+msgstr "Transactie-ID:"
+
+#: ../output.py:2198 ../output.py:2616
+msgid "Begin time     :"
+msgstr "Starttijd      :"
+
+#: ../output.py:2201 ../output.py:2203
+msgid "Begin rpmdb    :"
+msgstr "Begin rpmdb    :"
+
+#: ../output.py:2219
+#, python-format
+msgid "(%u seconds)"
+msgstr "(%u seconden)"
+
+#: ../output.py:2221
+#, python-format
+msgid "(%u minutes)"
+msgstr "(%u minuten)"
+
+#: ../output.py:2223
+#, python-format
+msgid "(%u hours)"
+msgstr "(%u uur)"
+
+#: ../output.py:2225
+#, python-format
+msgid "(%u days)"
+msgstr "(%u dagen)"
+
+#: ../output.py:2226
+msgid "End time       :"
+msgstr "Eindtijd       :"
+
+#: ../output.py:2229 ../output.py:2231
+msgid "End rpmdb      :"
+msgstr "Einde rpmdb    :"
+
+#: ../output.py:2234 ../output.py:2236
+msgid "User           :"
+msgstr "Gebruiker      :"
+
+#: ../output.py:2240 ../output.py:2243 ../output.py:2245 ../output.py:2247
+#: ../output.py:2249
+msgid "Return-Code    :"
+msgstr "Return-Code    :"
+
+#: ../output.py:2240 ../output.py:2245
+msgid "Aborted"
+msgstr "Afgebroken"
+
+#: ../output.py:2243
+msgid "Failures:"
+msgstr "Mislukkingen:"
+
+#: ../output.py:2247
+msgid "Failure:"
+msgstr "Falen:"
+
+#: ../output.py:2249
+msgid "Success"
+msgstr "Succes"
+
+#: ../output.py:2254 ../output.py:2256 ../output.py:2645
+msgid "Command Line   :"
+msgstr "Commando Lijn   :"
+
+#: ../output.py:2265
+#, python-format
+msgid "Additional non-default information stored: %d"
+msgstr "Extra niet-standaardinfo opgeslagen: %d"
+
+#. This is _possible_, but not common
+#: ../output.py:2270
+msgid "Transaction performed with:"
+msgstr "Transactie uitgevoerd met:"
+
+#: ../output.py:2274
+msgid "Packages Altered:"
+msgstr "Pakketten veranderd:"
+
+#: ../output.py:2278
+msgid "Packages Skipped:"
+msgstr "Pakketten overgeslagen:"
+
+#: ../output.py:2286
+msgid "Rpmdb Problems:"
+msgstr "Rpmdb Problemen:"
+
+#: ../output.py:2297
+msgid "Scriptlet output:"
+msgstr "Scriptlet output:"
+
+#: ../output.py:2303
+msgid "Errors:"
+msgstr "Fouten:"
+
+#: ../output.py:2311
+msgid "Dep-Install"
+msgstr "Dep-Installeren"
+
+#: ../output.py:2313
+msgid "Obsoleting"
+msgstr "Als verouderd aanmerken"
+
+#: ../output.py:2314
+msgid "Erase"
+msgstr "Wissen"
+
+#: ../output.py:2318
+msgid "Update"
+msgstr "Update"
+
+#: ../output.py:2392
+msgid "Time"
+msgstr "Tijd"
+
+#: ../output.py:2418
+msgid "Last day"
+msgstr "Gisteren"
+
+#: ../output.py:2419
+msgid "Last week"
+msgstr "Vorige week"
+
+#: ../output.py:2420
+msgid "Last 2 weeks"
+msgstr "Laatste 2 weken"
+
+#. US default :p
+#: ../output.py:2421
+msgid "Last 3 months"
+msgstr "Laatste 3 maanden"
+
+#: ../output.py:2422
+msgid "Last 6 months"
+msgstr "Laatste 6 maanden"
+
+#: ../output.py:2423
+msgid "Last year"
+msgstr "Afgelopen jaar"
+
+#: ../output.py:2424
+msgid "Over a year ago"
+msgstr "Ruim een ​​jaar geleden"
+
+#: ../output.py:2471
+#, python-format
+msgid "No Transaction %s found"
+msgstr "Geen transactie %s gevonden"
+
+#: ../output.py:2477
+msgid "Transaction ID:"
+msgstr "Transactie-ID:"
+
+#: ../output.py:2478
+msgid "Available additional history information:"
+msgstr "Beschikbare extra historische informatie:"
+
+#: ../output.py:2491
+#, python-format
+msgid "%s: No additional data found by this name"
+msgstr "%s: Geen aanvullende gegevens gevonden met deze naam"
+
+#: ../output.py:2617
+msgid "Package        :"
+msgstr "Pakket         :"
+
+#: ../output.py:2618
+msgid "State          :"
+msgstr "Status         :"
+
+#: ../output.py:2621
+msgid "Size           :"
+msgstr "Grootte        :"
+
+#: ../output.py:2623
+msgid "Build host     :"
+msgstr "Build host     :"
+
+#: ../output.py:2626
+msgid "Build time     :"
+msgstr "Build time     :"
+
+#: ../output.py:2628
+msgid "Packager       :"
+msgstr "Packager       :"
+
+#: ../output.py:2630
+msgid "Vendor         :"
+msgstr "Verkoper       :"
+
+#: ../output.py:2632
+msgid "License        :"
+msgstr "Licentie       :"
+
+#: ../output.py:2634
+msgid "URL            :"
+msgstr "URL            :"
+
+#: ../output.py:2636
+msgid "Source RPM     :"
+msgstr "Source RPM     :"
+
+#: ../output.py:2639
+msgid "Commit Time    :"
+msgstr "Commit Tijd    :"
+
+#: ../output.py:2641
+msgid "Committer      :"
+msgstr "Committer      :"
+
+#: ../output.py:2643
+msgid "Reason         :"
+msgstr "Reden          :"
+
+#: ../output.py:2647
+msgid "From repo      :"
+msgstr "Van repo       :"
+
+#: ../output.py:2651
+msgid "Installed by   :"
+msgstr "Geïnstalleerd door:"
+
+#: ../output.py:2655
+msgid "Changed by     :"
+msgstr "Gewijzigd door :"
+
+#: ../output.py:2700
+msgid "installed"
+msgstr "geïnstalleerd"
+
+#: ../output.py:2701
+msgid "an update"
+msgstr "een update"
+
+#: ../output.py:2702
+msgid "erased"
+msgstr "gewist"
+
+#: ../output.py:2703
+msgid "reinstalled"
+msgstr "opnieuw geïnstalleerd"
+
+#: ../output.py:2704
+msgid "a downgrade"
+msgstr "een downgrade"
+
+#: ../output.py:2705
+msgid "obsoleting"
+msgstr "als verouderd aanmerken"
+
+#: ../output.py:2706
+msgid "updated"
+msgstr "bijgewerkt"
+
+#: ../output.py:2707
+msgid "obsoleted"
+msgstr "als verouderd aangemerkt"
+
+#: ../output.py:2711
+#, python-format
+msgid "---> Package %s.%s %s:%s-%s will be %s"
+msgstr "---> Pakket %s.%s %s:%s-%s wordt %s"
+
+#: ../output.py:2722
+msgid "--> Running transaction check"
+msgstr "--> Transactiecontrole uitvoeren"
+
+#: ../output.py:2728
+msgid "--> Restarting Dependency Resolution with new changes."
+msgstr "--> Herstarten Oplossen Afhankelijkheden met de nieuwe gegevens"
+
+#: ../output.py:2734
+msgid "--> Finished Dependency Resolution"
+msgstr "--> Klaar met oplossen afhankelijkheden"
+
+#: ../output.py:2747 ../output.py:2760
+#, python-format
+msgid "--> Processing Dependency: %s for package: %s"
+msgstr "--> Verwerking afhankelijkheid: %s voor pakket: %s"
+
+#: ../output.py:2773
+#, python-format
+msgid "---> Keeping package: %s"
+msgstr "--> Behouden pakket: %s"
+
+#: ../output.py:2782
+#, python-format
+msgid "--> Unresolved Dependency: %s"
+msgstr "--> Onopgeloste afhankelijkheid: %s"
+
+#: ../output.py:2799
+#, python-format
+msgid "Package: %s"
+msgstr "Pakket: %s"
+
+#: ../output.py:2801
+#, python-format
+msgid ""
+"\n"
+"    Requires: %s"
+msgstr "\n     Vereist: %s"
+
+#: ../output.py:2810
+#, python-format
+msgid ""
+"\n"
+"    %s: %s (%s)"
+msgstr "\n    %s: %s (%s)"
+
+#: ../output.py:2815
+#, python-format
+msgid ""
+"\n"
+"        %s"
+msgstr "\n        %s"
+
+#: ../output.py:2817
+msgid ""
+"\n"
+"        Not found"
+msgstr "\n        Niet gevonden"
+
+#. These should be the only three things we care about:
+#: ../output.py:2832
+msgid "Updated By"
+msgstr "Bijgewerkt door"
+
+#: ../output.py:2833
+msgid "Downgraded By"
+msgstr "Downgraded door"
+
+#: ../output.py:2834
+msgid "Obsoleted By"
+msgstr "Nieuwer pakket is:"
+
+#: ../output.py:2852
+msgid "Available"
+msgstr "Beschikbaar"
+
+#: ../output.py:2887 ../output.py:2900
+#, python-format
+msgid "--> Processing Conflict: %s conflicts %s"
+msgstr "--> Verwerking Conflict: %s %s conflicteren"
+
+#: ../output.py:2906
+msgid "--> Populating transaction set with selected packages. Please wait."
+msgstr "--> De transactieset wordt met de geselecteerde pakketten gevuld. Een ogenblikje geduld."
+
+#: ../output.py:2915
+#, python-format
+msgid "---> Downloading header for %s to pack into transaction set."
+msgstr "---> Downloaden header voor %s om in de transactie op te nemen."
+
+#. self.event(txmbr.name, count, len(base.tsInfo), count, )
+#. (te_current*100L)/te_total
+#: ../output.py:3180
+msgid "Verifying"
+msgstr "Verifiëren"
+
+#: ../utils.py:129
+msgid "Running"
+msgstr "Uitvoeren"
+
+#: ../utils.py:130
+msgid "Sleeping"
+msgstr "Slapen"
+
+#: ../utils.py:131
+msgid "Uninterruptible"
+msgstr "Ononderbroken"
+
+#: ../utils.py:132
+msgid "Zombie"
+msgstr "Zombie"
+
+#: ../utils.py:133
+msgid "Traced/Stopped"
+msgstr "Getraceerd / Gestopt"
+
+#: ../utils.py:134 ../yumcommands.py:1937
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: ../utils.py:155
+msgid "  The other application is: PackageKit"
+msgstr "  De andere toepassing is: PackageKit"
+
+#: ../utils.py:157
+#, python-format
+msgid "  The other application is: %s"
+msgstr "  De andere toepassing is: %s"
+
+#: ../utils.py:160
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Memory : %5s RSS (%5sB VSZ)"
+
+#: ../utils.py:165
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    Gestart: %s - %s geleden"
+
+#: ../utils.py:167
+#, python-format
+msgid "    State  : %s, pid: %d"
+msgstr "    Status  : %s, pid: %d"
+
+#: ../utils.py:196 ../yummain.py:43
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel"
+msgstr "\n\nBeëindigen vanwege afbreken door gebruiker"
+
+#: ../utils.py:208 ../yummain.py:49
+msgid ""
+"\n"
+"\n"
+"Exiting on Broken Pipe"
+msgstr "\n\nBeëindigen vanwege Broken Pipe"
+
+#: ../utils.py:210 ../yummain.py:51
+#, python-format
+msgid ""
+"\n"
+"\n"
+"%s"
+msgstr "\n\n%s"
+
+#: ../utils.py:286 ../yummain.py:140
+msgid ""
+"Another app is currently holding the yum lock; exiting as configured by "
+"exit_on_lock"
+msgstr "Een andere toepassing heeft op dit moment yum gelocked; Stoppen zoals geconfigureerd door exit_on_lock"
+
+#: ../utils.py:352
+#, python-format
+msgid "PluginExit Error: %s"
+msgstr "PluginExit Fout: %s"
+
+#: ../utils.py:355
+#, python-format
+msgid "Yum Error: %s"
+msgstr "Yum Fout: %s"
+
+#: ../utils.py:413 ../yummain.py:167 ../yummain.py:206
+#, python-format
+msgid "Error: %s"
+msgstr "Fout: %s"
+
+#: ../utils.py:417 ../yummain.py:211
+msgid " You could try using --skip-broken to work around the problem"
+msgstr " Je zou kunnen proberen met behulp van --skip-broken het probleem te omzeilen"
+
+#: ../utils.py:419 ../yummain.py:87
+msgid " You could try running: rpm -Va --nofiles --nodigest"
+msgstr " Je zou kunnen proberen: rpm -Va --nofiles --nodigest"
+
+#: ../utils.py:426 ../yummain.py:177 ../yummain.py:219
+#, python-format
+msgid "Unknown Error(s): Exit Code: %d:"
+msgstr "Onbekende fout(en): Exit Code: %d:"
+
+#: ../utils.py:432 ../yummain.py:225
+msgid ""
+"\n"
+"Dependencies Resolved"
+msgstr "\nAfhankelijkheden opgelost"
+
+#: ../utils.py:448 ../yummain.py:257
+msgid "Complete!"
+msgstr "Compleet!"
+
+#: ../yumcommands.py:42
+msgid " Mini usage:\n"
+msgstr " Minimaal gebruik:\n"
+
+#: ../yumcommands.py:52
+msgid "You need to be root to perform this command."
+msgstr "U moet root zijn om dit commando uit te voeren."
+
+#: ../yumcommands.py:67
+msgid ""
+"\n"
+"You have enabled checking of packages via GPG keys. This is a good thing. \n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and yum \n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider.\n"
+msgstr "\nJe hebt het controleren van pakketten via GPG-sleutes aanstaan. Dat is een goede keuze.\nJe hebt echter geen publieke GPG-sleutels geïnstalleerd.\nDownload sleutels voor pakketten die je wilt installeren en\nimporteer deze daarna.\nImporteren kan je doen met het commando:\n    rpm --import public.gpg.key\n\n\nAlternatief is, de URL van de sleutel van de repo die je wil gebruiken, als 'gpgkey'-optie opnemen in een repo-sectie.\nYum installeert deze dan 'automagisch' voor u.\n\nInformeer bij de mensen van je distributie of van het pakket.\n"
+
+#: ../yumcommands.py:82
+#, python-format
+msgid "Problem repository: %s"
+msgstr "Probleem repository: %s"
+
+#: ../yumcommands.py:96
+#, python-format
+msgid "Error: Need to pass a list of pkgs to %s"
+msgstr "Fout: Lijst van Pkgs nodig om door te geven aan %s"
+
+#: ../yumcommands.py:112
+msgid "Error: Need an item to match"
+msgstr "Fout: Item om te vergelijken nodig"
+
+#: ../yumcommands.py:126
+msgid "Error: Need a group or list of groups"
+msgstr "Fout: Een groep of lijst van groepen nodig"
+
+#: ../yumcommands.py:143
+#, python-format
+msgid "Error: clean requires an option: %s"
+msgstr "Fout: clean vereist een optie: %s"
+
+#: ../yumcommands.py:149
+#, python-format
+msgid "Error: invalid clean argument: %r"
+msgstr "Fout: ongeldige clean argument: %r"
+
+#: ../yumcommands.py:164
+msgid "No argument to shell"
+msgstr "Geen argument voor shell"
+
+#: ../yumcommands.py:166
+#, python-format
+msgid "Filename passed to shell: %s"
+msgstr "Bestandsnaam doorgegeven aan shell: %s"
+
+#: ../yumcommands.py:170
+#, python-format
+msgid "File %s given as argument to shell does not exist."
+msgstr "Bestand %s gegeven als argument aan shell bestaat niet."
+
+#: ../yumcommands.py:176
+msgid "Error: more than one file given as argument to shell."
+msgstr "Fout: meer dan één bestand gegeven als argument aan shell."
+
+#: ../yumcommands.py:195
+msgid ""
+"There are no enabled repos.\n"
+" Run \"yum repolist all\" to see the repos you have.\n"
+" You can enable repos with yum-config-manager --enable <repo>"
+msgstr "Er zijn geen ingeschakeld repo's. \nRun \"yum repolist all\" om de repo's die je hebt te zien. \nJe kunt de repo's met yum-config-manager --enable <repo> instellen"
+
+#: ../yumcommands.py:303
+msgid "PACKAGE..."
+msgstr "PAKKET..."
+
+#: ../yumcommands.py:310
+msgid "Install a package or packages on your system"
+msgstr "Installeer een pakket of pakketten op je systeem"
+
+#: ../yumcommands.py:341
+msgid "Setting up Install Process"
+msgstr "Opzetten van installatieproces"
+
+#: ../yumcommands.py:367 ../yumcommands.py:427
+msgid "[PACKAGE...]"
+msgstr "[PAKKET...]"
+
+#: ../yumcommands.py:374
+msgid "Update a package or packages on your system"
+msgstr "Update een pakket of pakketten op je systeem"
+
+#: ../yumcommands.py:403
+msgid "Setting up Update Process"
+msgstr "Opzetten van update-proces"
+
+#: ../yumcommands.py:434
+msgid "Synchronize installed packages to the latest available versions"
+msgstr "Synchroniseren geïnstalleerde pakketten naar de nieuwste beschikbare versies"
+
+#: ../yumcommands.py:463
+msgid "Setting up Distribution Synchronization Process"
+msgstr "Opzetten van distributie synchronisatie proces"
+
+#: ../yumcommands.py:523
+msgid "Display details about a package or group of packages"
+msgstr "Weergeven details van pakket of een groep pakketten"
+
+#: ../yumcommands.py:591
+msgid "Installed Packages"
+msgstr "Geïnstalleerde pakketten"
+
+#: ../yumcommands.py:601
+msgid "Available Packages"
+msgstr "Beschikbare pakketten"
+
+#: ../yumcommands.py:606
+msgid "Extra Packages"
+msgstr "Extra pakketten"
+
+#: ../yumcommands.py:610
+msgid "Updated Packages"
+msgstr "Bijgewerkte pakketten"
+
+#. This only happens in verbose mode
+#: ../yumcommands.py:618 ../yumcommands.py:625 ../yumcommands.py:1329
+msgid "Obsoleting Packages"
+msgstr "Als verouderd aangemerkte pakketten"
+
+#: ../yumcommands.py:627
+msgid "Recently Added Packages"
+msgstr "Onlangs toegevoegde pakketten"
+
+#: ../yumcommands.py:634
+msgid "No matching Packages to list"
+msgstr "Geen passende pakketten om te tonen"
+
+#: ../yumcommands.py:669
+msgid "List a package or groups of packages"
+msgstr "Toon een pakket of groepen van pakketten"
+
+#: ../yumcommands.py:698
+msgid "Remove a package or packages from your system"
+msgstr "Verwijderen van pakket of pakketten van je systeem"
+
+#: ../yumcommands.py:727
+msgid "Setting up Remove Process"
+msgstr "Opzetten Verwijder-proces"
+
+#: ../yumcommands.py:786
+msgid "Display, or use, the groups information"
+msgstr "Toon, of gebruik, de groepen-informatie"
+
+#: ../yumcommands.py:789
+msgid "Setting up Group Process"
+msgstr "Opzetten van Groep-proces"
+
+#: ../yumcommands.py:795
+msgid "No Groups on which to run command"
+msgstr "Geen groepen waarop commando uit te voeren is"
+
+#: ../yumcommands.py:859
+#, python-format
+msgid "Invalid groups sub-command, use: %s."
+msgstr "Ongeldige groepen sub-commando, gebruik: %s."
+
+#: ../yumcommands.py:866
+msgid "There is no installed groups file."
+msgstr "Er bestaat geen geïnstalleerd groepenbestand"
+
+#: ../yumcommands.py:868
+msgid "You don't have access to the groups DB."
+msgstr "U hebt geen toegang tot de groepen DB"
+
+#: ../yumcommands.py:1067
+msgid "Generate the metadata cache"
+msgstr "Genereer de metadata-cache"
+
+#: ../yumcommands.py:1093
+msgid "Making cache files for all metadata files."
+msgstr "Maken van cache-bestanden voor alle metadata bestanden."
+
+#: ../yumcommands.py:1094
+msgid "This may take a while depending on the speed of this computer"
+msgstr "Dit kan enige tijd duren afhankelijk van de snelheid van deze computer"
+
+#: ../yumcommands.py:1113
+msgid "Metadata Cache Created"
+msgstr "Metadata Cache gemaakt"
+
+#: ../yumcommands.py:1151
+msgid "Remove cached data"
+msgstr "Verwijderen gegevens in het cachegeheugen"
+
+#: ../yumcommands.py:1218
+msgid "Find what package provides the given value"
+msgstr "Uitzoeken welk pakket de opgegeven waarde bevat"
+
+#: ../yumcommands.py:1275
+msgid "Check for available package updates"
+msgstr "Controleren beschikbaarheid update-pakketten"
+
+#: ../yumcommands.py:1366
+msgid "Search package details for the given string"
+msgstr "Doorzoeken pakketdetails voor de opgegeven string"
+
+#: ../yumcommands.py:1392
+msgid "Searching Packages: "
+msgstr "Zoeken Pakketten: "
+
+#: ../yumcommands.py:1434
+msgid "Update packages taking obsoletes into account"
+msgstr "Bijwerken pakketten met verouderde pakketten meerekenend"
+
+#: ../yumcommands.py:1464
+msgid "Setting up Upgrade Process"
+msgstr "Opzetten van Upgrade Proces"
+
+#: ../yumcommands.py:1499
+msgid "Install a local RPM"
+msgstr "Installeren lokale RPM"
+
+#: ../yumcommands.py:1529
+msgid "Setting up Local Package Process"
+msgstr "Opzetten Lokaal Pakket Proces"
+
+#: ../yumcommands.py:1593
+msgid "Searching Packages for Dependency:"
+msgstr "Opzoeken pakketten wegens afhankelijkheid:"
+
+#: ../yumcommands.py:1624
+msgid "Run an interactive yum shell"
+msgstr "Run een interactieve yum shell"
+
+#: ../yumcommands.py:1650
+msgid "Setting up Yum Shell"
+msgstr "Opzetten van Yum Shell"
+
+#: ../yumcommands.py:1693
+msgid "List a package's dependencies"
+msgstr "Toon pakketafhankelijkheden"
+
+#: ../yumcommands.py:1720
+msgid "Finding dependencies: "
+msgstr "Opzoeken van afhankelijkheden:"
+
+#: ../yumcommands.py:1752
+msgid "Display the configured software repositories"
+msgstr "Toon de geconfigureerde software repositories"
+
+#: ../yumcommands.py:1838 ../yumcommands.py:1839
+msgid "enabled"
+msgstr "ingeschakeld"
+
+#: ../yumcommands.py:1865 ../yumcommands.py:1866
+msgid "disabled"
+msgstr "uitgeschakeld"
+
+#: ../yumcommands.py:1881
+msgid "Repo-id      : "
+msgstr "Repo-id      : "
+
+#: ../yumcommands.py:1882
+msgid "Repo-name    : "
+msgstr "Repo-naam    : "
+
+#: ../yumcommands.py:1885
+msgid "Repo-status  : "
+msgstr "Repo-status  : "
+
+#: ../yumcommands.py:1888
+msgid "Repo-revision: "
+msgstr "Repo-revisie : "
+
+#: ../yumcommands.py:1892
+msgid "Repo-tags    : "
+msgstr "Repo-tags    : "
+
+#: ../yumcommands.py:1898
+msgid "Repo-distro-tags: "
+msgstr "Repo-distro-tags: "
+
+#: ../yumcommands.py:1903
+msgid "Repo-updated : "
+msgstr "Repo-updated : "
+
+#: ../yumcommands.py:1905
+msgid "Repo-pkgs    : "
+msgstr "Repo-pkgs    : "
+
+#: ../yumcommands.py:1906
+msgid "Repo-size    : "
+msgstr "Repo-grootte : "
+
+#: ../yumcommands.py:1913 ../yumcommands.py:1934
+msgid "Repo-baseurl : "
+msgstr "Repo-baseurl : "
+
+#: ../yumcommands.py:1921
+msgid "Repo-metalink: "
+msgstr "Repo-metalink: "
+
+#: ../yumcommands.py:1925
+msgid "  Updated    : "
+msgstr "  Bijgewerkt : "
+
+#: ../yumcommands.py:1928
+msgid "Repo-mirrors : "
+msgstr "Repo-mirrors : "
+
+#: ../yumcommands.py:1943
+#, python-format
+msgid "Never (last: %s)"
+msgstr "Nooit (laatste: %s)"
+
+#: ../yumcommands.py:1945
+#, python-format
+msgid "Instant (last: %s)"
+msgstr "Instant (laatste: %s)"
+
+#: ../yumcommands.py:1948
+#, python-format
+msgid "%s second(s) (last: %s)"
+msgstr "%s second(en) (vorige: %s)"
+
+#: ../yumcommands.py:1950
+msgid "Repo-expire  : "
+msgstr "Repo-expiratie: "
+
+#: ../yumcommands.py:1953
+msgid "Repo-exclude : "
+msgstr "Repo-uitsluiting : "
+
+#: ../yumcommands.py:1957
+msgid "Repo-include : "
+msgstr "Repo-inbegrepen: "
+
+#: ../yumcommands.py:1961
+msgid "Repo-excluded: "
+msgstr "Repo-uitgesloten: "
+
+#: ../yumcommands.py:1965
+msgid "Repo-filename: "
+msgstr "Repo-bestandsnaam:"
+
+#. Work out the first (id) and last (enabled/disalbed/count),
+#. then chop the middle (name)...
+#: ../yumcommands.py:1974 ../yumcommands.py:2003
+msgid "repo id"
+msgstr "repo id"
+
+#: ../yumcommands.py:1991 ../yumcommands.py:1992 ../yumcommands.py:2010
+msgid "status"
+msgstr "status"
+
+#: ../yumcommands.py:2004
+msgid "repo name"
+msgstr "repo naam"
+
+#: ../yumcommands.py:2066
+msgid "Display a helpful usage message"
+msgstr "Toon een hulpvaardig gebruiksbericht"
+
+#: ../yumcommands.py:2108
+#, python-format
+msgid "No help available for %s"
+msgstr "Geen hulp beschikbaar voor %s"
+
+#: ../yumcommands.py:2113
+msgid ""
+"\n"
+"\n"
+"aliases: "
+msgstr "\naliassen: "
+
+#: ../yumcommands.py:2115
+msgid ""
+"\n"
+"\n"
+"alias: "
+msgstr "\n\nalias: "
+
+#: ../yumcommands.py:2200
+msgid "Setting up Reinstall Process"
+msgstr "Opzetten herinstallatieproces"
+
+#: ../yumcommands.py:2212
+msgid "reinstall a package"
+msgstr "Herinstalleer een pakket"
+
+#: ../yumcommands.py:2275
+msgid "Setting up Downgrade Process"
+msgstr "Opzetten van Downgrade Proces"
+
+#: ../yumcommands.py:2286
+msgid "downgrade a package"
+msgstr "downgraden van een pakket"
+
+#: ../yumcommands.py:2325
+msgid "Display a version for the machine and/or available repos."
+msgstr "Toon een versie voor de machine en/of beschikbare repos."
+
+#: ../yumcommands.py:2377
+msgid " Yum version groups:"
+msgstr " Yum versie groepen:"
+
+#: ../yumcommands.py:2387
+msgid " Group   :"
+msgstr " Groep   :"
+
+#: ../yumcommands.py:2388
+msgid " Packages:"
+msgstr " Pakketten:"
+
+#: ../yumcommands.py:2417
+msgid "Installed:"
+msgstr "Geïnstalleerd:"
+
+#: ../yumcommands.py:2425
+msgid "Group-Installed:"
+msgstr "Groep-Geïnstalleerd:"
+
+#: ../yumcommands.py:2434
+msgid "Available:"
+msgstr "Beschikbaar:"
+
+#: ../yumcommands.py:2443
+msgid "Group-Available:"
+msgstr "Groep-Beschikbaar:"
+
+#: ../yumcommands.py:2507
+msgid "Display, or use, the transaction history"
+msgstr "Toon, of gebruik, de transactiegeschiedenis"
+
+#: ../yumcommands.py:2601
+msgid "Transactions:"
+msgstr "Transacties:"
+
+#: ../yumcommands.py:2602
+msgid "Begin time  :"
+msgstr "Begin tijd  :"
+
+#: ../yumcommands.py:2603
+msgid "End time    :"
+msgstr "Eindtijd    :"
+
+#: ../yumcommands.py:2604
+msgid "Counts      :"
+msgstr "Telling     :"
+
+#: ../yumcommands.py:2605
+msgid "  NEVRAC :"
+msgstr "  NEVRAC :"
+
+#: ../yumcommands.py:2606
+msgid "  NEVRA  :"
+msgstr "  NEVRA  :"
+
+#: ../yumcommands.py:2607
+msgid "  NA     :"
+msgstr "  NA     :"
+
+#: ../yumcommands.py:2608
+msgid "  NEVR   :"
+msgstr "  NEVR   :"
+
+#: ../yumcommands.py:2609
+msgid "  rpm DB :"
+msgstr "  rpm DB :"
+
+#: ../yumcommands.py:2610
+msgid "  yum DB :"
+msgstr "  yum DB :"
+
+#: ../yumcommands.py:2643
+#, python-format
+msgid "Invalid history sub-command, use: %s."
+msgstr "Ongeldig geschiedenis sub-commando, gebruik: %s."
+
+#: ../yumcommands.py:2650
+msgid "You don't have access to the history DB."
+msgstr "Je hebt geen toegang tot de geschiedenis-DB."
+
+#: ../yumcommands.py:2742
+msgid "Check for problems in the rpmdb"
+msgstr "Controleer op problemen in de rpmdb"
+
+#: ../yumcommands.py:2807
+msgid "load a saved transaction from filename"
+msgstr "laad opgeslagen transactie uit bestandsnaam"
+
+#: ../yumcommands.py:2824
+msgid "No saved transaction file specified."
+msgstr "Geen opgeslagen transactie bestand gespecificeerd."
+
+#: ../yumcommands.py:2828
+#, python-format
+msgid "loading transaction from %s"
+msgstr "laden transactie van %s"
+
+#: ../yumcommands.py:2834
+#, python-format
+msgid "Transaction loaded from %s with %s members"
+msgstr "Transactie geladen van %s met %s leden"
+
+#. This is mainly for PackageSackError from rpmdb.
+#: ../yummain.py:84
+#, python-format
+msgid " Yum checks failed: %s"
+msgstr " Yum controles is mislukt: %s"
+
+#: ../yummain.py:110
+msgid "No read/execute access in current directory, moving to /"
+msgstr "Geen lezen/uitvoeren rechten in de huidige directory, verhuizen naar /"
+
+#: ../yummain.py:118
+msgid "No getcwd() access in current directory, moving to /"
+msgstr "Geen getcwd() toegang in huidige directory, ik ga naar /"
+
+#: ../yummain.py:130
+msgid "Can't create lock file; exiting"
+msgstr "Kan geen lock-bestand aanmaken; verlaten"
+
+#: ../yummain.py:134
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr "Een andere toepassing blokkeert op dit moment yum; aan het wachten tot het afsluit ..."
+
+#. Depsolve stage
+#: ../yummain.py:184
+msgid "Resolving Dependencies"
+msgstr "Oplossen van afhankelijkheden"
+
+#: ../yummain.py:247 ../yummain.py:255
+#, python-format
+msgid ""
+"Your transaction was saved, rerun it with:\n"
+" yum load-transaction %s"
+msgstr "Je transactie was gesaved, voer opnieuw uit met:\n yum load-transaction %s"
+
+#: ../yummain.py:332
+msgid ""
+"\n"
+"\n"
+"Exiting on user cancel."
+msgstr "\n\nOphouden vanwege afbreken door gebruiker."
+
+#: ../yum/depsolve.py:127
+msgid "doTsSetup() will go away in a future version of Yum.\n"
+msgstr "doTsSetup() zal verdwijnen in een toekomstige versie van Yum.\n"
+
+#: ../yum/depsolve.py:143
+msgid "Setting up TransactionSets before config class is up"
+msgstr "Opzetten van TransactionSets voordat config klasse actief is"
+
+#: ../yum/depsolve.py:200
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "Ongeldige tsflag in config bestand: %s"
+
+#: ../yum/depsolve.py:218
+#, python-format
+msgid "Searching pkgSack for dep: %s"
+msgstr "Op zoek naar pkgSack afhankelijkheden: %s"
+
+#: ../yum/depsolve.py:269
+#, python-format
+msgid "Member: %s"
+msgstr "Lid: %s"
+
+#: ../yum/depsolve.py:283 ../yum/depsolve.py:916
+#, python-format
+msgid "%s converted to install"
+msgstr "%s omgezet om te installeren"
+
+#: ../yum/depsolve.py:295
+#, python-format
+msgid "Adding Package %s in mode %s"
+msgstr "Toevoegen van pakket %s in %s modus"
+
+#: ../yum/depsolve.py:311
+#, python-format
+msgid "Removing Package %s"
+msgstr "Verwijderen van pakket %s"
+
+#: ../yum/depsolve.py:333
+#, python-format
+msgid "%s requires: %s"
+msgstr "%s vereist: %s"
+
+#: ../yum/depsolve.py:374
+#, python-format
+msgid "%s requires %s"
+msgstr "%s vereist %s"
+
+#: ../yum/depsolve.py:401
+msgid "Needed Require has already been looked up, cheating"
+msgstr "Benodigde Vereiste is al opgezocht, even vals spelen"
+
+#: ../yum/depsolve.py:411
+#, python-format
+msgid "Needed Require is not a package name. Looking up: %s"
+msgstr "Benodigde Vereiste is geen pakketnaam. Opzoeken: %s "
+
+#: ../yum/depsolve.py:419
+#, python-format
+msgid "Potential Provider: %s"
+msgstr "Potentiële Leverancier: %s"
+
+#: ../yum/depsolve.py:442
+#, python-format
+msgid "Mode is %s for provider of %s: %s"
+msgstr "Modus is %s voor de leverancier van %s: %s"
+
+#: ../yum/depsolve.py:446
+#, python-format
+msgid "Mode for pkg providing %s: %s"
+msgstr "Modus voor pkg-verstrekking van %s: %s"
+
+#. the thing it needs is being updated or obsoleted away
+#. try to update the requiring package in hopes that all this problem goes
+#. away :(
+#: ../yum/depsolve.py:451 ../yum/depsolve.py:486
+#, python-format
+msgid "Trying to update %s to resolve dep"
+msgstr "Proberen om, door %s bij te werken, afhankelijkheden op te lossen"
+
+#: ../yum/depsolve.py:480 ../yum/depsolve.py:490
+#, python-format
+msgid "No update paths found for %s. Failure!"
+msgstr "Geen update paden gevonden voor %s. Faal!"
+
+#: ../yum/depsolve.py:496
+#, python-format
+msgid "TSINFO: %s package requiring %s marked as erase"
+msgstr "TSINFO: %s pakket dat %s nodig heeft is gemarkeerd als wissen"
+
+#: ../yum/depsolve.py:509
+#, python-format
+msgid "TSINFO: Obsoleting %s with %s to resolve dep."
+msgstr "TSINFO: Vervangen %s door %s om afhankelijkheid op te lossen."
+
+#: ../yum/depsolve.py:512
+#, python-format
+msgid "TSINFO: Updating %s to resolve dep."
+msgstr "TSINFO: Bijwerken %s om afhankelijkheid op te lossen."
+
+#: ../yum/depsolve.py:520
+#, python-format
+msgid "Cannot find an update path for dep for: %s"
+msgstr "Kan geen update-pad voor afhankelijkheden vinden voor: %s"
+
+#: ../yum/depsolve.py:551
+#, python-format
+msgid "Quick matched %s to require for %s"
+msgstr "Snelselectie %s, benodigd voor %s"
+
+#. is it already installed?
+#: ../yum/depsolve.py:593
+#, python-format
+msgid "%s is in providing packages but it is already installed, removing."
+msgstr "%s is aanwezig in klaargezette pakketten, maar is al geïnstalleerd, verwijderen."
+
+#: ../yum/depsolve.py:609
+#, python-format
+msgid "Potential resolving package %s has newer instance in ts."
+msgstr "Van potentieel afhankelijkheidoplossend pakket %s is nieuwere versie in ts aanwezig"
+
+#: ../yum/depsolve.py:620
+#, python-format
+msgid "Potential resolving package %s has newer instance installed."
+msgstr "Van potentieel afhankelijkheidoplossend pakket %s is al een nieuwere versie geïnstalleerd"
+
+#: ../yum/depsolve.py:638
+#, python-format
+msgid "%s already in ts, skipping this one"
+msgstr "%s reeds in transactieset, deze wordt overgeslagen"
+
+#: ../yum/depsolve.py:687
+#, python-format
+msgid "TSINFO: Marking %s as update for %s"
+msgstr "TSINFO: Markeren %s als update voor %s"
+
+#: ../yum/depsolve.py:696
+#, python-format
+msgid "TSINFO: Marking %s as install for %s"
+msgstr "TSINFO: Markeren %s als installatie voor %s"
+
+#: ../yum/depsolve.py:831 ../yum/depsolve.py:946
+msgid "Success - empty transaction"
+msgstr "Succes - lege transactie"
+
+#: ../yum/depsolve.py:871 ../yum/depsolve.py:906
+msgid "Restarting Loop"
+msgstr "Herstarten Loop"
+
+#: ../yum/depsolve.py:926
+msgid "Dependency Process ending"
+msgstr "Proces Afhankelijkheid beëindigen"
+
+#: ../yum/depsolve.py:948
+msgid "Success - deps resolved"
+msgstr "Succes - afhankelijkheden opgelost"
+
+#: ../yum/depsolve.py:972
+#, python-format
+msgid "Checking deps for %s"
+msgstr "Controleren afhankelijkheden voor %s"
+
+#: ../yum/depsolve.py:1061
+#, python-format
+msgid "looking for %s as a requirement of %s"
+msgstr "Zoeken naar %s als een vereiste voor %s"
+
+#: ../yum/depsolve.py:1304
+#, python-format
+msgid "Running compare_providers() for %s"
+msgstr "Uitvoeren compare_providers() voor %s"
+
+#: ../yum/depsolve.py:1331 ../yum/depsolve.py:1337
+#, python-format
+msgid "better arch in po %s"
+msgstr "betere arch in po %s"
+
+#: ../yum/depsolve.py:1451
+#, python-format
+msgid "%s obsoletes %s"
+msgstr "%s is nieuwer dan %s"
+
+#: ../yum/depsolve.py:1463
+#, python-format
+msgid ""
+"archdist compared %s to %s on %s\n"
+"  Winner: %s"
+msgstr "archdist vergeleek %s met %s op %s\n  Winnaar: %s"
+
+#: ../yum/depsolve.py:1471
+#, python-format
+msgid "common sourcerpm %s and %s"
+msgstr "gemeenschappelijke sourcerpm %s en %s"
+
+#: ../yum/depsolve.py:1475
+#, python-format
+msgid "base package %s is installed for %s"
+msgstr "basispakket %s is geïnstalleerd voor %s"
+
+#: ../yum/depsolve.py:1481
+#, python-format
+msgid "common prefix of %s between %s and %s"
+msgstr "gemeenschappelijke prefix van %s tussen %s en %s"
+
+#: ../yum/depsolve.py:1498
+#, python-format
+msgid "provides vercmp: %s"
+msgstr "levert vercmp: %s"
+
+#: ../yum/depsolve.py:1502 ../yum/depsolve.py:1536
+#, python-format
+msgid " Winner: %s"
+msgstr " Winnaar: %s"
+
+#: ../yum/depsolve.py:1532
+#, python-format
+msgid "requires minimal: %d"
+msgstr "vereist minimaal: %d"
+
+#: ../yum/depsolve.py:1541
+#, python-format
+msgid " Loser(with %d): %s"
+msgstr " Verliezer (met %d): %s"
+
+#: ../yum/depsolve.py:1557
+#, python-format
+msgid "Best Order: %s"
+msgstr "De beste keus: %s"
+
+#: ../yum/__init__.py:266
+msgid "doConfigSetup() will go away in a future version of Yum.\n"
+msgstr "doConfigSetup() zal verdwijnen in een toekomstige versie van Yum.\n"
+
+#: ../yum/__init__.py:554
+#, python-format
+msgid "Repository %r: Error parsing config: %s"
+msgstr "Repository %r: Fout parsing config: %s"
+
+#: ../yum/__init__.py:560
+#, python-format
+msgid "Repository %r is missing name in configuration, using id"
+msgstr "Van repository %r ontbreekt naam in configuratie, id wordt gebruikt"
+
+#: ../yum/__init__.py:598
+msgid "plugins already initialised"
+msgstr "plugins al geïnitialiseerd"
+
+#: ../yum/__init__.py:607
+msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
+msgstr "doRpmDBSetup() zal verdwijnen in een toekomstige versie van Yum.\n"
+
+#: ../yum/__init__.py:618
+msgid "Reading Local RPMDB"
+msgstr "Lezen lokale RPMDB"
+
+#: ../yum/__init__.py:648
+msgid "doRepoSetup() will go away in a future version of Yum.\n"
+msgstr "doRepoSetup() zal verdwijnen in een toekomstige versie van Yum.\n"
+
+#: ../yum/__init__.py:719
+msgid "doSackSetup() will go away in a future version of Yum.\n"
+msgstr "doSackSetup() zal verdwijnen in een toekomstige versie van Yum.\n"
+
+#: ../yum/__init__.py:749
+msgid "Setting up Package Sacks"
+msgstr "Opzetten van Pakkethouders"
+
+#: ../yum/__init__.py:794
+#, python-format
+msgid "repo object for repo %s lacks a _resetSack method\n"
+msgstr "repo object voor repo %s ontbeert een _resetSack methode\n"
+
+#: ../yum/__init__.py:795
+msgid "therefore this repo cannot be reset.\n"
+msgstr "daarom kan deze repo niet gereset worden.\n"
+
+#: ../yum/__init__.py:803
+msgid "doUpdateSetup() will go away in a future version of Yum.\n"
+msgstr "doUpdateSetup() zal verdwijnen in een toekomstige versie van Yum.\n"
+
+#: ../yum/__init__.py:815
+msgid "Building updates object"
+msgstr "Opbouwen updates object"
+
+#: ../yum/__init__.py:859
+msgid "doGroupSetup() will go away in a future version of Yum.\n"
+msgstr "doGroupSetup() zal verdwijnen in een toekomstige versie van Yum.\n"
+
+#: ../yum/__init__.py:884
+msgid "Getting group metadata"
+msgstr "Verkrijgen groep metadata"
+
+#: ../yum/__init__.py:912
+#, python-format
+msgid "Adding group file from repository: %s"
+msgstr "Toevoegen van groep-bestand uit repository: %s"
+
+#: ../yum/__init__.py:923
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "Niet gelukt groepen-bestand toe te voegen voor repository: %s - %s"
+
+#: ../yum/__init__.py:929
+msgid "No Groups Available in any repository"
+msgstr "Geen Groepen beschikbaar in welke repository dan ook"
+
+#: ../yum/__init__.py:944
+msgid "Getting pkgtags metadata"
+msgstr "Verkrijgen pkgtags metadata"
+
+#: ../yum/__init__.py:954
+#, python-format
+msgid "Adding tags from repository: %s"
+msgstr "Toevoegen van tags van repository: %s"
+
+#: ../yum/__init__.py:965
+#, python-format
+msgid "Failed to add Pkg Tags for repository: %s - %s"
+msgstr "Niet gelukt Pkg Tags toe te voegen voor repository: %s -%s"
+
+#: ../yum/__init__.py:1058
+msgid "Importing additional filelist information"
+msgstr "Importeren van extra filelist informatie"
+
+#: ../yum/__init__.py:1076
+#, python-format
+msgid "The program %s%s%s is found in the yum-utils package."
+msgstr "Het programma %s%s%s is gevonden in het yum-utils pakket."
+
+#: ../yum/__init__.py:1093
+msgid ""
+"There are unfinished transactions remaining. You might consider running yum-"
+"complete-transaction first to finish them."
+msgstr "Er zijn onvoltooid gebleven transactiehandelingen. Je zou kunnen overwegen om yum-complete-transaction eerst uit te voeren om deze af te maken."
+
+#: ../yum/__init__.py:1110
+msgid "--> Finding unneeded leftover dependencies"
+msgstr "--> Vinden van overbodige achtergebleven afhankelijkheden"
+
+#: ../yum/__init__.py:1168
+#, python-format
+msgid "Protected multilib versions: %s != %s"
+msgstr "Beschermde multilib versies: %s!=%s"
+
+#: ../yum/__init__.py:1223
+#, python-format
+msgid "Trying to remove \"%s\", which is protected"
+msgstr "Proberen \"%s\" te verwijderen, welke wordt beschermd"
+
+#: ../yum/__init__.py:1344
+msgid ""
+"\n"
+"Packages skipped because of dependency problems:"
+msgstr "\nPakketten overgeslagen vanwege afhankelijkheidsproblemen:"
+
+#: ../yum/__init__.py:1348
+#, python-format
+msgid "    %s from %s"
+msgstr "    %s van %s"
+
+#. FIXME: _N()
+#: ../yum/__init__.py:1520
+#, python-format
+msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
+msgstr "** %d reeds bestaande rpmdb problem(en) gevonden, 'yum check' output geeft:"
+
+#: ../yum/__init__.py:1524
+msgid "Warning: RPMDB altered outside of yum."
+msgstr "Waarschuwing: RPMDB buiten yum om veranderd."
+
+#: ../yum/__init__.py:1536
+msgid "missing requires"
+msgstr "ontbrekende vereist"
+
+#: ../yum/__init__.py:1537
+msgid "installed conflict"
+msgstr "geïnstalleerd conflict"
+
+#: ../yum/__init__.py:1673
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgstr "Waarschuwing: scriptlet of andere niet-fatale fouten opgetreden tijdens de transactie."
+
+#: ../yum/__init__.py:1683
+msgid "Transaction couldn't start:"
+msgstr "Transactie kon niet worden gestart:"
+
+#. should this be 'to_unicoded'?
+#: ../yum/__init__.py:1686
+msgid "Could not run transaction."
+msgstr "Transactie kon niet worden uitgevoerd."
+
+#: ../yum/__init__.py:1700
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "Niet gelukt transactiebestand %s te verwijderen"
+
+#. maybe a file log here, too
+#. but raising an exception is not going to do any good
+#: ../yum/__init__.py:1756
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "%s zou worden geïnstalleerd, maar werd het niet!"
+
+#. maybe a file log here, too
+#. but raising an exception is not going to do any good
+#. Note: This actually triggers atm. because we can't
+#. always find the erased txmbr to set it when
+#. we should.
+#: ../yum/__init__.py:1833
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "%s moest worden verwijderd, maar werd het niet!"
+
+#. Another copy seems to be running.
+#: ../yum/__init__.py:1968
+#, python-format
+msgid "Existing lock %s: another copy is running as pid %s."
+msgstr "Bestaande lock %s: een ander exemplaar wordt uitgevoerd met PID %s."
+
+#. Whoa. What the heck happened?
+#: ../yum/__init__.py:2017
+#, python-format
+msgid "Could not create lock at %s: %s "
+msgstr "Kon geen lock maken op %s: %s"
+
+#: ../yum/__init__.py:2029
+#, python-format
+msgid "Could not open lock %s: %s"
+msgstr "Kon lock %s niet openen: %s"
+
+#. The pid doesn't exist
+#. Whoa. What the heck happened?
+#: ../yum/__init__.py:2046
+#, python-format
+msgid "Unable to check if PID %s is active"
+msgstr "Kon niet vaststellen of PID %s actief is"
+
+#: ../yum/__init__.py:2096
+#, python-format
+msgid ""
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
+msgstr "Pakket komt niet overeen met voorgenomen download. Suggestie: voer yum --enablerepo=%s clean metadata uit"
+
+#: ../yum/__init__.py:2119
+msgid "Could not perform checksum"
+msgstr "Kon checksum niet uitvoeren"
+
+#: ../yum/__init__.py:2122
+msgid "Package does not match checksum"
+msgstr "Pakket komt niet overeen met checksum"
+
+#: ../yum/__init__.py:2185
+#, python-format
+msgid "package fails checksum but caching is enabled for %s"
+msgstr "pakket ontbeert checksum, maar caching is ingeschakeld voor %s"
+
+#: ../yum/__init__.py:2188 ../yum/__init__.py:2218
+#, python-format
+msgid "using local copy of %s"
+msgstr "lokale kopie van %s wordt gebruikt"
+
+#: ../yum/__init__.py:2296
+msgid "Header is not complete."
+msgstr "Header is niet compleet."
+
+#: ../yum/__init__.py:2336
+#, python-format
+msgid ""
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgstr "Header niet in lokale cache aanwezig en caching-only modus ingeschakeld. Kan %s niet downloaden"
+
+#: ../yum/__init__.py:2396
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "Publieke sleutel voor %s is niet geïnstalleerd"
+
+#: ../yum/__init__.py:2400
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Probleem met openen van pakket %s"
+
+#: ../yum/__init__.py:2408
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "Publieke sleutel voor %s is niet vertrouwd"
+
+#: ../yum/__init__.py:2412
+#, python-format
+msgid "Package %s is not signed"
+msgstr "Pakket %s is niet ondertekend"
+
+#: ../yum/__init__.py:2454
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Kan %s niet verwijderen"
+
+#: ../yum/__init__.py:2458
+#, python-format
+msgid "%s removed"
+msgstr "Verwijderd %s"
+
+#: ../yum/__init__.py:2519
+#, python-format
+msgid "Cannot remove %s file %s"
+msgstr "Kan niet verwijderen %s bestand %s"
+
+#: ../yum/__init__.py:2523
+#, python-format
+msgid "%s file %s removed"
+msgstr "%s bestand verwijderd %s"
+
+#: ../yum/__init__.py:2525
+#, python-format
+msgid "%d %s file removed"
+msgid_plural "%d %s files removed"
+msgstr[0] "%d %s bestand verwijderd"
+msgstr[1] "%d %s bestanden verwijderd"
+
+#: ../yum/__init__.py:2627
+#, python-format
+msgid "More than one identical match in sack for %s"
+msgstr "Meer dan één identieke match in houder voor %s"
+
+#: ../yum/__init__.py:2633
+#, python-format
+msgid "Nothing matches %s.%s %s:%s-%s from update"
+msgstr "Niets komt overeen met %s.%s%s:%s-%s van update"
+
+#: ../yum/__init__.py:2997
+msgid ""
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
+msgstr "searchPackages() zal verdwijnen in een toekomstige versie van Yum.                      Gebruik searchGenerator()  \n"
+
+#: ../yum/__init__.py:3053
+#, python-format
+msgid "Searching %d package"
+msgid_plural "Searching %d packages"
+msgstr[0] "Zoeken %d pakket"
+msgstr[1] "Zoeken %d pakketten"
+
+#: ../yum/__init__.py:3057
+#, python-format
+msgid "searching package %s"
+msgstr "zoeken pakket %s"
+
+#: ../yum/__init__.py:3069
+msgid "searching in file entries"
+msgstr "zoeken in file entries"
+
+#: ../yum/__init__.py:3076
+msgid "searching in provides entries"
+msgstr "zoeken in provides entries"
+
+#: ../yum/__init__.py:3213
+msgid "No group data available for configured repositories"
+msgstr "Geen groepsgegevens beschikbaar voor geconfigureerde repositories"
+
+#: ../yum/__init__.py:3271 ../yum/__init__.py:3298 ../yum/__init__.py:3334
+#: ../yum/__init__.py:3340 ../yum/__init__.py:3469 ../yum/__init__.py:3473
+#: ../yum/__init__.py:3939
+#, python-format
+msgid "No Group named %s exists"
+msgstr "Er bestaat geen groep met de naam %s"
+
+#: ../yum/__init__.py:3310 ../yum/__init__.py:3489
+#, python-format
+msgid "package %s was not marked in group %s"
+msgstr "pakket %s is niet gemarkeerd in groep %s"
+
+#. (upgrade and igroup_data[pkg] == 'available')):
+#: ../yum/__init__.py:3376
+#, python-format
+msgid "Skipping package %s from group %s"
+msgstr "Pakket %s van groep %s wordt overgeslagen"
+
+#: ../yum/__init__.py:3382
+#, python-format
+msgid "Adding package %s from group %s"
+msgstr "Toevoegen van pakket %s uit de groep %s"
+
+#: ../yum/__init__.py:3402
+#, python-format
+msgid "No package named %s available to be installed"
+msgstr "Geen pakket met de naam %s beschikbaar om te worden geïnstalleerd"
+
+#: ../yum/__init__.py:3453
+#, python-format
+msgid "Warning: Group %s does not have any packages."
+msgstr "Waarschuwing: Groep %s heeft geen pakketten."
+
+#: ../yum/__init__.py:3455
+#, python-format
+msgid "Group %s does have %u conditional packages, which may get installed."
+msgstr "Groep %s heeft %u voorwaardelijk pakketten, welke zouden kunnen worden geïnstalleerd."
+
+#. This can happen due to excludes after .up has
+#. happened.
+#: ../yum/__init__.py:3527
+#, python-format
+msgid "Package tuple %s could not be found in packagesack"
+msgstr "Pakket-tupel %s kon niet in pakkethouder gevonden worden"
+
+#: ../yum/__init__.py:3555
+#, python-format
+msgid "Package tuple %s could not be found in rpmdb"
+msgstr "Pakket-tupel %s kon niet in rpmdb gevonden worden"
+
+#: ../yum/__init__.py:3618 ../yum/__init__.py:3681
+#, python-format
+msgid "Invalid version flag from: %s"
+msgstr "Ongeldige versie vlag van: %s"
+
+#: ../yum/__init__.py:3642 ../yum/__init__.py:3648 ../yum/__init__.py:3705
+#: ../yum/__init__.py:3711
+#, python-format
+msgid "No Package found for %s"
+msgstr "Geen pakket gevonden voor %s"
+
+#: ../yum/__init__.py:4023
+msgid "Package Object was not a package object instance"
+msgstr "Pakket Object was niet een pakket objectinstantie"
+
+#: ../yum/__init__.py:4027
+msgid "Nothing specified to install"
+msgstr "Niets aangemerkt om te installeren"
+
+#: ../yum/__init__.py:4046 ../yum/__init__.py:4957
+#, python-format
+msgid "Checking for virtual provide or file-provide for %s"
+msgstr "Controleren op virtuele levering dan wel bestand-levering voor %s"
+
+#: ../yum/__init__.py:4121
+#, python-format
+msgid "Package %s installed and not available"
+msgstr "Pakket %s geïnstalleerd en niet beschikbaar"
+
+#: ../yum/__init__.py:4124
+msgid "No package(s) available to install"
+msgstr "Geen pakket(ten) beschikbaar om te installeren"
+
+#: ../yum/__init__.py:4136
+#, python-format
+msgid "Package: %s  - already in transaction set"
+msgstr "Pakket: %s  - reeds in transactie set"
+
+#: ../yum/__init__.py:4164
+#, python-format
+msgid "Package %s is obsoleted by %s which is already installed"
+msgstr "Pakket %s is ouder dan %s, dat reeds is geïnstalleerd"
+
+#: ../yum/__init__.py:4169
+#, python-format
+msgid ""
+"Package %s is obsoleted by %s, but obsoleting package does not provide for "
+"requirements"
+msgstr "Pakket %s is ouder dan %s, maar nieuwer pakket voldoet niet aan de vereisten"
+
+#: ../yum/__init__.py:4172
+#, python-format
+msgid "Package %s is obsoleted by %s, trying to install %s instead"
+msgstr "Pakket %s is ouder dan %s, zal dientengevolge pogen %s te installeren"
+
+#: ../yum/__init__.py:4180
+#, python-format
+msgid "Package %s already installed and latest version"
+msgstr "Pakket %s is reeds geïnstalleerd en de meest recente versie"
+
+#: ../yum/__init__.py:4194
+#, python-format
+msgid "Package matching %s already installed. Checking for update."
+msgstr "Pakket dat overeenkomt met %s is al geïnstalleerd. Controleren op update."
+
+#. update everything (the easy case)
+#: ../yum/__init__.py:4317
+msgid "Updating Everything"
+msgstr "Updaten Alles"
+
+#: ../yum/__init__.py:4341 ../yum/__init__.py:4488 ../yum/__init__.py:4530
+#: ../yum/__init__.py:4566
+#, python-format
+msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
+msgstr "Niet Bijwerken pakket dat al verouderd is: %s.%s%s:%s-%s"
+
+#: ../yum/__init__.py:4391 ../yum/__init__.py:4623
+#, python-format
+msgid "%s"
+msgstr "%s"
+
+#: ../yum/__init__.py:4413 ../yum/__init__.py:4627 ../yum/__init__.py:4963
+#, python-format
+msgid "No Match for argument: %s"
+msgstr "Geen resultaat voor argument: %s"
+
+#: ../yum/__init__.py:4431
+#, python-format
+msgid "No package matched to upgrade: %s"
+msgstr "Geen pakket aangetroffen om te upgraden: %s"
+
+#: ../yum/__init__.py:4477
+#, python-format
+msgid "Package is already obsoleted: %s.%s %s:%s-%s"
+msgstr "Pakket is al verouderd: %s.%s%s:%s-%s"
+
+#: ../yum/__init__.py:4525
+#, python-format
+msgid "Not Updating Package that is obsoleted: %s"
+msgstr "Niet Bijwerken pakket dat verouderd is: %s"
+
+#: ../yum/__init__.py:4534 ../yum/__init__.py:4570
+#, python-format
+msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
+msgstr "Niet Bijwerken pakket dat al bijgewerkt is: %s.%s%s:%s-%s"
+
+#: ../yum/__init__.py:4640
+#, python-format
+msgid "No package matched to remove: %s"
+msgstr "Geen pakket aangetroffen om te verwijderen: %s"
+
+#: ../yum/__init__.py:4646
+#, python-format
+msgid "Skipping the running kernel: %s"
+msgstr "Overslaan van -draaiende- kernel: %s"
+
+#: ../yum/__init__.py:4652
+#, python-format
+msgid "Removing %s from the transaction"
+msgstr "Verwijderen van %s uit de transactie"
+
+#: ../yum/__init__.py:4689
+#, python-format
+msgid "Cannot open: %s. Skipping."
+msgstr "Kan niet openen: %s. Overslaan."
+
+#: ../yum/__init__.py:4692 ../yum/__init__.py:4809 ../yum/__init__.py:4894
+#, python-format
+msgid "Examining %s: %s"
+msgstr "Onderzoeken %s: %s"
+
+#: ../yum/__init__.py:4696
+#, python-format
+msgid "Cannot localinstall deltarpm: %s. Skipping."
+msgstr "Niet gelukt deltarpm lokaal te installeren: %s. Overslaan."
+
+#: ../yum/__init__.py:4705 ../yum/__init__.py:4812 ../yum/__init__.py:4897
+#, python-format
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgstr "Kan pakket %s niet toevoegen aan transactie. Geen compatibele architectuur: %s"
+
+#: ../yum/__init__.py:4711
+#, python-format
+msgid "Cannot install package %s. It is obsoleted by installed package %s"
+msgstr "Kan pakket %s niet installeren. Het al geïnstalleerde pakket %s is nieuwer"
+
+#: ../yum/__init__.py:4719
+#, python-format
+msgid ""
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
+msgstr "Pakket %s is niet geïnstalleerd, en kan dus ook niet vernieuwd worden. Voer in de plaats daarvan yum install uit, om te installeren."
+
+#: ../yum/__init__.py:4738 ../yum/__init__.py:4745
+#, python-format
+msgid ""
+"Package %s.%s not installed, cannot update it. Run yum install to install it"
+" instead."
+msgstr "Pakket %s.%s is niet geïnstalleerd, kan het dus niet vernieuwen. Voer in de plaats daarvan yum install uit om te installeren."
+
+#: ../yum/__init__.py:4754 ../yum/__init__.py:4817 ../yum/__init__.py:4902
+#, python-format
+msgid "Excluding %s"
+msgstr "Uitsluiten %s"
+
+#: ../yum/__init__.py:4759
+#, python-format
+msgid "Marking %s to be installed"
+msgstr "Markeren %s om te installeren"
+
+#: ../yum/__init__.py:4765
+#, python-format
+msgid "Marking %s as an update to %s"
+msgstr "Markeren %s als een update voor %s"
+
+#: ../yum/__init__.py:4772
+#, python-format
+msgid "%s: does not update installed package."
+msgstr "%s: is geen update voor geïnstalleerd pakket."
+
+#: ../yum/__init__.py:4806 ../yum/__init__.py:4891
+#, python-format
+msgid "Cannot open file: %s. Skipping."
+msgstr "Kan bestand niet openen: %s. Overslaan."
+
+#: ../yum/__init__.py:4846
+msgid "Problem in reinstall: no package matched to remove"
+msgstr "Probleem met herinstalleren: geen overeenkomstig pakket gevonden om eerst te verwijderen"
+
+#: ../yum/__init__.py:4872
+#, python-format
+msgid "Problem in reinstall: no package %s matched to install"
+msgstr "Probleem met herinstalleren: geen overeenkomstig pakket %s gevonden om opnieuw te installeren "
+
+#: ../yum/__init__.py:4985
+msgid "No package(s) available to downgrade"
+msgstr "Geen pakket(ten) beschikbaar om te downgraden"
+
+#: ../yum/__init__.py:4993
+#, python-format
+msgid "Package %s is allowed multiple installs, skipping"
+msgstr "Pakket %s is toegestaan ​​meerdere installaties te hebben, wordt overgeslagen"
+
+#: ../yum/__init__.py:5039
+#, python-format
+msgid "No Match for available package: %s"
+msgstr "Geen match voor beschikbaar pakket: %s"
+
+#: ../yum/__init__.py:5046
+#, python-format
+msgid "Only Upgrade available on package: %s"
+msgstr "Upgrade alleen beschikbaar voor het pakket: %s"
+
+#: ../yum/__init__.py:5159 ../yum/__init__.py:5226
+#, python-format
+msgid "Failed to downgrade: %s"
+msgstr "Mislukt downgraden: %s"
+
+#: ../yum/__init__.py:5176 ../yum/__init__.py:5232
+#, python-format
+msgid "Failed to upgrade: %s"
+msgstr "Bijwerken mislukt van: %s"
+
+#: ../yum/__init__.py:5265
+#, python-format
+msgid "Retrieving key from %s"
+msgstr "Ophalen sleutel uit %s"
+
+#: ../yum/__init__.py:5283
+msgid "GPG key retrieval failed: "
+msgstr "GPG sleutel ophalen mislukte:"
+
+#. if we decide we want to check, even though the sig failed
+#. here is where we would do that
+#: ../yum/__init__.py:5306
+#, python-format
+msgid "GPG key signature on key %s does not match CA Key for repo: %s"
+msgstr "GPG key signature van sleutel %s komt niet overeen met de CA Key van repo: %s"
+
+#: ../yum/__init__.py:5308
+msgid "GPG key signature verified against CA Key(s)"
+msgstr "GPG key geverifieerd middels CA Key(s)"
+
+#: ../yum/__init__.py:5316
+#, python-format
+msgid "Invalid GPG Key from %s: %s"
+msgstr "Ongeldige GPG sleutel van %s: %s"
+
+#: ../yum/__init__.py:5325
+#, python-format
+msgid "GPG key parsing failed: key does not have value %s"
+msgstr "GPG sleutel parsing faalde: sleutel heeft geen waarde %s"
+
+#: ../yum/__init__.py:5341
+#, python-format
+msgid ""
+"Importing %s key 0x%s:\n"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" Package    : %s (%s)\n"
+" From       : %s"
+msgstr "Importeren %s sleutel 0x%s:\n Userid     : \"%s\"\n Fingerprint: %s\n Pakket     : %s (%s)\n Van        : %s"
+
+#: ../yum/__init__.py:5351
+#, python-format
+msgid ""
+"Importing %s key 0x%s:\n"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" From       : %s"
+msgstr "Importeren %s sleutel 0x%s:\n Userid     : \"%s\"\n Fingerprint: %s\n Van        : %s"
+
+#: ../yum/__init__.py:5379
+#, python-format
+msgid ""
+"\n"
+"\n"
+"\n"
+" Failing package is: %s\n"
+" GPG Keys are configured as: %s\n"
+msgstr "\n\n\n Falende pakket is: %s\n GPG Sleutels zijn geconfigureerd als: %s\n"
+
+#: ../yum/__init__.py:5393
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "GPG sleutel %s (0x%s) is al geïnstalleerd"
+
+#: ../yum/__init__.py:5431
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "Importeren sleutel is mislukt (code %d)"
+
+#: ../yum/__init__.py:5433 ../yum/__init__.py:5534
+msgid "Key imported successfully"
+msgstr "Sleutel succesvol geïmporteerd"
+
+#: ../yum/__init__.py:5437
+msgid "Didn't install any keys"
+msgstr "Er werden geen sleutels geïnstalleerd"
+
+#: ../yum/__init__.py:5440
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr "De GPG sleutels vermeld voor de \"%s\" repository zijn al geïnstalleerd, maar ze zijn niet correct voor dit pakket. \nControleer of de juiste sleutel-URL's zijn geconfigureerd voor deze repository."
+
+#: ../yum/__init__.py:5450
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "Import van sleutel(s) heeft niet geholpen, verkeerde sleutel(s)?"
+
+#: ../yum/__init__.py:5472
+msgid "No"
+msgstr "Nee"
+
+#: ../yum/__init__.py:5474
+msgid "Yes"
+msgstr "Ja"
+
+#: ../yum/__init__.py:5475
+#, python-format
+msgid ""
+"\n"
+"\n"
+"\n"
+" CA Key: %s\n"
+" Failing repo is: %s\n"
+" GPG Keys are configured as: %s\n"
+msgstr "\n\n\n CA Sleutel: %s\n Falende repo is: %s\n GPG Sleutels zijn geconfigureerd als: %s\n"
+
+#: ../yum/__init__.py:5488
+#, python-format
+msgid "GPG key at %s (0x%s) is already imported"
+msgstr "GPG-sleutel op %s (0x%s) is reeds geïmporteerd"
+
+#: ../yum/__init__.py:5532
+#, python-format
+msgid "Key %s import failed"
+msgstr "Import sleutel %s faalde"
+
+#: ../yum/__init__.py:5549
+#, python-format
+msgid "Didn't install any keys for repo %s"
+msgstr "Er werden geen sleutels geïnstalleerd voor repo %s"
+
+#: ../yum/__init__.py:5554
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr "De GPG sleutels vermeld voor de \"%s\" repository zijn al geïnstalleerd, maar ze zijn niet correct. \nControleer of de juiste sleutel-URL's zijn geconfigureerd voor deze repository."
+
+#: ../yum/__init__.py:5705
+msgid "Unable to find a suitable mirror."
+msgstr "Niet in staat om een ​​geschikte mirror te vinden."
+
+#: ../yum/__init__.py:5707
+msgid "Errors were encountered while downloading packages."
+msgstr "Fouten tegengekomen tijdens het downloaden van pakketten."
+
+#: ../yum/__init__.py:5762
+#, python-format
+msgid "Please report this error at %s"
+msgstr "Meld deze fout a.u.b. op %s"
+
+#: ../yum/__init__.py:5779
+msgid "Test Transaction Errors: "
+msgstr "Test Transactie Fouten: "
+
+#: ../yum/__init__.py:5891
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Kon cachedir niet instellen: %s"
+
+#: ../yum/__init__.py:5952 ../yum/__init__.py:5954
+msgid "Dependencies not solved. Will not save unresolved transaction."
+msgstr "Afhankelijkheden niet opgelost. Zal een transactie met onopgeloste afhankelijkheden niet opslaan."
+
+#: ../yum/__init__.py:5983 ../yum/__init__.py:5985
+#, python-format
+msgid "Could not save transaction file %s: %s"
+msgstr "Kon transactiebestand %s niet opslaan: %s"
+
+#: ../yum/__init__.py:6009
+#, python-format
+msgid "Could not access/read saved transaction %s : %s"
+msgstr "Kon geen toegang krijgen tot/lezen opgeslagen transactie %s: %s"
+
+#: ../yum/__init__.py:6038
+msgid "rpmdb ver mismatched saved transaction version, "
+msgstr "rpmdb versie gaat niet samen met de bewaarde transactieversie,"
+
+#: ../yum/__init__.py:6040
+msgid " ignoring, as requested."
+msgstr " negeren, zoals gevraagd."
+
+#: ../yum/__init__.py:6043 ../yum/__init__.py:6179
+msgid " aborting."
+msgstr "afbreken."
+
+#: ../yum/__init__.py:6052
+msgid "cannot find tsflags or tsflags not integer."
+msgstr "kan tsflags of tsflags niet vinden, geen integer."
+
+#: ../yum/__init__.py:6092
+#, python-format
+msgid "Found txmbr in unknown current state: %s"
+msgstr "Trof txmbr in onbekende huidige status aan: %s"
+
+#: ../yum/__init__.py:6096
+#, python-format
+msgid "Could not find txmbr: %s in state %s"
+msgstr "Kon txmbr niet vinden: %s in status %s"
+
+#: ../yum/__init__.py:6132 ../yum/__init__.py:6149
+#, python-format
+msgid "Could not find txmbr: %s from origin: %s"
+msgstr "Kon txmbr niet vinden: %s van herkomst: %s"
+
+#: ../yum/__init__.py:6174
+msgid "Transaction members, relations are missing or ts has been modified,"
+msgstr "Transactie-leden, relaties ontbreken of ts is gewijzigd,"
+
+#: ../yum/__init__.py:6176
+msgid " ignoring, as requested. You must redepsolve!"
+msgstr " negeren, zoals gevraagd. U moet afhankelijkheden opnieuw oplossen!"
+
+#. Debugging output
+#: ../yum/__init__.py:6251 ../yum/__init__.py:6270
+#, python-format
+msgid "%s has been visited already and cannot be removed."
+msgstr "%s is al bezocht en kan niet worden verwijderd."
+
+#. Debugging output
+#: ../yum/__init__.py:6254
+#, python-format
+msgid "Examining revdeps of %s"
+msgstr "Onderzoeken revdeps van %s"
+
+#. Debugging output
+#: ../yum/__init__.py:6275
+#, python-format
+msgid "%s has revdep %s which was user-installed."
+msgstr "%s heeft revdep %s en was gebruiker-geïnstalleerd."
+
+#. Debugging output
+#: ../yum/__init__.py:6289
+#, python-format
+msgid "%s has no user-installed revdeps."
+msgstr "%s heeft geen door gebruiker geïnstalleerd revdeps."
+
+#. Mostly copied from YumOutput._outKeyValFill()
+#: ../yum/plugins.py:212
+msgid "Loaded plugins: "
+msgstr "Geladen plugins: "
+
+#: ../yum/plugins.py:226 ../yum/plugins.py:232
+#, python-format
+msgid "No plugin match for: %s"
+msgstr "Geen plugin match voor: %s"
+
+#: ../yum/plugins.py:262
+#, python-format
+msgid "Not loading \"%s\" plugin, as it is disabled"
+msgstr "\"%s\" plug-in wordt niet geladen, staat uitgeschakeld"
+
+#. Give full backtrace:
+#: ../yum/plugins.py:274
+#, python-format
+msgid "Plugin \"%s\" can't be imported"
+msgstr "Plugin \"%s\" kan niet worden geïmporteerd"
+
+#: ../yum/plugins.py:281
+#, python-format
+msgid "Plugin \"%s\" doesn't specify required API version"
+msgstr "Plugin \"%s\" geeft niet de vereiste API-versie aan"
+
+#: ../yum/plugins.py:286
+#, python-format
+msgid "Plugin \"%s\" requires API %s. Supported API is %s."
+msgstr "Plugin \"%s\" vereist API %s. Ondersteunde API is echter %s."
+
+#: ../yum/plugins.py:319
+#, python-format
+msgid "Loading \"%s\" plugin"
+msgstr "Laden van \"%s\" plugin"
+
+#: ../yum/plugins.py:326
+#, python-format
+msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr "Twee of meer plugins met de naam \"%s\" komen voor ​​in het plugin zoekpad"
+
+#: ../yum/plugins.py:346
+#, python-format
+msgid "Configuration file %s not found"
+msgstr "Configuratiebestand %s niet gevonden"
+
+#. for
+#. Configuration files for the plugin not found
+#: ../yum/plugins.py:349
+#, python-format
+msgid "Unable to find configuration file for plugin %s"
+msgstr "Kan configuratiebestand niet vinden voor plugin %s"
+
+#: ../yum/plugins.py:553
+msgid "registration of commands not supported"
+msgstr "registratie van commando's niet ondersteund"
+
+#: ../yum/rpmsack.py:159
+msgid "has missing requires of"
+msgstr "heeft ontbrekende vereisten"
+
+#: ../yum/rpmsack.py:162
+msgid "has installed conflicts"
+msgstr "heeft geïnstalleerde conflicten"
+
+#: ../yum/rpmsack.py:171
+#, python-format
+msgid "%s is a duplicate with %s"
+msgstr "%s is een duplicaat van %s"
+
+#: ../yum/rpmsack.py:179
+#, python-format
+msgid "%s is obsoleted by %s"
+msgstr "%s is ouder dan %s"
+
+#: ../yum/rpmsack.py:187
+#, python-format
+msgid "%s provides %s but it cannot be found"
+msgstr "%s bevat %s, maar kan niet worden gevonden"
+
+#: ../yum/rpmtrans.py:80
+msgid "Repackaging"
+msgstr "Opnieuw verpakken"
+
+#: ../yum/rpmtrans.py:149
+#, python-format
+msgid "Verify: %u/%u: %s"
+msgstr "Verifiëer: %u/%u: %s"
+
+#: ../yum/yumRepo.py:798
+#, python-format
+msgid ""
+"Insufficient space in download directory %s\n"
+"    * free   %s\n"
+"    * needed %s"
+msgstr "Onvoldoende ruimte in download directory %s\n    * vrij     %s\n    * nodig %s"
+
+#: ../rpmUtils/oldUtils.py:33
+#, python-format
+msgid "Header cannot be opened or does not match %s, %s."
+msgstr "Header kan niet worden geopend of komt niet overeen met %s, %s."
+
+#: ../rpmUtils/oldUtils.py:53
+#, python-format
+msgid "RPM %s fails md5 check"
+msgstr "RPM %s komt niet door de md5 check"
+
+#: ../rpmUtils/oldUtils.py:151
+msgid "Could not open RPM database for reading. Perhaps it is already in use?"
+msgstr "RPM-database kan niet worden geopend om te lezen. Misschien al in gebruik?"
+
+#: ../rpmUtils/oldUtils.py:183
+msgid "Got an empty Header, something has gone wrong"
+msgstr "Verkreeg een lege Header, iets is er mis gegaan"
+
+#: ../rpmUtils/oldUtils.py:253 ../rpmUtils/oldUtils.py:260
+#: ../rpmUtils/oldUtils.py:263 ../rpmUtils/oldUtils.py:266
+#, python-format
+msgid "Damaged Header %s"
+msgstr "Beschadigde Header %s"
+
+#: ../rpmUtils/oldUtils.py:281
+#, python-format
+msgid "Error opening rpm %s - error %s"
+msgstr "Fout bij het openen van rpm %s - fout %s"

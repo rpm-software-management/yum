@@ -388,13 +388,12 @@ class YumRepository(Repository, config.RepoConf):
             else:
                 val = ''
         ret = self.id
-        if '$releasever' in val:
-            ret += '/'
-            ret += str(self.yumvar['releasever'])
-        if '$basearch' in val:
-            ret += '/'
-            ret += str(self.yumvar['basearch'])
-        # Could maybe list some other things here too?
+
+        for var in self.ui_repoid_vars:
+            if '$'+var in val:
+                ret += '/'
+                ret += str(self.yumvar[var])
+
         setattr(self, '__cached_ui_id', ret)
         return ret
     ui_id = property(_ui_id)

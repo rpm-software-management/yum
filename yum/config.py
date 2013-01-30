@@ -839,6 +839,8 @@ class YumConf(StartupConf):
     color_update_remote    = Option('normal')
 
     color_search_match = Option('bold')
+
+    ui_repoid_vars = ListOption(['releasever', 'basearch'])
     
     sslcacert = Option()
     sslverify = BoolOption(True)
@@ -966,6 +968,8 @@ class RepoConf(BaseConfig):
 
     skip_if_unavailable = BoolOption(False)
     async = BoolOption(True)
+
+    ui_repoid_vars = Inherit(YumConf.ui_repoid_vars)
     
 class VersionGroupConf(BaseConfig):
     """Option definitions for version groups."""

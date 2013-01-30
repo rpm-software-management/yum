@@ -706,6 +706,12 @@ be downloaded. The updates list is what is printed when you run "yum update",
 Default is `normal'.
 See color_list_installed_older for possible values.
 
+.IP
+\fBui_repoid_vars \fR
+When a repository id is displayed, append these yum variables to the string
+if they are used in the baseurl/etc. Variables are appended in the order
+listed (and found).
+Default is 'releasever basearch'.
 
 .IP
 \fBclean_requirements_on_remove \fR
@@ -1007,6 +1013,11 @@ for any given command. Defaults to False.
 \fBasync \fR
 If set to True Yum will download packages and metadata from this repo in
 parallel, if possible.  Defaults to True.
+
+.IP
+\fBui_repoid_vars \fR
+Overrides the \fBui_repoid_vars\fR option from the [main] section for this
+repository.
 
 .SH "URL INCLUDE SYNTAX"
 .LP

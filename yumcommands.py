@@ -3166,7 +3166,7 @@ class SwapCommand(YumCommand):
 
         :return: a one line summary of this command
         """
-        return _("Simple way to swap packages, isntead of using shell")
+        return _("Simple way to swap packages, instead of using shell")
 
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.

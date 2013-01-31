@@ -47,6 +47,8 @@ Requires: yum-metadata-parser >= 1.1.0
 Requires: pygpgme
 # rawhide is >= 0.5.3-7.fc18 ... as this is added.
 Requires: pyliblzma
+# This is really a suggests, but we have none...
+Requires: pyxattr
 
 Conflicts: rpm >= 5-0
 # Zif is a re-implementation of yum in C, however:

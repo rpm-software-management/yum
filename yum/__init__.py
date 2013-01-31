@@ -4974,6 +4974,9 @@ much more problems).
             # at which point ignore everything.
             obsoleting_pkg = self._test_loop(available_pkg, self._pkg2obspkg)
             if obsoleting_pkg is not None:
+                if (kwargs.get('repoid') and
+                    obsoleting_pkg.repoid != kwargs.get('repoid')):
+                    continue # Meh.
                 self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is obsoleted: %s'), available_pkg)
                 tx_return.extend(self.update(po=obsoleting_pkg))
                 continue

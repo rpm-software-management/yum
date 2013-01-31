@@ -780,6 +780,7 @@ class EraseCommand(YumCommand):
         """
         return ['erase', 'remove', 'autoremove',
                 'erase-n', 'erase-na', 'erase-nevra',
+                'autoremove-n', 'autoremove-na', 'autoremove-nevra',
                 'remove-n', 'remove-na', 'remove-nevra']
 
     def getUsage(self):
@@ -827,10 +828,12 @@ class EraseCommand(YumCommand):
         """
 
         pos = False
-        if basecmd == 'autoremove':
+        if basecmd.startswith('autoremove'):
             #  We have to alter this, as it's used in resolving stage. Which
             # sucks. Just be careful in "yum shell".
             base.conf.clean_requirements_on_remove = True
+
+            basecmd = basecmd[len('auto'):] # pretend it's just remove...
 
             if not extcmds:
                 pos = True

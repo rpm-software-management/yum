@@ -4846,12 +4846,15 @@ much more problems).
             try:
                 if update_to:
                     m = []
+                elif kwargs.get('repoid'):
+                    pats = [kwargs['pattern']]
+                    m = self.pkgSack.sacks[kwargs['repoid']]
+                    m = m.returnNewestByNameArch(patterns=pats)
                 else:
                     pats = [kwargs['pattern']]
                     m = self.pkgSack.returnNewestByNameArch(patterns=pats)
             except Errors.PackageSackError:
                 m = []
-            m = misc.filter_pkgs_repoid(m, kwargs.get('repoid'))
             availpkgs.extend(m)
 
             if not availpkgs and not instpkgs:

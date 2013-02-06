@@ -2,7 +2,8 @@
 Description=Run automatic yum updates as a cron job
 
 [Service]
-Type=simple
+Type=oneshot
+RemainAfterExit=yes
 ExecStart=/bin/touch /var/lock/subsys/yum-cron
 ExecStop=/bin/rm -f /var/lock/subsys/yum-cron
 

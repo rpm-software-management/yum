@@ -201,6 +201,16 @@ exit 0
 %post cron
 %systemd_post yum-cron.service
 
+#  Note that systemctl preset is being run here ... but _only_ on initial
+# install. So try this...
+
+if [ -f /var/lock/subsys/yum-cron -a -f /etc/rc.d/init.d/yum-cron ]; then
+ systemctl enable yum-cron
+fi
+
+# Also note:
+#  systemctl list-unit-files | fgrep yum-cron
+
 %preun cron
 %systemd_preun yum-cron.service
 

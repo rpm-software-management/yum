@@ -141,6 +141,7 @@ class YumPackageSack(packageSack.PackageSack):
 
             if self._check_db_version(repo, mydbtype):
                 if not self._check_uncompressed_db_gen(repo, mydbtype):
+                    # NOTE: No failfunc.
                     repo._retrieveMD(mydbtype, async=True, failfunc=None)
 
     def populate(self, repo, mdtype='metadata', callback=None, cacheonly=0):
@@ -940,6 +941,7 @@ Insufficient space in download directory %s
                                     range=(start, end),
                                     )
             except URLGrabError, e:
+                self._del_dl_file(local, size)
                 errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self, e)
                 if self.mirrorurls:
                     errstr +="\n  You could try running: yum clean expire-cache"
@@ -961,6 +963,7 @@ Insufficient space in download directory %s
                                            **kwargs
                                            )
             except URLGrabError, e:
+                self._del_dl_file(local, size)
                 errstr = "failure: %s from %s: %s" % (relative, self, e)
                 errors = getattr(e, 'errors', None)
                 raise Errors.NoMoreMirrorsRepoError(errstr, errors)
@@ -1652,6 +1655,18 @@ Insufficient space in download directory %s
             raise URLGrabError(-1, 'repomd.xml does not match metalink for %s' %
                                self)
 
+    def _del_dl_file(self, local, size):
+        """ Delete a downloaded file if it's the correct size. """
+
+        sd = misc.stat_f(local)
+        if not sd: # File doesn't exist...
+            return
+
+        if size and sd.st_size < size:
+            return # Still more to get...
+
+        # Is the correct size, or too big ... delete it so we'll try again.
+        misc.unlink_f(local)
 
     def checkMD(self, fn, mdtype, openchecksum=False):
         """check the metadata type against its checksum"""
@@ -1681,7 +1696,7 @@ Insufficient space in download directory %s
         if size is not None:
             size = int(size)
 
-        if fast:
+        if fast and skip_old_DBMD_check:
             fsize = misc.stat_f(file)
             if fsize is None: # File doesn't exist...
                 return None
@@ -1756,16 +1771,21 @@ Insufficient space in download directory %s
 
         try:
             def checkfunc(obj):
-                self.checkMD(obj, mdtype)
+                try:
+                    self.checkMD(obj, mdtype)
+                except URLGrabError:
+                    #  Don't share MD among mirrors, in theory we could use:
+                    #     self._del_dl_file(local, int(thisdata.size))
+                    # ...but this is safer.
+                    misc.unlink_f(obj.filename)
+                    raise
                 self.retrieved[mdtype] = 1
             text = "%s/%s" % (self, mdtype)
             if thisdata.size is None:
                 reget = None
             else:
                 reget = 'simple'
-                if os.path.exists(local):
-                    if os.stat(local).st_size >= int(thisdata.size):
-                        misc.unlink_f(local)
+                self._del_dl_file(local, int(thisdata.size))
             local = self._getFile(relative=remote,
                                   local=local, 
                                   copy_local=1,

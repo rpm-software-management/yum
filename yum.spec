@@ -199,13 +199,19 @@ exit 0
 
 
 %post cron
-%systemd_post yum-cron.service
 
+#systemd_post yum-cron.service
+#  Do this manually because it's a fake service for a cronjob, and cronjobs
+# are default on atm. This may change in the future.
+if [ $1 = 1 ]; then
+ systemctl enable yum-cron >/dev/null 2>&1
+else
 #  Note that systemctl preset is being run here ... but _only_ on initial
 # install. So try this...
 
 if [ -f /var/lock/subsys/yum-cron -a -f /etc/rc.d/init.d/yum-cron ]; then
- systemctl enable yum-cron
+ systemctl enable yum-cron >/dev/null 2>&1
+fi
 fi
 
 # Also note:

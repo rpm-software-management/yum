@@ -2200,9 +2200,6 @@ much more problems).
                 return 1
             return 0
         
-        """download list of package objects handed to you, output based on
-           callback, raise yum.Errors.YumBaseError on problems"""
-
         errors = {}
         def adderror(po, msg):
             errors.setdefault(po, []).append(msg)
@@ -2218,41 +2215,45 @@ much more problems).
         self.history.close()
 
         self.plugins.run('predownload', pkglist=pkglist)
+        beenthere = set() # only once, please. BZ 468401
         downloadonly = getattr(self.conf, 'downloadonly', False)
-        repo_cached = False
         remote_pkgs = []
         remote_size = 0
+
+        def verify_local(po):
+            local = po.localPkg()
+            if local in beenthere:
+                # This is definitely a depsolver bug.  Make it fatal?
+                self.verbose_logger.warn(_("ignoring a dupe of %s") % po)
+                return True
+            beenthere.add(local)
+            if os.path.exists(local):
+                if self.verifyPkg(local, po, False):
+                    self.verbose_logger.debug(_("using local copy of %s") % po)
+                    return True
+                if po.repo.cache:
+                    adderror(po, _('package fails checksum but caching is '
+                        'enabled for %s') % po.repo.id)
+                    return False
+                if os.path.getsize(local) >= po.size:
+                    os.unlink(local)
+            if downloadonly:
+                po.localpath += '.%d.tmp' % os.getpid()
+                try: os.rename(local, po.localpath)
+                except OSError: pass
+                po.basepath # prefetch now; fails when repos are closed
+            return False
+
         for po in pkglist:
             if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
                 continue
-                    
-            local = po.localPkg()
-            if os.path.exists(local):
-                if not self.verifyPkg(local, po, False):
-                    if po.repo.cache:
-                        repo_cached = True
-                        adderror(po, _('package fails checksum but caching is '
-                            'enabled for %s') % po.repo.id)
-                else:
-                    self.verbose_logger.debug(_("using local copy of %s") %(po,))
-                    continue
-                        
-            if downloadonly:
-                # download to temp file
-                rpmfile = po.localpath
-                po.localpath += '.%d.tmp' % os.getpid()
-                try: os.rename(rpmfile, po.localpath)
-                except OSError: pass
-                po.basepath # prefetch now; fails when repos are closed
-
+            if verify_local(po):
+                continue
+            if errors:
+                return errors
             remote_pkgs.append(po)
             remote_size += po.size
-            
-            # caching is enabled and the package 
-            # just failed to check out there's no 
-            # way to save this, report the error and return
-            if (self.conf.cache or repo_cached) and errors:
-                return errors
+
         if downloadonly:
             # close DBs, unlock
             self.repos.close()
@@ -2271,20 +2272,7 @@ much more problems).
         done_repos = set()
         async = hasattr(urlgrabber.grabber, 'parallel_wait')
         for po in remote_pkgs:
-            #  Recheck if the file is there, works around a couple of weird
-            # edge cases.
-            local = po.localPkg()
             i += 1
-            if os.path.exists(local):
-                if self.verifyPkg(local, po, False):
-                    self.verbose_logger.debug(_("using local copy of %s") %(po,))
-                    remote_size -= po.size
-                    if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-                        urlgrabber.progress.text_meter_total_size(remote_size,
-                                                                  local_size[0])
-                    continue
-                if os.path.getsize(local) >= po.size:
-                    os.unlink(local)
 
             def checkfunc(obj, po=po):
                 self.verifyPkg(obj, po, 1)
@@ -2337,7 +2325,7 @@ much more problems).
 
                 #  Note that for file:// repos. urlgrabber won't "download"
                 # so we have to check that po.localpath exists.
-                if po not in errors and os.path.exists(po.localpath):
+                elif os.path.exists(po.localpath):
                     # verifyPkg() didn't complain, so (potentially)
                     # overwriting another copy should not be a problem
                     os.rename(po.localpath, rpmfile)

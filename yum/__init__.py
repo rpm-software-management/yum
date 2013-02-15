@@ -6466,6 +6466,27 @@ much more problems).
             else:
                 raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, exception2msg(e)))
 
+    def _load_ts_data(self, filename):
+        """ Load the file into a simple data format. """
+        try:
+            data = open(filename, 'r').readlines()
+        except (IOError, OSError), e:
+            return (exception2msg(e), None)
+
+        if not data:
+            return (_("File is empty."), None)
+
+        if data[0] == 'saved_tx:\n':
+            #  Old versions of yum would put "saved_tx:" at the begining and
+            # two blank lines at the end when you used:
+            # "yum -q history addon-info saved_tx".
+            if data[-1] == 'history addon-info\n':
+                # Might as well also DTRT if they hand removed the plugins line
+                data = data[1:-3]
+            else:
+                data = data[1:-2]
+
+        return (None, data)
         
     def load_ts(self, filename, ignorerpm=None, ignoremissing=None,
                 ignorenewrpm=None):
@@ -6487,11 +6508,11 @@ much more problems).
         # setup any ts flags
         # setup cmds for history/yumdb to know about
         # return txmbrs loaded
-        try:
-            data = open(filename, 'r').readlines()
-        except (IOError, OSError), e:
-            raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, exception2msg(e)))
-            
+
+        data = self._load_ts_data(filename)
+        if data[0] is not None:
+            raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, data[0]))
+        data = data[1]
 
         if ignorerpm is None:
             ignorerpm = self.conf.loadts_ignorerpm
@@ -6514,16 +6535,6 @@ much more problems).
         #                         new rpmdb version.
         # 3+numrepos = num pkgs
         # 3+numrepos+1 -> EOF= txmembers
-        
-        if data[0] == 'saved_tx:\n':
-            #  Old versions of yum would put "saved_tx:" at the begining and
-            # two blank lines at the end when you used:
-            # "yum -q history addon-info saved_tx".
-            if data[-1] == 'history addon-info\n':
-                # Might as well also DTRT if they hand removed the plugins line
-                data = data[1:-3]
-            else:
-                data = data[1:-2]
 
         # rpm db ver
         rpmv = data[0].strip()

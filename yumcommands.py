@@ -30,6 +30,8 @@ import locale
 import fnmatch
 import time
 from yum.i18n import utf8_width, utf8_width_fill, to_unicode, exception2msg
+import tempfile
+import glob
 
 import yum.config
 
@@ -3088,7 +3090,7 @@ class LoadTransactionCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['load-transaction', 'load-ts']
+        return ['load-transaction', 'load-ts', 'ts-load']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -3118,11 +3120,85 @@ class LoadTransactionCommand(YumCommand):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+        def _pkg_avail(l):
+            if not l.startswith('mbr:'):
+                return True # Kind of ... 
+
+            try:
+                pkgtup, current_state = l.split(':')[1].strip().split(' ')
+                current_state = int(current_state.strip())
+                pkgtup = tuple(pkgtup.strip().split(','))
+                if current_state == yum.TS_INSTALL:
+                    po = base.getInstalledPackageObject(pkgtup)
+                elif current_state == yum.TS_AVAILABLE:
+                    po = base.getPackageObject(pkgtup)
+                else:
+                    return False # Bad...
+            except:
+                return False # Bad...
+
+            return True
+
         if not extcmds:
-            base.logger.critical(_("No saved transaction file specified."))
-            raise cli.CliError
+            extcmds = [tempfile.gettempdir()]
         
         load_file = extcmds[0]
+
+        if os.path.isdir(load_file):
+            self.doneCommand(base, _("showing transaction files from %s") %
+                             load_file)
+            yumtxs = sorted(glob.glob("%s/*.yumtx" % load_file))
+            currpmv = None
+            done = False
+            for yumtx in yumtxs:
+                data = base._load_ts_data(yumtx)
+                if data[0] is not None:
+                    continue # Bad file...
+                data = data[1]
+
+                rpmv = data[0].strip()
+                if currpmv is None:
+                    currpmv = str(base.rpmdb.simpleVersion(main_only=True)[0])
+                if rpmv == currpmv:
+                    current = _('y')
+                else:
+                    current = ' ' # Not usable is the most common
+
+                # See load_ts() for data ...
+                try:
+                    numrepos = int(data[2].strip())
+                    pkgstart = 3+numrepos
+                    numpkgs  = int(data[pkgstart].strip())
+                    pkgstart += 1
+                except:
+                    continue
+
+                # Check to see if all the packages are available..
+                bad = ' '
+                for l in data[pkgstart:]:
+                    l = l.rstrip()
+                    if _pkg_avail(l):
+                        continue
+
+                    bad = '*'
+                    break
+
+                current = '%s%s' % (bad, current)
+                if not done:
+                    pkgtitle = _("Members")
+                    pkglen = utf8_width(pkgtitle)
+                    if pkglen < 6:
+                        pkglen = 6
+                    pkgtitle = utf8_width_fill(pkgtitle, pkglen)
+                    print "?? |", pkgtitle, "|", _("Filename")
+                    
+                    done = True
+
+                numpkgs = "%*s" % (pkglen, locale.format("%d", numpkgs, True))
+                print current, '|', numpkgs, '|', os.path.basename(yumtx)
+            return 0, [_('Saved transactions from %s; looked at %u files') %
+                       (load_file, len(yumtxs))]
+
         self.doneCommand(base, _("loading transaction from %s") % load_file)
         
         try:

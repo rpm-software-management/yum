@@ -491,6 +491,11 @@ The two common ways to get a saved yum transaction file are from
 "yum -q history addon-info last saved_tx" or via. the automatic saves in
 $TMPDIR/yum_save_tx.* when a transaction is solved but not run.
 
+Running the command without an argument, or a directory as an argument will
+try and list the possible files available to load. Showing if the packages are
+still available, if the rpmdb matches the current rpmdb, how many transaction
+members are in the saved transaction and what the filename is.
+
 .IP
 .IP "\fBcheck\fP"
 Checks the local rpmdb and produces information on any problems it finds. You

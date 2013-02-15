@@ -1185,7 +1185,7 @@ pointing out that there is a problem. Eg.:
      message showing the root cause of the problem.
 
   2. You have multiple architectures of %(name)s installed, but
-     yum can only see an upgrade for one of those arcitectures.
+     yum can only see an upgrade for one of those architectures.
      If you don't want/need both architectures anymore then you
      can remove the one with the missing update and everything
      will work.

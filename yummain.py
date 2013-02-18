@@ -126,6 +126,11 @@ def main(args):
         result, resultmsgs = base.doCommands()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
+    except Errors.RepoError, e:
+        result = 1
+        resultmsgs = [exception2msg(e)]
+        # For RepoErrors ... help out by forcing new repodata next time.
+        base.cleanExpireCache()
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [exception2msg(e)]
@@ -167,6 +172,11 @@ def main(args):
         (result, resultmsgs) = base.buildTransaction() 
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
+    except Errors.RepoError, e:
+        result = 1
+        resultmsgs = [exception2msg(e)]
+        # For RepoErrors ... help out by forcing new repodata next time.
+        base.cleanExpireCache()
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [exception2msg(e)]
@@ -209,6 +219,11 @@ def main(args):
         return_code = base.doTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
+    except Errors.RepoError, e:
+        result = 1
+        resultmsgs = [exception2msg(e)]
+        # For RepoErrors ... help out by forcing new repodata next time.
+        base.cleanExpireCache()
     except Errors.YumBaseError, e:
         return exFatal(e)
     except KeyboardInterrupt:

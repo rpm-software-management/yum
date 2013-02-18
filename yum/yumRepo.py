@@ -980,9 +980,6 @@ Insufficient space in download directory %s
             except URLGrabError, e:
                 self._del_dl_file(local, size)
                 errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self, e)
-                if self.mirrorurls:
-                    errstr +="\n  You could try running: yum clean expire-cache"
-                    errstr +="\n  To get a new set of mirrors."
                 raise Errors.RepoError, errstr
 
 

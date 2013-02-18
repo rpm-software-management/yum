@@ -2,6 +2,12 @@
 %define auto_sitelib 1
 %define yum_updatesd 0
 %define disable_check 0
+%define yum_cron 1
+
+%if 0%{?rhel} == 6
+# rhel-6 doesn't have the systemd stuff, so won't build...
+%define yum_cron 0
+%endif
 
 %if %{auto_sitelib}
 
@@ -111,7 +117,7 @@ Requires(postun): /sbin/service
 yum-updatesd provides a daemon which checks for available updates and 
 can notify you when they are available via email, syslog or dbus. 
 
-
+%if %{yum_cron}
 %package cron
 Summary: Files needed to run yum updates as a cron job
 Group: System Environment/Base
@@ -124,7 +130,7 @@ Requires(postun): systemd
 %description cron
 These are the files needed to run yum updates as a cron job.
 Install this package if you want auto yum updates nightly via cron.
-
+%endif
 
 
 %prep
@@ -179,6 +185,15 @@ chmod +x $RPM_BUILD_ROOT/%{python_sitelib}/rpmUtils/*.py
 
 %find_lang %name
 
+%if ! %{yum_cron}
+# Remove the yum-cron stuff to make rpmbuild happy..
+rm -f $RPM_BUILD_ROOT/%{_unitdir}/yum-cron.service
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/cron.daily/0yum-update.cron
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum-cron.conf
+rm -f $RPM_BUILD_ROOT/%{_sbindir}/yum-cron
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man*/yum-cron.*
+%endif
+
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
@@ -197,7 +212,7 @@ fi
 exit 0
 %endif
 
-
+%if %{yum_cron}
 %post cron
 
 #systemd_post yum-cron.service
@@ -222,7 +237,7 @@ fi
 
 %postun cron
 %systemd_postun_with_restart yum-cron.service
-
+%endif
 
 
 %files -f %{name}.lang
@@ -263,6 +278,7 @@ fi
 %dir %{yum_pluginslib}
 %dir %{yum_pluginsshare}
 
+%if %{yum_cron}
 %files cron
 %defattr(-,root,root)
 %doc COPYING
@@ -271,6 +287,7 @@ fi
 %{_unitdir}/yum-cron.service
 %{_sbindir}/yum-cron
 %{_mandir}/man*/yum-cron.*
+%endif
 
 %if %{yum_updatesd}
 %files updatesd

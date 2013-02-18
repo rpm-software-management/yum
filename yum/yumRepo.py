@@ -52,15 +52,54 @@ import stat
 import errno
 import tempfile
 
-#  If you want yum to _always_ check the MD .sqlite files then set this to
-# False (this doesn't affect .xml files or .sqilte files derived from them).
-# With this as True yum will only check when a new repomd.xml or
-# new MD is downloaded.
-#  Note that with atomic MD, we can't have old MD lying around anymore so
-# the only way we need this check is if someone does something like:
-#   cp primary.sqlite /var/cache/yum/blah
-# ...at which point you lose.
-skip_old_DBMD_check = True
+# This is unused now, probably nothing uses it but it was global/public.
+skip_old_DBMD_check = False
+
+try:
+    import xattr
+    if not hasattr(xattr, 'get') or not hasattr(xattr, 'set'):
+        xattr = None # This is a "newer" API.
+except ImportError:
+    xattr = None
+
+#  The problem we are trying to solve here is that:
+#
+# 1. We rarely want to be downloading MD/pkgs/etc.
+# 2. We want to check those files are valid (match checksums) when we do
+#    download them.
+# 3. We _really_ don't want to checksum all the files everytime we
+#    run (100s of MBs).
+# 4. We can continue to download files from bad mirrors, or retry files due to
+#    C-c etc.
+#
+# ...we used to solve this by just checking the file size, and assuming the
+# files had been downloaded and checksumed as correct if that matched. But that
+# was error prone on bad mirrors, so now we store the checksum in an
+# xattr ... this does mean that if you can't store xattrs (Eg. NFS) you will
+# rechecksum everything constantly.
+
+def _xattr_get_chksum(filename, chktype):
+    if not xattr:
+        return None
+
+    try:
+        ret = xattr.get(filename, 'user.yum.checksum.' + chktype)
+    except: # Documented to be "EnvironmentError", but make sure
+        return None
+
+    return ret
+
+def _xattr_set_chksum(filename, chktype, chksum):
+    if not xattr:
+        return None
+
+    try:
+        xattr.set(filename, 'user.yum.checksum.' + chktype, chksum)
+    except:
+        return False # Data too long. = IOError ... ignore everything.
+
+    return True
+
 
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
@@ -228,7 +267,7 @@ class YumPackageSack(packageSack.PackageSack):
         # get rid of all this stuff we don't need now
         del repo.cacheHandler
 
-    def _check_uncompressed_db_gen(self, repo, mdtype, fast=True):
+    def _check_uncompressed_db_gen(self, repo, mdtype):
         """return file name of db in gen/ dir if good, None if not"""
 
         mydbdata         = repo.repoXML.getData(mdtype)
@@ -238,7 +277,7 @@ class YumPackageSack(packageSack.PackageSack):
         db_un_fn         = mdtype + '.sqlite'
 
         if not repo._checkMD(compressed_fn, mdtype, data=mydbdata,
-                             check_can_fail=fast, fast=fast):
+                             check_can_fail=True):
             return None
 
         ret = misc.repo_gen_decompress(compressed_fn, db_un_fn,
@@ -261,8 +300,7 @@ class YumPackageSack(packageSack.PackageSack):
         result = None
 
         if os.path.exists(db_un_fn):
-            if skip_old_DBMD_check and repo._using_old_MD:
-                return db_un_fn
+
 
             try:
                 repo.checkMD(db_un_fn, mdtype, openchecksum=True)
@@ -296,7 +334,6 @@ class YumRepository(Repository, config.RepoConf):
                                               # eventually want
         self.repoMDFile = 'repodata/repomd.xml'
         self._repoXML = None
-        self._using_old_MD = None
         self._oldRepoMDData = {}
         self.cache = 0
         self.mirrorlistparsed = 0
@@ -1407,7 +1444,6 @@ Insufficient space in download directory %s
             self._revertOldRepoXML()
             return False
 
-        self._using_old_MD = caching
         if caching:
             return False # Skip any work.
 
@@ -1673,7 +1709,7 @@ Insufficient space in download directory %s
         return self._checkMD(fn, mdtype, openchecksum)
 
     def _checkMD(self, fn, mdtype, openchecksum=False,
-                 data=None, check_can_fail=False, fast=False):
+                 data=None, check_can_fail=False):
         """ Internal function, use .checkMD() from outside yum. """
 
         thisdata = data # So the argument name is nicer
@@ -1696,17 +1732,15 @@ Insufficient space in download directory %s
         if size is not None:
             size = int(size)
 
-        if fast and skip_old_DBMD_check:
+        l_csum = _xattr_get_chksum(file, r_ctype)
+        if l_csum:
             fsize = misc.stat_f(file)
-            if fsize is None: # File doesn't exist...
-                return None
-            if size is None:
-                return 1
-            if size == fsize.st_size:
-                return 1
-            if check_can_fail:
-                return None
-            raise URLGrabError(-1, 'Metadata file does not match size')
+            if fsize is not None: # We just got an xattr, so it should be there
+                if size is None and l_csum == r_csum:
+                    return 1
+                if size == fsize.st_size and l_csum == r_csum:
+                    return 1
+            # Anything goes wrong, run the checksums as normal...
 
         try: # get the local checksum
             l_csum = self._checksum(r_ctype, file, datasize=size)
@@ -1716,6 +1750,7 @@ Insufficient space in download directory %s
             raise URLGrabError(-3, 'Error performing checksum')
 
         if l_csum == r_csum:
+            _xattr_set_chksum(file, r_ctype, l_csum)
             return 1
         else:
             if check_can_fail:

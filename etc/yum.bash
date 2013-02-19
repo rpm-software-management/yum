@@ -180,7 +180,7 @@ _yum()
             return 0
             ;;
 
-        check-update|makecache|resolvedep|search)
+        check-update|makecache|resolvedep)
             return 0
             ;;
 
@@ -323,6 +323,11 @@ _yum()
         repolist)
             [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W 'all enabled disabled' -- "$cur" ) )
+            return 0
+            ;;
+
+        search)
+            [[ $prev == $cmd ]] && COMPREPLY=( $( compgen -W 'all' -- "$cur" ) )
             return 0
             ;;
 

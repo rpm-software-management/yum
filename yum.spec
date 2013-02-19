@@ -2,11 +2,16 @@
 %define auto_sitelib 1
 %define yum_updatesd 0
 %define disable_check 0
-%define yum_cron 1
+%define yum_cron_systemd 1
 
-%if 0%{?rhel} == 6
-# rhel-6 doesn't have the systemd stuff, so won't build...
-%define yum_cron 0
+%if 0%{?rhel} <= 6
+# rhel-6 doesn't have the systemd stuff...
+%define yum_cron_systemd 0
+%endif
+
+%if 0%{?fedora} <= 18
+# yum in Fedora <= 18 doesn't use systemd unit files...
+%define yum_cron_systemd 0
 %endif
 
 %if %{auto_sitelib}
@@ -117,20 +122,26 @@ Requires(postun): /sbin/service
 yum-updatesd provides a daemon which checks for available updates and 
 can notify you when they are available via email, syslog or dbus. 
 
-%if %{yum_cron}
 %package cron
 Summary: Files needed to run yum updates as a cron job
 Group: System Environment/Base
 Requires: yum >= 3.0 cronie crontabs findutils
+%if %{yum_cron_systemd}
 BuildRequires: systemd-units
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
+%else
+Requires(post): /sbin/chkconfig
+Requires(post): /sbin/service
+Requires(preun): /sbin/chkconfig
+Requires(preun): /sbin/service
+Requires(postun): /sbin/service
+%endif
 
 %description cron
 These are the files needed to run yum updates as a cron job.
 Install this package if you want auto yum updates nightly via cron.
-%endif
 
 
 %prep
@@ -147,7 +158,15 @@ make check
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-make DESTDIR=$RPM_BUILD_ROOT UNITDIR=%{_unitdir} install
+
+%if %{yum_cron_systemd}
+INIT=systemd
+%else
+INIT=sysv
+%endif
+
+make DESTDIR=$RPM_BUILD_ROOT UNITDIR=%{_unitdir} INIT=$INIT install
+
 install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/yum/pluginconf.d $RPM_BUILD_ROOT/%{yum_pluginslib}
 mkdir -p $RPM_BUILD_ROOT/%{yum_pluginsshare}
@@ -185,13 +204,12 @@ chmod +x $RPM_BUILD_ROOT/%{python_sitelib}/rpmUtils/*.py
 
 %find_lang %name
 
-%if ! %{yum_cron}
-# Remove the yum-cron stuff to make rpmbuild happy..
+%if %{yum_cron_systemd}
+# Remove the yum-cron sysV stuff to make rpmbuild happy..
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/yum-cron
+%else
+# Remove the yum-cron systemd stuff to make rpmbuild happy..
 rm -f $RPM_BUILD_ROOT/%{_unitdir}/yum-cron.service
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/cron.daily/0yum-update.cron
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum-cron.conf
-rm -f $RPM_BUILD_ROOT/%{_sbindir}/yum-cron
-rm -f $RPM_BUILD_ROOT/%{_mandir}/man*/yum-cron.*
 %endif
 
 %clean
@@ -212,9 +230,9 @@ fi
 exit 0
 %endif
 
-%if %{yum_cron}
 %post cron
 
+%if %{yum_cron_systemd}
 #systemd_post yum-cron.service
 #  Do this manually because it's a fake service for a cronjob, and cronjobs
 # are default on atm. This may change in the future.
@@ -231,12 +249,58 @@ fi
 
 # Also note:
 #  systemctl list-unit-files | fgrep yum-cron
+%else
+# SYSV init post cron
+# Make sure chkconfig knows about the service
+/sbin/chkconfig --add yum-cron
+# if an upgrade:
+if [ "$1" -ge "1" ]; then
+# if there's a /etc/rc.d/init.d/yum file left, assume that there was an
+# older instance of yum-cron which used this naming convention.  Clean 
+# it up, do a conditional restart
+ if [ -f /etc/init.d/yum ]; then 
+# was it on?
+  /sbin/chkconfig yum
+  RETVAL=$?
+  if [ $RETVAL = 0 ]; then
+# if it was, stop it, then turn on new yum-cron
+   /sbin/service yum stop 1> /dev/null 2>&1
+   /sbin/service yum-cron start 1> /dev/null 2>&1
+   /sbin/chkconfig yum-cron on
+  fi
+# remove it from the service list
+  /sbin/chkconfig --del yum
+ fi
+fi 
+exit 0
+%endif
 
 %preun cron
+%if %{yum_cron_systemd}
 %systemd_preun yum-cron.service
+%else
+# SYSV init preun cron
+# if this will be a complete removeal of yum-cron rather than an upgrade,
+# remove the service from chkconfig control
+if [ $1 = 0 ]; then
+ /sbin/chkconfig --del yum-cron
+ /sbin/service yum-cron stop 1> /dev/null 2>&1
+fi
+exit 0
+%endif
 
 %postun cron
+%if %{yum_cron_systemd}
 %systemd_postun_with_restart yum-cron.service
+%else
+# SYSV init postun cron
+
+# If there's a yum-cron package left after uninstalling one, do a
+# conditional restart of the service
+if [ "$1" -ge "1" ]; then
+ /sbin/service yum-cron condrestart 1> /dev/null 2>&1
+fi
+exit 0
 %endif
 
 
@@ -278,16 +342,18 @@ fi
 %dir %{yum_pluginslib}
 %dir %{yum_pluginsshare}
 
-%if %{yum_cron}
 %files cron
 %defattr(-,root,root)
 %doc COPYING
 %{_sysconfdir}/cron.daily/0yum-update.cron
 %config(noreplace) %{_sysconfdir}/yum/yum-cron.conf
+%if %{yum_cron_systemd}
 %{_unitdir}/yum-cron.service
+%else
+%{_sysconfdir}/rc.d/init.d/yum-cron
+%endif
 %{_sbindir}/yum-cron
 %{_mandir}/man*/yum-cron.*
-%endif
 
 %if %{yum_updatesd}
 %files updatesd

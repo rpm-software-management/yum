@@ -1394,6 +1394,17 @@ class CleanCommand(YumCommand):
         """
         return False
 
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:past'
+
+
 class ProvidesCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     provides command.
@@ -3077,6 +3088,16 @@ class CheckRpmdbCommand(YumCommand):
         :return: True if a transaction set is needed, False otherwise
         """
         return False
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        return 'read-only:past'
 
 
 class LoadTransactionCommand(YumCommand):

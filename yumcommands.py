@@ -3217,7 +3217,23 @@ class LoadTransactionCommand(YumCommand):
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
         """
+        if not extcmds or os.path.isdir(extcmds[0]):
+            return False
+
         return True
+
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        if not extcmds or os.path.isdir(extcmds[0]):
+            return 'read-only:past'
+
+        return 'write'
 
 
 class SwapCommand(YumCommand):

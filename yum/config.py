@@ -791,6 +791,7 @@ class YumConf(StartupConf):
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
     max_connections = IntOption(0)
+    presto = BoolOption(True)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
@@ -949,6 +950,7 @@ class RepoConf(BaseConfig):
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)
     ip_resolve = Inherit(YumConf.ip_resolve)
+    presto = Inherit(YumConf.presto)
 
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)

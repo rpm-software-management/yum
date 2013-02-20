@@ -90,6 +90,7 @@ from packages import YumUrlPackage, YumNotFoundPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str, exception2msg
+from yum.presto import Presto
 
 import string
 import StringIO
@@ -2244,6 +2245,7 @@ much more problems).
                 po.basepath # prefetch now; fails when repos are closed
             return False
 
+        pkgs = []
         for po in pkglist:
             if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
                 continue
@@ -2251,8 +2253,21 @@ much more problems).
                 continue
             if errors:
                 return errors
+            pkgs.append(po)
+
+        # download presto metadata
+        presto = Presto(self, pkgs)
+        for po in pkgs:
+            if presto.to_drpm(po) and verify_local(po):
+                # there's .drpm already, use it
+                presto.rebuild(po, adderror)
+                continue
             remote_pkgs.append(po)
             remote_size += po.size
+        if presto.deltasize:
+            self.verbose_logger.info(_('Delta RPMs reduced %s of updates to %s (%d%% saved)'),
+                format_number(presto.rpmsize), format_number(presto.deltasize),
+                100 - presto.deltasize*100.0/presto.rpmsize)
 
         if downloadonly:
             # close DBs, unlock
@@ -2280,6 +2295,9 @@ much more problems).
                 if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                     urlgrabber.progress.text_meter_total_size(remote_size,
                                                               local_size[0])
+                if po in presto.deltas:
+                    presto.rebuild(po, adderror)
+                    return
                 if po.repoid not in done_repos:
                     done_repos.add(po.repoid)
                     #  Check a single package per. repo. ... to give a hint to

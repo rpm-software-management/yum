@@ -372,6 +372,13 @@ default of 5 connections.  Note that there are also implicit per-mirror limits
 and the downloader honors these too.
 
 .IP
+\fBpresto\fR
+
+Either `0' or `1'. Set this to `1' to use delta-RPM files, if available.
+This reduces the download size of updates significantly, but local rebuild
+is CPU intensive.  Default is `1' (on).
+
+.IP
 \fBsslcacert \fR
 Path to the directory containing the databases of the certificate authorities
 yum should use to verify SSL certificates. Defaults to none - uses system
@@ -930,6 +937,11 @@ repository.
 Overrides the \fBip_resolve\fR option from the [main] section for this
 repository.
 
+.IP
+\fBpresto\fR
+
+Overrides the \fBpresto\fR option from the [main] section for this
+repository.
 
 .IP
 \fBsslcacert \fR

@@ -2275,80 +2275,82 @@ much more problems).
             self.closeRpmDB()
             self.doUnlock()
 
-        remote_pkgs.sort(mediasort)
-        #  This is kind of a hack and does nothing in non-Fedora versions,
-        # we'll fix it one way or anther soon.
-        if (hasattr(urlgrabber.progress, 'text_meter_total_size') and
-            len(remote_pkgs) > 1):
-            urlgrabber.progress.text_meter_total_size(remote_size)
-        beg_download = time.time()
-        i = 0
-        local_size = [0]
-        done_repos = set()
-        async = hasattr(urlgrabber.grabber, 'parallel_wait')
-        for po in remote_pkgs:
-            i += 1
-
-            def checkfunc(obj, po=po):
-                self.verifyPkg(obj, po, 1)
-                local_size[0] += po.size
-                if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-                    urlgrabber.progress.text_meter_total_size(remote_size,
-                                                              local_size[0])
-                if po in presto.deltas:
-                    presto.rebuild(po, adderror)
-                    return
-                if po.repoid not in done_repos:
-                    done_repos.add(po.repoid)
-                    #  Check a single package per. repo. ... to give a hint to
-                    # the user on big downloads.
-                    result, errmsg = self.sigCheckPkg(po)
-                    if result != 0:
-                        self.verbose_logger.warn("%s", errmsg)
-                po.localpath = obj.filename
-                if po in errors:
-                    del errors[po]
-
-            text = os.path.basename(po.relativepath)
-            kwargs = {}
-            if async and po.repo._async:
-                kwargs['failfunc'] = lambda obj, po=po: adderror(po, exception2msg(obj.exception))
-                kwargs['async'] = True
-            elif not (i == 1 and not local_size[0] and remote_size == po.size):
-                text = '(%s/%s): %s' % (i, len(remote_pkgs), text)
-            try:
-                po.repo.getPackage(po,
-                                   checkfunc=checkfunc,
-                                   text=text,
-                                   cache=po.repo.http_caching != 'none',
-                                   **kwargs
-                                   )
-            except Errors.RepoError, e:
-                adderror(po, exception2msg(e))
-        if async:
-            urlgrabber.grabber.parallel_wait()
-
-        if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-            urlgrabber.progress.text_meter_total_size(0)
-        if callback_total is not None and not errors:
-            callback_total(remote_pkgs, remote_size, beg_download)
-
-        if downloadonly:
+        if 1:
+            remote_pkgs.sort(mediasort)
+            #  This is kind of a hack and does nothing in non-Fedora versions,
+            # we'll fix it one way or anther soon.
+            if (hasattr(urlgrabber.progress, 'text_meter_total_size') and
+                len(remote_pkgs) > 1):
+                urlgrabber.progress.text_meter_total_size(remote_size)
+            beg_download = time.time()
+            i = 0
+            local_size = [0]
+            done_repos = set()
+            async = hasattr(urlgrabber.grabber, 'parallel_wait')
             for po in remote_pkgs:
-                rpmfile = po.localpath.rsplit('.', 2)[0]
-                if po in errors:
-                    # we may throw away partial file here- but we don't lock,
-                    # so can't rename tempfile to rpmfile safely
-                    misc.unlink_f(po.localpath)
+                i += 1
 
-                #  Note that for file:// repos. urlgrabber won't "download"
-                # so we have to check that po.localpath exists.
-                elif os.path.exists(po.localpath):
-                    # verifyPkg() didn't complain, so (potentially)
-                    # overwriting another copy should not be a problem
-                    os.rename(po.localpath, rpmfile)
-                po.localpath = rpmfile
-        else:
+                def checkfunc(obj, po=po):
+                    self.verifyPkg(obj, po, 1)
+                    local_size[0] += po.size
+                    if hasattr(urlgrabber.progress, 'text_meter_total_size'):
+                        urlgrabber.progress.text_meter_total_size(remote_size,
+                                                                  local_size[0])
+                    if po in presto.deltas:
+                        presto.rebuild(po, adderror)
+                        return
+                    if po.repoid not in done_repos:
+                        done_repos.add(po.repoid)
+                        #  Check a single package per. repo. ... to give a hint to
+                        # the user on big downloads.
+                        result, errmsg = self.sigCheckPkg(po)
+                        if result != 0:
+                            self.verbose_logger.warn("%s", errmsg)
+                    po.localpath = obj.filename
+                    if po in errors:
+                        del errors[po]
+
+                text = os.path.basename(po.relativepath)
+                kwargs = {}
+                if async and po.repo._async:
+                    kwargs['failfunc'] = lambda obj, po=po: adderror(po, exception2msg(obj.exception))
+                    kwargs['async'] = True
+                elif not (i == 1 and not local_size[0] and remote_size == po.size):
+                    text = '(%s/%s): %s' % (i, len(remote_pkgs), text)
+                try:
+                    po.repo.getPackage(po,
+                                       checkfunc=checkfunc,
+                                       text=text,
+                                       cache=po.repo.http_caching != 'none',
+                                       **kwargs
+                                       )
+                except Errors.RepoError, e:
+                    adderror(po, exception2msg(e))
+            if async:
+                urlgrabber.grabber.parallel_wait()
+
+            if hasattr(urlgrabber.progress, 'text_meter_total_size'):
+                urlgrabber.progress.text_meter_total_size(0)
+            if callback_total is not None and not errors:
+                callback_total(remote_pkgs, remote_size, beg_download)
+
+            if downloadonly:
+                for po in remote_pkgs:
+                    rpmfile = po.localpath.rsplit('.', 2)[0]
+                    if po in errors:
+                        # we may throw away partial file here- but we don't lock,
+                        # so can't rename tempfile to rpmfile safely
+                        misc.unlink_f(po.localpath)
+
+                    #  Note that for file:// repos. urlgrabber won't "download"
+                    # so we have to check that po.localpath exists.
+                    elif os.path.exists(po.localpath):
+                        # verifyPkg() didn't complain, so (potentially)
+                        # overwriting another copy should not be a problem
+                        os.rename(po.localpath, rpmfile)
+                    po.localpath = rpmfile
+                    
+        if not downloadonly:
             # XXX: Run unlocked?  Skip this for now..
             self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
 

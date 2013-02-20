@@ -2275,7 +2275,7 @@ much more problems).
             self.closeRpmDB()
             self.doUnlock()
 
-        if 1:
+        while True:
             remote_pkgs.sort(mediasort)
             #  This is kind of a hack and does nothing in non-Fedora versions,
             # we'll fix it one way or anther soon.
@@ -2350,6 +2350,22 @@ much more problems).
                         os.rename(po.localpath, rpmfile)
                     po.localpath = rpmfile
                     
+            fatal = False
+            for po in errors:
+                if po not in presto.deltas:
+                    fatal = True; break
+            if not errors or fatal:
+                break
+
+            # there were drpm related errors *only*
+            remote_pkgs = errors.keys()
+            remote_size = 0
+            for po in remote_pkgs:
+                presto.to_rpm(po) # needed, we don't rebuild() when DL fails
+                remote_size += po.size
+            self.verbose_logger.warn(_('Some delta RPMs failed to download or rebuild. Retrying..'))
+            presto.deltas.clear() # any error is now considered fatal
+
         if not downloadonly:
             # XXX: Run unlocked?  Skip this for now..
             self.plugins.run('postdownload', pkglist=pkglist, errors=errors)

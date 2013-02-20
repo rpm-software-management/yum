@@ -99,8 +99,6 @@ class Presto:
                         csum = el.find('checksum')
                         csum = csum.get('type'), csum.text
                         self.deltas[po] = size, el.find('filename').text, csum
-                    if po not in self.deltas:
-                        self.verbose_logger.warn(_('No suitable drpm files for %s'), po)
                 el.clear()
 
     def to_drpm(self, po):
@@ -119,10 +117,17 @@ class Presto:
         po.returnIdSum = lambda: csum
         return True
 
+    def to_rpm(self, po):
+        if po not in self._rpmsave:
+            return
+        # revert back to RPM
+        po.packagesize, po.relativepath, po.localpath = self._rpmsave.pop(po)
+        del po.returnIdSum
+
     def rebuild(self, po, adderror):
         # restore rpm values
         deltapath = po.localpath
-        po.packagesize, po.relativepath, po.localpath = self._rpmsave[po]
+        po.packagesize, po.relativepath, po.localpath = self._rpmsave.pop(po)
         del po.returnIdSum
 
         # rebuild it from drpm

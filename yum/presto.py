@@ -89,12 +89,6 @@ class Presto:
                         old = el.get('oldepoch'), el.get('oldversion'), el.get('oldrelease')
                         if size >= best or old not in have:
                             continue
-                        # the old version is installed, seq check should never fail. kill this?
-                        seq = el.find('sequence').text
-                        if subprocess.call(['/usr/bin/applydeltarpm', '-C', '-s', seq]) != 0:
-                            self.verbose_logger.warn(_('Deltarpm sequence check failed for %s'), seq)
-                            continue
-
                         best = size
                         csum = el.find('checksum')
                         csum = csum.get('type'), csum.text

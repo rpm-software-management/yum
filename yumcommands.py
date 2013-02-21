@@ -595,7 +595,7 @@ class InfoCommand(YumCommand):
 
         :return: a usage string for this command
         """
-        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
+        return "[PACKAGE|all|available|installed|updates|distro-extras|extras|obsoletes|recent]"
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -741,7 +741,7 @@ class InfoCommand(YumCommand):
         """
         if len(extcmds) and extcmds[0] in ('updates', 'obsoletes'):
             return 'read-only:future'
-        if len(extcmds) and extcmds[0] in ('installed', 'extras', 'recent'):
+        if len(extcmds) and extcmds[0] in ('installed', 'distro-extras', 'extras', 'recent'):
             return 'read-only:past'
         # available/all
         return 'read-only:present'

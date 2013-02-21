@@ -2780,6 +2780,16 @@ much more problems).
                 if po.pkgtup not in avail:
                     extras.append(po)
 
+        # not in a repo but installed
+        elif pkgnarrow == 'distro-extras':
+            for po in self.rpmdb.returnPackages(patterns=patterns,
+                                                ignore_case=ic):
+                if not misc.filter_pkgs_repoid([po], repoid):
+                    continue
+                if self.pkgSack.searchNames([po.name]):
+                    continue
+                extras.append(po)
+
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1

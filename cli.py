@@ -1281,7 +1281,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
              recent = list of packageObjects
         """
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
-                   'obsoletes']
+                   'obsoletes', 'distro-extras']
         
         pkgnarrow = 'all'
         done_hidden_available = False

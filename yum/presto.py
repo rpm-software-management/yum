@@ -23,7 +23,7 @@ from yum.i18n import exception2msg, _
 from urlgrabber import grabber
 async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
-import os, gzip, subprocess
+import os, gzip
 
 class Presto:
     def __init__(self, ayum, pkgs):
@@ -32,6 +32,8 @@ class Presto:
         self._rpmsave = {}
         self.rpmsize = 0
         self.deltasize = 0
+        self.jobs = {}
+        self.limit = ayum.conf.presto
 
         # calculate update sizes
         pinfo = {}
@@ -41,6 +43,7 @@ class Presto:
                 continue
             if po.state != TS_UPDATE and po.name not in ayum.conf.installonlypkgs:
                 continue
+            self.limit = max(self.limit, po.repo.presto)
             pinfo.setdefault(po.repo, {})[po.pkgtup] = po
             reposize[po.repo] = reposize.get(po.repo, 0) + po.size
 
@@ -118,17 +121,31 @@ class Presto:
         po.packagesize, po.relativepath, po.localpath = self._rpmsave.pop(po)
         del po.returnIdSum
 
+    def wait(self, limit = 1):
+        # wait for some jobs, run callbacks
+        while len(self.jobs) >= limit:
+            pid, code = os.wait()
+            # urlgrabber spawns child jobs, too.  But they exit synchronously,
+            # so we should never see an unknown pid here.
+            assert pid in self.jobs
+            callback = self.jobs.pop(pid)
+            callback(code)
+
     def rebuild(self, po, adderror):
         # restore rpm values
         deltapath = po.localpath
         po.packagesize, po.relativepath, po.localpath = self._rpmsave.pop(po)
         del po.returnIdSum
 
-        # rebuild it from drpm
-        if subprocess.call(['/usr/bin/applydeltarpm', deltapath, po.localpath]) != 0:
-            return adderror(po, _('Delta RPM rebuild failed'))
-        # source drpm was already checksummed.. is this necessary?
-        if not po.verifyLocalPkg():
-            return adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
-        # no need to keep this
-        os.unlink(deltapath)
+        # this runs when worker finishes
+        def callback(code):
+            if code != 0:
+                return adderror(po, _('Delta RPM rebuild failed'))
+            if not po.verifyLocalPkg():
+                return adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
+            os.unlink(deltapath)
+
+        # spawn a worker process
+        self.wait(self.limit)
+        pid = os.spawnl(os.P_NOWAIT, '/usr/bin/applydeltarpm', 'applydeltarpm', deltapath, po.localpath)
+        self.jobs[pid] = callback

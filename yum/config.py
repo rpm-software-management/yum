@@ -791,7 +791,7 @@ class YumConf(StartupConf):
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
     max_connections = IntOption(0)
-    presto = BoolOption(True)
+    presto = IntOption(4)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).

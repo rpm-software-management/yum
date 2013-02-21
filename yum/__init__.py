@@ -2328,6 +2328,7 @@ much more problems).
                     adderror(po, exception2msg(e))
             if async:
                 urlgrabber.grabber.parallel_wait()
+            presto.wait()
 
             if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                 urlgrabber.progress.text_meter_total_size(0)

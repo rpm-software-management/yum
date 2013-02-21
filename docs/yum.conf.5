@@ -374,9 +374,8 @@ and the downloader honors these too.
 .IP
 \fBpresto\fR
 
-Either `0' or `1'. Set this to `1' to use delta-RPM files, if available.
-This reduces the download size of updates significantly, but local rebuild
-is CPU intensive.  Default is `1' (on).
+When non-zero, delta-RPM files are used if available.  The value specifies
+the maximum number of "applydeltarpm" processes Yum will spawn. (4 by default).
 
 .IP
 \fBsslcacert \fR

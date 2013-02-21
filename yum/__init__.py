@@ -2348,7 +2348,7 @@ much more problems).
                         # verifyPkg() didn't complain, so (potentially)
                         # overwriting another copy should not be a problem
                         os.rename(po.localpath, rpmfile)
-                    po.localpath = rpmfile
+                        po.localpath = rpmfile
                     
             fatal = False
             for po in errors:

@@ -1095,7 +1095,7 @@ class Depsolve(object):
                     continue
                 for member in self.tsInfo.getMembersWithState(
                     pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
-                    member.relatedto.append((txmbr.po, 'dependson'))
+                    member.setAsDep(txmbr.po)
 
         return ret
 

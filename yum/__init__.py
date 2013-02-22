@@ -1537,9 +1537,17 @@ much more problems).
 
     def _getDepsToRemove(self,po, deptree, toRemove):
         for dep in deptree.get(po, []): # Loop trough all deps of po
+            more_deps = False
             for txmbr in self.tsInfo.getMembers(dep.pkgtup):
+                txmbr.removeDep(po)
+                if txmbr.depends_on:
+                    more_deps = True
+                    break
+
                 for pkg in (txmbr.updates + txmbr.obsoletes):
                     toRemove.add(pkg)
+            if more_deps: # Others depend on this pkg, so leave it. bz#905899
+                continue
             if dep in toRemove: #  If this is true we inf. recurse, so check
                 continue        # even though it shouldn't happen. bz#874065
             toRemove.add(dep)

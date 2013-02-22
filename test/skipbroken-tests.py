@@ -809,7 +809,55 @@ class SkipBrokenTests(DepsolveTests):
         members.append(u1)
         self.assertEquals('ok', *self.resolveCode(skip=True))
         self.assertResult(members)
+
+    def test_skipbroken_004_deps_1(self):
+        ''' 
+        this tries to test that when we have two things depending on Y, and we
+        remove one of them we do not want to remove Y. bz#905899.
+        '''
+        members = []
+        ux0 = self.repoString('1:bar-1.0.0-1.i686')
+        members.append(ux0)
+
+        ux1 = self.repoString('1:foo1-1.0.0-1.i686')
+        ux1.addRequires('bar')
+        ux1.addRequires('blah')
+
+        ux2 = self.repoString('1:foo2-1.0.0-1.i686')
+        ux2.addRequires('bar')
+        members.append(ux2)
+
+        self.tsInfo.addInstall(ux1)
+        self.tsInfo.addInstall(ux2)
+
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
     
+    def test_skipbroken_004_deps_2(self):
+        ''' 
+        this tries to test that when we have two things depending on Y, and we
+        remove both then we do want to remove Y again. bz#905899.
+        '''
+        members = []
+        ux0 = self.repoString('1:bar-1.0.0-1.i686')
+
+        ux0 = self.repoString('1:zoom-1.0.0-1.i686')
+        members.append(ux0)
+
+        ux1 = self.repoString('1:foo1-1.0.0-1.i686')
+        ux1.addRequires('bar')
+        ux1.addRequires('blah')
+
+        ux2 = self.repoString('1:foo2-1.0.0-1.i686')
+        ux2.addRequires('bar')
+        ux2.addRequires('baz')
+
+        self.tsInfo.addInstall(ux0)
+        self.tsInfo.addInstall(ux1)
+        self.tsInfo.addInstall(ux2)
+
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
     
     def resolveCode(self,skip = False):
         solver = YumBase()

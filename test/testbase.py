@@ -58,6 +58,12 @@ class FakeConf(object):
         self.upgrade_requirements_on_install = False
         self.recheck_installed_requires = False
         self.group_command = 'compat'
+        self.repopkgsremove_leaf_only = False
+        self.remove_leaf_only = False
+        self.config_file_path = '/dev/null'
+        self.config_file_age = 0
+        self.yumvar = {}
+        self.reposdir = '/tmp/XXXX'
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""

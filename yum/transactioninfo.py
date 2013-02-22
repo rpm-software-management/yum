@@ -819,6 +819,24 @@ class TransactionMember:
             self.relatedto.append((po, 'dependson'))
             self.depends_on.append(po)
 
+    def removeDep(self, po):
+        """sets the transaction member as a dependency and maps the dep into the
+           relationship list attribute"""
+
+        nrelto = []
+        for data in self.relatedto:
+            if data[0] == po:
+                continue
+            nrelto.append(data)
+        self.relatedto = nrelto
+
+        ndepon = []
+        for data in self.depends_on:
+            if data == po:
+                continue
+            ndepon.append(data)
+        self.depends_on = ndepon
+
     def __cmp__(self, other):
         return cmp(self.po, other.po)
 

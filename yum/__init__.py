@@ -6286,8 +6286,8 @@ much more problems).
                 raise Errors.YumRPMCheckError, retmsgs
             retmsgs = [_('ERROR with transaction check vs depsolve:')]
             retmsgs.extend(msgs) 
-            retmsgs.append(_('Please report this error at %s') 
-                                         % self.conf.bugtracker_url)
+            # Don't encourage users to file a bug here, as this is probably
+            # pre-existing issue in dependendies of installed packages
             raise Errors.YumRPMCheckError,retmsgs
         
         tsConf = {}

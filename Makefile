@@ -45,18 +45,18 @@ apidocs:
 
 transifex-pull:
 	tx pull -a -f
-	@echo "You can now git commit -a -m 'Transfix pull, *.po update'"
+	@echo "You can now git commit -a -m 'Transifex pull, *.po update'"
 
 transifex-push:
 	make -C po yum.pot
 	tx push -s -t
-	@echo "You can now git commit -a -m 'Transfix push, yum.pot update'"
+	@echo "You can now git commit -a -m 'Transifex push, yum.pot update'"
 
 transifex:
 	make transifex-pull
-	git commit -a -m 'Transfix pull, *.po update'
+	git commit -a -m 'Transefex pull, *.po update'
 	make transifex-push
-	git commit -a -m 'Transfix push, yum.pot update'
+	git commit -a -m 'Transifex push, yum.pot update'
 
 .PHONY: docs test
 

@@ -25,6 +25,8 @@ async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
 import os, gzip
 
+APPLYDELTA = '/usr/bin/applydeltarpm'
+
 class Presto:
     def __init__(self, ayum, pkgs):
         self.verbose_logger = ayum.verbose_logger
@@ -46,6 +48,11 @@ class Presto:
             self.limit = max(self.limit, po.repo.presto)
             pinfo.setdefault(po.repo, {})[po.pkgtup] = po
             reposize[po.repo] = reposize.get(po.repo, 0) + po.size
+
+        # don't use deltas when deltarpm not installed
+        if reposize and not os.access(APPLYDELTA, os.X_OK):
+            self.verbose_logger.info(_('Delta RPMs disabled because %s not installed.'), APPLYDELTA)
+            return
 
         # download delta metadata
         mdpath = {}
@@ -147,5 +154,5 @@ class Presto:
 
         # spawn a worker process
         self.wait(self.limit)
-        pid = os.spawnl(os.P_NOWAIT, '/usr/bin/applydeltarpm', 'applydeltarpm', deltapath, po.localpath)
+        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, deltapath, po.localpath)
         self.jobs[pid] = callback

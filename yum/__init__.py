@@ -2190,7 +2190,9 @@ much more problems).
             a = apo.getDiscNum()
             b = bpo.getDiscNum()
             if a is None and b is None:
-                return cmp(apo, bpo)
+                # deltas first to start rebuilding asap
+                return cmp(bpo in presto.deltas, apo in presto.deltas) \
+                    or cmp(apo, bpo)
             if a is None:
                 return -1
             if b is None:

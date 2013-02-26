@@ -90,7 +90,7 @@ from packages import YumUrlPackage, YumNotFoundPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str, exception2msg
-from yum.presto import Presto
+from yum.drpm import DeltaInfo
 
 import string
 import StringIO
@@ -2258,7 +2258,7 @@ much more problems).
             pkgs.append(po)
 
         # download presto metadata
-        presto = Presto(self, pkgs)
+        presto = DeltaInfo(self, pkgs)
         for po in pkgs:
             if presto.to_drpm(po) and verify_local(po):
                 # there's .drpm already, use it

@@ -27,7 +27,7 @@ import os, gzip
 
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
-class Presto:
+class DeltaInfo:
     def __init__(self, ayum, pkgs):
         self.verbose_logger = ayum.verbose_logger
         self.deltas = {}
@@ -35,17 +35,16 @@ class Presto:
         self.rpmsize = 0
         self.deltasize = 0
         self.jobs = {}
-        self.limit = ayum.conf.presto
+        self.limit = ayum.conf.deltarpm
 
         # calculate update sizes
         pinfo = {}
         reposize = {}
         for po in pkgs:
-            if not po.repo.presto:
+            if not po.repo.deltarpm:
                 continue
             if po.state != TS_UPDATE and po.name not in ayum.conf.installonlypkgs:
                 continue
-            self.limit = max(self.limit, po.repo.presto)
             pinfo.setdefault(po.repo, {})[po.pkgtup] = po
             reposize[po.repo] = reposize.get(po.repo, 0) + po.size
 
@@ -57,6 +56,7 @@ class Presto:
         # download delta metadata
         mdpath = {}
         for repo in reposize:
+            self.limit = max(self.limit, repo.deltarpm)
             for name in ('prestodelta', 'deltainfo'):
                 try: data = repo.repoXML.getData(name); break
                 except: pass

@@ -20,6 +20,8 @@
 from yum.constants import TS_UPDATE
 from yum.Errors import RepoError
 from yum.i18n import exception2msg, _
+from yum.Errors import MiscError
+from misc import checksum
 from urlgrabber import grabber
 async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
@@ -27,25 +29,56 @@ import os, gzip
 
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
+class DeltaPackage:
+    def __init__(self, rpm, size, remote, csum):
+        # copy what needed
+        self.rpm = rpm
+        self.repo = rpm.repo
+        self.basepath = rpm.basepath
+        self.pkgtup = rpm.pkgtup
+
+        # set up drpm attributes
+        self.size = size
+        self.relativepath = remote
+        self.localpath = os.path.dirname(rpm.localpath) +'/'+ os.path.basename(remote)
+        self.csum = csum
+
+    def __str__(self):
+        return 'Delta RPM of %s' % self.rpm
+
+    def localPkg(self):
+        return self.localpath
+
+    def verifyLocalPkg(self):
+        # check file size first
+        try: fsize = os.path.getsize(self.localpath)
+        except OSError: return False
+        if fsize != self.size: return False
+
+        # checksum
+        ctype, csum = self.csum
+        try: fsum = checksum(ctype, self.localpath)
+        except MiscError: return False
+        if fsum != csum: return False
+
+        # hooray
+        return True
+
 class DeltaInfo:
     def __init__(self, ayum, pkgs):
         self.verbose_logger = ayum.verbose_logger
-        self.deltas = {}
-        self._rpmsave = {}
-        self.rpmsize = 0
-        self.deltasize = 0
         self.jobs = {}
         self.limit = ayum.conf.deltarpm
 
         # calculate update sizes
         pinfo = {}
         reposize = {}
-        for po in pkgs:
+        for index, po in enumerate(pkgs):
             if not po.repo.deltarpm:
                 continue
             if po.state != TS_UPDATE and po.name not in ayum.conf.installonlypkgs:
                 continue
-            pinfo.setdefault(po.repo, {})[po.pkgtup] = po
+            pinfo.setdefault(po.repo, {})[po.pkgtup] = index
             reposize[po.repo] = reposize.get(po.repo, 0) + po.size
 
         # don't use deltas when deltarpm not installed
@@ -90,8 +123,9 @@ class DeltaInfo:
             for ev, el in iterparse(path):
                 if el.tag != 'newpackage': continue
                 new = el.get('name'), el.get('arch'), el.get('epoch'), el.get('version'), el.get('release')
-                po = pinfo_repo.get(new)
-                if po:
+                index = pinfo_repo.get(new)
+                if index is not None:
+                    po = pkgs[index]
                     best = po.size * 0.75 # make this configurable?
                     have = ayum._up.installdict.get(new[:2], [])
                     for el in el.findall('delta'):
@@ -100,33 +134,11 @@ class DeltaInfo:
                         if size >= best or old not in have:
                             continue
                         best = size
+                        remote = el.find('filename').text
                         csum = el.find('checksum')
                         csum = csum.get('type'), csum.text
-                        self.deltas[po] = size, el.find('filename').text, csum
+                        pkgs[index] = DeltaPackage(po, size, remote, csum)
                 el.clear()
-
-    def to_drpm(self, po):
-        try: size, remote, csum = self.deltas[po]
-        except KeyError: return False
-        self._rpmsave[po] = po.packagesize, po.relativepath, po.localpath
-
-        # update stats
-        self.rpmsize += po.packagesize
-        self.deltasize += size
-
-        # update size/path/checksum to drpm values
-        po.packagesize = size
-        po.relativepath = remote
-        po.localpath = os.path.dirname(po.localpath) +'/'+ os.path.basename(remote)
-        po.returnIdSum = lambda: csum
-        return True
-
-    def to_rpm(self, po):
-        if po not in self._rpmsave:
-            return
-        # revert back to RPM
-        po.packagesize, po.relativepath, po.localpath = self._rpmsave.pop(po)
-        del po.returnIdSum
 
     def wait(self, limit = 1):
         # wait for some jobs, run callbacks
@@ -139,20 +151,16 @@ class DeltaInfo:
             callback(code)
 
     def rebuild(self, po, adderror):
-        # restore rpm values
-        deltapath = po.localpath
-        po.packagesize, po.relativepath, po.localpath = self._rpmsave.pop(po)
-        del po.returnIdSum
-
         # this runs when worker finishes
         def callback(code):
             if code != 0:
                 return adderror(po, _('Delta RPM rebuild failed'))
-            if not po.verifyLocalPkg():
+            if not po.rpm.verifyLocalPkg():
                 return adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
-            os.unlink(deltapath)
+            os.unlink(po.localpath)
+            po.localpath = po.rpm.localpath # for --downloadonly
 
         # spawn a worker process
         self.wait(self.limit)
-        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, deltapath, po.localpath)
+        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, po.localpath, po.rpm.localpath)
         self.jobs[pid] = callback

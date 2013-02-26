@@ -90,7 +90,7 @@ from packages import YumUrlPackage, YumNotFoundPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str, exception2msg
-from yum.drpm import DeltaInfo
+from yum.drpm import DeltaInfo, DeltaPackage
 
 import string
 import StringIO
@@ -2191,8 +2191,8 @@ much more problems).
             b = bpo.getDiscNum()
             if a is None and b is None:
                 # deltas first to start rebuilding asap
-                return cmp(bpo in presto.deltas, apo in presto.deltas) \
-                    or cmp(apo, bpo)
+                return cmp(isinstance(bpo, DeltaPackage),
+                           isinstance(apo, DeltaPackage)) or cmp(apo, bpo)
             if a is None:
                 return -1
             if b is None:
@@ -2257,19 +2257,22 @@ much more problems).
                 return errors
             pkgs.append(po)
 
-        # download presto metadata
+        # download presto metadata and use drpms
         presto = DeltaInfo(self, pkgs)
+        deltasize = rpmsize = 0
         for po in pkgs:
-            if presto.to_drpm(po) and verify_local(po):
-                # there's .drpm already, use it
-                presto.rebuild(po, adderror)
-                continue
+            if isinstance(po, DeltaPackage):
+                if verify_local(po):
+                    # there's .drpm already, use it
+                    presto.rebuild(po, adderror)
+                    continue
+                deltasize += po.size
+                rpmsize = po.rpm.size
             remote_pkgs.append(po)
             remote_size += po.size
-        if presto.deltasize:
+        if deltasize:
             self.verbose_logger.info(_('Delta RPMs reduced %s of updates to %s (%d%% saved)'),
-                format_number(presto.rpmsize), format_number(presto.deltasize),
-                100 - presto.deltasize*100.0/presto.rpmsize)
+                format_number(rpmsize), format_number(deltasize), 100 - deltasize*100.0/rpmsize)
 
         if downloadonly:
             # close DBs, unlock
@@ -2298,7 +2301,7 @@ much more problems).
                     if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                         urlgrabber.progress.text_meter_total_size(remote_size,
                                                                   local_size[0])
-                    if po in presto.deltas:
+                    if isinstance(po, DeltaPackage):
                         presto.rebuild(po, adderror)
                         return
                     if po.repoid not in done_repos:
@@ -2355,19 +2358,21 @@ much more problems).
                     
             fatal = False
             for po in errors:
-                if po not in presto.deltas:
-                    fatal = True; break
+                if not isinstance(po, DeltaPackage):
+                    fatal = True
+                    break
             if not errors or fatal:
                 break
 
             # there were drpm related errors *only*
-            remote_pkgs = errors.keys()
+            remote_pkgs = []
             remote_size = 0
-            for po in remote_pkgs:
-                presto.to_rpm(po) # needed, we don't rebuild() when DL fails
+            for po in errors:
+                po = po.rpm
+                remote_pkgs.append(po)
                 remote_size += po.size
+            errors.clear()
             self.verbose_logger.warn(_('Some delta RPMs failed to download or rebuild. Retrying..'))
-            presto.deltas.clear() # any error is now considered fatal
 
         if not downloadonly:
             # XXX: Run unlocked?  Skip this for now..

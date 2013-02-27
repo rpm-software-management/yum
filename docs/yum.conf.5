@@ -261,7 +261,7 @@ actually runs "group install" (this means that you get any new packages added
 to the group, but you also get packages added that were there before and you
 didn't want).
 
-Objects makes groups act like a real object, seperate from the packages they
+Objects makes groups act like a real object, separate from the packages they
 contain. Yum keeps track of the groups you have installed, so "group upgrade"
 will install new packages for the group but not install old ones. It also knows
 about group members that are installed but weren't installed as part of the
@@ -529,18 +529,18 @@ certain level of timeliness quality from the remote repos. from "I'm about to
 install/upgrade, so this better be current" to "Anything that's available
 is good enough".
 
-'never' - Nothing is filtered, always obey metadata_expire.
+`never' - Nothing is filtered, always obey metadata_expire.
 
-'read-only:past' - Commands that only care about past information
+`read-only:past' - Commands that only care about past information
 are filtered from metadata expiring.
 Eg. yum history info (if history needs to lookup anything about a previous
 transaction, then by definition the remote package was available in the past).
 
-'read-only:present' - Commands that are balanced between past and future.
+`read-only:present' - Commands that are balanced between past and future.
 This is the default.
 Eg. yum list yum
 
-'read-only:future' - Commands that are likely to result in running other
+`read-only:future' - Commands that are likely to result in running other
 commands which will require the latest metadata. Eg. yum check-update
 
 Note that this option does not override "yum clean expire-cache".

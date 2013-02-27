@@ -910,10 +910,18 @@ class Depsolve(object):
                         for otxmbr in self.tsInfo.matchNaevr(name=obs_n):
                             if otxmbr.output_state not in TS_INSTALL_STATES:
                                 continue
+                            if otxmbr.po == txmbr.po:
+                                #  Not sure if we should just ignore this for
+                                # us, or for everyone...
+                                continue
                             if otxmbr.po.obsoletedBy([txmbr.po]):
                                 if txmbr.po.obsoletedBy([otxmbr.po]):
                                     # Have to deal with loops!
                                     continue
+                                # No callback?
+                                msg = _('Removing %s due to obsoletes from %s')
+                                self.verbose_logger.log(logginglevels.DEBUG_1,
+                                                        msg, otxmbr, txmbr)
                                 self.tsInfo.remove(otxmbr.pkgtup)
                                 #  We need to remove an obsoleted entry that
                                 # was maybe used to resolve something ... ?

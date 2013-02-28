@@ -21,7 +21,7 @@ from yum.constants import TS_UPDATE
 from yum.Errors import RepoError
 from yum.i18n import exception2msg, _
 from yum.Errors import MiscError
-from misc import checksum
+from misc import checksum, repo_gen_decompress
 from urlgrabber import grabber
 async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
@@ -124,10 +124,10 @@ class DeltaInfo:
                 for po in ayum.rpmdb.searchNevra(n, None, None, None, a)]
 
         # parse metadata, populate self.deltas
-        for repo, path in mdpath.items():
+        for repo, cpath in mdpath.items():
             pinfo_repo = pinfo[repo]
-            if path.endswith('.gz'):
-                path = gzip.open(path)
+            path = repo_gen_decompress(cpath, 'prestodelta.xml',
+                                       cached=repo.cache)
             for ev, el in iterparse(path):
                 if el.tag != 'newpackage': continue
                 new = el.get('name'), el.get('arch'), el.get('epoch'), el.get('version'), el.get('release')

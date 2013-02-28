@@ -115,6 +115,14 @@ class DeltaInfo:
         if async:
             grabber.parallel_wait()
 
+        # use installdict or rpmdb
+        if ayum._up:
+            installed = ayum._up.installdict.get
+        else:
+            installed = lambda (n, a): [
+                (po.epoch, po.version, po.release)
+                for po in ayum.rpmdb.searchNevra(n, None, None, None, a)]
+
         # parse metadata, populate self.deltas
         for repo, path in mdpath.items():
             pinfo_repo = pinfo[repo]
@@ -127,7 +135,7 @@ class DeltaInfo:
                 if index is not None:
                     po = pkgs[index]
                     best = po.size * 0.75 # make this configurable?
-                    have = ayum._up.installdict.get(new[:2], [])
+                    have = installed(new[:2]) or []
                     for el in el.findall('delta'):
                         size = int(el.find('size').text)
                         old = el.get('oldepoch'), el.get('oldversion'), el.get('oldrelease')

@@ -49,6 +49,9 @@ class DeltaPackage:
     def localPkg(self):
         return self.localpath
 
+    def getDiscNum(self):
+        return None
+
     def verifyLocalPkg(self):
         # check file size first
         try: fsize = os.path.getsize(self.localpath)

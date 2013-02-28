@@ -372,6 +372,12 @@ default of 5 connections.  Note that there are also implicit per-mirror limits
 and the downloader honors these too.
 
 .IP
+\fBdeltarpm\fR
+
+When non-zero, delta-RPM files are used if available.  The value specifies
+the maximum number of "applydeltarpm" processes Yum will spawn. (4 by default).
+
+.IP
 \fBsslcacert \fR
 Path to the directory containing the databases of the certificate authorities
 yum should use to verify SSL certificates. Defaults to none - uses system
@@ -930,6 +936,11 @@ repository.
 Overrides the \fBip_resolve\fR option from the [main] section for this
 repository.
 
+.IP
+\fBpresto\fR
+
+Overrides the \fBpresto\fR option from the [main] section for this
+repository.
 
 .IP
 \fBsslcacert \fR

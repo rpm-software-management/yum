@@ -375,6 +375,17 @@ repository, basicallly the same as: yum install $(repoquery --repoid=<repo> -a).
 "repository\-packages <repo> upgrade" - Update all of the packages in the
 repository, basicallly the same as: yum upgrade $(repoquery --repoid=<repo> -a).
 
+"repository\-packages <repo> reinstall-old" - ReInstall all of the packages 
+that are installed from the repository and available in the
+repository, similar to: yum reinstall $(yumdb search-quiet from_repo <repo>).
+
+"repository\-packages <repo> move-to" - ReInstall all of the packages 
+that are available in the repository, basically the same as:
+yum reinstall $(repoquery --repoid=<repo> -a).
+
+"repository\-packages <repo> reinstall" - Tries to do reinstall-old, but if that
+produces no packages then tries move-to.
+
 "repo\-pkgs <repo> remove" - Remove all of the packages in the repository, very
 similar to: yum remove $(repoquery --repoid=<repo> -a). However the
 repopkgsremove_leaf_only option is obeyed.

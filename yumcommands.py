@@ -3458,6 +3458,55 @@ class RepoPkgsCommand(YumCommand):
                 return 2, P_('%d package to update', '%d packages to update',
                              num)
 
+        elif cmd in ('reinstall-old', 'reinstall-installed'):
+            #  We have to choose for reinstall, for "reinstall foo" do we mean:
+            # 1. reinstall the packages that are currently installed from "foo".
+            # 2. reinstall the packages specified to the ones from "foo"
+
+            # This is for installed.from_repo=foo
+            for arg in args:
+                txmbrs = base.reinstall(pattern=arg,
+                                        repoid=repoid, repoid_install=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to reinstall',
+                             '%d packages to reinstall', num)
+
+        elif cmd in ('reinstall-new', 'reinstall-available', 'move-to'):
+            # This is for move-to the packages from this repo.
+            for arg in args:
+                txmbrs = base.reinstall(pattern=arg, repoid_install=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to move to',
+                             '%d packages to move to', num)
+
+        elif cmd == 'reinstall':
+            #  This means "guess", so doing the old version unless it produces
+            # nothing, in which case try switching.
+            for arg in args:
+                txmbrs = base.reinstall(pattern=arg,
+                                        repoid=repoid, repoid_install=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to reinstall',
+                             '%d packages to reinstall', num)
+
+            for arg in args:
+                txmbrs = base.reinstall(pattern=arg, repoid_install=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to move to',
+                             '%d packages to move to', num)
+
         elif cmd == 'remove': # Also mostly the same...
             for arg in args:
                 txmbrs = base.remove(pattern=arg, repoid=repoid)

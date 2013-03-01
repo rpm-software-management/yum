@@ -3371,7 +3371,7 @@ class RepoPkgsCommand(YumCommand):
 
         :return: a usage string for this command
         """
-        return "<repoid> <list|info|install|remove|upgrade|remove-or-*> [pkg(s)]"
+        return "<repoid> <list|info|install|remove|upgrade|reinstall*|remove-or-*> [pkg(s)]"
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -3417,7 +3417,9 @@ class RepoPkgsCommand(YumCommand):
         repoid = extcmds[0]
         cmd = extcmds[1]
         args = extcmds[2:]
+        noargs = False
         if not args:
+            noargs = True
             args = ['*']
         num = 0
 
@@ -3464,11 +3466,15 @@ class RepoPkgsCommand(YumCommand):
             # 2. reinstall the packages specified to the ones from "foo"
 
             # This is for installed.from_repo=foo
+            if noargs:
+                onot_found_a = base._not_found_a.copy()
             for arg in args:
                 txmbrs = base.reinstall(pattern=arg,
                                         repoid=repoid, repoid_install=repoid)
                 _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
+            if noargs:
+                base._not_found_a = onot_found_a
 
             if num:
                 return 2, P_('%d package to reinstall',
@@ -3476,10 +3482,14 @@ class RepoPkgsCommand(YumCommand):
 
         elif cmd in ('reinstall-new', 'reinstall-available', 'move-to'):
             # This is for move-to the packages from this repo.
+            if noargs:
+                onot_found_a = base._not_found_a.copy()
             for arg in args:
                 txmbrs = base.reinstall(pattern=arg, repoid_install=repoid)
                 _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
+            if noargs:
+                base._not_found_a = onot_found_a
 
             if num:
                 return 2, P_('%d package to move to',
@@ -3488,11 +3498,18 @@ class RepoPkgsCommand(YumCommand):
         elif cmd == 'reinstall':
             #  This means "guess", so doing the old version unless it produces
             # nothing, in which case try switching.
+            if noargs:
+                onot_found_a = base._not_found_a.copy()
             for arg in args:
-                txmbrs = base.reinstall(pattern=arg,
-                                        repoid=repoid, repoid_install=repoid)
+                try:
+                    txmbrs = base.reinstall(pattern=arg,
+                                            repoid=repoid,repoid_install=repoid)
+                except yum.Errors.ReinstallRemoveError:
+                    continue
                 _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
+            if noargs:
+                base._not_found_a = onot_found_a.copy()
 
             if num:
                 return 2, P_('%d package to reinstall',
@@ -3502,6 +3519,8 @@ class RepoPkgsCommand(YumCommand):
                 txmbrs = base.reinstall(pattern=arg, repoid_install=repoid)
                 _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
+            if noargs:
+                base._not_found_a = onot_found_a
 
             if num:
                 return 2, P_('%d package to move to',

@@ -2267,7 +2267,7 @@ much more problems).
                     presto.rebuild(po, adderror)
                     continue
                 deltasize += po.size
-                rpmsize = po.rpm.size
+                rpmsize += po.rpm.size
             remote_pkgs.append(po)
             remote_size += po.size
         if deltasize:

@@ -5350,6 +5350,12 @@ much more problems).
                              rpm.RPMPROB_FILTER_REPLACENEWFILES,
                              rpm.RPMPROB_FILTER_REPLACEOLDFILES)
 
+        # NOTE: For repoid=foo we could do two things:
+        # 1. Only do the "remove" op. with packages installed from "foo".
+        # 2. Only do the "install" op. with packages available from "foo".
+        # ...so repoid=foo means #1 and repoid_install=foo means #2. Can also
+        # combine them.
+
         tx_mbrs = []
         if po: # The po, is the "available" po ... we want the installed po
             tx_mbrs.extend(self.remove(pkgtup=po.pkgtup))
@@ -5368,10 +5374,11 @@ much more problems).
             # pkgs that are obsolete.
             old_conf_obs = self.conf.obsoletes
             self.conf.obsoletes = False
-            if isinstance(po, YumLocalPackage):
+            if isinstance(po, YumLocalPackage) and 'repoid' not in kwargs:
                 members = self.install(po=po)
             else:
-                members = self.install(pkgtup=item.pkgtup)
+                members = self.install(pkgtup=item.pkgtup,
+                                       repoid=kwargs.get('repoid_install'))
             self.conf.obsoletes = old_conf_obs
             if len(members) == 0:
                 self.tsInfo.remove(item.pkgtup)

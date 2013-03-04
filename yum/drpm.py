@@ -25,7 +25,7 @@ from misc import checksum, repo_gen_decompress
 from urlgrabber import grabber
 async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
-import os, gzip
+import os
 
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
@@ -126,7 +126,7 @@ class DeltaInfo:
                 (po.epoch, po.version, po.release)
                 for po in ayum.rpmdb.searchNevra(n, None, None, None, a)]
 
-        # parse metadata, populate self.deltas
+        # parse metadata, create DeltaPackage instances
         for repo, cpath in mdpath.items():
             pinfo_repo = pinfo[repo]
             path = repo_gen_decompress(cpath, 'prestodelta.xml',
@@ -165,9 +165,11 @@ class DeltaInfo:
         # this runs when worker finishes
         def callback(code):
             if code != 0:
-                return adderror(po, _('Delta RPM rebuild failed'))
+                adderror(po, _('Delta RPM rebuild failed'))
+                return
             if not po.rpm.verifyLocalPkg():
-                return adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
+                adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
+                return
             os.unlink(po.localpath)
             po.localpath = po.rpm.localpath # for --downloadonly
 

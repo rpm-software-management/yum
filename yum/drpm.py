@@ -137,7 +137,7 @@ class DeltaInfo:
                 index = pinfo_repo.get(new)
                 if index is not None:
                     po = pkgs[index]
-                    best = po.size * 0.75 # make this configurable?
+                    best = po.size * (repo.deltarpm_percentage / 100.0)
                     have = installed(new[:2]) or []
                     for el in el.findall('delta'):
                         size = int(el.find('size').text)

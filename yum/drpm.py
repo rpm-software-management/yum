@@ -30,7 +30,7 @@ import os
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
 class DeltaPackage:
-    def __init__(self, rpm, size, remote, csum):
+    def __init__(self, rpm, size, remote, csum, oldrpm):
         # copy what needed
         self.rpm = rpm
         self.repo = rpm.repo
@@ -42,6 +42,7 @@ class DeltaPackage:
         self.relativepath = remote
         self.localpath = os.path.dirname(rpm.localpath) +'/'+ os.path.basename(remote)
         self.csum = csum
+        self.oldrpm = oldrpm
 
     def __str__(self):
         return 'Delta RPM of %s' % self.rpm
@@ -79,8 +80,6 @@ class DeltaInfo:
         for index, po in enumerate(pkgs):
             if not po.repo.deltarpm:
                 continue
-            if po.state != TS_UPDATE and po.name not in ayum.conf.installonlypkgs:
-                continue
             pinfo.setdefault(po.repo, {})[po.pkgtup] = index
             reposize[po.repo] = reposize.get(po.repo, 0) + po.size
 
@@ -97,7 +96,7 @@ class DeltaInfo:
                 try: data = repo.repoXML.getData(name); break
                 except: pass
             else:
-                self.verbose_logger.warn(_('No Presto metadata available for %s'), repo)
+                self.verbose_logger.info(_('No Presto metadata available for %s'), repo)
                 continue
             path = repo.cachedir +'/'+ os.path.basename(data.location[1])
             if not os.path.exists(path) and int(data.size) > reposize[repo]:
@@ -118,14 +117,6 @@ class DeltaInfo:
         if async:
             grabber.parallel_wait()
 
-        # use installdict or rpmdb
-        if ayum._up:
-            installed = ayum._up.installdict.get
-        else:
-            installed = lambda (n, a): [
-                (po.epoch, po.version, po.release)
-                for po in ayum.rpmdb.searchNevra(n, None, None, None, a)]
-
         # parse metadata, create DeltaPackage instances
         for repo, cpath in mdpath.items():
             pinfo_repo = pinfo[repo]
@@ -133,22 +124,34 @@ class DeltaInfo:
                                        cached=repo.cache)
             for ev, el in iterparse(path):
                 if el.tag != 'newpackage': continue
-                new = el.get('name'), el.get('arch'), el.get('epoch'), el.get('version'), el.get('release')
+                name = el.get('name')
+                arch = el.get('arch')
+                new = name, arch, el.get('epoch'), el.get('version'), el.get('release')
                 index = pinfo_repo.get(new)
                 if index is not None:
                     po = pkgs[index]
                     best = po.size * (repo.deltarpm_percentage / 100.0)
-                    have = installed(new[:2]) or []
                     for el in el.findall('delta'):
                         size = int(el.find('size').text)
-                        old = el.get('oldepoch'), el.get('oldversion'), el.get('oldrelease')
-                        if size >= best or old not in have:
+                        if size >= best:
                             continue
+
+                        # can we use this delta?
+                        epoch = el.get('oldepoch')
+                        ver = el.get('oldversion')
+                        rel = el.get('oldrelease')
+                        if ayum.rpmdb.searchNevra(name, epoch, ver, rel, arch):
+                            oldrpm = None
+                        else:
+                            oldrpm = '%s/%s-%s-%s.%s.rpm' % (repo.pkgdir, name, ver, rel, arch)
+                            if not os.access(oldrpm, os.R_OK):
+                                continue
+
                         best = size
                         remote = el.find('filename').text
                         csum = el.find('checksum')
                         csum = csum.get('type'), csum.text
-                        pkgs[index] = DeltaPackage(po, size, remote, csum)
+                        pkgs[index] = DeltaPackage(po, size, remote, csum, oldrpm)
                 el.clear()
 
     def wait(self, limit = 1):
@@ -175,5 +178,8 @@ class DeltaInfo:
 
         # spawn a worker process
         self.wait(self.limit)
-        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, po.localpath, po.rpm.localpath)
+        args = ()
+        if po.oldrpm: args += '-r', po.oldrpm
+        args += po.localpath, po.rpm.localpath
+        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
         self.jobs[pid] = callback

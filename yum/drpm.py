@@ -68,11 +68,30 @@ class DeltaPackage:
         # hooray
         return True
 
+def _num_cpus_online(unknown=1):
+    if not hasattr(os, "sysconf"):
+        return unknown
+
+    if not os.sysconf_names.has_key("SC_NPROCESSORS_ONLN"):
+        return unknown
+
+    ncpus = os.sysconf("SC_NPROCESSORS_ONLN")
+    try:
+        if int(ncpus) > 0:
+            return ncpus
+    except:
+        pass
+
+    return unknown
+
 class DeltaInfo:
     def __init__(self, ayum, pkgs):
         self.verbose_logger = ayum.verbose_logger
         self.jobs = {}
         self.limit = ayum.conf.deltarpm
+        if self.limit < 0:
+            nprocs = _num_cpus_online()
+            self.limit *= -nprocs
 
         # calculate update sizes
         oldrpms = {}
@@ -106,7 +125,6 @@ class DeltaInfo:
         # download delta metadata
         mdpath = {}
         for repo in reposize:
-            self.limit = max(self.limit, repo.deltarpm)
             for name in ('prestodelta', 'deltainfo'):
                 try: data = repo.repoXML.getData(name); break
                 except: pass

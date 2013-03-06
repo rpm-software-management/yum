@@ -791,7 +791,7 @@ class YumConf(StartupConf):
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
     max_connections = IntOption(0, range_min=0)
-    deltarpm = IntOption(4, range_min=-2)
+    deltarpm = IntOption(-2, range_min=-16, range_max=128)
     deltarpm_percentage = IntOption(75, range_min=1, range_max=100)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
@@ -951,7 +951,6 @@ class RepoConf(BaseConfig):
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)
     ip_resolve = Inherit(YumConf.ip_resolve)
-    deltarpm = Inherit(YumConf.deltarpm)
     deltarpm_percentage = Inherit(YumConf.deltarpm_percentage)
 
     http_caching = Inherit(YumConf.http_caching)

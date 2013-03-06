@@ -43,7 +43,7 @@ gnome\-packagekit application\&.
 .br  
 .I \fR * clean [ packages | metadata | expire-cache | rpmdb | plugins | all ]
 .br
-.I \fR * makecache
+.I \fR * makecache [fast]
 .br
 .I \fR * groups  [\&.\&.\&.]
 .br
@@ -209,7 +209,8 @@ the \fIClean Options\fP section below\&.
 .IP 
 .IP "\fBmakecache\fP"
 Is used to download and make usable all the metadata for the currently enabled
-\fByum\fP repos.
+\fByum\fP repos. If the arguemnt "fast" is passed, then we just try to make
+sure the repos. are current (much like "yum clean expire-cache").
 .IP 
 .IP "\fBgroups\fP"
 A command, new in 3.4.2, that collects all the subcommands that act on groups together.

@@ -1812,7 +1812,7 @@ Insufficient space in download directory %s
                     misc.unlink_f(obj.filename)
                     raise
                 self.retrieved[mdtype] = 1
-            text = "%s/%s" % (self, mdtype)
+            text = "%s/%s" % (self.ui_id, mdtype)
             if thisdata.size is None:
                 reget = None
             else:

@@ -1286,10 +1286,17 @@ class MakeCacheCommand(YumCommand):
         """
         base.logger.debug(_("Making cache files for all metadata files."))
         base.logger.debug(_("This may take a while depending on the speed of this computer"))
+
+        # Fast == don't download any extra MD
+        fast = False
+        if extcmds and extcmds[0] == 'fast':
+            fast = True
+
         try:
             for repo in base.repos.findRepos('*'):
                 repo.metadata_expire = 0
-                repo.mdpolicy = "group:all"
+                if not fast:
+                    repo.mdpolicy = "group:all"
             base.doRepoSetup(dosack=0)
             base.repos.doSetup()
             
@@ -1297,7 +1304,12 @@ class MakeCacheCommand(YumCommand):
             # we can't remove them until *LoadRepo() can do:
             # 1. Download a .sqlite.bz2 and convert to .sqlite
             # 2. Download a .xml.gz and convert to .xml.gz.sqlite
-            base.repos.populateSack(mdtype='all', cacheonly=1)
+            if fast:
+                #  Can't easily tell which other metadata each repo. has, so
+                # just do primary.
+                base.repos.populateSack(mdtype='metadata', cacheonly=1)
+            else:
+                base.repos.populateSack(mdtype='all', cacheonly=1)
 
             # Now decompress stuff, so that -C works, sigh.
             fname_map = {'group_gz'   : 'groups.xml',
@@ -1309,6 +1321,8 @@ class MakeCacheCommand(YumCommand):
                 for MD in repo.repoXML.fileTypes():
                     if MD not in fname_map:
                         continue
+                    if MD not in repo.retrieved or not repo.retrieved[MD]:
+                        continue # For fast mode.
                     misc.repo_gen_decompress(repo.retrieveMD(MD),
                                              fname_map[MD],
                                              cached=repo.cache)

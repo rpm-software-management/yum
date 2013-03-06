@@ -1303,6 +1303,7 @@ class MakeCacheCommand(YumCommand):
             fname_map = {'group_gz'   : 'groups.xml',
                          'pkgtags'    : 'pkgtags.sqlite',
                          'updateinfo' : 'updateinfo.xml',
+                         'prestodelta': 'prestodelta.xml',
                          }
             for repo in base.repos.listEnabled():
                 for MD in repo.repoXML.fileTypes():

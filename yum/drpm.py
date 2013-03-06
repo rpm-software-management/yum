@@ -25,7 +25,7 @@ from misc import checksum, repo_gen_decompress
 from urlgrabber import grabber
 async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
-import os
+import os, re
 
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
@@ -75,11 +75,26 @@ class DeltaInfo:
         self.limit = ayum.conf.deltarpm
 
         # calculate update sizes
+        oldrpms = {}
         pinfo = {}
         reposize = {}
         for index, po in enumerate(pkgs):
             if not po.repo.deltarpm:
                 continue
+            if po.state == TS_UPDATE: pass
+            elif po.name in ayum.conf.installonlypkgs: pass
+            else:
+                names = oldrpms.get(po.repo)
+                if names is None:
+                    # load all locally cached rpms
+                    names = oldrpms[po.repo] = {}
+                    for rpmfn in os.listdir(po.repo.pkgdir):
+                        m = re.match('^(.+)-(.+)-(.+)\.(.+)\.rpm$', rpmfn)
+                        if m:
+                            n, v, r, a = m.groups()
+                            names.setdefault((n, a), set()).add((v, r))
+                if (po.name, po.arch) not in names:
+                    continue
             pinfo.setdefault(po.repo, {})[po.pkgtup] = index
             reposize[po.repo] = reposize.get(po.repo, 0) + po.size
 
@@ -131,6 +146,7 @@ class DeltaInfo:
                 if index is not None:
                     po = pkgs[index]
                     best = po.size * (repo.deltarpm_percentage / 100.0)
+                    have = oldrpms.get(repo, {}).get((name, arch), {})
                     for el in el.findall('delta'):
                         size = int(el.find('size').text)
                         if size >= best:
@@ -140,12 +156,12 @@ class DeltaInfo:
                         epoch = el.get('oldepoch')
                         ver = el.get('oldversion')
                         rel = el.get('oldrelease')
-                        if ayum.rpmdb.searchNevra(name, epoch, ver, rel, arch):
-                            oldrpm = None
-                        else:
+                        if (ver, rel) in have:
                             oldrpm = '%s/%s-%s-%s.%s.rpm' % (repo.pkgdir, name, ver, rel, arch)
-                            if not os.access(oldrpm, os.R_OK):
+                        else:
+                            if not ayum.rpmdb.searchNevra(name, epoch, ver, rel, arch):
                                 continue
+                            oldrpm = None
 
                         best = size
                         remote = el.find('filename').text

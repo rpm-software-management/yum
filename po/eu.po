@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
-"POT-Creation-Date: 2012-03-01 16:05-0500\n"
-"PO-Revision-Date: 2012-09-28 23:24+0000\n"
-"Last-Translator: assar <asiersar@yahoo.com>\n"
+"POT-Creation-Date: 2013-01-30 09:08-0500\n"
+"PO-Revision-Date: 2013-01-30 14:08+0000\n"
+"Last-Translator: james <james@fedoraproject.org>\n"
 "Language-Team: Basque (http://www.transifex.com/projects/p/yum/language/eu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../callback.py:45 ../output.py:1440 ../yum/rpmtrans.py:73
+#: ../callback.py:45 ../output.py:1502 ../yum/rpmtrans.py:73
 msgid "Updating"
 msgstr "Eguneratzen"
 
@@ -27,26 +27,26 @@ msgstr "Eguneratzen"
 msgid "Erasing"
 msgstr "Ezabatzen"
 
-#: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1439
-#: ../output.py:2854 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
+#: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1501
+#: ../output.py:2922 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
 #: ../yum/rpmtrans.py:78
 msgid "Installing"
 msgstr "Instalatzen"
 
-#: ../callback.py:49 ../callback.py:55 ../output.py:2312 ../yum/rpmtrans.py:77
+#: ../callback.py:49 ../callback.py:55 ../output.py:2379 ../yum/rpmtrans.py:77
 msgid "Obsoleted"
 msgstr "Zaharkitua"
 
-#: ../callback.py:51 ../output.py:1608 ../output.py:2155 ../output.py:2319
+#: ../callback.py:51 ../output.py:1670 ../output.py:2222 ../output.py:2386
 msgid "Updated"
 msgstr "Eguneratua"
 
-#: ../callback.py:52 ../output.py:2154
+#: ../callback.py:52 ../output.py:2221
 msgid "Erased"
 msgstr "Ezabatua"
 
-#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1606
-#: ../output.py:2154 ../output.py:2156 ../output.py:2826
+#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1668
+#: ../output.py:2221 ../output.py:2223 ../output.py:2894
 msgid "Installed"
 msgstr "Instalatua"
 
@@ -68,7 +68,7 @@ msgstr "Errorea: baliogabeko irteera-egoera: %s %s-(e)rako"
 msgid "Erased: %s"
 msgstr "Ezabatua: %s"
 
-#: ../callback.py:229 ../output.py:1441 ../output.py:2829
+#: ../callback.py:229 ../output.py:1503 ../output.py:2897
 msgid "Removing"
 msgstr "Kentzen"
 
@@ -76,58 +76,58 @@ msgstr "Kentzen"
 msgid "Cleanup"
 msgstr "Garbitzen"
 
-#: ../cli.py:120
+#: ../cli.py:122
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "\"%s\" komandoa jadanik definitua"
 
-#: ../cli.py:135
+#: ../cli.py:137
 msgid "Setting up repositories"
 msgstr "Biltegiak konfiguratzen"
 
-#: ../cli.py:146
+#: ../cli.py:148
 msgid "Reading repository metadata in from local files"
 msgstr "Biltegien metadatuak irakurtzen fitxategi lokaletatik"
 
-#: ../cli.py:271 ../cli.py:275 ../utils.py:346
+#: ../cli.py:273 ../cli.py:277 ../utils.py:320
 #, python-format
 msgid "Config Error: %s"
 msgstr "Konfigurazio-errorea: %s"
 
-#: ../cli.py:278 ../cli.py:1987 ../utils.py:349
+#: ../cli.py:280 ../cli.py:2206 ../utils.py:323
 #, python-format
 msgid "Options Error: %s"
 msgstr "Aukeren errorea: %s"
 
-#: ../cli.py:325
+#: ../cli.py:327
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Instalatua: %s-%s %s-(e)n"
 
-#: ../cli.py:327
+#: ../cli.py:329
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Eraikia    : %s %s-(e)n"
 
-#: ../cli.py:329
+#: ../cli.py:331
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Egikaritua: %s %s-(e)n"
 
-#: ../cli.py:370
+#: ../cli.py:372
 msgid "You need to give some command"
 msgstr "Komandoren bat eman behar duzu"
 
-#: ../cli.py:384
+#: ../cli.py:386
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Ez dago halako komandorik: %s. Erabili %s --help"
 
-#: ../cli.py:442
+#: ../cli.py:444
 msgid "Disk Requirements:\n"
 msgstr "Disko-eskakizunak:\n"
 
-#: ../cli.py:444
+#: ../cli.py:446
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
@@ -136,323 +136,374 @@ msgstr[1] "  Gutxienez %dMD gehiagoko espazioa behar da %s fitxategi-sisteman.\n
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:449
+#: ../cli.py:451
 msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr "Erroreen laburpena\n-------------\n"
 
-#: ../cli.py:497
+#: ../cli.py:472
+msgid "Can't create lock file; exiting"
+msgstr "Ezin izan da fitxategia blokeatu; irteten"
+
+#: ../cli.py:479
+msgid ""
+"Another app is currently holding the yum lock; exiting as configured by "
+"exit_on_lock"
+msgstr "Beste aplikazio batek yum blokeatuta dauka; irteten exit_on_lock-en konfiguratuta dagoenari kasu eginez"
+
+#: ../cli.py:532
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr "Transakzioaren exekuzioa saiatzen baina ez dago egiteko ezer. Irteten."
 
-#: ../cli.py:542
+#: ../cli.py:577
+msgid "future rpmdb ver mismatched saved transaction version,"
+msgstr ""
+
+#: ../cli.py:579 ../yum/__init__.py:6523
+msgid " ignoring, as requested."
+msgstr " ezikusten, eskatu den bezala."
+
+#: ../cli.py:582 ../yum/__init__.py:6526 ../yum/__init__.py:6673
+msgid " aborting."
+msgstr " abortatzen."
+
+#: ../cli.py:588
 msgid "Exiting on user Command"
 msgstr "Irteten erabiltzaile-komandoaren ondoren"
 
-#: ../cli.py:546
+#: ../cli.py:592
 msgid "Downloading Packages:"
 msgstr "Paketeak deskargatzen:"
 
-#: ../cli.py:551
+#: ../cli.py:597
 msgid "Error Downloading Packages:\n"
 msgstr "Errorea paketeak deskargatzean:\n"
 
-#: ../cli.py:570 ../yum/__init__.py:5748
+#: ../cli.py:616 ../yum/__init__.py:6215
 msgid "Running Transaction Check"
 msgstr "Transakzio-egiaztapena exekutatzen"
 
-#: ../cli.py:579 ../yum/__init__.py:5757
+#: ../cli.py:625 ../yum/__init__.py:6224
 msgid "ERROR You need to update rpm to handle:"
 msgstr "ERROREA, rpm eguneratu behar duzu hau maneiatzeko:"
 
-#: ../cli.py:581 ../yum/__init__.py:5760
+#: ../cli.py:627 ../yum/__init__.py:6227
 msgid "ERROR with transaction check vs depsolve:"
 msgstr "ERROREA transakzio-egiaztapena eta depsolve artean:"
 
-#: ../cli.py:587
+#: ../cli.py:633
 msgid "RPM needs to be updated"
 msgstr "RPM eguneratu egin behar da"
 
-#: ../cli.py:588
+#: ../cli.py:634
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Jakinarazi errore hau %s-(e)n"
 
-#: ../cli.py:594
+#: ../cli.py:640
 msgid "Running Transaction Test"
 msgstr "Transakzio-testa exekutatzen"
 
-#: ../cli.py:606
+#: ../cli.py:652
 msgid "Transaction Check Error:\n"
 msgstr "Transakzioaren egiaztapen-errorea:\n"
 
-#: ../cli.py:613
+#: ../cli.py:659
 msgid "Transaction Test Succeeded"
 msgstr "Transakzio-testak arrakasta izan du"
 
-#: ../cli.py:645
+#: ../cli.py:691
 msgid "Running Transaction"
 msgstr "Transakzioa exekutatzen"
 
-#: ../cli.py:678
+#: ../cli.py:724
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr "Baztertzen gakoak automatikoki inportatzea arretarik gabe exekutatzen ari denean.\nErabili \"-y\" gainidazteko."
 
-#: ../cli.py:697 ../cli.py:740
+#: ../cli.py:743 ../cli.py:786
 msgid "  * Maybe you meant: "
 msgstr "  * Agian hau esan nahi zenuen: "
 
-#: ../cli.py:723 ../cli.py:731
+#: ../cli.py:769 ../cli.py:777
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "%s%s%s paketea(k) eskuragarri, baina ez daude instalatuta."
 
-#: ../cli.py:737 ../cli.py:835 ../cli.py:1071
+#: ../cli.py:783 ../cli.py:891 ../cli.py:1158
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "%s%s%s paketea ez dago eskuragarri."
 
-#: ../cli.py:844
+#: ../cli.py:871 ../cli.py:881 ../cli.py:1101 ../cli.py:1111
+#, python-format
+msgid "Bad %s argument %s."
+msgstr ""
+
+#: ../cli.py:900 ../yumcommands.py:3331
 #, python-format
 msgid "%d package to install"
 msgid_plural "%d packages to install"
 msgstr[0] "Pakete %d instalatzeko"
 msgstr[1] "%d pakete instalatzeko"
 
-#: ../cli.py:847 ../cli.py:848 ../cli.py:1078 ../cli.py:1128 ../cli.py:1163
-#: ../yumcommands.py:271
+#: ../cli.py:903 ../cli.py:904 ../cli.py:1169 ../cli.py:1170 ../cli.py:1224
+#: ../cli.py:1225 ../cli.py:1260 ../yumcommands.py:323 ../yumcommands.py:3419
 msgid "Nothing to do"
 msgstr "Ez dago egiteko ezer"
 
-#: ../cli.py:897
+#: ../cli.py:953
 #, python-format
 msgid "%d package marked for Update"
 msgid_plural "%d packages marked for Update"
 msgstr[0] "Pakete %d markatu da eguneratua izateko"
 msgstr[1] "%d pakete markatu dira eguneratuak izateko"
 
-#: ../cli.py:899
+#: ../cli.py:955
 msgid "No Packages marked for Update"
 msgstr "Ez da paketerik markatu eguneratua izateko"
 
-#: ../cli.py:1011
+#: ../cli.py:1067
 #, python-format
 msgid "%d package marked for Distribution Synchronization"
 msgid_plural "%d packages marked for Distribution Synchronization"
 msgstr[0] "Pakete %d markatu da banaketa sinkronizatzeko"
 msgstr[1] "%d pakete markatu dira banaketa sinkronizatzeko"
 
-#: ../cli.py:1013
+#: ../cli.py:1069
 msgid "No Packages marked for Distribution Synchronization"
 msgstr "Ez da paketerik markatu banaketa sinkronizatzeko"
 
-#: ../cli.py:1038
+#: ../cli.py:1124
 #, python-format
 msgid "%d package marked for removal"
 msgid_plural "%d packages marked for removal"
 msgstr[0] "Pakete %d markatu da kendua izateko"
 msgstr[1] "%d pakete markatu dira kenduak izateko"
 
-#: ../cli.py:1040
+#: ../cli.py:1126
 msgid "No Packages marked for removal"
 msgstr "Ez da paketerik markatu kendua izateko"
 
-#: ../cli.py:1077
+#: ../cli.py:1166
 #, python-format
 msgid "%d package to downgrade"
 msgid_plural "%d packages to downgrade"
 msgstr[0] "Pakete %d bertsio zaharragoa instalatzeko"
 msgstr[1] "%d pakete bertsio zaharragoa instalatzeko"
 
-#: ../cli.py:1114
+#: ../cli.py:1207
 #, python-format
 msgid " (from %s)"
 msgstr " (%s-(e)tik)"
 
-#: ../cli.py:1115
+#: ../cli.py:1208
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "%s%s%s%s pakete instalatua ez dago eskuragarri."
 
-#: ../cli.py:1127
+#: ../cli.py:1221
 #, python-format
 msgid "%d package to reinstall"
 msgid_plural "%d packages to reinstall"
 msgstr[0] "Pakete %d berrinstalatzeko"
 msgstr[1] "%d pakete berrinstalatzeko"
 
-#: ../cli.py:1149
+#: ../cli.py:1246
 msgid "No Packages Provided"
 msgstr "Ez da paketerik adierazi"
 
-#: ../cli.py:1162
+#: ../cli.py:1259
 msgid "Package(s) to install"
 msgstr "Instalatzeko paketea(k)"
 
-#: ../cli.py:1269
+#: ../cli.py:1367
 #, python-format
 msgid "N/S Matched: %s"
 msgstr "N/S bat etortze: %s"
 
-#: ../cli.py:1286
+#: ../cli.py:1384
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr "  Izen eta laburpenen bat etortzeak %ssoilik%s, erabili \"bilatu dena\" denean bilaketa egiteko."
 
-#: ../cli.py:1288
+#: ../cli.py:1386
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr "  Izen osoen eta laburpenen bat etortzeak %ssoilik%s, erabili \"bilatu dena\" denean bilaketa egiteko."
 
-#: ../cli.py:1306
+#: ../cli.py:1404
 #, python-format
 msgid "Matched: %s"
 msgstr "Bat dator: %s"
 
-#: ../cli.py:1313
+#: ../cli.py:1411
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
 msgstr "  Izen eta laburpenen bat etortzeak %sgehien bat%s, erabili \"bilatu dena\" denean bilaketa egiteko."
 
-#: ../cli.py:1317
+#: ../cli.py:1415
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Abisua: Ez da bat datorrenik aurkitu honentzako: %s"
 
-#: ../cli.py:1320
+#: ../cli.py:1418
 msgid "No Matches found"
 msgstr "Ez da parekatzerik aurkitu"
 
-#: ../cli.py:1436
+#: ../cli.py:1536
 #, python-format
 msgid ""
 "Error: No Packages found for:\n"
 "  %s"
 msgstr "Errorea: Ez da paketerik aurkitu honetarako:\n  %s"
 
-#: ../cli.py:1472
+#: ../cli.py:1572
 msgid "Cleaning repos: "
 msgstr "Biltegiak garbitzen: "
 
-#: ../cli.py:1477
+#: ../cli.py:1577
 msgid "Cleaning up Everything"
 msgstr "Dena garbitzen"
 
-#: ../cli.py:1493
+#: ../cli.py:1593
 msgid "Cleaning up Headers"
 msgstr "Goiburuak garbitzen"
 
-#: ../cli.py:1496
+#: ../cli.py:1596
 msgid "Cleaning up Packages"
 msgstr "Paketeak garbitzen"
 
-#: ../cli.py:1499
+#: ../cli.py:1599
 msgid "Cleaning up xml metadata"
 msgstr "XML metadatuak garbitzen"
 
-#: ../cli.py:1502
+#: ../cli.py:1602
 msgid "Cleaning up database cache"
 msgstr "Datu-basearen katxea garbitzen"
 
-#: ../cli.py:1505
+#: ../cli.py:1605
 msgid "Cleaning up expire-cache metadata"
 msgstr "Metadatuen expire-cache garbitzen"
 
-#: ../cli.py:1508
+#: ../cli.py:1608
 msgid "Cleaning up cached rpmdb data"
 msgstr "Katxetutako rpmdb datuak garbitzen"
 
-#: ../cli.py:1511
+#: ../cli.py:1611
 msgid "Cleaning up plugins"
 msgstr "pluginak garbitzen"
 
-#: ../cli.py:1547
-#, python-format
-msgid "Warning: No groups match: %s"
-msgstr "Abisua: Ez dago taldeen bat etortzerik: %s"
+#: ../cli.py:1727
+msgid "Installed Environment Groups:"
+msgstr ""
 
-#: ../cli.py:1564 ../cli.py:1622
+#: ../cli.py:1728
+msgid "Available Environment Groups:"
+msgstr ""
+
+#: ../cli.py:1735
 msgid "Installed Groups:"
 msgstr "Talde instalatuak:"
 
-#: ../cli.py:1570 ../cli.py:1628
+#: ../cli.py:1742
 msgid "Installed Language Groups:"
 msgstr "Instalatutako hizkuntza-taldeak:"
 
-#: ../cli.py:1576 ../cli.py:1634
+#: ../cli.py:1749
 msgid "Available Groups:"
 msgstr "Talde eskuragarriak:"
 
-#: ../cli.py:1582 ../cli.py:1640
+#: ../cli.py:1756
 msgid "Available Language Groups:"
 msgstr "Eskuragarri dauden hizkuntza-taldeak:"
 
-#: ../cli.py:1585 ../cli.py:1642
+#: ../cli.py:1759
+#, python-format
+msgid "Warning: No Environments/Groups match: %s"
+msgstr ""
+
+#: ../cli.py:1763
 msgid "Done"
 msgstr "Egina"
 
-#: ../cli.py:1665 ../cli.py:1693 ../cli.py:1699 ../yum/__init__.py:3909
+#: ../cli.py:1818
+#, python-format
+msgid "Warning: Group/Environment %s does not exist."
+msgstr ""
+
+#: ../cli.py:1859
+#, python-format
+msgid "Warning: Environment %s does not exist."
+msgstr ""
+
+#: ../cli.py:1873 ../cli.py:1879 ../yum/__init__.py:4254
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Abisua: %s taldea ez da existitzen."
 
-#: ../cli.py:1703
+#: ../cli.py:1883
 msgid "No packages in any requested group available to install or update"
 msgstr "Eskatutako taldean ez dago paketerik instalatzeko edo eguneratzeko"
 
-#: ../cli.py:1705
+#: ../cli.py:1885
 #, python-format
 msgid "%d package to Install"
 msgid_plural "%d packages to Install"
 msgstr[0] "Pakete %d instalatzeko"
 msgstr[1] "%d pakete instalatzeko"
 
-#: ../cli.py:1725 ../yum/__init__.py:3925
+#: ../cli.py:1919 ../yum/__init__.py:3536 ../yum/__init__.py:3766
+#: ../yum/__init__.py:3824
+#, python-format
+msgid "No Environment named %s exists"
+msgstr ""
+
+#: ../cli.py:1935 ../yum/__init__.py:4282
 #, python-format
 msgid "No group named %s exists"
 msgstr "Ez da existitzen %s izena duen talderik"
 
-#: ../cli.py:1731
+#: ../cli.py:1945
 msgid "No packages to remove from groups"
 msgstr "Ez dago paketerik taldeetatik kentzeko"
 
-#: ../cli.py:1733
+#: ../cli.py:1947 ../yumcommands.py:3351
 #, python-format
 msgid "%d package to remove"
 msgid_plural "%d packages to remove"
 msgstr[0] "Pakete %d kentzeko"
 msgstr[1] "%d pakete kentzeko"
 
-#: ../cli.py:1774
+#: ../cli.py:1988
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "%s paketea instalatuta dago, saltatzen"
 
-#: ../cli.py:1785
+#: ../cli.py:1999
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "Alderagarria ez den pkg %s.%s baztertzen"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1811
+#: ../cli.py:2025
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr "Ez dago beste %s-(e)rik instalatuta, zerrendara gehitzen balizko instalazio baterako"
 
-#: ../cli.py:1831
+#: ../cli.py:2045
 msgid "Plugin Options"
 msgstr "Plugin aukerak"
 
-#: ../cli.py:1843
+#: ../cli.py:2057
 #, python-format
 msgid "Command line error: %s"
 msgstr "Komando-lerroko errorea: %s"
 
-#: ../cli.py:1865
+#: ../cli.py:2079
 #, python-format
 msgid ""
 "\n"
@@ -460,452 +511,484 @@ msgid ""
 "%s: %s option requires an argument"
 msgstr "\n\n%s: %s aukerak argumentua behar du"
 
-#: ../cli.py:1928
+#: ../cli.py:2147
 msgid "--color takes one of: auto, always, never"
 msgstr "--color aukerak hauetako bat hartzen du: auto, always, never"
 
 #. We have a relative installroot ... haha
-#: ../cli.py:1999
+#: ../cli.py:2218
 #, python-format
 msgid "--installroot must be an absolute path: %s"
 msgstr "--installroot-ek bide-izen absolutua izan behar du: %s"
 
-#: ../cli.py:2053
+#: ../cli.py:2272
 msgid "show this help message and exit"
 msgstr "erakutsi laguntza-mezu hau eta irten"
 
-#: ../cli.py:2057
+#: ../cli.py:2276
 msgid "be tolerant of errors"
 msgstr "erroreekiko tolerantea izan"
 
-#: ../cli.py:2060
+#: ../cli.py:2279
 msgid "run entirely from system cache, don't update cache"
 msgstr "exekutatu osorik sistemaren katxetik, ez eguneratu katxea"
 
-#: ../cli.py:2063
+#: ../cli.py:2282
 msgid "config file location"
 msgstr "konfigurazio-fitxategiaren kokapena"
 
-#: ../cli.py:2066
+#: ../cli.py:2285
 msgid "maximum command wait time"
 msgstr "komandoen itxarote-denbora maximoa"
 
-#: ../cli.py:2068
+#: ../cli.py:2287
 msgid "debugging output level"
 msgstr "arazketa-irteeraren maila"
 
-#: ../cli.py:2072
+#: ../cli.py:2291
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "erakutsi bikoiztuak, biltegietan, zerrenda/bilaketa komandoetan"
 
-#: ../cli.py:2074
+#: ../cli.py:2296
 msgid "error output level"
 msgstr "errore-irteeraren maila"
 
-#: ../cli.py:2077
+#: ../cli.py:2299
 msgid "debugging output level for rpm"
 msgstr "arazketa-irteeraren maila rpm-rako"
 
-#: ../cli.py:2080
+#: ../cli.py:2302
 msgid "quiet operation"
 msgstr "eragiketa lasaia"
 
-#: ../cli.py:2082
+#: ../cli.py:2304
 msgid "verbose operation"
 msgstr "eragiketa berritsua"
 
-#: ../cli.py:2084
+#: ../cli.py:2306
 msgid "answer yes for all questions"
 msgstr "erantzun bai galdera guztiei"
 
-#: ../cli.py:2086
+#: ../cli.py:2308
 msgid "answer no for all questions"
 msgstr "erantzun ez galdera guztiei"
 
-#: ../cli.py:2090
+#: ../cli.py:2312
 msgid "show Yum version and exit"
 msgstr "erakutsi Yum bertsioa eta irten"
 
-#: ../cli.py:2091
+#: ../cli.py:2313
 msgid "set install root"
 msgstr "ezarri instalazio-erroa"
 
-#: ../cli.py:2095
+#: ../cli.py:2317
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr "gaitu biltegi bat edo gehiago (komodinak onartzen dira)"
 
-#: ../cli.py:2099
+#: ../cli.py:2321
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr "desgaitu biltegi bat edo gehiago (komodinak onartzen dira)"
 
-#: ../cli.py:2102
+#: ../cli.py:2324
 msgid "exclude package(s) by name or glob"
 msgstr "baztertu paketea(k) izenaren edo glob-aren arabera"
 
-#: ../cli.py:2104
+#: ../cli.py:2326
 msgid "disable exclude from main, for a repo or for everything"
 msgstr "desgaitu bazterketa main-etik, biltegi batetik edo denetik"
 
-#: ../cli.py:2107
+#: ../cli.py:2329
 msgid "enable obsoletes processing during updates"
 msgstr "gaitu zaharkituen prozesatzea eguneraketetan"
 
-#: ../cli.py:2109
+#: ../cli.py:2331
 msgid "disable Yum plugins"
 msgstr "desagitu Yum-en pluginak"
 
-#: ../cli.py:2111
+#: ../cli.py:2333
 msgid "disable gpg signature checking"
 msgstr "desgaitu gpg sinaduren egiaztatzea"
 
-#: ../cli.py:2113
+#: ../cli.py:2335
 msgid "disable plugins by name"
 msgstr "desgaitu pluginak izenaren arabera"
 
-#: ../cli.py:2116
+#: ../cli.py:2338
 msgid "enable plugins by name"
 msgstr "gaitu pluginak izenaren arabera"
 
-#: ../cli.py:2119
+#: ../cli.py:2341
 msgid "skip packages with depsolving problems"
 msgstr "saltatu mendekotasun-arazoak dituzten paketeak"
 
-#: ../cli.py:2121
+#: ../cli.py:2343
 msgid "control whether color is used"
 msgstr "kontrolatu kolorea erabiliko den"
 
-#: ../cli.py:2123
+#: ../cli.py:2345
 msgid "set value of $releasever in yum config and repo files"
 msgstr "ezarri $releasever balioa yum-en konfigurazioan eta biltegi-fitxategietan"
 
-#: ../cli.py:2125
+#: ../cli.py:2347
+msgid "don't update, just download"
+msgstr ""
+
+#: ../cli.py:2349
+msgid "specifies an alternate directory to store packages"
+msgstr ""
+
+#: ../cli.py:2351
 msgid "set arbitrary config and repo options"
 msgstr "ezarri konfigurazio- eta biltegi-aukera arbitrarioak"
 
-#: ../output.py:453
+#: ../output.py:458
 msgid "Jan"
 msgstr "urt."
 
-#: ../output.py:453
+#: ../output.py:458
 msgid "Feb"
 msgstr "ots."
 
-#: ../output.py:453
+#: ../output.py:458
 msgid "Mar"
 msgstr "mar."
 
-#: ../output.py:453
+#: ../output.py:458
 msgid "Apr"
 msgstr "api."
 
-#: ../output.py:453
+#: ../output.py:458
 msgid "May"
 msgstr "mai."
 
-#: ../output.py:453
+#: ../output.py:458
 msgid "Jun"
 msgstr "eka."
 
-#: ../output.py:454
+#: ../output.py:459
 msgid "Jul"
 msgstr "uzt."
 
-#: ../output.py:454
+#: ../output.py:459
 msgid "Aug"
 msgstr "abu."
 
-#: ../output.py:454
+#: ../output.py:459
 msgid "Sep"
 msgstr "ira."
 
-#: ../output.py:454
+#: ../output.py:459
 msgid "Oct"
 msgstr "urr."
 
-#: ../output.py:454
+#: ../output.py:459
 msgid "Nov"
 msgstr "aza."
 
-#: ../output.py:454
+#: ../output.py:459
 msgid "Dec"
 msgstr "abe."
 
-#: ../output.py:468
+#: ../output.py:473
 msgid "Trying other mirror."
 msgstr "Beste ispilu bat probatzen."
 
-#: ../output.py:811
+#: ../output.py:816
 #, python-format
 msgid "Name        : %s%s%s"
 msgstr "Izena        : %s%s%s"
 
-#: ../output.py:812
+#: ../output.py:817
 #, python-format
 msgid "Arch        : %s"
 msgstr "Arkitektura        : %s"
 
-#: ../output.py:814
+#: ../output.py:819
 #, python-format
 msgid "Epoch       : %s"
 msgstr "Garaia       : %s"
 
-#: ../output.py:815
+#: ../output.py:820
 #, python-format
 msgid "Version     : %s"
 msgstr "Bertsioa     : %s"
 
-#: ../output.py:816
+#: ../output.py:821
 #, python-format
 msgid "Release     : %s"
 msgstr "Argitalpena     : %s"
 
-#: ../output.py:817
+#: ../output.py:822
 #, python-format
 msgid "Size        : %s"
 msgstr "Tamaina        : %s"
 
-#: ../output.py:818 ../output.py:1267
+#: ../output.py:823 ../output.py:1329
 #, python-format
 msgid "Repo        : %s"
 msgstr "Biltegia        : %s"
 
-#: ../output.py:820
+#: ../output.py:825
 #, python-format
 msgid "From repo   : %s"
 msgstr "Biltegitik   : %s"
 
-#: ../output.py:822
+#: ../output.py:827
 #, python-format
 msgid "Committer   : %s"
 msgstr "Bidaltzailea   : %s"
 
-#: ../output.py:823
+#: ../output.py:828
 #, python-format
 msgid "Committime  : %s"
 msgstr "Bidaltze-data  : %s"
 
-#: ../output.py:824
+#: ../output.py:829
 #, python-format
 msgid "Buildtime   : %s"
 msgstr "Eraikitze-data   : %s"
 
-#: ../output.py:826
+#: ../output.py:831
 #, python-format
 msgid "Install time: %s"
 msgstr "Instalazio-ordua: %s"
 
-#: ../output.py:834
+#: ../output.py:839
 #, python-format
 msgid "Installed by: %s"
 msgstr "Instalatzailea: %s"
 
-#: ../output.py:841
+#: ../output.py:846
 #, python-format
 msgid "Changed by  : %s"
 msgstr "Aldatzailea: %s"
 
-#: ../output.py:842
+#: ../output.py:847
 msgid "Summary     : "
 msgstr "Laburpena    : "
 
-#: ../output.py:844 ../output.py:1283
+#: ../output.py:849 ../output.py:1345
 #, python-format
 msgid "URL         : %s"
 msgstr "URLa        : %s"
 
-#: ../output.py:845
+#: ../output.py:850
 msgid "License     : "
 msgstr "Lizentzia     : "
 
-#: ../output.py:846 ../output.py:1280
+#: ../output.py:851 ../output.py:1342
 msgid "Description : "
 msgstr "Deskribapena: "
 
-#: ../output.py:964
+#: ../output.py:969
 msgid "y"
 msgstr "b"
 
-#: ../output.py:964
+#: ../output.py:969
 msgid "yes"
 msgstr "bai"
 
-#: ../output.py:965
+#: ../output.py:970
 msgid "n"
 msgstr "e"
 
-#: ../output.py:965
+#: ../output.py:970
 msgid "no"
 msgstr "ez"
 
-#: ../output.py:969
+#: ../output.py:974
 msgid "Is this ok [y/N]: "
 msgstr "Ados? [b/E]:  "
 
-#: ../output.py:1092
+#: ../output.py:1097
 #, python-format
 msgid ""
 "\n"
 "Group: %s"
 msgstr "\nTaldea: %s"
 
-#: ../output.py:1096
+#: ../output.py:1101
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Talde-IDa: %s"
 
-#: ../output.py:1117
+#: ../output.py:1122 ../output.py:1169
 #, python-format
 msgid " Description: %s"
 msgstr " Deskribapena: %s"
 
-#: ../output.py:1119
+#: ../output.py:1124
 #, python-format
 msgid " Language: %s"
 msgstr " Hizkuntza: %s"
 
-#: ../output.py:1121
+#: ../output.py:1126
 msgid " Mandatory Packages:"
 msgstr " Derrigorrezko paketeak:"
 
-#: ../output.py:1122
+#: ../output.py:1127
 msgid " Default Packages:"
 msgstr " Pakete lehenetsiak:"
 
-#: ../output.py:1123
+#: ../output.py:1128
 msgid " Optional Packages:"
 msgstr " Hautazko paketeak:"
 
-#: ../output.py:1124
+#: ../output.py:1129
 msgid " Conditional Packages:"
 msgstr " Baldintzapeko paketeak:"
 
-#: ../output.py:1142
+#: ../output.py:1147
 msgid " Installed Packages:"
 msgstr " Instalatutako paketeak:"
 
-#: ../output.py:1155
+#: ../output.py:1157
+#, python-format
+msgid ""
+"\n"
+"Environment Group: %s"
+msgstr ""
+
+#: ../output.py:1158
+#, python-format
+msgid " Environment-Id: %s"
+msgstr ""
+
+#: ../output.py:1191
+msgid " Mandatory Groups:"
+msgstr ""
+
+#: ../output.py:1192
+msgid " Optional Groups:"
+msgstr ""
+
+#: ../output.py:1205
+msgid " Installed Groups:"
+msgstr ""
+
+#: ../output.py:1217
 #, python-format
 msgid "package: %s"
 msgstr "paketea: %s"
 
-#: ../output.py:1157
+#: ../output.py:1219
 msgid "  No dependencies for this package"
 msgstr "  Ez dago mendekotasunik pakete honetarako"
 
-#: ../output.py:1162
+#: ../output.py:1224
 #, python-format
 msgid "  dependency: %s"
 msgstr "  mendekotasuna: %s"
 
-#: ../output.py:1164
+#: ../output.py:1226
 msgid "   Unsatisfied dependency"
 msgstr "   Bete gabeko mendekotasuna"
 
-#: ../output.py:1275
+#: ../output.py:1337
 msgid "Matched from:"
 msgstr "Bat-egitea hemendik:"
 
-#: ../output.py:1286
+#: ../output.py:1348
 #, python-format
 msgid "License     : %s"
 msgstr "Lizentzia     : %s"
 
-#: ../output.py:1289
+#: ../output.py:1351
 #, python-format
 msgid "Filename    : %s"
 msgstr "Fitxategi-izena    : %s"
 
-#: ../output.py:1298
+#: ../output.py:1360
 msgid "Provides    : "
 msgstr "Hornitzen du    : "
 
-#: ../output.py:1301
+#: ../output.py:1363
 msgid "Other       : "
 msgstr "Besterik       : "
 
-#: ../output.py:1364
+#: ../output.py:1426
 msgid "There was an error calculating total download size"
 msgstr "Errorea gertatu da deskarga-tamaina osoa kalkulatzean"
 
-#: ../output.py:1369
+#: ../output.py:1431
 #, python-format
 msgid "Total size: %s"
 msgstr "Tamaina osoa: %s"
 
-#: ../output.py:1371
+#: ../output.py:1433
 #, python-format
 msgid "Total download size: %s"
 msgstr "Deskargaren tamaina osoa: %s"
 
-#: ../output.py:1374 ../output.py:1397 ../output.py:1401
+#: ../output.py:1436 ../output.py:1459 ../output.py:1463
 #, python-format
 msgid "Installed size: %s"
 msgstr "Tamaina instalatu ondoren: %s"
 
-#: ../output.py:1392
+#: ../output.py:1454
 msgid "There was an error calculating installed size"
 msgstr "Errorea gertatu da instalatu ondoren duen tamaina kalkulatzean"
 
-#: ../output.py:1442
+#: ../output.py:1504
 msgid "Reinstalling"
 msgstr "Berrinstalatzen"
 
-#: ../output.py:1443
+#: ../output.py:1505
 msgid "Downgrading"
 msgstr "Bertsio zaharra instalatzen"
 
-#: ../output.py:1444
+#: ../output.py:1506
 msgid "Installing for dependencies"
 msgstr "Mendekotasunengatik instalatzen"
 
-#: ../output.py:1445
+#: ../output.py:1507
 msgid "Updating for dependencies"
 msgstr "Mendekotasunengatik eguneratzen"
 
-#: ../output.py:1446
+#: ../output.py:1508
 msgid "Removing for dependencies"
 msgstr "Mendekotasunengatik kentzen"
 
-#: ../output.py:1453 ../output.py:1514 ../output.py:1610
+#: ../output.py:1515 ../output.py:1576 ../output.py:1672
 msgid "Skipped (dependency problems)"
 msgstr "Saltatu egin da (mendekotasun-arazoak)"
 
-#: ../output.py:1455 ../output.py:1515 ../output.py:2156
+#: ../output.py:1517 ../output.py:1577 ../output.py:2223
 msgid "Not installed"
 msgstr "Ez instalatua"
 
-#: ../output.py:1456 ../output.py:1516
+#: ../output.py:1518 ../output.py:1578
 msgid "Not available"
 msgstr "Ez dago eskuragarri"
 
-#: ../output.py:1478 ../output.py:1526 ../output.py:1542 ../output.py:2514
+#: ../output.py:1540 ../output.py:1588 ../output.py:1604 ../output.py:2581
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Pakete"
 msgstr[1] "Pakete"
 
-#: ../output.py:1478
+#: ../output.py:1540
 msgid "Arch"
 msgstr "Arkitektura"
 
-#: ../output.py:1479
+#: ../output.py:1541
 msgid "Version"
 msgstr "Bertsioa"
 
-#: ../output.py:1479
+#: ../output.py:1541
 msgid "Repository"
 msgstr "Biltegia"
 
-#: ../output.py:1480
+#: ../output.py:1542
 msgid "Size"
 msgstr "Tamaina"
 
-#: ../output.py:1492
+#: ../output.py:1554
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr "     %s%s%s.%s %s ordezten\n"
 
-#: ../output.py:1501
+#: ../output.py:1563
 #, python-format
 msgid ""
 "\n"
@@ -913,58 +996,58 @@ msgid ""
 "%s\n"
 msgstr "\nTransakzio-laburpena\n%s\n"
 
-#: ../output.py:1506 ../output.py:2309 ../output.py:2310
+#: ../output.py:1568 ../output.py:2376 ../output.py:2377
 msgid "Install"
 msgstr "Instalatu"
 
-#: ../output.py:1508
+#: ../output.py:1570
 msgid "Upgrade"
 msgstr "Bertsio-berritu"
 
-#: ../output.py:1510
+#: ../output.py:1572
 msgid "Remove"
 msgstr "Kendu"
 
-#: ../output.py:1512 ../output.py:2315
+#: ../output.py:1574 ../output.py:2382
 msgid "Reinstall"
 msgstr "Berrinstalatu"
 
-#: ../output.py:1513 ../output.py:2316
+#: ../output.py:1575 ../output.py:2383
 msgid "Downgrade"
 msgstr "Bertsio zaharra instalatu"
 
-#: ../output.py:1544
+#: ../output.py:1606
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] "Mendeko pakete"
 msgstr[1] "Mendeko pakete"
 
-#: ../output.py:1604
+#: ../output.py:1666
 msgid "Removed"
 msgstr "Kendua"
 
-#: ../output.py:1605
+#: ../output.py:1667
 msgid "Dependency Removed"
 msgstr "Mendekotasuna kendu da"
 
-#: ../output.py:1607
+#: ../output.py:1669
 msgid "Dependency Installed"
 msgstr "Mendekotasuna instalatu da"
 
-#: ../output.py:1609
+#: ../output.py:1671
 msgid "Dependency Updated"
 msgstr "Mendekotasuna eguneratu da"
 
-#: ../output.py:1611
+#: ../output.py:1673
 msgid "Replaced"
 msgstr "Ordezkatua"
 
-#: ../output.py:1612
+#: ../output.py:1674
 msgid "Failed"
 msgstr "Huts egin du"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1699
+#: ../output.py:1764
 msgid "two"
 msgstr "bi"
 
@@ -972,7 +1055,7 @@ msgstr "bi"
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
 #. Where "interupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1710
+#: ../output.py:1775
 #, python-format
 msgid ""
 "\n"
@@ -980,542 +1063,542 @@ msgid ""
 "to exit.\n"
 msgstr "\n Uneko deskarga bertan behera utzi da, %sinterrupt (ktrl-c) berriro%s  %s%s%s segundotan\n"
 
-#: ../output.py:1721
+#: ../output.py:1786
 msgid "user interrupt"
 msgstr "erabiltzaileak utzia"
 
-#: ../output.py:1747
+#: ../output.py:1812
 msgid "Total"
 msgstr "Guztira"
 
-#: ../output.py:1769
+#: ../output.py:1834
 msgid "I"
 msgstr "I"
 
-#: ../output.py:1770
+#: ../output.py:1835
 msgid "O"
 msgstr "O"
 
-#: ../output.py:1771
+#: ../output.py:1836
 msgid "E"
 msgstr "E"
 
-#: ../output.py:1772
+#: ../output.py:1837
 msgid "R"
 msgstr "R"
 
-#: ../output.py:1773
+#: ../output.py:1838
 msgid "D"
 msgstr "D"
 
-#: ../output.py:1774
+#: ../output.py:1839
 msgid "U"
 msgstr "U"
 
-#: ../output.py:1788
+#: ../output.py:1853
 msgid "<unset>"
 msgstr "<ezarri gabea>"
 
-#: ../output.py:1789
+#: ../output.py:1854
 msgid "System"
 msgstr "Sistema"
 
-#: ../output.py:1858
+#: ../output.py:1923
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
 msgstr "Batutako %d transakzioa %d-ra saltatzen, teilakatu egiten baitira"
 
-#: ../output.py:1868 ../output.py:2058
+#: ../output.py:1933 ../output.py:2125
 msgid "No transactions"
 msgstr "Ez dago transakziorik"
 
-#: ../output.py:1893 ../output.py:2503 ../output.py:2593
+#: ../output.py:1958 ../output.py:2570 ../output.py:2660
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Transakzio-ID, edo pakete, okerra(k) eman dira"
 
-#: ../output.py:1940
+#: ../output.py:2007
 msgid "Command line"
 msgstr "Komando-lerroa"
 
-#: ../output.py:1942 ../output.py:2391
+#: ../output.py:2009 ../output.py:2458
 msgid "Login user"
 msgstr "Saioa hasteko erabiltzailea"
 
 #. REALLY Needs to use columns!
-#: ../output.py:1943 ../output.py:2512
+#: ../output.py:2010 ../output.py:2579
 msgid "ID"
 msgstr "IDa"
 
-#: ../output.py:1945
+#: ../output.py:2012
 msgid "Date and time"
 msgstr "Data eta ordua"
 
-#: ../output.py:1946 ../output.py:2393 ../output.py:2513
+#: ../output.py:2013 ../output.py:2460 ../output.py:2580
 msgid "Action(s)"
 msgstr "Ekintza(k)"
 
-#: ../output.py:1947 ../output.py:2394
+#: ../output.py:2014 ../output.py:2461
 msgid "Altered"
 msgstr "Aldatua"
 
-#: ../output.py:1994
+#: ../output.py:2061
 msgid "No transaction ID given"
 msgstr "Ez da transakzio-IDrik eman"
 
-#: ../output.py:2020 ../output.py:2459
+#: ../output.py:2087 ../output.py:2526
 msgid "Bad transaction ID given"
 msgstr "Transakzio-ID okerra eman da"
 
-#: ../output.py:2025
+#: ../output.py:2092
 msgid "Not found given transaction ID"
 msgstr "Ez da aurkitu emandako transakzio-IDarekin"
 
-#: ../output.py:2033
+#: ../output.py:2100
 msgid "Found more than one transaction ID!"
 msgstr "Transakzio-ID bat baino gehiago aurkitu da!"
 
-#: ../output.py:2084 ../output.py:2467
+#: ../output.py:2151 ../output.py:2534
 msgid "No transaction ID, or package, given"
 msgstr "Ez da transakzio-IDrik, edo paketerik, eman"
 
-#: ../output.py:2155 ../output.py:2317
+#: ../output.py:2222 ../output.py:2384
 msgid "Downgraded"
 msgstr "Bertsio zaharra instalatua"
 
-#: ../output.py:2157
+#: ../output.py:2224
 msgid "Older"
 msgstr "Zaharragoa"
 
-#: ../output.py:2157
+#: ../output.py:2224
 msgid "Newer"
 msgstr "Berriagoa"
 
-#: ../output.py:2194 ../output.py:2196 ../output.py:2614
+#: ../output.py:2261 ../output.py:2263 ../output.py:2681
 msgid "Transaction ID :"
 msgstr "Transakzio-IDa :"
 
-#: ../output.py:2198 ../output.py:2616
+#: ../output.py:2265 ../output.py:2683
 msgid "Begin time     :"
 msgstr "Hasiera-ordua     :"
 
-#: ../output.py:2201 ../output.py:2203
+#: ../output.py:2268 ../output.py:2270
 msgid "Begin rpmdb    :"
 msgstr "Hasierako rpmdb-a    :"
 
-#: ../output.py:2219
+#: ../output.py:2286
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u segundo)"
 
-#: ../output.py:2221
+#: ../output.py:2288
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u minutu)"
 
-#: ../output.py:2223
+#: ../output.py:2290
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u ordu)"
 
-#: ../output.py:2225
+#: ../output.py:2292
 #, python-format
 msgid "(%u days)"
 msgstr "(%u egun)"
 
-#: ../output.py:2226
+#: ../output.py:2293
 msgid "End time       :"
 msgstr "Amaiera-ordua       :"
 
-#: ../output.py:2229 ../output.py:2231
+#: ../output.py:2296 ../output.py:2298
 msgid "End rpmdb      :"
 msgstr "Amaierako rpmdb-a      :"
 
-#: ../output.py:2234 ../output.py:2236
+#: ../output.py:2301 ../output.py:2303
 msgid "User           :"
 msgstr "Erabiltzailea           :"
 
-#: ../output.py:2240 ../output.py:2243 ../output.py:2245 ../output.py:2247
-#: ../output.py:2249
+#: ../output.py:2307 ../output.py:2310 ../output.py:2312 ../output.py:2314
+#: ../output.py:2316
 msgid "Return-Code    :"
 msgstr "Itzulera-kodea    :"
 
-#: ../output.py:2240 ../output.py:2245
+#: ../output.py:2307 ../output.py:2312
 msgid "Aborted"
 msgstr "Abortatua"
 
-#: ../output.py:2243
+#: ../output.py:2310
 msgid "Failures:"
 msgstr "Hutsegiteak:"
 
-#: ../output.py:2247
+#: ../output.py:2314
 msgid "Failure:"
 msgstr "Hutsegitea:"
 
-#: ../output.py:2249
+#: ../output.py:2316
 msgid "Success"
 msgstr "Arrakasta"
 
-#: ../output.py:2254 ../output.py:2256 ../output.py:2645
+#: ../output.py:2321 ../output.py:2323 ../output.py:2712
 msgid "Command Line   :"
 msgstr "Komando-lerroa   :"
 
-#: ../output.py:2265
+#: ../output.py:2332
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Informazio gehigarri ez-lehenetsia gorde da: %d"
 
 #. This is _possible_, but not common
-#: ../output.py:2270
+#: ../output.py:2337
 msgid "Transaction performed with:"
 msgstr "Transakzioa honekin burutu da:"
 
-#: ../output.py:2274
+#: ../output.py:2341
 msgid "Packages Altered:"
 msgstr "Aldatutako paketeak:"
 
-#: ../output.py:2278
+#: ../output.py:2345
 msgid "Packages Skipped:"
 msgstr "Saltatutako paketeak:"
 
-#: ../output.py:2286
+#: ../output.py:2353
 msgid "Rpmdb Problems:"
 msgstr "Rpmdb-arazoak:"
 
-#: ../output.py:2297
+#: ../output.py:2364
 msgid "Scriptlet output:"
 msgstr "Scriptlet-irteera:"
 
-#: ../output.py:2303
+#: ../output.py:2370
 msgid "Errors:"
 msgstr "Erroreak:"
 
-#: ../output.py:2311
+#: ../output.py:2378
 msgid "Dep-Install"
 msgstr "Mendekotasunak instalatu"
 
-#: ../output.py:2313
+#: ../output.py:2380
 msgid "Obsoleting"
 msgstr "Zaharkitutzat hartzen"
 
-#: ../output.py:2314
+#: ../output.py:2381
 msgid "Erase"
 msgstr "Ezabatu"
 
-#: ../output.py:2318
+#: ../output.py:2385
 msgid "Update"
 msgstr "Eguneratu"
 
-#: ../output.py:2392
+#: ../output.py:2459
 msgid "Time"
 msgstr "Noiz"
 
-#: ../output.py:2418
+#: ../output.py:2485
 msgid "Last day"
 msgstr "Azken eguna"
 
-#: ../output.py:2419
+#: ../output.py:2486
 msgid "Last week"
 msgstr "Azken astea"
 
-#: ../output.py:2420
+#: ../output.py:2487
 msgid "Last 2 weeks"
 msgstr "Azken 2 asteak"
 
 #. US default :p
-#: ../output.py:2421
+#: ../output.py:2488
 msgid "Last 3 months"
 msgstr "Azken 3 hilabeteak"
 
-#: ../output.py:2422
+#: ../output.py:2489
 msgid "Last 6 months"
 msgstr "Azken 6 hilabeteak"
 
-#: ../output.py:2423
+#: ../output.py:2490
 msgid "Last year"
 msgstr "Azken urtea"
 
-#: ../output.py:2424
+#: ../output.py:2491
 msgid "Over a year ago"
 msgstr "Duela urtebete inguru"
 
-#: ../output.py:2471
+#: ../output.py:2538
 #, python-format
 msgid "No Transaction %s found"
 msgstr "Ez da %s transakziorik aurkitu"
 
-#: ../output.py:2477
+#: ../output.py:2544
 msgid "Transaction ID:"
 msgstr "Transakzioaren IDa:"
 
-#: ../output.py:2478
+#: ../output.py:2545
 msgid "Available additional history information:"
 msgstr "Historia-informazio gehigarria eskuragarri:"
 
-#: ../output.py:2491
+#: ../output.py:2558
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: Ez da datu gehigarririk aurkitu izen horrekin"
 
-#: ../output.py:2617
+#: ../output.py:2684
 msgid "Package        :"
 msgstr "Paketea        :"
 
-#: ../output.py:2618
+#: ../output.py:2685
 msgid "State          :"
 msgstr "Egoera          :"
 
-#: ../output.py:2621
+#: ../output.py:2688
 msgid "Size           :"
 msgstr "Tamaina        :"
 
-#: ../output.py:2623
+#: ../output.py:2690
 msgid "Build host     :"
 msgstr "Eraikitze-ostalaria :"
 
-#: ../output.py:2626
+#: ../output.py:2693
 msgid "Build time     :"
 msgstr "Eraikitze-ordua :"
 
-#: ../output.py:2628
+#: ../output.py:2695
 msgid "Packager       :"
 msgstr "Paketatzailea  :"
 
-#: ../output.py:2630
+#: ../output.py:2697
 msgid "Vendor         :"
 msgstr "Hornitzailea   :"
 
-#: ../output.py:2632
+#: ../output.py:2699
 msgid "License        :"
 msgstr "Lizentzia      :"
 
-#: ../output.py:2634
+#: ../output.py:2701
 msgid "URL            :"
 msgstr "URLa           :"
 
-#: ../output.py:2636
+#: ../output.py:2703
 msgid "Source RPM     :"
 msgstr "Jatorrizko RPMa :"
 
-#: ../output.py:2639
+#: ../output.py:2706
 msgid "Commit Time    :"
 msgstr "Egikaritze-ordua :"
 
-#: ../output.py:2641
+#: ../output.py:2708
 msgid "Committer      :"
 msgstr "Bidaltzailea   :"
 
-#: ../output.py:2643
+#: ../output.py:2710
 msgid "Reason         :"
 msgstr "Arrazoia       :"
 
-#: ../output.py:2647
+#: ../output.py:2714
 msgid "From repo      :"
 msgstr "Biltegi honetatik :"
 
-#: ../output.py:2651
+#: ../output.py:2718
 msgid "Installed by   :"
 msgstr "Instalatzailea  :"
 
-#: ../output.py:2655
+#: ../output.py:2722
 msgid "Changed by     :"
 msgstr "Aldatzailea    :"
 
-#: ../output.py:2700
+#: ../output.py:2767
 msgid "installed"
 msgstr "instalatu"
 
-#: ../output.py:2701
+#: ../output.py:2768
 msgid "an update"
 msgstr "eguneraketa bat"
 
-#: ../output.py:2702
+#: ../output.py:2769
 msgid "erased"
 msgstr "ezabatu"
 
-#: ../output.py:2703
+#: ../output.py:2770
 msgid "reinstalled"
 msgstr "berrinstalatu"
 
-#: ../output.py:2704
+#: ../output.py:2771
 msgid "a downgrade"
 msgstr "bertsio-zahartu"
 
-#: ../output.py:2705
+#: ../output.py:2772
 msgid "obsoleting"
 msgstr "zaharkitzen"
 
-#: ../output.py:2706
+#: ../output.py:2773
 msgid "updated"
 msgstr "eguneratua"
 
-#: ../output.py:2707
+#: ../output.py:2774
 msgid "obsoleted"
 msgstr "zaharkitu"
 
-#: ../output.py:2711
+#: ../output.py:2778
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
 msgstr "---> %s.%s %s:%s-%s paketea %s egingo da"
 
-#: ../output.py:2722
+#: ../output.py:2789
 msgid "--> Running transaction check"
 msgstr "--> Transakzio-egiaztapena exekutatzen"
 
-#: ../output.py:2728
+#: ../output.py:2795
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr "--> Mendekotasun-ebazpena berrabiarazten aldaketa berriekin."
 
-#: ../output.py:2734
+#: ../output.py:2801
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Amaitu da mendekotasunen ebazpena"
 
-#: ../output.py:2747 ../output.py:2760
+#: ../output.py:2814 ../output.py:2827
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> Mendekotasuna prozesatzen: %s %s paketerako"
 
-#: ../output.py:2773
+#: ../output.py:2841
 #, python-format
-msgid "---> Keeping package: %s"
-msgstr "---> Paketea mantentzen: %s"
+msgid "---> Keeping package: %s due to %s"
+msgstr ""
 
-#: ../output.py:2782
+#: ../output.py:2850
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Ebatzi gabeko mendekotasuna: %s"
 
-#: ../output.py:2799
+#: ../output.py:2867
 #, python-format
 msgid "Package: %s"
 msgstr "Paketea: %s"
 
-#: ../output.py:2801
+#: ../output.py:2869
 #, python-format
 msgid ""
 "\n"
 "    Requires: %s"
 msgstr "\n    Behar du: %s"
 
-#: ../output.py:2810
+#: ../output.py:2878
 #, python-format
 msgid ""
 "\n"
 "    %s: %s (%s)"
 msgstr "\n    %s: %s (%s)"
 
-#: ../output.py:2815
+#: ../output.py:2883
 #, python-format
 msgid ""
 "\n"
 "        %s"
 msgstr "\n        %s"
 
-#: ../output.py:2817
+#: ../output.py:2885
 msgid ""
 "\n"
 "        Not found"
 msgstr "\n        Ez da aurkitu"
 
 #. These should be the only three things we care about:
-#: ../output.py:2832
+#: ../output.py:2900
 msgid "Updated By"
 msgstr "Eguneratu duena"
 
-#: ../output.py:2833
+#: ../output.py:2901
 msgid "Downgraded By"
 msgstr "Bertsio zaharra hobetsi duena"
 
-#: ../output.py:2834
+#: ../output.py:2902
 msgid "Obsoleted By"
 msgstr "Zaharkitutzat hartu duena"
 
-#: ../output.py:2852
+#: ../output.py:2920
 msgid "Available"
 msgstr "Eskuragarri"
 
-#: ../output.py:2887 ../output.py:2900
+#: ../output.py:2955 ../output.py:2968
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Gatazka prozesatzen: %s-(e)k gatazka du %s-(e)kin"
 
-#: ../output.py:2906
+#: ../output.py:2974
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr "--> Transakzio-multzoa sortzen hautatutako paketeekin. Itxaron mesedez."
 
-#: ../output.py:2915
+#: ../output.py:2983
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr "---> Goiburua deskargatzen %s-(e)rako, transakzio-multzoan sartua izan dadin."
 
 #. self.event(txmbr.name, count, len(base.tsInfo), count, )
 #. (te_current*100L)/te_total
-#: ../output.py:3180
+#: ../output.py:3248
 msgid "Verifying"
 msgstr "Egiaztatzen"
 
-#: ../utils.py:129
+#: ../utils.py:123
 msgid "Running"
 msgstr "Exekutatzen"
 
-#: ../utils.py:130
+#: ../utils.py:124
 msgid "Sleeping"
 msgstr "Lotan"
 
-#: ../utils.py:131
+#: ../utils.py:125
 msgid "Uninterruptible"
 msgstr "Ezin da eten"
 
-#: ../utils.py:132
+#: ../utils.py:126
 msgid "Zombie"
 msgstr "Zonbia"
 
-#: ../utils.py:133
+#: ../utils.py:127
 msgid "Traced/Stopped"
 msgstr "Aztarnatua/Gelditua"
 
-#: ../utils.py:134 ../yumcommands.py:1937
+#: ../utils.py:128 ../yumcommands.py:2193
 msgid "Unknown"
 msgstr "Ezezaguna"
 
-#: ../utils.py:155
+#: ../utils.py:153
 msgid "  The other application is: PackageKit"
 msgstr "  Beste aplikazioa PackageKit da"
 
-#: ../utils.py:157
+#: ../utils.py:155
 #, python-format
 msgid "  The other application is: %s"
 msgstr "  Beste aplikazioa %s da"
 
-#: ../utils.py:160
+#: ../utils.py:158
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
 msgstr "    Memoria: %5s RSS (%5sB VSZ)"
 
-#: ../utils.py:165
+#: ../utils.py:163
 #, python-format
 msgid "    Started: %s - %s ago"
 msgstr "    Hasiera: %s - duela %s"
 
-#: ../utils.py:167
+#: ../utils.py:165
 #, python-format
 msgid "    State  : %s, pid: %d"
 msgstr "    Egoera  : %s, pid: %d"
 
-#: ../utils.py:196 ../yummain.py:43
+#: ../utils.py:194 ../yummain.py:43
 msgid ""
 "\n"
 "\n"
 "Exiting on user cancel"
 msgstr "\n\nIrteten erabiltzaileak bertan behera utzi duelako"
 
-#: ../utils.py:208 ../yummain.py:49
+#: ../utils.py:206 ../yummain.py:49
 msgid ""
 "\n"
 "\n"
 "Exiting on Broken Pipe"
 msgstr "\n\nIrteten kanalizazio hautsiagatik"
 
-#: ../utils.py:210 ../yummain.py:51
+#: ../utils.py:208 ../yummain.py:51
 #, python-format
 msgid ""
 "\n"
@@ -1523,47 +1606,41 @@ msgid ""
 "%s"
 msgstr "\n\n%s"
 
-#: ../utils.py:286 ../yummain.py:140
-msgid ""
-"Another app is currently holding the yum lock; exiting as configured by "
-"exit_on_lock"
-msgstr "Beste aplikazio batek yum blokeatuta dauka; irteten exit_on_lock-en konfiguratuta dagoenari kasu eginez"
-
-#: ../utils.py:352
+#: ../utils.py:326
 #, python-format
 msgid "PluginExit Error: %s"
 msgstr "PluginExit errorea: %s"
 
-#: ../utils.py:355
+#: ../utils.py:329
 #, python-format
 msgid "Yum Error: %s"
 msgstr "Yum errorea: %s"
 
-#: ../utils.py:413 ../yummain.py:167 ../yummain.py:206
+#: ../utils.py:387 ../yummain.py:147 ../yummain.py:186
 #, python-format
 msgid "Error: %s"
 msgstr "Errorea: %s"
 
-#: ../utils.py:417 ../yummain.py:211
+#: ../utils.py:391 ../yummain.py:191
 msgid " You could try using --skip-broken to work around the problem"
 msgstr " --skip-broken erabiltzen saia zaitezke arazoa saihesteko"
 
-#: ../utils.py:419 ../yummain.py:87
+#: ../utils.py:393 ../yummain.py:87
 msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr " rpm -Va --nofiles --nodigest exekutatzen saia zaitezke"
 
-#: ../utils.py:426 ../yummain.py:177 ../yummain.py:219
+#: ../utils.py:400 ../yummain.py:157 ../yummain.py:199
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Errore ezezaguna(k): Irteera-kodea: %d:"
 
-#: ../utils.py:432 ../yummain.py:225
+#: ../utils.py:406 ../yummain.py:205
 msgid ""
 "\n"
 "Dependencies Resolved"
 msgstr "\nMendekotasunak ebatzi dira"
 
-#: ../utils.py:448 ../yummain.py:257
+#: ../utils.py:422 ../yummain.py:237
 msgid "Complete!"
 msgstr "Osatua!"
 
@@ -1602,481 +1679,536 @@ msgstr "Arazoa duen biltegia:  %s"
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "Errorea: Pkgs-en zerrenda bat pasatu behar zaio %s-(e)ri"
 
-#: ../yumcommands.py:112
+#: ../yumcommands.py:114
+#, python-format
+msgid "Error: Need at least two packages to %s"
+msgstr ""
+
+#: ../yumcommands.py:129
+#, python-format
+msgid "Error: Need to pass a repoid. and command to %s"
+msgstr ""
+
+#: ../yumcommands.py:136 ../yumcommands.py:142
+#, python-format
+msgid "Error: Need to pass a single valid repoid. to %s"
+msgstr ""
+
+#: ../yumcommands.py:147
+#, python-format
+msgid "Error: Repo %s is not enabled"
+msgstr ""
+
+#: ../yumcommands.py:164
 msgid "Error: Need an item to match"
 msgstr "Errorea: Bat datorren elementu bat behar da"
 
-#: ../yumcommands.py:126
+#: ../yumcommands.py:178
 msgid "Error: Need a group or list of groups"
 msgstr "Errorea: Talde bat edo taldeen zerrenda bat behar da"
 
-#: ../yumcommands.py:143
+#: ../yumcommands.py:195
 #, python-format
 msgid "Error: clean requires an option: %s"
 msgstr "Errorea: Garbiketak aukera bat behar du: %s"
 
-#: ../yumcommands.py:149
+#: ../yumcommands.py:201
 #, python-format
 msgid "Error: invalid clean argument: %r"
 msgstr "Errorea: baliogabeko garbiketa-argumentua: %r"
 
-#: ../yumcommands.py:164
+#: ../yumcommands.py:216
 msgid "No argument to shell"
 msgstr "Ez dago argumenturik shell-arentzako "
 
-#: ../yumcommands.py:166
+#: ../yumcommands.py:218
 #, python-format
 msgid "Filename passed to shell: %s"
 msgstr "Shell-ari pasatutako fitxategi-izena: %s"
 
-#: ../yumcommands.py:170
+#: ../yumcommands.py:222
 #, python-format
 msgid "File %s given as argument to shell does not exist."
 msgstr "Shell-ari argumentu gisa emandako %s fitxategia ez da existitzen."
 
-#: ../yumcommands.py:176
+#: ../yumcommands.py:228
 msgid "Error: more than one file given as argument to shell."
 msgstr "Errorea: fitxategi bat baino gehiago eman zaio shell-ari argumentu gisa."
 
-#: ../yumcommands.py:195
+#: ../yumcommands.py:247
 msgid ""
 "There are no enabled repos.\n"
 " Run \"yum repolist all\" to see the repos you have.\n"
 " You can enable repos with yum-config-manager --enable <repo>"
 msgstr "Ez dago biltegirik gaituta.\n Exekutatu \"yum repolist all\" dauzkazun biltegiak ikusteko.\n Biltegiak gaitzeko, yum-config-manager --enable <biltegia> erabil dezakezu"
 
-#: ../yumcommands.py:303
+#: ../yumcommands.py:383
 msgid "PACKAGE..."
 msgstr "PAKETEA..."
 
-#: ../yumcommands.py:310
+#: ../yumcommands.py:390
 msgid "Install a package or packages on your system"
 msgstr "Instalatu pakete bat edo gehiago zure sisteman"
 
-#: ../yumcommands.py:341
+#: ../yumcommands.py:421
 msgid "Setting up Install Process"
 msgstr "Instalazio-prozesua konfiguratzen"
 
-#: ../yumcommands.py:367 ../yumcommands.py:427
+#: ../yumcommands.py:447 ../yumcommands.py:507
 msgid "[PACKAGE...]"
 msgstr "[PAKETEA...]"
 
-#: ../yumcommands.py:374
+#: ../yumcommands.py:454
 msgid "Update a package or packages on your system"
 msgstr "Eguneratu zure sistemako pakete bat edo gehiago"
 
-#: ../yumcommands.py:403
+#: ../yumcommands.py:483
 msgid "Setting up Update Process"
 msgstr "Eguneraketa-prozesua konfiguratzen"
 
-#: ../yumcommands.py:434
+#: ../yumcommands.py:514
 msgid "Synchronize installed packages to the latest available versions"
 msgstr "Sinkronizatu instalatutako paketeak eskuragarri dauden azken bertsioetara"
 
-#: ../yumcommands.py:463
+#: ../yumcommands.py:543
 msgid "Setting up Distribution Synchronization Process"
 msgstr "Banaketaren sinkronizazio-prozesua konfiguratzen"
 
-#: ../yumcommands.py:523
+#: ../yumcommands.py:603
 msgid "Display details about a package or group of packages"
 msgstr "Erakutsi pakete bati edo pakete-multzo bati buruzko xehetasunak"
 
-#: ../yumcommands.py:591
+#: ../yumcommands.py:672
 msgid "Installed Packages"
 msgstr "Instalatutako paketeak"
 
-#: ../yumcommands.py:601
+#: ../yumcommands.py:682
 msgid "Available Packages"
 msgstr "Pakete eskuragarriak"
 
-#: ../yumcommands.py:606
+#: ../yumcommands.py:687
 msgid "Extra Packages"
 msgstr "Pakete gehigarriak"
 
-#: ../yumcommands.py:610
+#: ../yumcommands.py:691
 msgid "Updated Packages"
 msgstr "Eguneratutako paketeak"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:618 ../yumcommands.py:625 ../yumcommands.py:1329
+#: ../yumcommands.py:699 ../yumcommands.py:706 ../yumcommands.py:1539
 msgid "Obsoleting Packages"
 msgstr "Paketeak zaharkitutzat hartzen"
 
-#: ../yumcommands.py:627
+#: ../yumcommands.py:708
 msgid "Recently Added Packages"
 msgstr "Berriki gehitutako paketeak"
 
-#: ../yumcommands.py:634
+#: ../yumcommands.py:715
 msgid "No matching Packages to list"
 msgstr "Ez dago bat datorren paketerik zerrendatzeko"
 
-#: ../yumcommands.py:669
+#: ../yumcommands.py:766
 msgid "List a package or groups of packages"
 msgstr "Zerrendatu pakete bat edo pakete-multzo bat"
 
-#: ../yumcommands.py:698
+#: ../yumcommands.py:797
 msgid "Remove a package or packages from your system"
 msgstr "Kendu pakete bat edo gehiago zure sistematik"
 
-#: ../yumcommands.py:727
+#: ../yumcommands.py:845
 msgid "Setting up Remove Process"
 msgstr "Kentze-prozesua konfiguratzen"
 
-#: ../yumcommands.py:786
+#: ../yumcommands.py:906
 msgid "Display, or use, the groups information"
 msgstr "Erakutsi, edo erabili, taldeen informazioa"
 
-#: ../yumcommands.py:789
+#: ../yumcommands.py:909
 msgid "Setting up Group Process"
 msgstr "Talde-prozesua konfiguratzen"
 
-#: ../yumcommands.py:795
+#: ../yumcommands.py:915
 msgid "No Groups on which to run command"
 msgstr "Ez dago talderik komandoa exekutatu ahal izateko"
 
-#: ../yumcommands.py:859
+#: ../yumcommands.py:985
 #, python-format
 msgid "Invalid groups sub-command, use: %s."
 msgstr "Baliogabeko talde-azpikomandoa, erabili: %s."
 
-#: ../yumcommands.py:866
+#: ../yumcommands.py:992
 msgid "There is no installed groups file."
 msgstr "Ez dago instalatutako taldeen fitxategirik."
 
-#: ../yumcommands.py:868
+#: ../yumcommands.py:994
 msgid "You don't have access to the groups DB."
 msgstr "Ez duzu baimenik taldeen DBa ikusteko."
 
-#: ../yumcommands.py:1067
+#: ../yumcommands.py:1256
 msgid "Generate the metadata cache"
 msgstr "Sortu metadatuen katxea"
 
-#: ../yumcommands.py:1093
+#: ../yumcommands.py:1282
 msgid "Making cache files for all metadata files."
 msgstr "Katxe-fitxategiak egiten metadatu-fitxategi guztietarako"
 
-#: ../yumcommands.py:1094
+#: ../yumcommands.py:1283
 msgid "This may take a while depending on the speed of this computer"
 msgstr "Honek denbora behar du, ordenagailu honen abiaduraren araberakoa"
 
-#: ../yumcommands.py:1113
+#: ../yumcommands.py:1312
 msgid "Metadata Cache Created"
 msgstr "Metadatuen katxea sortu da"
 
-#: ../yumcommands.py:1151
+#: ../yumcommands.py:1350
 msgid "Remove cached data"
 msgstr "kendu katxeatutako datuak"
 
-#: ../yumcommands.py:1218
+#: ../yumcommands.py:1417
 msgid "Find what package provides the given value"
 msgstr "Aurkitu zein paketek hornitzen duen emandako balioaz"
 
-#: ../yumcommands.py:1275
+#: ../yumcommands.py:1485
 msgid "Check for available package updates"
 msgstr "Egiaztatu pakete-eguneraketarik dagoen eskuragarri"
 
-#: ../yumcommands.py:1366
+#: ../yumcommands.py:1587
 msgid "Search package details for the given string"
 msgstr "Bilatu pakete-xehetasunak emandako katetik abiatuz"
 
-#: ../yumcommands.py:1392
+#: ../yumcommands.py:1613
 msgid "Searching Packages: "
 msgstr "Paketeak bilatzen: "
 
-#: ../yumcommands.py:1434
+#: ../yumcommands.py:1666
 msgid "Update packages taking obsoletes into account"
 msgstr "Eguneratu paketeak zaharkituak kontuan hartuz"
 
-#: ../yumcommands.py:1464
+#: ../yumcommands.py:1696
 msgid "Setting up Upgrade Process"
 msgstr "Bertsio-berritzearen prozesua konfiguratzen"
 
-#: ../yumcommands.py:1499
+#: ../yumcommands.py:1731
 msgid "Install a local RPM"
 msgstr "Instalatu RPM lokala"
 
-#: ../yumcommands.py:1529
+#: ../yumcommands.py:1761
 msgid "Setting up Local Package Process"
 msgstr "Pakete lokalen prozesua konfiguratzen"
 
-#: ../yumcommands.py:1593
+#: ../yumcommands.py:1825
 msgid "Searching Packages for Dependency:"
 msgstr "Mendekotasunetarako paketeak bilatzen:"
 
-#: ../yumcommands.py:1624
+#: ../yumcommands.py:1867
 msgid "Run an interactive yum shell"
 msgstr "Exekutatu yum shell interaktiboa"
 
-#: ../yumcommands.py:1650
+#: ../yumcommands.py:1893
 msgid "Setting up Yum Shell"
 msgstr "Yum shell konfiguratzen"
 
-#: ../yumcommands.py:1693
+#: ../yumcommands.py:1936
 msgid "List a package's dependencies"
 msgstr "Zerrendatu pakete baten mendekotasunak"
 
-#: ../yumcommands.py:1720
+#: ../yumcommands.py:1963
 msgid "Finding dependencies: "
 msgstr "Mendekotasunak aurkitzen: "
 
-#: ../yumcommands.py:1752
+#: ../yumcommands.py:2005
 msgid "Display the configured software repositories"
 msgstr "Erakutsi konfiguratutako software-biltegiak"
 
-#: ../yumcommands.py:1838 ../yumcommands.py:1839
+#: ../yumcommands.py:2094 ../yumcommands.py:2095
 msgid "enabled"
 msgstr "gaitua"
 
-#: ../yumcommands.py:1865 ../yumcommands.py:1866
+#: ../yumcommands.py:2121 ../yumcommands.py:2122
 msgid "disabled"
 msgstr "desgaitua"
 
-#: ../yumcommands.py:1881
+#: ../yumcommands.py:2137
 msgid "Repo-id      : "
 msgstr "Biltegi-id      : "
 
-#: ../yumcommands.py:1882
+#: ../yumcommands.py:2138
 msgid "Repo-name    : "
 msgstr "Biltegi-izena      : "
 
-#: ../yumcommands.py:1885
+#: ../yumcommands.py:2141
 msgid "Repo-status  : "
 msgstr "Biltegi-egoera  : "
 
-#: ../yumcommands.py:1888
+#: ../yumcommands.py:2144
 msgid "Repo-revision: "
 msgstr "Biltegi-berrikuspena: "
 
-#: ../yumcommands.py:1892
+#: ../yumcommands.py:2148
 msgid "Repo-tags    : "
 msgstr "Biltegi-etiketak    : "
 
-#: ../yumcommands.py:1898
+#: ../yumcommands.py:2154
 msgid "Repo-distro-tags: "
 msgstr "Banaketa-biltegi-etiketak: "
 
-#: ../yumcommands.py:1903
+#: ../yumcommands.py:2159
 msgid "Repo-updated : "
 msgstr "Biltegi-eguneratua: "
 
-#: ../yumcommands.py:1905
+#: ../yumcommands.py:2161
 msgid "Repo-pkgs    : "
 msgstr "Biltegi-pkgs: "
 
-#: ../yumcommands.py:1906
+#: ../yumcommands.py:2162
 msgid "Repo-size    : "
 msgstr "Biltegi-tamaina: "
 
-#: ../yumcommands.py:1913 ../yumcommands.py:1934
+#: ../yumcommands.py:2169 ../yumcommands.py:2190
 msgid "Repo-baseurl : "
 msgstr "Biltegi-baseurl: "
 
-#: ../yumcommands.py:1921
+#: ../yumcommands.py:2177
 msgid "Repo-metalink: "
 msgstr "Biltegi-metaesteka: "
 
-#: ../yumcommands.py:1925
+#: ../yumcommands.py:2181
 msgid "  Updated    : "
 msgstr "  Eguneratua    : "
 
-#: ../yumcommands.py:1928
+#: ../yumcommands.py:2184
 msgid "Repo-mirrors : "
 msgstr "Biltegi-ispiluak: "
 
-#: ../yumcommands.py:1943
+#: ../yumcommands.py:2199
 #, python-format
 msgid "Never (last: %s)"
 msgstr "Inoiz ez (azkena: %s)"
 
-#: ../yumcommands.py:1945
+#: ../yumcommands.py:2201
 #, python-format
 msgid "Instant (last: %s)"
 msgstr "Berehala (azkena: %s)"
 
-#: ../yumcommands.py:1948
+#: ../yumcommands.py:2204
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s segundo (azkena: %s)"
 
-#: ../yumcommands.py:1950
+#: ../yumcommands.py:2206
 msgid "Repo-expire  : "
 msgstr "Biltegi-iraungipena: "
 
-#: ../yumcommands.py:1953
+#: ../yumcommands.py:2209
 msgid "Repo-exclude : "
 msgstr "Biltegi-baztertu: "
 
-#: ../yumcommands.py:1957
+#: ../yumcommands.py:2213
 msgid "Repo-include : "
 msgstr "Biltegi-barneratu: "
 
-#: ../yumcommands.py:1961
+#: ../yumcommands.py:2217
 msgid "Repo-excluded: "
 msgstr "Biltegi-baztertua: "
 
-#: ../yumcommands.py:1965
+#: ../yumcommands.py:2221
 msgid "Repo-filename: "
 msgstr "Biltegi-izena: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:1974 ../yumcommands.py:2003
+#: ../yumcommands.py:2230 ../yumcommands.py:2259
 msgid "repo id"
 msgstr "biltegi id-a"
 
-#: ../yumcommands.py:1991 ../yumcommands.py:1992 ../yumcommands.py:2010
+#: ../yumcommands.py:2247 ../yumcommands.py:2248 ../yumcommands.py:2266
 msgid "status"
 msgstr "egoera"
 
-#: ../yumcommands.py:2004
+#: ../yumcommands.py:2260
 msgid "repo name"
 msgstr "biltegi-izena"
 
-#: ../yumcommands.py:2066
+#: ../yumcommands.py:2332
 msgid "Display a helpful usage message"
 msgstr "Erakutsi erabilera-mezu laguntzailea"
 
-#: ../yumcommands.py:2108
+#: ../yumcommands.py:2374
 #, python-format
 msgid "No help available for %s"
 msgstr "Ez dago laguntzarik %s-(e)rako"
 
-#: ../yumcommands.py:2113
+#: ../yumcommands.py:2379
 msgid ""
 "\n"
 "\n"
 "aliases: "
 msgstr "\n\naliasak: "
 
-#: ../yumcommands.py:2115
+#: ../yumcommands.py:2381
 msgid ""
 "\n"
 "\n"
 "alias: "
 msgstr "\n\naliasa: "
 
-#: ../yumcommands.py:2200
+#: ../yumcommands.py:2466
 msgid "Setting up Reinstall Process"
 msgstr "Berrinstalazio-prozesua konfiguratzen"
 
-#: ../yumcommands.py:2212
+#: ../yumcommands.py:2478
 msgid "reinstall a package"
 msgstr "Berrinstalatu pakete bat"
 
-#: ../yumcommands.py:2275
+#: ../yumcommands.py:2541
 msgid "Setting up Downgrade Process"
 msgstr "Bertsio zaharragoaren instalazio-prozesua konfiguratzen"
 
-#: ../yumcommands.py:2286
+#: ../yumcommands.py:2552
 msgid "downgrade a package"
 msgstr "Pakete baten bertsio zaharragoa instalatu"
 
-#: ../yumcommands.py:2325
+#: ../yumcommands.py:2591
 msgid "Display a version for the machine and/or available repos."
 msgstr "Erakutsi bertsio bat makinarako eta/edo biltegi eskuragarriak."
 
-#: ../yumcommands.py:2377
+#: ../yumcommands.py:2643
 msgid " Yum version groups:"
 msgstr " Yum bertsio-taldeak:"
 
-#: ../yumcommands.py:2387
+#: ../yumcommands.py:2653
 msgid " Group   :"
 msgstr " Taldea   :"
 
-#: ../yumcommands.py:2388
+#: ../yumcommands.py:2654
 msgid " Packages:"
 msgstr " Paketeak:"
 
-#: ../yumcommands.py:2417
+#: ../yumcommands.py:2683
 msgid "Installed:"
 msgstr "Instalatua:"
 
-#: ../yumcommands.py:2425
+#: ../yumcommands.py:2691
 msgid "Group-Installed:"
 msgstr "Talde-instalatua:"
 
-#: ../yumcommands.py:2434
+#: ../yumcommands.py:2700
 msgid "Available:"
 msgstr "Eskuragarri:"
 
-#: ../yumcommands.py:2443
+#: ../yumcommands.py:2709
 msgid "Group-Available:"
 msgstr "Talde-eskuragarri:"
 
-#: ../yumcommands.py:2507
+#: ../yumcommands.py:2783
 msgid "Display, or use, the transaction history"
 msgstr "Erakutsi, edo erabili, transakzio-historia"
 
-#: ../yumcommands.py:2601
+#: ../yumcommands.py:2876 ../yumcommands.py:2880
 msgid "Transactions:"
 msgstr "Transakzioak:"
 
-#: ../yumcommands.py:2602
+#: ../yumcommands.py:2881
 msgid "Begin time  :"
 msgstr "Hasiera-ordua     :"
 
-#: ../yumcommands.py:2603
+#: ../yumcommands.py:2882
 msgid "End time    :"
 msgstr "Amaiera-ordua       :"
 
-#: ../yumcommands.py:2604
+#: ../yumcommands.py:2883
 msgid "Counts      :"
 msgstr "Zenbaketa   :"
 
-#: ../yumcommands.py:2605
+#: ../yumcommands.py:2884
 msgid "  NEVRAC :"
 msgstr "  NEVRAC :"
 
-#: ../yumcommands.py:2606
+#: ../yumcommands.py:2885
 msgid "  NEVRA  :"
 msgstr "  NEVRA  :"
 
-#: ../yumcommands.py:2607
+#: ../yumcommands.py:2886
 msgid "  NA     :"
 msgstr "  NA     :"
 
-#: ../yumcommands.py:2608
+#: ../yumcommands.py:2887
 msgid "  NEVR   :"
 msgstr "  NEVR   :"
 
-#: ../yumcommands.py:2609
+#: ../yumcommands.py:2888
 msgid "  rpm DB :"
 msgstr "  rpm DB :"
 
-#: ../yumcommands.py:2610
+#: ../yumcommands.py:2889
 msgid "  yum DB :"
 msgstr "  yum DB :"
 
-#: ../yumcommands.py:2643
+#: ../yumcommands.py:2922
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr "Baliogabeko historia-azpikomandoa, erabili: %s."
 
-#: ../yumcommands.py:2650
+#: ../yumcommands.py:2929
 msgid "You don't have access to the history DB."
 msgstr "Ez daukazu historiaren DBra sartzeko baimenik."
 
-#: ../yumcommands.py:2742
+#: ../yumcommands.py:3036
 msgid "Check for problems in the rpmdb"
 msgstr "Begiratu arazorik dagoen rpmdb-an"
 
-#: ../yumcommands.py:2807
+#: ../yumcommands.py:3102
 msgid "load a saved transaction from filename"
 msgstr "kargatu gordetako transakzio bat fitxategi-izen batetik"
 
-#: ../yumcommands.py:2824
+#: ../yumcommands.py:3119
 msgid "No saved transaction file specified."
 msgstr "Ez da gordetako transakzioaren fitxategia adierazi."
 
-#: ../yumcommands.py:2828
+#: ../yumcommands.py:3123
 #, python-format
 msgid "loading transaction from %s"
 msgstr "transakzioa kargatzen %s fitxategitik"
 
-#: ../yumcommands.py:2834
+#: ../yumcommands.py:3129
 #, python-format
 msgid "Transaction loaded from %s with %s members"
 msgstr "Transakzioa kargatua %s-(e)tik, %s kide"
+
+#: ../yumcommands.py:3169
+msgid "Simple way to swap packages, isntead of using shell"
+msgstr ""
+
+#: ../yumcommands.py:3264
+msgid ""
+"Treat a repo. as a group of packages, so we can install/remove all of them"
+msgstr ""
+
+#: ../yumcommands.py:3341
+#, python-format
+msgid "%d package to update"
+msgid_plural "%d packages to update"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../yumcommands.py:3370
+#, python-format
+msgid "%d package to remove/reinstall"
+msgid_plural "%d packages to remove/reinstall"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../yumcommands.py:3413
+#, python-format
+msgid "%d package to remove/sync"
+msgid_plural "%d packages to remove/sync"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../yumcommands.py:3417
+#, python-format
+msgid "Not a valid sub-command of %s"
+msgstr ""
 
 #. This is mainly for PackageSackError from rpmdb.
 #: ../yummain.py:84
@@ -2084,36 +2216,27 @@ msgstr "Transakzioa kargatua %s-(e)tik, %s kide"
 msgid " Yum checks failed: %s"
 msgstr " Yum egiaztapenak huts egin du: %s"
 
-#: ../yummain.py:110
+#: ../yummain.py:98
 msgid "No read/execute access in current directory, moving to /"
 msgstr "Ez dago irakurtzeko/exekutatzeko baimenik uneko direktorioan, errora mugitzen"
 
-#: ../yummain.py:118
+#: ../yummain.py:106
 msgid "No getcwd() access in current directory, moving to /"
 msgstr "Ez dago getcwd() atzipenik uneko direktorioan, errora mugitzen"
 
-#: ../yummain.py:130
-msgid "Can't create lock file; exiting"
-msgstr "Ezin izan da fitxategia blokeatu; irteten"
-
-#: ../yummain.py:134
-msgid ""
-"Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Beste aplikazio batek yum blokeatuta dauka; irten dadin itxaroten..."
-
 #. Depsolve stage
-#: ../yummain.py:184
+#: ../yummain.py:164
 msgid "Resolving Dependencies"
 msgstr "Mendekotasunak ebazten"
 
-#: ../yummain.py:247 ../yummain.py:255
+#: ../yummain.py:227 ../yummain.py:235
 #, python-format
 msgid ""
 "Your transaction was saved, rerun it with:\n"
 " yum load-transaction %s"
 msgstr "Zure transakzioa gorde egin da, berrexekutatzeko erabili hau:\n yum load-transacion %s"
 
-#: ../yummain.py:332
+#: ../yummain.py:312
 msgid ""
 "\n"
 "\n"
@@ -2143,7 +2266,7 @@ msgstr "Bilatzen pkgSack mendekotasunetarako: %s"
 msgid "Member: %s"
 msgstr "Kidea: %s"
 
-#: ../yum/depsolve.py:283 ../yum/depsolve.py:916
+#: ../yum/depsolve.py:283 ../yum/depsolve.py:937
 #, python-format
 msgid "%s converted to install"
 msgstr "%s bihurtu instalatzeko"
@@ -2200,326 +2323,380 @@ msgstr "pkg-rako moduak %s-(e)az hornitzen: %s"
 msgid "Trying to update %s to resolve dep"
 msgstr "%s eguneratzen saiatzen dep konpontzeko"
 
-#: ../yum/depsolve.py:480 ../yum/depsolve.py:490
+#: ../yum/depsolve.py:480
 #, python-format
 msgid "No update paths found for %s. Failure!"
 msgstr "Ez da eguneratze-biderik aurkitu %s-(e)rako Hutsegitea!"
 
-#: ../yum/depsolve.py:496
+#: ../yum/depsolve.py:491
+#, python-format
+msgid "No update paths found for %s. Failure due to requirement: %s!"
+msgstr ""
+
+#: ../yum/depsolve.py:507
+#, python-format
+msgid "Update for %s. Doesn't fix requirement: %s!"
+msgstr ""
+
+#: ../yum/depsolve.py:514
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr "TSINFO: %s paketeak behar duen %s ezabatzeko markatu da"
 
-#: ../yum/depsolve.py:509
+#: ../yum/depsolve.py:527
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr "TSINFO: %s zaharkitu bihurtzen %s ordez, mendekotasuna konpontzeko."
 
-#: ../yum/depsolve.py:512
+#: ../yum/depsolve.py:530
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: %s eguneratzen mendekotasuna konpontzeko."
 
-#: ../yum/depsolve.py:520
+#: ../yum/depsolve.py:538
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "Ezin da eguneraketa-biderik aurkitu %s-(e)rako"
 
-#: ../yum/depsolve.py:551
+#: ../yum/depsolve.py:569
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "%s-(r)en bat etortze azkarra %s-(e)rako behar delako"
 
 #. is it already installed?
-#: ../yum/depsolve.py:593
+#: ../yum/depsolve.py:611
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr "%s hornitutako paketeetan dago baina jadanik instalatuta dago, kentzen."
 
-#: ../yum/depsolve.py:609
+#: ../yum/depsolve.py:627
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr "Konponketak ekar ditzakeen %s paketeak instantzia berria du ts-n."
 
-#: ../yum/depsolve.py:620
+#: ../yum/depsolve.py:638
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr "Konponketak ekar ditzakeen %s paketeak instantzia berria du instalatuta."
 
-#: ../yum/depsolve.py:638
+#: ../yum/depsolve.py:656
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "%s jadanik tx-en, saltatzen hau"
 
-#: ../yum/depsolve.py:687
+#: ../yum/depsolve.py:705
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: %s markatzen %s-(r)en eguneraketa gisa"
 
-#: ../yum/depsolve.py:696
+#: ../yum/depsolve.py:714
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: %s markatzen %s-(r)en instalazio gisa"
 
-#: ../yum/depsolve.py:831 ../yum/depsolve.py:946
+#: ../yum/depsolve.py:849 ../yum/depsolve.py:967
 msgid "Success - empty transaction"
 msgstr "Arrakasta - transakzio hutsa"
 
-#: ../yum/depsolve.py:871 ../yum/depsolve.py:906
+#: ../yum/depsolve.py:889 ../yum/depsolve.py:927
 msgid "Restarting Loop"
 msgstr "Berrabiarazten begizta"
 
-#: ../yum/depsolve.py:926
+#: ../yum/depsolve.py:947
 msgid "Dependency Process ending"
 msgstr "Amaitzen mendekotasun-prozesatzea"
 
-#: ../yum/depsolve.py:948
+#: ../yum/depsolve.py:969
 msgid "Success - deps resolved"
 msgstr "Arrakasta - mendekotasunak konpondu dira"
 
-#: ../yum/depsolve.py:972
+#: ../yum/depsolve.py:993
 #, python-format
 msgid "Checking deps for %s"
 msgstr "%s-(r)en mendekotasunak egiaztatzen"
 
-#: ../yum/depsolve.py:1061
+#: ../yum/depsolve.py:1082
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "%s bilatzen %s-(e)k behar duelako"
 
-#: ../yum/depsolve.py:1304
+#: ../yum/depsolve.py:1349
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "compare_providers() exekutatzen %s-(e)rako"
 
-#: ../yum/depsolve.py:1331 ../yum/depsolve.py:1337
+#: ../yum/depsolve.py:1376 ../yum/depsolve.py:1382
 #, python-format
 msgid "better arch in po %s"
 msgstr "Arkitektura hobea %s po-an"
 
-#: ../yum/depsolve.py:1451
+#: ../yum/depsolve.py:1496
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "%s-(e)k %s zaharkitu bihurtzen du"
 
-#: ../yum/depsolve.py:1463
+#: ../yum/depsolve.py:1508
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
 "  Winner: %s"
 msgstr "%s eta %s alderatu dira %s-(e)n\n  Irabazlea: %s"
 
-#: ../yum/depsolve.py:1471
+#: ../yum/depsolve.py:1516
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "%s eta %s sourcerpm komuna"
 
-#: ../yum/depsolve.py:1475
+#: ../yum/depsolve.py:1520
 #, python-format
 msgid "base package %s is installed for %s"
 msgstr "%s oinarrizko paketea instalatu da %s-(e)rako"
 
-#: ../yum/depsolve.py:1481
+#: ../yum/depsolve.py:1526
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "%s-(r)en aurrizki komuna %s eta %s artean"
 
-#: ../yum/depsolve.py:1498
+#: ../yum/depsolve.py:1543
 #, python-format
 msgid "provides vercmp: %s"
 msgstr "vercmp hornitzen du: %s"
 
-#: ../yum/depsolve.py:1502 ../yum/depsolve.py:1536
+#: ../yum/depsolve.py:1547 ../yum/depsolve.py:1581
 #, python-format
 msgid " Winner: %s"
 msgstr " Irabazlea: %s"
 
-#: ../yum/depsolve.py:1532
+#: ../yum/depsolve.py:1577
 #, python-format
 msgid "requires minimal: %d"
 msgstr "minimoa behar du: %d"
 
-#: ../yum/depsolve.py:1541
+#: ../yum/depsolve.py:1586
 #, python-format
 msgid " Loser(with %d): %s"
 msgstr " Galtzailea (%d-(r)ekin): %s"
 
-#: ../yum/depsolve.py:1557
+#: ../yum/depsolve.py:1602
 #, python-format
 msgid "Best Order: %s"
 msgstr "Ordenarik onena: %s"
 
-#: ../yum/__init__.py:266
+#: ../yum/__init__.py:274
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr "doConfigSetup() desagertu egingo da yum-en etorkizuneko bertsio batean.\n"
 
-#: ../yum/__init__.py:554
+#: ../yum/__init__.py:553
+#, python-format
+msgid "Skipping unreadable repository %s"
+msgstr ""
+
+#: ../yum/__init__.py:572
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
 msgstr "%r biltegia: Errorea konfigurazioa analizatzean: %s"
 
-#: ../yum/__init__.py:560
+#: ../yum/__init__.py:578
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr "%r biltegiak ez du izenik konfigurazioan, id erabiltzen"
 
-#: ../yum/__init__.py:598
+#: ../yum/__init__.py:618
 msgid "plugins already initialised"
 msgstr "pluginak jadanik hasieratu dira"
 
-#: ../yum/__init__.py:607
+#: ../yum/__init__.py:627
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr "doRpmDBSetup() desagertu egingo da yum-en etorkizuneko bertsio batean.\n"
 
-#: ../yum/__init__.py:618
+#: ../yum/__init__.py:638
 msgid "Reading Local RPMDB"
 msgstr "RPMDB lokala irakurtzen"
 
-#: ../yum/__init__.py:648
+#: ../yum/__init__.py:668
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "doRepoSetup() desagertu egingo da yum-en etorkizuneko bertsio batean.\n"
 
-#: ../yum/__init__.py:719
+#: ../yum/__init__.py:722
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "doSackSetup() desagertu egingo da yum-en etorkizuneko bertsio batean.\n"
 
-#: ../yum/__init__.py:749
+#: ../yum/__init__.py:752
 msgid "Setting up Package Sacks"
 msgstr "Pakete-multzoak konfiguratzen"
 
-#: ../yum/__init__.py:794
+#: ../yum/__init__.py:797
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "%s biltegiaren biltegi-objektuak ez dauka _resetSack metodorik\n"
 
-#: ../yum/__init__.py:795
+#: ../yum/__init__.py:798
 msgid "therefore this repo cannot be reset.\n"
 msgstr "beraz, biltegi hau ezin da berrezarri.\n"
 
-#: ../yum/__init__.py:803
+#: ../yum/__init__.py:806
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "doUpdateSetup() desagertu egingo da yum-en etorkizuneko bertsio batean.\n"
 
-#: ../yum/__init__.py:815
+#: ../yum/__init__.py:818
 msgid "Building updates object"
 msgstr "Eguneraketa-objektua eraikitzen"
 
-#: ../yum/__init__.py:859
+#: ../yum/__init__.py:862
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "doGroupSetup() desagertu egingo da yum-en etorkizuneko bertsio batean.\n"
 
-#: ../yum/__init__.py:884
+#: ../yum/__init__.py:887
 msgid "Getting group metadata"
 msgstr "Taldeen metadatuak eskuratzen"
 
-#: ../yum/__init__.py:912
+#: ../yum/__init__.py:915
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "Biltegiko talde-fitxategia gehitzen: %s"
 
-#: ../yum/__init__.py:923
+#: ../yum/__init__.py:918
+#, python-format
+msgid "Failed to retrieve group file for repository: %s"
+msgstr ""
+
+#: ../yum/__init__.py:924
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Taldeen fitxategiak biltegitik gehitzeak huts egin du: %s - %s"
 
-#: ../yum/__init__.py:929
+#: ../yum/__init__.py:930
 msgid "No Groups Available in any repository"
 msgstr "Ez dago talderik eskuragarri biltegietan"
 
-#: ../yum/__init__.py:944
+#: ../yum/__init__.py:945
 msgid "Getting pkgtags metadata"
 msgstr "pkgtags metadatuak eskuratzen"
 
-#: ../yum/__init__.py:954
+#: ../yum/__init__.py:955
 #, python-format
 msgid "Adding tags from repository: %s"
 msgstr "Etiketak gehitzen biltegitik: %s"
 
-#: ../yum/__init__.py:965
+#: ../yum/__init__.py:966
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
 msgstr "Ezin izan dira Pkg etiketak gehitu biltegitik: %s - %s"
 
-#: ../yum/__init__.py:1058
+#: ../yum/__init__.py:1059
 msgid "Importing additional filelist information"
 msgstr "Fitxategi-zerrendaren informazio gehigarria inportatzen"
 
-#: ../yum/__init__.py:1076
+#: ../yum/__init__.py:1077
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "%s%s%s programa yum-utils paketean dago."
 
-#: ../yum/__init__.py:1093
+#: ../yum/__init__.py:1094
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
 msgstr "Amaitu gabeko transakzioak geratu dira. Lehenengo yum-complete-transaction exekutatu beharko zenuke haiek amaitzeko."
 
-#: ../yum/__init__.py:1110
+#: ../yum/__init__.py:1111
 msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Behar ez diren gainerako mendekotasunak aurkitzen"
 
-#: ../yum/__init__.py:1168
+#: ../yum/__init__.py:1169
 #, python-format
 msgid "Protected multilib versions: %s != %s"
 msgstr "Babestutako multilib bertsioak: %s != %s"
 
-#: ../yum/__init__.py:1223
+#. People are confused about protected mutilib ... so give
+#. them a nicer message.
+#: ../yum/__init__.py:1173
+#, python-format
+msgid ""
+" Multilib version problems found. This often means that the root\n"
+"cause is something else and multilib version checking is just\n"
+"pointing out that there is a problem. Eg.:\n"
+"\n"
+"  1. You have an upgrade for %(name)s which is missing some\n"
+"     dependency that another package requires. Yum is trying to\n"
+"     solve this by installing an older version of %(name)s of the\n"
+"     different architecture. If you exclude the bad architecture\n"
+"     yum will tell you what the root cause is (which package\n"
+"     requires what). You can try redoing the upgrade with\n"
+"     --exclude %(name)s.otherarch ... this should give you an error\n"
+"     message showing the root cause of the problem.\n"
+"\n"
+"  2. You have multiple architectures of %(name)s installed, but\n"
+"     yum can only see an upgrade for one of those arcitectures.\n"
+"     If you don't want/need both architectures anymore then you\n"
+"     can remove the one with the missing update and everything\n"
+"     will work.\n"
+"\n"
+"  3. You have duplicate versions of %(name)s installed already.\n"
+"     You can use \"yum check\" to get yum show these errors.\n"
+"\n"
+"...you can also use --setopt=protected_multilib=false to remove\n"
+"this checking, however this is almost never the correct thing to\n"
+"do as something else is very likely to go wrong (often causing\n"
+"much more problems).\n"
+"\n"
+msgstr ""
+
+#: ../yum/__init__.py:1257
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
 msgstr "Babestuta dagoen \"%s\" kentzen saiatzen"
 
-#: ../yum/__init__.py:1344
+#: ../yum/__init__.py:1378
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
 msgstr "\nMendekotasun-arazoengatik saltatutako paketeak:"
 
-#: ../yum/__init__.py:1348
+#: ../yum/__init__.py:1382
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s %s-(e)tik"
 
 #. FIXME: _N()
-#: ../yum/__init__.py:1520
+#: ../yum/__init__.py:1556
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
 msgstr "** Aurretiaz existitzen ziren %d rpmdb arazo aurkitu dira, 'yum check' aginduak hurrengoa ematen du:"
 
-#: ../yum/__init__.py:1524
+#: ../yum/__init__.py:1560
 msgid "Warning: RPMDB altered outside of yum."
 msgstr "Abisua: RPMDB yum-etik kanpo aldatu da."
 
-#: ../yum/__init__.py:1536
+#: ../yum/__init__.py:1572
 msgid "missing requires"
 msgstr "galdutako betebeharrak"
 
-#: ../yum/__init__.py:1537
+#: ../yum/__init__.py:1573
 msgid "installed conflict"
 msgstr "gatazka instalazioan"
 
-#: ../yum/__init__.py:1673
+#: ../yum/__init__.py:1709
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr "Abisua: transakzioan zehar erroreak scriptlet-ekin edo beste errore ez-larri batzuk gertatu dira"
 
-#: ../yum/__init__.py:1683
+#: ../yum/__init__.py:1719
 msgid "Transaction couldn't start:"
 msgstr "Transakzioa ezin izan da abiarazi:"
 
 #. should this be 'to_unicoded'?
-#: ../yum/__init__.py:1686
+#: ../yum/__init__.py:1722
 msgid "Could not run transaction."
 msgstr "Ezin izan da transakzioa exekutatu."
 
-#: ../yum/__init__.py:1700
+#: ../yum/__init__.py:1736
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "%s transakzio-fitxategia kentzeak huts egin du"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1756
+#: ../yum/__init__.py:1792
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s instalatuko zela uste zen baina ez dago instalatuta!"
@@ -2529,462 +2706,482 @@ msgstr "%s instalatuko zela uste zen baina ez dago instalatuta!"
 #. Note: This actually triggers atm. because we can't
 #. always find the erased txmbr to set it when
 #. we should.
-#: ../yum/__init__.py:1833
+#: ../yum/__init__.py:1869
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s kenduko zela uste zen baina ez da kendu!"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1968
+#: ../yum/__init__.py:2004
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "%s blokeoa existitzen da: beste kopia bat %s PIDarekin ari da exekutatzen"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:2017
+#: ../yum/__init__.py:2053
 #, python-format
 msgid "Could not create lock at %s: %s "
 msgstr "Ezin izan da blokeoa sortu %s-(e)n: %s "
 
-#: ../yum/__init__.py:2029
+#: ../yum/__init__.py:2065
 #, python-format
 msgid "Could not open lock %s: %s"
 msgstr "Ezin da %s blokeoa ireki: %s"
 
 #. The pid doesn't exist
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:2046
+#: ../yum/__init__.py:2082
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "Ezin izan da egiaztatu %s PIDa aktibo dagoen ala ez"
 
-#: ../yum/__init__.py:2096
+#: ../yum/__init__.py:2132
 #, python-format
 msgid ""
 "Package does not match intended download. Suggestion: run yum "
 "--enablerepo=%s clean metadata"
 msgstr "Paketea ez dator bat esandako deskargarekin. Iradokizuna: exekutatu yum --enablerepo=%s clean metadata"
 
-#: ../yum/__init__.py:2119
+#: ../yum/__init__.py:2155
 msgid "Could not perform checksum"
 msgstr "Ezin izan da checksum-a egin"
 
-#: ../yum/__init__.py:2122
+#: ../yum/__init__.py:2158
 msgid "Package does not match checksum"
 msgstr "Paketea ez dator bat checksum-arekin"
 
-#: ../yum/__init__.py:2185
+#: ../yum/__init__.py:2222
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr "paketeak huts egin du checksum-ean baina katxea gaituta dago %s-(e)rako"
 
-#: ../yum/__init__.py:2188 ../yum/__init__.py:2218
+#: ../yum/__init__.py:2225 ../yum/__init__.py:2268
 #, python-format
 msgid "using local copy of %s"
 msgstr "%s-(r)en kopia lokala erabiltzen"
 
-#: ../yum/__init__.py:2296
+#. caller handles errors
+#: ../yum/__init__.py:2342
+msgid "exiting because --downloadonly specified"
+msgstr ""
+
+#: ../yum/__init__.py:2371
 msgid "Header is not complete."
 msgstr "Goiburua ez dago osorik."
 
-#: ../yum/__init__.py:2336
+#: ../yum/__init__.py:2411
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr "Goiburua ez dago katxe lokalean eta katxea-bakarrik modua dago gaituta. Ezin da %s deskargatu"
 
-#: ../yum/__init__.py:2396
+#: ../yum/__init__.py:2471
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s-(r)entzako gako publikoa ez dago instalatuta"
 
-#: ../yum/__init__.py:2400
+#: ../yum/__init__.py:2475
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Arazoa %s paketea irekitzen"
 
-#: ../yum/__init__.py:2408
+#: ../yum/__init__.py:2483
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s-(r)entzako gako publikoa ez da fidagarria"
 
-#: ../yum/__init__.py:2412
+#: ../yum/__init__.py:2487
 #, python-format
 msgid "Package %s is not signed"
 msgstr "%s paketea ez dago sinatuta"
 
-#: ../yum/__init__.py:2454
+#: ../yum/__init__.py:2529
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Ezin da %s kendu"
 
-#: ../yum/__init__.py:2458
+#: ../yum/__init__.py:2533
 #, python-format
 msgid "%s removed"
 msgstr "%s kendu da"
 
-#: ../yum/__init__.py:2519
+#: ../yum/__init__.py:2594
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Ezin da %s fitxategi %s kendu"
 
-#: ../yum/__init__.py:2523
+#: ../yum/__init__.py:2598
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s fitxategi %s kendu da"
 
-#: ../yum/__init__.py:2525
+#: ../yum/__init__.py:2600
 #, python-format
 msgid "%d %s file removed"
 msgid_plural "%d %s files removed"
 msgstr[0] "Fitxategi %d %s kendu da"
 msgstr[1] "%d %s fitxategi kendu dira"
 
-#: ../yum/__init__.py:2627
+#: ../yum/__init__.py:2712
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Bat etortze bat baino gehiago dago multzoan %s(e)rako"
 
-#: ../yum/__init__.py:2633
+#: ../yum/__init__.py:2718
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Ezer ez dator bat %s-(r)ekin.%s %s:%s-%s eguneraketatik"
 
-#: ../yum/__init__.py:2997
+#: ../yum/__init__.py:3096
 msgid ""
 "searchPackages() will go away in a future version of Yum."
 "                      Use searchGenerator() instead. \n"
 msgstr "searchPackages() desagertu egingo da yum-en etorkizuneko bertsio batean.                      Erabili searchGenerator() haren ordez. \n"
 
-#: ../yum/__init__.py:3053
+#: ../yum/__init__.py:3149
 #, python-format
 msgid "Searching %d package"
 msgid_plural "Searching %d packages"
 msgstr[0] "Pakete %d bilatzen"
 msgstr[1] "%d pakete bilatzen"
 
-#: ../yum/__init__.py:3057
+#: ../yum/__init__.py:3153
 #, python-format
 msgid "searching package %s"
 msgstr "Pakete %s bilatzen"
 
-#: ../yum/__init__.py:3069
+#: ../yum/__init__.py:3165
 msgid "searching in file entries"
 msgstr "fitxategi-sarreretan bilatzen"
 
-#: ../yum/__init__.py:3076
+#: ../yum/__init__.py:3172
 msgid "searching in provides entries"
 msgstr "hornitze-sarreretan bilatzen"
 
-#: ../yum/__init__.py:3213
+#: ../yum/__init__.py:3369
 msgid "No group data available for configured repositories"
 msgstr "Ez dago talde-daturik eskuragarri konfiguratutako biltegietarako"
 
-#: ../yum/__init__.py:3271 ../yum/__init__.py:3298 ../yum/__init__.py:3334
-#: ../yum/__init__.py:3340 ../yum/__init__.py:3469 ../yum/__init__.py:3473
-#: ../yum/__init__.py:3939
+#: ../yum/__init__.py:3466 ../yum/__init__.py:3500 ../yum/__init__.py:3576
+#: ../yum/__init__.py:3582 ../yum/__init__.py:3719 ../yum/__init__.py:3723
+#: ../yum/__init__.py:4298
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Ez da existitzen %s deritzon talderik"
 
-#: ../yum/__init__.py:3310 ../yum/__init__.py:3489
+#: ../yum/__init__.py:3512 ../yum/__init__.py:3740
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "%s paketea ez da markatua izan %s taldean"
 
 #. (upgrade and igroup_data[pkg] == 'available')):
-#: ../yum/__init__.py:3376
+#: ../yum/__init__.py:3622
 #, python-format
 msgid "Skipping package %s from group %s"
 msgstr "%s paketea (%s taldekoa) saltatzen"
 
-#: ../yum/__init__.py:3382
+#: ../yum/__init__.py:3628
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "%s taldeko %s paketea gehitzen"
 
-#: ../yum/__init__.py:3402
+#: ../yum/__init__.py:3649
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "Ez dago %s izeneko paketerik eskuragarri instalatua izateko"
 
-#: ../yum/__init__.py:3453
+#: ../yum/__init__.py:3702
 #, python-format
-msgid "Warning: Group %s does not have any packages."
-msgstr "Abisua: %s taldeak ez du paketerik."
+msgid "Warning: Group %s does not have any packages to install."
+msgstr ""
 
-#: ../yum/__init__.py:3455
+#: ../yum/__init__.py:3704
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
 msgstr "%s taldeak %u baldintza-pakete ditu, instalatuak izan daitezkeenak."
 
+#: ../yum/__init__.py:3794
+#, python-format
+msgid "Skipping group %s from environment %s"
+msgstr ""
+
 #. This can happen due to excludes after .up has
 #. happened.
-#: ../yum/__init__.py:3527
+#: ../yum/__init__.py:3858
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "%s pakete-tuplea ez da aurkitu pakete-multzoan"
 
-#: ../yum/__init__.py:3555
+#: ../yum/__init__.py:3886
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr "%s pakete-tuplea ez da aurkitu rpmdb-n"
 
-#: ../yum/__init__.py:3618 ../yum/__init__.py:3681
+#: ../yum/__init__.py:3949 ../yum/__init__.py:4012
 #, python-format
 msgid "Invalid version flag from: %s"
 msgstr "Baliogabeko bertsio-bandera: %s"
 
-#: ../yum/__init__.py:3642 ../yum/__init__.py:3648 ../yum/__init__.py:3705
-#: ../yum/__init__.py:3711
+#: ../yum/__init__.py:3973 ../yum/__init__.py:3979 ../yum/__init__.py:4036
+#: ../yum/__init__.py:4042
 #, python-format
 msgid "No Package found for %s"
 msgstr "Ez da paketerik aurkitu %s-(e)rako"
 
-#: ../yum/__init__.py:4023
+#: ../yum/__init__.py:4245 ../yum/__init__.py:4274
+#, python-format
+msgid "Warning: Environment Group %s does not exist."
+msgstr ""
+
+#: ../yum/__init__.py:4397
+#, python-format
+msgid "Package: %s - can't co-install with %s"
+msgstr ""
+
+#: ../yum/__init__.py:4437
 msgid "Package Object was not a package object instance"
 msgstr "Package Object ez da pakete-objektuen instantzia bat"
 
-#: ../yum/__init__.py:4027
+#: ../yum/__init__.py:4441
 msgid "Nothing specified to install"
 msgstr "Ez da instalatzeko ezer zehaztu"
 
-#: ../yum/__init__.py:4046 ../yum/__init__.py:4957
+#: ../yum/__init__.py:4465 ../yum/__init__.py:5410
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Hornitze birtualen edo fitxategi-hornitzeen bila %s-(e)rako"
 
-#: ../yum/__init__.py:4121
+#: ../yum/__init__.py:4542
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "%s paketea instalatuta dago eta ez dago eskuragarri"
 
-#: ../yum/__init__.py:4124
+#: ../yum/__init__.py:4545
 msgid "No package(s) available to install"
 msgstr "Ez dago paketerik eskuragarri instalatua izateko"
 
-#: ../yum/__init__.py:4136
+#: ../yum/__init__.py:4557
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "Paketea: %s - jadanik transakzio-multzoan"
 
-#: ../yum/__init__.py:4164
+#: ../yum/__init__.py:4589
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "%s paketea zaharkitua dago, bere ordezkoa den %s paketea instalatuta dago"
 
-#: ../yum/__init__.py:4169
+#: ../yum/__init__.py:4594
 #, python-format
 msgid ""
 "Package %s is obsoleted by %s, but obsoleting package does not provide for "
 "requirements"
 msgstr "%s paketea zaharkitua dago, eta bere ordezkoa den %s paketeak ez ditu eskakizunak betetzen"
 
-#: ../yum/__init__.py:4172
+#: ../yum/__init__.py:4597
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr "%s paketea zaharkitua dago, bere ordezkoa %s da, %s instalatzen saiatzen"
 
-#: ../yum/__init__.py:4180
+#: ../yum/__init__.py:4605
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "%s paketea jadanik instalatuta dago bere azken bertsioan"
 
-#: ../yum/__init__.py:4194
+#: ../yum/__init__.py:4619
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr "Bat datorren %s paketea jadanik instalatuta dago. Eguneraketak egiaztatzen."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:4317
+#: ../yum/__init__.py:4751
 msgid "Updating Everything"
 msgstr "Dena eguneratzen"
 
-#: ../yum/__init__.py:4341 ../yum/__init__.py:4488 ../yum/__init__.py:4530
-#: ../yum/__init__.py:4566
+#: ../yum/__init__.py:4775 ../yum/__init__.py:4930 ../yum/__init__.py:4975
+#: ../yum/__init__.py:5011
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Ez eguneratzen jadanik zaharkitua dagoen paketea: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:4391 ../yum/__init__.py:4623
+#: ../yum/__init__.py:4830 ../yum/__init__.py:5072
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:4413 ../yum/__init__.py:4627 ../yum/__init__.py:4963
+#: ../yum/__init__.py:4854 ../yum/__init__.py:5080 ../yum/__init__.py:5416
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "Ez dago bat etortzerik argumenturako: %s"
 
-#: ../yum/__init__.py:4431
+#: ../yum/__init__.py:4872
 #, python-format
 msgid "No package matched to upgrade: %s"
 msgstr "Ez dago bertsio-berritzeko bat datorren paketerik: %s"
 
-#: ../yum/__init__.py:4477
+#: ../yum/__init__.py:4919
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Paketea zaharkitua dago jadanik: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:4525
+#: ../yum/__init__.py:4970
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr "Ez eguneratzen zaharkitua dagoen paketea: %s"
 
-#: ../yum/__init__.py:4534 ../yum/__init__.py:4570
+#: ../yum/__init__.py:4979 ../yum/__init__.py:5015
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Ez eguneratzen jadanik eguneratua dagoen paketea: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:4640
+#: ../yum/__init__.py:5093
 #, python-format
 msgid "No package matched to remove: %s"
 msgstr "Ez dago kentzeko bat datorren paketerik: %s"
 
-#: ../yum/__init__.py:4646
+#: ../yum/__init__.py:5099
 #, python-format
 msgid "Skipping the running kernel: %s"
 msgstr "Exekutatzen ari den kernela saltatzen: %s"
 
-#: ../yum/__init__.py:4652
+#: ../yum/__init__.py:5105
 #, python-format
 msgid "Removing %s from the transaction"
 msgstr "%s kentzen transakziotik"
 
-#: ../yum/__init__.py:4689
+#: ../yum/__init__.py:5142
 #, python-format
 msgid "Cannot open: %s. Skipping."
 msgstr "Ezin da ireki: %s. Saltatzen."
 
-#: ../yum/__init__.py:4692 ../yum/__init__.py:4809 ../yum/__init__.py:4894
+#: ../yum/__init__.py:5145 ../yum/__init__.py:5262 ../yum/__init__.py:5347
 #, python-format
 msgid "Examining %s: %s"
 msgstr "%s aztertzen: %s"
 
-#: ../yum/__init__.py:4696
+#: ../yum/__init__.py:5149
 #, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
 msgstr "Ezin da lokalean instalatu deltarpm: %s. Saltatzen."
 
-#: ../yum/__init__.py:4705 ../yum/__init__.py:4812 ../yum/__init__.py:4897
+#: ../yum/__init__.py:5158 ../yum/__init__.py:5265 ../yum/__init__.py:5350
 #, python-format
 msgid ""
 "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr "Ezin da %s paketea gehitu transakzioari. Arkitektura ez da bateragarri: %s"
 
-#: ../yum/__init__.py:4711
+#: ../yum/__init__.py:5164
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr "Ezin da %s paketea instalatu. Instalatutako %s paketeak zaharkitu egin du"
 
-#: ../yum/__init__.py:4719
+#: ../yum/__init__.py:5172
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
 msgstr "%s paketea ez dago instalatuta, ezin da eguneratu. Exekutatu yum install hura instalatzeko."
 
-#: ../yum/__init__.py:4738 ../yum/__init__.py:4745
+#: ../yum/__init__.py:5191 ../yum/__init__.py:5198
 #, python-format
 msgid ""
 "Package %s.%s not installed, cannot update it. Run yum install to install it"
 " instead."
 msgstr "%s.%s paketea ez dago instalatua, ezin da eguneratu. Exekutatu yum install hura instalatzeko."
 
-#: ../yum/__init__.py:4754 ../yum/__init__.py:4817 ../yum/__init__.py:4902
+#: ../yum/__init__.py:5207 ../yum/__init__.py:5270 ../yum/__init__.py:5355
 #, python-format
 msgid "Excluding %s"
 msgstr "%s baztertzen"
 
-#: ../yum/__init__.py:4759
+#: ../yum/__init__.py:5212
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "%s markatzen instalatua izateko"
 
-#: ../yum/__init__.py:4765
+#: ../yum/__init__.py:5218
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "%s markatzen %s(r)en eguneraketa gisa"
 
-#: ../yum/__init__.py:4772
+#: ../yum/__init__.py:5225
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s: ez du instalatutako paketea eguneratzen."
 
-#: ../yum/__init__.py:4806 ../yum/__init__.py:4891
+#: ../yum/__init__.py:5259 ../yum/__init__.py:5344
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Ezin da fitxategia ireki: %s. Saltatzen."
 
-#: ../yum/__init__.py:4846
+#: ../yum/__init__.py:5299
 msgid "Problem in reinstall: no package matched to remove"
 msgstr "Arazoa berrinstalatzean: kentzeko paketeak ez datoz bat"
 
-#: ../yum/__init__.py:4872
+#: ../yum/__init__.py:5325
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
 msgstr "Arazoa berrinstalatzean: %s paketea ez dator bat instalazioarekin"
 
-#: ../yum/__init__.py:4985
+#: ../yum/__init__.py:5438
 msgid "No package(s) available to downgrade"
 msgstr "Ez dago paketerik eskuragarri bertsio zaharragoa instalatzeko"
 
-#: ../yum/__init__.py:4993
+#: ../yum/__init__.py:5446
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "%s paketeari instalazio anitz onartzen zaizkio, saltatzen"
 
-#: ../yum/__init__.py:5039
+#: ../yum/__init__.py:5496
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "Ez dago bat etortzerik eskuragarri dagoen paketerako: %s"
 
-#: ../yum/__init__.py:5046
+#: ../yum/__init__.py:5506
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Bertsio-berritzea soilik dago eskuragarri pakete honetarako: %s"
 
-#: ../yum/__init__.py:5159 ../yum/__init__.py:5226
+#: ../yum/__init__.py:5619 ../yum/__init__.py:5686
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Bertsio zaharragoa instalatzeak huts egin du: %s"
 
-#: ../yum/__init__.py:5176 ../yum/__init__.py:5232
+#: ../yum/__init__.py:5636 ../yum/__init__.py:5692
 #, python-format
 msgid "Failed to upgrade: %s"
 msgstr "Bertsio-berritzeak huts egin du: %s"
 
-#: ../yum/__init__.py:5265
+#: ../yum/__init__.py:5725
 #, python-format
 msgid "Retrieving key from %s"
 msgstr "Gakoa atzitzen %s-(e)tik"
 
-#: ../yum/__init__.py:5283
+#: ../yum/__init__.py:5743
 msgid "GPG key retrieval failed: "
 msgstr "GPG gakoaren atzipenak huts egin du: "
 
 #. if we decide we want to check, even though the sig failed
 #. here is where we would do that
-#: ../yum/__init__.py:5306
+#: ../yum/__init__.py:5766
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr "%s gakoaren GPG gako-sinadura ez dator bat biltegiaren CA gakoarekin: %s"
 
-#: ../yum/__init__.py:5308
+#: ../yum/__init__.py:5768
 msgid "GPG key signature verified against CA Key(s)"
 msgstr "GPG gako-sinadura CA gakoen aurka egiaztatu dira"
 
-#: ../yum/__init__.py:5316
+#: ../yum/__init__.py:5776
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "GPG gako baliogabea %s-(e)tik: %s"
 
-#: ../yum/__init__.py:5325
+#: ../yum/__init__.py:5785
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "GPG gakoaren analisiak huts egin du: gakoak ez dauka %s balioa"
 
-#: ../yum/__init__.py:5341
+#: ../yum/__init__.py:5801
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -2994,7 +3191,7 @@ msgid ""
 " From       : %s"
 msgstr "%s gakoa inportatzen 0x%s:\n Erabiltzaile-IDa: \"%s\"\n Hatz-marka: %s\n Paketea    : %s (%s)\n Nondik    : %s"
 
-#: ../yum/__init__.py:5351
+#: ../yum/__init__.py:5811
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -3003,7 +3200,7 @@ msgid ""
 " From       : %s"
 msgstr "%s gakoa inportatzen 0x%s:\n Erabiltzaile-IDa: \"%s\"\n Hatz-marka: %s\n Nondik    : %s"
 
-#: ../yum/__init__.py:5379
+#: ../yum/__init__.py:5839
 #, python-format
 msgid ""
 "\n"
@@ -3013,44 +3210,44 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr "\n\n\n Huts egin duen paketea: %s\n GPG gakoak honela daude konfiguratuta: %s\n"
 
-#: ../yum/__init__.py:5393
+#: ../yum/__init__.py:5853
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s-(e)ko GPG gakoa (0x%s) jadanik instalatuta dago"
 
-#: ../yum/__init__.py:5431
+#: ../yum/__init__.py:5891
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Gakoaren inportazioak huts egin du (%d kodea)"
 
-#: ../yum/__init__.py:5433 ../yum/__init__.py:5534
+#: ../yum/__init__.py:5893 ../yum/__init__.py:5994
 msgid "Key imported successfully"
 msgstr "Gakoa ongi inportatu da"
 
-#: ../yum/__init__.py:5437
+#: ../yum/__init__.py:5897
 msgid "Didn't install any keys"
 msgstr "Ez da gakorik instalatu"
 
-#: ../yum/__init__.py:5440
+#: ../yum/__init__.py:5900
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr "\"%s\" biltegirako zerrendatu diren GPG gakoak jadanik instalatuta daude, baina ez dira zuzenak pakete honetarako.\nEgiaztatu gako URL zuzena konfiguratuta dagoela biltegi honetarako."
 
-#: ../yum/__init__.py:5450
+#: ../yum/__init__.py:5910
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Gako(ar)en inportazioak ez du balio izan, gako okerra(k)?"
 
-#: ../yum/__init__.py:5472
+#: ../yum/__init__.py:5932
 msgid "No"
 msgstr "Ez"
 
-#: ../yum/__init__.py:5474
+#: ../yum/__init__.py:5934
 msgid "Yes"
 msgstr "Bai"
 
-#: ../yum/__init__.py:5475
+#: ../yum/__init__.py:5935
 #, python-format
 msgid ""
 "\n"
@@ -3061,123 +3258,120 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr "\n\n\n CA gakoa: %s\n Huts egin duen biltegia hau da: %s\n GPG gakoak honela daude konfiguratuta: %s\n"
 
-#: ../yum/__init__.py:5488
+#: ../yum/__init__.py:5948
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "%s (0x%s)-(e)ko GPG gakoa jadanik inportatuta dago"
 
-#: ../yum/__init__.py:5532
+#: ../yum/__init__.py:5992
 #, python-format
 msgid "Key %s import failed"
 msgstr "%s gakoa inportatzeak huts egin du"
 
-#: ../yum/__init__.py:5549
+#: ../yum/__init__.py:6009
 #, python-format
 msgid "Didn't install any keys for repo %s"
 msgstr "Ez da gakorik instalatu %s biltegirako"
 
-#: ../yum/__init__.py:5554
+#: ../yum/__init__.py:6014
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr "\"%s\" biltegirako zerrendatu diren GPG gakoak jadanik instalatuta daude, baina ez dira zuzenak.\nEgiaztatu gako URL zuzena konfiguratuta dagoela biltegi honetarako."
 
-#: ../yum/__init__.py:5705
+#: ../yum/__init__.py:6172
 msgid "Unable to find a suitable mirror."
 msgstr "Ezin izan da ispilu egokia aurkitu."
 
-#: ../yum/__init__.py:5707
+#: ../yum/__init__.py:6174
 msgid "Errors were encountered while downloading packages."
 msgstr "Erroreak aurkitu dira paketeak deskargatzean."
 
-#: ../yum/__init__.py:5762
+#: ../yum/__init__.py:6229
 #, python-format
 msgid "Please report this error at %s"
 msgstr "Jakinarazi errore hau %s-(e)n"
 
-#: ../yum/__init__.py:5779
+#: ../yum/__init__.py:6246
 msgid "Test Transaction Errors: "
 msgstr "Probatu transakzio-erroreak: "
 
-#: ../yum/__init__.py:5891
+#: ../yum/__init__.py:6358
 #, python-format
 msgid "Could not set cachedir: %s"
 msgstr "Ezin izan da katxe-direktorioa ezarri: %s"
 
-#: ../yum/__init__.py:5952 ../yum/__init__.py:5954
+#: ../yum/__init__.py:6420 ../yum/__init__.py:6422
 msgid "Dependencies not solved. Will not save unresolved transaction."
 msgstr "Mendekotasunak ez dira konpondu. Ez da gordeko konpondu gabeko transakzioa."
 
-#: ../yum/__init__.py:5983 ../yum/__init__.py:5985
+#: ../yum/__init__.py:6455 ../yum/__init__.py:6457
 #, python-format
 msgid "Could not save transaction file %s: %s"
 msgstr "Ezin izan da %s transakzio-fitxategia gorde: %s"
 
-#: ../yum/__init__.py:6009
+#: ../yum/__init__.py:6483
 #, python-format
 msgid "Could not access/read saved transaction %s : %s"
 msgstr "Ezin izan da atzitu/irakurri gordetako %s transakzioa: %s"
 
-#: ../yum/__init__.py:6038
-msgid "rpmdb ver mismatched saved transaction version, "
-msgstr "rpmdb ver mismatched saved transaction version, "
+#: ../yum/__init__.py:6521
+msgid "rpmdb ver mismatched saved transaction version,"
+msgstr ""
 
-#: ../yum/__init__.py:6040
-msgid " ignoring, as requested."
-msgstr " ezikusten, eskatu den bezala."
-
-#: ../yum/__init__.py:6043 ../yum/__init__.py:6179
-msgid " aborting."
-msgstr " abortatzen."
-
-#: ../yum/__init__.py:6052
+#: ../yum/__init__.py:6535
 msgid "cannot find tsflags or tsflags not integer."
 msgstr "ezin da tsflags aurkitu edo tsflags ez da balio osoa."
 
-#: ../yum/__init__.py:6092
+#: ../yum/__init__.py:6584
 #, python-format
 msgid "Found txmbr in unknown current state: %s"
 msgstr "txmbr uneko egoera ezezagunean aurkitu da: %s"
 
-#: ../yum/__init__.py:6096
+#: ../yum/__init__.py:6588
 #, python-format
 msgid "Could not find txmbr: %s in state %s"
 msgstr "Ezin izan da txmbr aurkitu: %s %s egoeran"
 
-#: ../yum/__init__.py:6132 ../yum/__init__.py:6149
+#: ../yum/__init__.py:6625 ../yum/__init__.py:6642
 #, python-format
 msgid "Could not find txmbr: %s from origin: %s"
 msgstr "Ezin izan da txmbr aurkitu: %s jatorritik: %s"
 
-#: ../yum/__init__.py:6174
+#: ../yum/__init__.py:6667
 msgid "Transaction members, relations are missing or ts has been modified,"
 msgstr "Transakzio-kideak, erlazioak galdu dira edo ts aldatua izan da,"
 
-#: ../yum/__init__.py:6176
+#: ../yum/__init__.py:6670
 msgid " ignoring, as requested. You must redepsolve!"
 msgstr " ezikusten, eskatu den bezala. Redepsolve erabili behar duzu!"
 
 #. Debugging output
-#: ../yum/__init__.py:6251 ../yum/__init__.py:6270
+#: ../yum/__init__.py:6738 ../yum/__init__.py:6757
 #, python-format
 msgid "%s has been visited already and cannot be removed."
 msgstr "%s jadanik bisitatu da eta ezin da kendu."
 
 #. Debugging output
-#: ../yum/__init__.py:6254
+#: ../yum/__init__.py:6741
 #, python-format
 msgid "Examining revdeps of %s"
 msgstr "%s paketearen revdep-ak aztertzen"
 
 #. Debugging output
-#: ../yum/__init__.py:6275
+#: ../yum/__init__.py:6762
 #, python-format
 msgid "%s has revdep %s which was user-installed."
 msgstr "%s paketeak %s revdep-a du, jadanik erabiltzaileak instalatutakoa."
 
+#: ../yum/__init__.py:6773 ../yum/__init__.py:6779
+#, python-format
+msgid "%s is needed by a package to be installed."
+msgstr ""
+
 #. Debugging output
-#: ../yum/__init__.py:6289
+#: ../yum/__init__.py:6793
 #, python-format
 msgid "%s has no user-installed revdeps."
 msgstr "%s paketeak ez dauka erabiltzaileak instalatutako revdep-ik."
@@ -3271,13 +3465,17 @@ msgstr "Birpaketatzen"
 msgid "Verify: %u/%u: %s"
 msgstr "Egiaztatu: %u/%u: %s"
 
-#: ../yum/yumRepo.py:798
+#: ../yum/yumRepo.py:919
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
 "    * free   %s\n"
 "    * needed %s"
 msgstr "Ez dago aski espaziorik %s deskarga-direktorioan\n    *lekua %s\n    * behar da %s"
+
+#: ../yum/yumRepo.py:986
+msgid "Package does not match intended download."
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:33
 #, python-format

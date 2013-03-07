@@ -98,8 +98,8 @@ class DeltaInfo:
         pinfo = {}
         reposize = {}
         for index, po in enumerate(pkgs):
-            if not po.repo.deltarpm:
-                continue
+            if po.repo.deltarpm_percentage == 1:
+                continue # Allow people to turn off a repo. (meh)
             if po.state == TS_UPDATE: pass
             elif po.name in ayum.conf.installonlypkgs: pass
             else:

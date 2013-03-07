@@ -2305,8 +2305,7 @@ much more problems).
                         presto.rebuild(po, adderror)
                         return
                     else:
-                        while presto.dequeue(block=False):
-                            pass
+                        presto.dequeue_max()
 
                     if po.repoid not in done_repos:
                         done_repos.add(po.repoid)

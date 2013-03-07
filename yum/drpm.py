@@ -211,12 +211,14 @@ class DeltaInfo:
                 el.clear()
 
     def wait(self, num=None):
+        """ Wait for "num" number of jobs to finish, or all of them. Blocks. """
         if num is None:
             num = len(self.jobs)
 
         # wait for some jobs, run callbacks
         while num > 0:
-            assert self.jobs
+            if not self.jobs: # This is probably broken logic, which is bad.
+                return
             num -= self._wait(block=True)
 
     def _wait(self, block=False):
@@ -239,6 +241,8 @@ class DeltaInfo:
         return num
 
     def rebuild(self, po, adderror):
+        """ Turn a drpm into an rpm, by adding it to the queue and trying to
+            service the queue. """
         # this runs when worker finishes
         def callback(code):
             if code != 0:
@@ -255,7 +259,7 @@ class DeltaInfo:
         args += po.localpath, po.rpm.localpath
 
         self.queue(args, callback)
-        self.dequeue(block=False)
+        self.dequeue_max()
 
     def queue(self, args, callback):
         """ Queue a delta rebuild up. """
@@ -266,6 +270,19 @@ class DeltaInfo:
 
         while self._future_jobs:
             self.dequeue()
+
+    def dequeue_max(self):
+        """ De-Queue all delta rebuilds we can and spawn the rebuild
+            processes. """
+
+        if not self._future_jobs:
+            # Just trim the zombies...
+            self._wait()
+            return
+
+        while self._future_jobs:
+            if not self.dequeue(block=False):
+                break
 
     def dequeue(self, block=True):
         """ Try to De-Queue a delta rebuild and spawn the rebuild process. """

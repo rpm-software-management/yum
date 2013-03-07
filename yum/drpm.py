@@ -36,6 +36,9 @@ class DeltaPackage:
         self.repo = rpm.repo
         self.basepath = rpm.basepath
         self.pkgtup = rpm.pkgtup
+        (self.name, self.arch, self.epoch,
+         self.version, self.release) = self.pkgtup
+        self._hash = None
 
         # set up drpm attributes
         self.size = size
@@ -46,6 +49,24 @@ class DeltaPackage:
 
     def __str__(self):
         return 'Delta RPM of %s' % self.rpm
+
+    def __cmp__(self, other):
+        if other is None:
+            return 1
+
+        #  Not a PackageObject(), so do this ourselves the bad way:
+        return (cmp(self.name, other.name) or
+                cmp(self.epoch, other.epoch) or
+                cmp(self.version, other.version) or
+                cmp(self.release, other.release) or
+                cmp(self.arch, other.arch))
+
+    def __hash__(self): # C&P from PackageObject...
+        if self._hash is None:
+            mystr = '%s - %s:%s-%s-%s.%s' % (self.repo.id, self.epoch, self.name,
+                                         self.version, self.release, self.arch)
+            self._hash = hash(mystr)
+        return self._hash
 
     def localPkg(self):
         return self.localpath

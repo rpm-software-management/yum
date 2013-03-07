@@ -2304,6 +2304,10 @@ much more problems).
                     if isinstance(po, DeltaPackage):
                         presto.rebuild(po, adderror)
                         return
+                    else:
+                        while presto.dequeue(block=False):
+                            pass
+
                     if po.repoid not in done_repos:
                         done_repos.add(po.repoid)
                         #  Check a single package per. repo. ... to give a hint to
@@ -2333,6 +2337,7 @@ much more problems).
                     adderror(po, exception2msg(e))
             if async:
                 urlgrabber.grabber.parallel_wait()
+            presto.dequeue_all()
             presto.wait()
 
             if hasattr(urlgrabber.progress, 'text_meter_total_size'):

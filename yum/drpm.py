@@ -88,6 +88,7 @@ class DeltaInfo:
     def __init__(self, ayum, pkgs):
         self.verbose_logger = ayum.verbose_logger
         self.jobs = {}
+        self._future_jobs = []
         self.limit = ayum.conf.deltarpm
         if self.limit < 0:
             nprocs = _num_cpus_online()
@@ -188,15 +189,33 @@ class DeltaInfo:
                         pkgs[index] = DeltaPackage(po, size, remote, csum, oldrpm)
                 el.clear()
 
-    def wait(self, limit = 1):
+    def wait(self, num=None):
+        if num is None:
+            num = len(self.jobs)
+
         # wait for some jobs, run callbacks
-        while len(self.jobs) >= limit:
-            pid, code = os.wait()
+        while num > 0:
+            assert self.jobs
+            num -= self._wait(block=True)
+
+    def _wait(self, block=False):
+        num = 0
+
+        while self.jobs:
+            if block:
+                pid, code = os.wait()
+            else:
+                pid, code = os.waitpid(-1, os.WNOHANG)
+                if not pid:
+                    break
+
             # urlgrabber spawns child jobs, too.  But they exit synchronously,
             # so we should never see an unknown pid here.
             assert pid in self.jobs
             callback = self.jobs.pop(pid)
             callback(code)
+            num += 1
+        return num
 
     def rebuild(self, po, adderror):
         # this runs when worker finishes
@@ -210,10 +229,41 @@ class DeltaInfo:
             os.unlink(po.localpath)
             po.localpath = po.rpm.localpath # for --downloadonly
 
-        # spawn a worker process
-        self.wait(self.limit)
         args = ()
         if po.oldrpm: args += '-r', po.oldrpm
         args += po.localpath, po.rpm.localpath
+
+        self.queue(args, callback)
+        self.dequeue(block=False)
+
+    def queue(self, args, callback):
+        """ Queue a delta rebuild up. """
+        self._future_jobs.append((args, callback))
+
+    def dequeue_all(self):
+        """ De-Queue all delta rebuilds and spawn the rebuild processes. """
+
+        while self._future_jobs:
+            self.dequeue()
+
+    def dequeue(self, block=True):
+        """ Try to De-Queue a delta rebuild and spawn the rebuild process. """
+        # Do this here, just to keep the zombies at bay...
+        self._wait()
+
+        if not self._future_jobs:
+            return False
+
+        if self.limit <= len(self.jobs):
+            if not block:
+                return False
+            self.wait((self.limit - len(self.jobs)) + 1)
+
+        args, callback = self._future_jobs.pop(0)
+        self._spawn(args, callback)
+
+        return True
+
+    def _spawn(self, args, callback):
         pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
         self.jobs[pid] = callback

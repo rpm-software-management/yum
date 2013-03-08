@@ -377,7 +377,12 @@ and the downloader honors these too.
 When non-zero, delta-RPM files are used if available.  The value specifies
 the maximum number of "applydeltarpm" processes Yum will spawn, if the value
 is negative then yum works out how many cores you have and multiplies that
-by the value (cores=2, deltarpm=-2; 4 processes). (-2 by default).
+by the value (cores=2, deltarpm=-2; 4 processes). (2 by default).
+
+Note that the "applydeltarpm" process uses a significant amount of disk IO,
+so running too many instances can significantly slow down all disk IO including
+the downloads that yum is doing (thus. a too high value can make everything
+slower).
 
 .IP
 \fBdeltarpm_percentage\fR

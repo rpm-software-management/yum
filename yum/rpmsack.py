@@ -159,11 +159,6 @@ class RPMDBProblemDependency(RPMDBProblem):
             return "%s %s %s" % (self.pkg, _('has missing requires of'),
                                  self.missing)
 
-        if self.problem == 'obsoletes':
-            return "%s %s %s: %s" % (self.pkg, _('has installed obsoletes'),
-                                     self.found,', '.join(map(str,
-                                                              self.obsoletes)))
-
         return "%s %s %s: %s" % (self.pkg, _('has installed conflicts'),
                                  self.found,', '.join(map(str, self.conflicts)))
 
@@ -1496,19 +1491,6 @@ class RPMDBPackageSack(PackageSackBase):
                 found = miscutils.formatRequire(req, ver, flags)
                 prob = RPMDBProblemDependency(pkg, "conflicts", found=found,
                                               conflicts=res)
-                problems.append(prob)
-
-            for creq in pkg.obsoletes:
-                if creq[0].startswith('rpmlib'): continue
-
-                (req, flags, ver) = creq
-                res = self.getProvides(req, flags, ver)
-                if not res:
-                    continue
-                flags = yum.depsolve.flags.get(flags, flags)
-                found = miscutils.formatRequire(req, ver, flags)
-                prob = RPMDBProblemDependency(pkg, "obsoletes", found=found,
-                                              obsoletes=res)
                 problems.append(prob)
         return problems
 

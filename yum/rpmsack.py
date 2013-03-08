@@ -1492,6 +1492,8 @@ class RPMDBPackageSack(PackageSackBase):
                 prob = RPMDBProblemDependency(pkg, "conflicts", found=found,
                                               conflicts=res)
                 problems.append(prob)
+
+            # Note that obsoletes are checked seperately, and are name only.
         return problems
 
     def _iter_two_pkgs(self, ignore_provides):

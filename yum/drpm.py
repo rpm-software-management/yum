@@ -115,6 +115,9 @@ class DeltaInfo:
             nprocs = _num_cpus_online()
             self.limit *= -nprocs
 
+        if not self.limit: # Turned off.
+            return
+
         # calculate update sizes
         oldrpms = {}
         pinfo = {}

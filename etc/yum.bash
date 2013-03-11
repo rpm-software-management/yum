@@ -3,6 +3,14 @@
 _yum_helper()
 {
     local IFS=$'\n'
+    if [[ -n "$YUM_CACHEDIR" && "$1 $2" == "list available" ]]; then
+        for db in $(find "$YUM_CACHEDIR" -name primary_db.sqlite); do
+            COMPREPLY+=( $( sqlite3 "$db" \
+                "SELECT name||'.'||arch FROM packages WHERE name LIKE '$3%'"
+            ) )
+        done
+        return
+    fi
     COMPREPLY+=( $(
         /usr/share/yum-cli/completion-helper.py -d 0 -C "$@" 2>/dev/null ) )
 }

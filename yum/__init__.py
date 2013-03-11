@@ -2238,8 +2238,6 @@ much more problems).
                     adderror(po, _('package fails checksum but caching is '
                         'enabled for %s') % po.repo.id)
                     return False
-                if os.path.getsize(local) >= po.size:
-                    os.unlink(local)
             if downloadonly:
                 po.localpath += '.%d.tmp' % os.getpid()
                 try: os.rename(local, po.localpath)

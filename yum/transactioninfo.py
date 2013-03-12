@@ -34,6 +34,8 @@ import Errors
 import warnings
 import misc
 
+import time
+
 class GetProvReqOnlyPackageSack(PackageSack):
     def __init__(self, need_files=False):
         PackageSack.__init__(self)
@@ -84,6 +86,8 @@ class TransactionData:
         self.changed = False
         self.installonlypkgs = []
         self.state_counter = 0
+        self.tm_created = time.time()
+        self.tm_changed = time.time()
         self.conditionals = {} # key = pkgname, val = list of pos to add
 
         self.rpmdb = None
@@ -111,6 +115,11 @@ class TransactionData:
 
         self._future_rpmdbv = None
         self._check_future_rpmdbv = None
+
+    def _changed(self):
+        self.changed = True
+        self.state_counter += 1
+        self.tm_changed = time.time()
         
     def __len__(self):
         return len(self.pkgdict)
@@ -288,8 +297,8 @@ class TransactionData:
                     return
         self.pkgdict[txmember.pkgtup].append(txmember)
         self._namedict.setdefault(txmember.name, []).append(txmember)
-        self.changed = True
-        self.state_counter += 1
+        self._changed()
+
         if self._isLocalPackage(txmember):
             self.localSack.addPackage(txmember.po)
         elif isinstance(txmember.po, YumAvailablePackageSqlite):
@@ -329,8 +338,7 @@ class TransactionData:
         del self.pkgdict[pkgtup]
         if not self._namedict[pkgtup[0]]:
             del self._namedict[pkgtup[0]]
-        self.changed = True        
-        self.state_counter += 1
+        self._changed()
     
     def exists(self, pkgtup):
         """tells if the pkg is in the class"""

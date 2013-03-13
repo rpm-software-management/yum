@@ -471,7 +471,7 @@ class ArchStorage(object):
         if arch:
             self.canonarch = arch
         else:
-            self.canonarch = getCanonArch()
+            self.canonarch = canonArch
         
         self.basearch = getBaseArch(myarch=self.canonarch)
         self.archlist = getArchList(thisarch=self.canonarch)

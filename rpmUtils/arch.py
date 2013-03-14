@@ -227,8 +227,7 @@ def _try_read_cpuinfo():
     """ Try to read /proc/cpuinfo ... if we can't ignore errors (ie. proc not
         mounted). """
     try:
-        lines = open("/proc/cpuinfo", "r").readlines()
-        return lines
+        return open("/proc/cpuinfo", "r")
     except:
         return []
 
@@ -262,8 +261,10 @@ def getCanonX86Arch(arch):
     # 
     if arch == "i586":
         for line in _try_read_cpuinfo():
-            if line.startswith("model name") and line.find("Geode(TM)") != -1:
-                return "geode"
+            if line.startswith("model name"):
+                if line.find("Geode(TM)") != -1:
+                    return "geode"
+                break
         return arch
     # only athlon vs i686 isn't handled with uname currently
     if arch != "i686":
@@ -274,8 +275,10 @@ def getCanonX86Arch(arch):
         if line.startswith("vendor") and line.find("AuthenticAMD") != -1:
             return "athlon"
         # i686 doesn't guarantee cmov, but we depend on it
-        elif line.startswith("flags") and line.find("cmov") == -1:
-            return "i586"
+        elif line.startswith("flags"):
+            if line.find("cmov") == -1:
+                return "i586"
+            break
 
     return arch
 

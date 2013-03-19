@@ -28,7 +28,7 @@ install:
 	done
 	chmod 755 $(DESTDIR)/usr/share/yum-cli/completion-helper.py
 	mv $(DESTDIR)/usr/share/yum-cli/yum-updatesd.py $(DESTDIR)/usr/share/yum-cli/yumupd.py
-	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '$(PYDIR)', 1)"
+	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '/usr/share/yum-cli', 1)"
 
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/sbin
 	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum

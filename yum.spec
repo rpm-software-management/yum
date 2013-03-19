@@ -26,6 +26,13 @@
 %define yum_pluginslib   /usr/lib/yum-plugins
 %define yum_pluginsshare /usr/share/yum-plugins
 
+# disable broken /usr/lib/rpm/brp-python-bytecompile
+%define __os_install_post %{nil}
+%define compdir %(pkg-config --variable=completionsdir bash-completion)
+%if "%{compdir}" == ""
+%define compdir "/etc/bash_completion.d"
+%endif
+
 Summary: RPM package installer/updater/manager
 Name: yum
 Version: 3.4.3
@@ -47,6 +54,7 @@ BuildRequires: python-sqlite
 BuildRequires: python-urlgrabber >= 3.9.0-8
 BuildRequires: yum-metadata-parser >= 1.1.0
 BuildRequires: pygpgme
+BuildRequires: bash-completion
 # End of CheckRequires
 Conflicts: pirut < 1.1.4
 Requires: python >= 2.4
@@ -321,7 +329,7 @@ exit 0
 %dir %{_sysconfdir}/yum/protected.d
 %dir %{_sysconfdir}/yum/vars
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%{_sysconfdir}/bash_completion.d
+%(dirname %{compdir})
 %dir %{_datadir}/yum-cli
 %{_datadir}/yum-cli/*
 %exclude %{_datadir}/yum-cli/completion-helper.py?

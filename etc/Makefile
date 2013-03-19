@@ -1,4 +1,6 @@
 YUMETC=$(DESTDIR)/etc/yum
+compdir = $(shell pkg-config --variable=completionsdir bash-completion)
+compdir := $(or $(compdir), "/etc/bash_completion.d")
 
 all:
 	echo "Nothing to do"
@@ -25,6 +27,7 @@ install:
 	mkdir -p $(DESTDIR)/etc/dbus-1/system.d/
 	install -m 755 yum-updatesd-dbus.conf $(DESTDIR)/etc/dbus-1/system.d/yum-updatesd.conf
 	install -m 644 yum-updatesd.conf $(YUMETC)
-	mkdir -p $(DESTDIR)/etc/bash_completion.d
-	install -m 644 yum.bash $(DESTDIR)/etc/bash_completion.d
+	mkdir -p $(DESTDIR)/$(compdir)
+	install -m 644 yum.bash $(DESTDIR)/$(compdir)/yum
+	ln -s yum $(DESTDIR)/$(compdir)/yummain.py
 	install -m 644 yum-cron.conf $(YUMETC)

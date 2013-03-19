@@ -399,7 +399,7 @@ class RPMDBPackageSack(PackageSackBase):
         else:
             self._cachedir = '/' + cachedir
 
-        if hasattr(self, 'yumdb'): # Need to keep this upto date, after init.
+        if hasattr(self, 'yumdb'): # Need to keep this up to date, after init.
             version_path = os.path.normpath(self._cachedir + '/version')
             self.yumdb.conf.version_path = version_path
 
@@ -1493,7 +1493,7 @@ class RPMDBPackageSack(PackageSackBase):
                                               conflicts=res)
                 problems.append(prob)
 
-            # Note that obsoletes are checked seperately, and are name only.
+            # Note that obsoletes are checked separately, and are name only.
         return problems
 
     def _iter_two_pkgs(self, ignore_provides):

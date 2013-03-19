@@ -73,7 +73,7 @@ if [ ! -d $WORKDIR/usr/bin ]; then
   "${RPM[@]}" -q vim-minimal > /dev/null
   if [ "X$?" == "X0" ] ; then echo " OK"; else echo " FAILED"; fi
 else
-  echo Ommiting base install
+  echo Omitting base install
 fi
 
 #"${YUMUPDATES[@]}" list updates

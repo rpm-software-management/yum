@@ -1384,7 +1384,7 @@ much more problems).
                 self.verbose_logger.info(msg)
             self.skipped_packages.extend(skipped_list)   # make the skipped packages public
         else:
-            # If we cant solve the problems the show the original error messages.
+            # If we can't solve the problems the show the original error messages.
             self.verbose_logger.info("Skip-broken could not solve problems")
             return 1, orig_restring
         return rescode, restring
@@ -1426,7 +1426,7 @@ much more problems).
             for pkg in txmbr.obsoleted_by:
                 # check if the obsoleting txmbr is in the transaction
                 # else remove the obsoleted txmbr
-                # it clean out some really wierd cases
+                # it clean out some really weird cases
                 if not self.tsInfo.exists(pkg.pkgtup):
                     self.verbose_logger.debug('SKIPBROKEN: Remove extra obsoleted %s (%s)' % (txmbr.po,pkg) )
                     self.tsInfo.remove(txmbr.po.pkgtup)
@@ -1441,7 +1441,7 @@ much more problems).
             for pkg in txmbr.updated_by:
                 # check if the updating txmbr is in the transaction
                 # else remove the updated txmbr
-                # it clean out some really wierd cases with dupes installed on the system
+                # it clean out some really weird cases with dupes installed on the system
                 if not self.tsInfo.exists(pkg.pkgtup):
                     self.verbose_logger.debug('SKIPBROKEN: Remove extra updated %s (%s)' % (txmbr.po,pkg) )
                     self.tsInfo.remove(txmbr.po.pkgtup)
@@ -3068,7 +3068,7 @@ much more problems).
         # ...but without showdups we want to output _just_ #3, which requires
         # we find the newest EVR po for the best "matching value". Without keys
         # it's the same, except we just want the newest EVR.
-        #  If we screw it up it's probably not even noticable most of the time
+        #  If we screw it up it's probably not even noticeable most of the time
         # either, so it's pretty thankless. HTH. HAND.
         # By default just sort using package sorting
         sort_func = operator.itemgetter(0)
@@ -3142,7 +3142,7 @@ much more problems).
         """Deprecated.  Search the specified fields for packages that
         match the given criteria, and return a list of the results.
 
-        :param fields: the fields to seach
+        :param fields: the fields to search
         :param criteria: a list of strings specifying the criteria to
            search for
         :param callback: a function to print out the results as they
@@ -4409,7 +4409,7 @@ much more problems).
 
         if False and self._up is not None:
             #  This is the old code, not sure it's good to have two paths. And
-            # we don't wnat to create .up. (which requires init repos.) if we
+            # we don't want to create .up. (which requires init repos.) if we
             # don't have to.
             return po.pkgtup in self.up.updating_dict
 
@@ -6537,7 +6537,7 @@ much more problems).
             return (_("File is empty."), None)
 
         if data[0] == 'saved_tx:\n':
-            #  Old versions of yum would put "saved_tx:" at the begining and
+            #  Old versions of yum would put "saved_tx:" at the beginning and
             # two blank lines at the end when you used:
             # "yum -q history addon-info saved_tx".
             if data[-1] == 'history addon-info\n':

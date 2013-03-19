@@ -175,7 +175,7 @@ def generateAll(source_directory, output_directory):
         if '__init__.py' in filenames:
             packages.add(dirpath)
 
-        # Find the heirarchy of packages that we are currently in
+        # Find the hierarchy of packages that we are currently in
         package_heirarchy = []
         #Recurse up to the root
         dirpath_i = dirpath

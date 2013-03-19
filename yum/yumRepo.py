@@ -67,7 +67,7 @@ except ImportError:
 # 1. We rarely want to be downloading MD/pkgs/etc.
 # 2. We want to check those files are valid (match checksums) when we do
 #    download them.
-# 3. We _really_ don't want to checksum all the files everytime we
+# 3. We _really_ don't want to checksum all the files every time we
 #    run (100s of MBs).
 # 4. We can continue to download files from bad mirrors, or retry files due to
 #    C-c etc.

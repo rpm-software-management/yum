@@ -69,7 +69,7 @@ class _wrap_ayum_getPkgSack:
     """ This is a wrapper for calling YumBase.pkgSack because
         otherwise we take a real reference through the bound method and
         that is d00m (this applies to YumBase and TransactionInfo, hence why
-        we have a seperate class). """
+        we have a separate class). """
     def __init__(self, ayum):
         self.ayum = weakref(ayum)
     def __call__(self):
@@ -79,7 +79,7 @@ class _wrap_ayum_install:
     """ This is a wrapper for calling YumBase.install because
         otherwise we take a real reference through the bound method and
         that is d00m (this applies to YumBase and TransactionInfo, hence why
-        we have a seperate class). """
+        we have a separate class). """
     def __init__(self, ayum):
         self.ayum = weakref(ayum)
     def __call__(self, *args, **kwargs):
@@ -88,7 +88,7 @@ class _wrap_ayum_remove:
     """ This is a wrapper for calling YumBase.remove because
         otherwise we take a real reference through the bound method and
         that is d00m (this applies to YumBase and TransactionInfo, hence why
-        we have a seperate class). """
+        we have a separate class). """
     def __init__(self, ayum):
         self.ayum = weakref(ayum)
     def __call__(self, *args, **kwargs):
@@ -97,7 +97,7 @@ class _wrap_ayum_update:
     """ This is a wrapper for calling YumBase.update because
         otherwise we take a real reference through the bound method and
         that is d00m (this applies to YumBase and TransactionInfo, hence why
-        we have a seperate class). """
+        we have a separate class). """
     def __init__(self, ayum):
         self.ayum = weakref(ayum)
     def __call__(self, *args, **kwargs):

@@ -1771,7 +1771,7 @@ Transaction Summary
             # For translators: This is output like:
 #  Current download cancelled, interrupt (ctrl-c) again within two seconds
 # to exit.
-            # Where "interupt (ctrl-c) again" and "two" are highlighted.
+            # Where "interrupt (ctrl-c) again" and "two" are highlighted.
             msg = _("""
  Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds
 to exit.
@@ -3036,7 +3036,7 @@ class CacheProgressCallback:
         if opc <= 1:
             output = True
         elif current <= 1:
-            output = True # output the begining
+            output = True # output the beginning
         elif current == total:
             output = True # output the end
         elif not (current % opc):
@@ -3205,7 +3205,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             pnl = utf8_width(pkgname)
 
         overhead  = (2 * l) + 2 # Length of done, above
-        overhead +=  2+ wid1 +2 # Length of begining ("  " action " :")
+        overhead +=  2+ wid1 +2 # Length of beginning ("  " action " :")
         overhead +=  1          # Space between pn and done
         overhead +=  2          # Ends for progress
         overhead +=  1          # Space for end

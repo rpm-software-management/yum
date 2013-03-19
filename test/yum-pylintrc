@@ -33,7 +33,7 @@ load-plugins=
 # can either give multiple identifier separated by comma (,) or put this option
 # multiple time.
 
-# E1101: *%s %r has no %r member* (The init-hook for do sys.path manipulation don't, so we cant find the utils module)
+# E1101: *%s %r has no %r member* (The init-hook for do sys.path manipulation don't, so we can't find the utils module)
 # F0401: *Unable to import %r (%s)* (See above)
 # W0704: *Except doesn't do anything* ( Except xxxxxx,e : pass is ok)
 # W0612: *Unused variable %r* ( dont care if x,y,z = f() and y,z is not used) 

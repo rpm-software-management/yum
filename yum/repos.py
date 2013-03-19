@@ -31,7 +31,7 @@ class _wrap_ayum_getKeyForRepo:
     """ This is a wrapper for calling YumBase.getKeyForRepo() because
         otherwise we take a real reference through the bound method and
         that is d00m (this applies to YumBase and RepoStorage, hence why
-        we have a seperate class).
+        we have a separate class).
         A "better" fix might be to explicitly pass the YumBase instance to
         the callback ... API change! """
     def __init__(self, ayum, ca=False):

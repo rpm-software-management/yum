@@ -81,7 +81,7 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([])
 
     def testDepWithMissingReqSkip(self):
-        ''' install is skipped, beacuse dep is missing req.  
+        ''' install is skipped, because dep is missing req.  
         foo + foobar is skipped because barfoo is not provided
         bar stays in the transaction
         '''
@@ -219,7 +219,7 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([ipo, po1])
 
     def testConflictWithInstalledButUpdateExist(self):
-        ''' update fails, because conflict cant be fixed. (req. loop)
+        ''' update fails, because conflict can't be fixed. (req. loop)
         foo 1.0 -> 2.0 update fails, because foo-2.0 conflict with bar-1.0
         bar-1.0 is update to bar-2.0, to solve the conflict but bar-2.0 need foo-1.0
         so the foo & bar updates get skipped and the transaction is empty
@@ -240,7 +240,7 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([po1,ipo])
 
     def testConflictWithInstalledButUpdateExist2(self):
-        '''update fails, because conflict cant be fixed. (missing req.)
+        '''update fails, because conflict can't be fixed. (missing req.)
         foo 1.0 -> 2.0 update fails, because foo-2.0 conflict with bar-1.0
         bar-1.0 is update to bar-2.0, to solve the conflict but bar-2.0 need poo-1.0
         there is not provided

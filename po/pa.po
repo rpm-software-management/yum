@@ -1053,7 +1053,7 @@ msgstr "ਦੋ"
 #. For translators: This is output like:
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
-#. Where "interupt (ctrl-c) again" and "two" are highlighted.
+#. Where "interrupt (ctrl-c) again" and "two" are highlighted.
 #: ../output.py:1775
 #, python-format
 msgid ""

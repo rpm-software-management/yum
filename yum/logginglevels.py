@@ -42,7 +42,7 @@ logging.addLevelName(DEBUG_3, "DEBUG_3")
 logging.addLevelName(DEBUG_4, "DEBUG_4")
 
 # High level to effectively turn off logging.
-# For compatability with the old logging system.
+# For compatibility with the old logging system.
 __NO_LOGGING = 100
 logging.raiseExceptions = False
 

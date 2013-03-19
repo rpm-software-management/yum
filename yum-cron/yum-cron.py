@@ -75,7 +75,7 @@ class UpdateEmitter(object):
         """Append a message to the output list stating that updates
         have been installed successfully.
         """
-        self.output.append('The updates were sucessfully applied')
+        self.output.append('The updates were successfully applied')
 
     def setupFailed(self, errmsg):
         """Append a message to the output list stating that setup

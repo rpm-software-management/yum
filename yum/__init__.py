@@ -6435,7 +6435,8 @@ much more problems).
             self.prerepoconf.cachedir = cachedir
         else:
             self.repos.setCacheDir(cachedir)
-        self._old_cachedir = self.conf.cachedir
+        if not hasattr(self, '_old_cachedir'):
+            self._old_cachedir = self.conf.cachedir
         self.conf.cachedir = cachedir
         return True # We got a new cache dir
 

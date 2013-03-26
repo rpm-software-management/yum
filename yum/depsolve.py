@@ -900,35 +900,10 @@ class Depsolve(object):
                     if checkdep:
                         break # The next conflict might be the same pkg
 
-                # check Obsoletes
-                #  Atm. This is _just_ checking for transaction members which
-                # obsolete each other. Because rpm will now auto. obs. those
-                # anyway. We _don't_ check for installed pkgs. which might obs.
-                # something to be installed, even though rpm will also do that.
-                for txmbr in self.tsInfo.getMembersWithState(None, output_states=TS_INSTALL_STATES):
-                    for obs_n in txmbr.po.obsoletes_names:
-                        for otxmbr in self.tsInfo.matchNaevr(name=obs_n):
-                            if otxmbr.output_state not in TS_INSTALL_STATES:
-                                continue
-                            if otxmbr.po == txmbr.po:
-                                #  Not sure if we should just ignore this for
-                                # us, or for everyone...
-                                continue
-                            if otxmbr.po.obsoletedBy([txmbr.po]):
-                                if txmbr.po.obsoletedBy([otxmbr.po]):
-                                    # Have to deal with loops!
-                                    continue
-                                # No callback?
-                                msg = _('Removing %s due to obsoletes from %s')
-                                self.verbose_logger.log(logginglevels.DEBUG_1,
-                                                        msg, otxmbr, txmbr)
-                                self.tsInfo.remove(otxmbr.pkgtup)
-                                #  We need to remove an obsoleted entry that
-                                # was maybe used to resolve something ... ?
-                                CheckDeps = True
-                                self._last_req = None
-                                self.pkgSack.delPackage(otxmbr.po)
-                                self.up.delPackage(otxmbr.pkgtup)
+                if True: # Always have to check obsoletes...
+                    if self._checkObsoletes():
+                        CheckDeps = True
+                        self._last_req = None
 
                 if CheckDeps:
                     if self.dsCallback: self.dsCallback.restartLoop()
@@ -1326,6 +1301,68 @@ class Depsolve(object):
             return ret # Don't need the conflicts cache anymore
 
         self.rpmdb.transactionCacheConflictPackages(cpkgs)
+        return ret
+
+    #  This is checking for installed / transaction members which
+    # obsolete each other. Because rpm will now auto. obs. those
+    # anyway (even if we have obsoletes turned off).
+    def _checkObsoletes(self):
+        opkgs = []
+
+        ret = False
+
+        def _do_obs(otxmbr):
+            self.tsInfo.remove(otxmbr.pkgtup)
+            #  We need to remove an obsoleted entry that
+            # was maybe used to resolve something ... ?
+            self.pkgSack.delPackage(otxmbr.po)
+            self.up.delPackage(otxmbr.pkgtup)
+
+        for po in self.rpmdb.returnObsoletePackages():
+            if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):
+                continue
+            obsoletes = po.returnPrco('obsoletes')
+            if not obsoletes: # We broke this due to dbMatch() usage.
+                continue
+            opkgs.append(po)
+            for obs_name,f,v in obsoletes:
+                for otxmbr in self.tsInfo.matchNaevr(name=obs_name):
+                    if not otxmbr.po.obsoletedBy([po]):
+                        continue
+                    if po.obsoletedBy([otxmbr.po]): # Loops, hope for rpm.
+                        continue
+                    msg = _('Removing %s due to obsoletes from installed %s')
+                    self.verbose_logger.log(logginglevels.DEBUG_1,
+                                            msg, otxmbr, po)
+                    _do_obs(otxmbr)
+                    ret = True
+
+        for txmbr in self.tsInfo.getMembersWithState(None, output_states=TS_INSTALL_STATES):
+            done = False
+            for obs_n in txmbr.po.obsoletes_names:
+                if not done:
+                    opkgs.append(txmbr.po)
+                    done = True
+
+                for otxmbr in self.tsInfo.matchNaevr(name=obs_n):
+                    if otxmbr.output_state not in TS_INSTALL_STATES:
+                        continue
+                    if otxmbr.po == txmbr.po:
+                        #  Not sure if we should just ignore this for
+                        # us, or for everyone...
+                        continue
+                    if not otxmbr.po.obsoletedBy([txmbr.po]):
+                        continue
+                    if txmbr.po.obsoletedBy([otxmbr.po]):
+                        # Have to deal with loops! Hope rpm behaves too.
+                        continue
+                    msg = _('Removing %s due to obsoletes from %s')
+                    self.verbose_logger.log(logginglevels.DEBUG_1,
+                                            msg, otxmbr, txmbr)
+                    _do_obs(otxmbr)
+                    ret = True
+
+        self.rpmdb.transactionCacheObsoletePackages(opkgs)
         return ret
 
     def isPackageInstalled(self, pkgname):

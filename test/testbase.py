@@ -321,6 +321,12 @@ class FakeRpmDb(packageSack.PackageSack):
             if len(pkg.conflicts):
                 ret.append(pkg)
         return ret
+    def returnObsoletePackages(self):
+        ret = []
+        for pkg in self.returnPackages():
+            if len(pkg.obsoletes):
+                ret.append(pkg)
+        return ret
     def fileRequiresData(self):
         installedFileRequires = {}
         installedUnresolvedFileRequires = set()
@@ -354,6 +360,8 @@ class FakeRpmDb(packageSack.PackageSack):
                                      problems):
         return
     def transactionCacheConflictPackages(self, pkgs):
+        return
+    def transactionCacheObsoletePackages(self, pkgs):
         return
     def transactionResultVersion(self, rpmdbv):
         return

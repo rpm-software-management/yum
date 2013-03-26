@@ -247,14 +247,12 @@ class SimpleObsoletesTests(OperationsTests):
     def testObsoletesOffPostInst1(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh'], [p.obsoletes_i386], [p.installed_i386])
-        self.assert_(res=='ok', msg)
-        self.assertResult((p.obsoletes_i386,))
+        self.assert_(res=='empty', msg)
 
     def testObsoletesOffPostInst2(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh'], [p.obsoletes_i386], [p.installed_i386], {'obsoletes' : False})
-        self.assert_(res=='ok', msg)
-        self.assertResult((p.obsoletes_i386,))
+        self.assert_(res=='empty', msg)
 
     def testObsoletesOffPostAvail1(self):
         p = self.pkgs

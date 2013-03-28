@@ -1233,6 +1233,23 @@ class GroupsCommand(YumCommand):
             return True
         return False
 
+    def cacheRequirement(self, base, basecmd, extcmds):
+        """Return the cache requirements for the remote repos.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: Type of requirement: read-only:past, read-only:present, read-only:future, write
+        """
+        cmd, extcmds = self._grp_cmd(basecmd, extcmds)
+
+        if cmd in ('list', 'info', 'summary'):
+            return 'read-only:past'
+        if cmd.startswith('mark') or cmd.startswith('unmark'):
+            return 'read-only:past'
+        return 'write'
+
+
 class MakeCacheCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     makecache command.

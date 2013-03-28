@@ -6,7 +6,12 @@
 import sys
 import glob
 
-from yum.misc import to_utf8
+# Don't import from yum, as it isn't there when we are distro. building...
+def to_utf8(obj, errors='replace'):
+    '''convert 'unicode' to an encoded utf-8 byte string '''
+    if isinstance(obj, unicode):
+        obj = obj.encode('utf-8', errors)
+    return obj
 
 def trans(msg, default):
     if msg == 'msgstr ""\n':

@@ -3666,7 +3666,9 @@ much more problems).
                 else:
                     self.igroups.add_group(thisgroup.groupid,
                                            thisgroup.packages, ievgrp)
-            pkgs.extend(list(igroup_data.keys()))
+            for pkg in igroup_data:
+                if igroup_data[pkg] == 'installed':
+                    pkgs.append(pkg)
 
             old_txmbrs = len(txmbrs_used)
             for pkg in pkgs:

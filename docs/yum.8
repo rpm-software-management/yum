@@ -35,6 +35,8 @@ gnome\-packagekit application\&.
 .br
 .I \fR * remove | erase package1 [package2] [\&.\&.\&.]
 .br 
+.I \fR * autoremove [package1] [\&.\&.\&.]
+.br 
 .I \fR * list [\&.\&.\&.]
 .br 
 .I \fR * info [\&.\&.\&.]
@@ -172,11 +174,24 @@ the "install" command\&.(See \fBSpecifying package names\fP for more information
 Note that "yum" is included in the protected_packages configuration, by default.
 So you can't accidentally remove yum itself.
 
+The remove_leaf_only configuration changes the behaviour of this command
+to only remove packages which aren't required by something else.
+
+The clean_requirements_on_remove configuration changes the behaviour of this
+command to also remove packages that are only dependencies of this package.
+
 Because remove does a lot of work to make it as easy as possible to use, there
 are also a few specific remove commands "\fBremove-n\fP", "\fBremove-na\fP"
 and "\fBremove-nevra\fP". These only work on package names, and do not process
 wildcards etc.
 .IP 
+.IP "\fBautoremove\fP"
+.IP 
+With one or more arguments this command works like running the "\fBremove\fP"
+command with the clean_requirements_on_remove turned on. However you can also
+specify no arguments, at which point it tries to remove any packages that
+weren't installed explicitly by the user and which aren't required by
+anything (so called leaf packages).
 .IP "\fBlist\fP"
 Is used to list various information about available
 packages; more complete details are available in the \fIList Options\fP

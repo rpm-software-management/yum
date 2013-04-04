@@ -387,9 +387,16 @@ only shows packages from the givien repository.
 
 "repository\-packages <repo> install" - Install all of the packages in the
 repository, basicallly the same as: yum install $(repoquery --repoid=<repo> -a).
+Specific packages/wildcards can be specified.
 
 "repository\-packages <repo> upgrade" - Update all of the packages in the
 repository, basicallly the same as: yum upgrade $(repoquery --repoid=<repo> -a).
+Specific packages/wildcards can be specified.
+
+"repository\-packages <repo> upgrade-to" - Update all of the packages in the
+repository, basicallly the same as: yum upgrade $(repoquery --repoid=<repo> -a).
+Without arguments it works the same as upgrade, with arguments it just
+interprets them as the versions you want to move to.
 
 "repository\-packages <repo> reinstall-old" - ReInstall all of the packages 
 that are installed from the repository and available in the

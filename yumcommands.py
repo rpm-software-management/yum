@@ -3462,6 +3462,7 @@ class RepoPkgsCommand(YumCommand):
                  'erase-or-distribution-synchronization' : 'remove-or-sync',
                  'remove-or-distribution-synchronization' : 'remove-or-sync',
                  'upgrade' : 'update', # Hack, but meh.
+                 'upgrade-to' : 'update-to', # Hack, but meh.
                  }
         cmd = remap.get(cmd, cmd)
 
@@ -3484,6 +3485,16 @@ class RepoPkgsCommand(YumCommand):
         elif cmd == 'update': # update is basically the same as install...
             for arg in args:
                 txmbrs = base.update(pattern=arg, repoid=repoid)
+                _add_repopkg2txmbrs(txmbrs, repoid)
+                num += len(txmbrs)
+
+            if num:
+                return 2, P_('%d package to update', '%d packages to update',
+                             num)
+
+        elif cmd == 'update-to': # update is basically the same as install...
+            for arg in args:
+                txmbrs = base.update(pattern=arg, update_to=True, repoid=repoid)
                 _add_repopkg2txmbrs(txmbrs, repoid)
                 num += len(txmbrs)
 

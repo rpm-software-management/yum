@@ -704,6 +704,69 @@ class SimpleObsoletesTests(OperationsTests):
         # Just d2 is fine too, although less likely what the user wants
         self.assertResult((c2,d2))
 
+    def testRLFileReqTransObs1(self):
+        fr1 = FakePackage('fr1', '1', '1')
+        fr1.addRequires('/foo')
+        fr2 = FakePackage('fr2', '2', '2')
+
+        fp1 = FakePackage('fp1', '1', '2')
+        fp1.addFile('/foo')
+        fp2 = FakePackage('fpl2', '1', '2')
+        fp2.addFile('/foo')
+
+        ob1 = FakePackage('ob1', '1', '3')
+        ob1.addObsoletes('fp1', None, (None, None, None))
+
+        res, msg = self.runOperation(['install', 'ob1', 'fr1'], [],
+                                     [fr1, fr2, fp1, fp2, ob1])
+
+        self.assert_(res=='err', msg)
+        # Should really be:
+        # self.assertResult([ob1, fr1, fp2])
+
+    def testRLFileReqTransObs2(self):
+        fr1 = FakePackage('fr1', '1', '1')
+        fr1.addRequires('/foo')
+        fr2 = FakePackage('fr2', '2', '2')
+        fr2.addRequires('/bar')
+
+        fp1 = FakePackage('fp1', '1', '2')
+        fp1.addFile('/foo')
+        fp2 = FakePackage('fpl2', '1', '2')
+        fp2.addFile('/foo')
+
+        ob1 = FakePackage('ob1', '1', '3')
+        ob1.addObsoletes('fp1', None, (None, None, None))
+        ob1.addFile('/bar')
+
+        res, msg = self.runOperation(['install', 'fr1', 'fr2'], [],
+                                     [fr1, fr2, fp1, fp2, ob1])
+
+        self.assert_(res=='err', msg)
+        # Should really be:
+        # self.assertResult([ob1, fr1, fp2])
+
+    def testRLFileReqInstObs(self):
+        fr1 = FakePackage('fr1', '1', '1')
+        fr1.addRequires('/foo')
+        fr2 = FakePackage('fr2', '2', '2')
+
+        fp1 = FakePackage('fp1', '1', '2')
+        fp1.addFile('/foo')
+        fp2 = FakePackage('fpl2', '1', '2')
+        fp2.addFile('/foo')
+
+        ob1 = FakePackage('ob1', '1', '3')
+        ob1.addObsoletes('fp1', None, (None, None, None))
+
+        res, msg = self.runOperation(['install', 'fr1'], [ob1],
+                                     [fr1, fr2, fp1, fp2, ob1])
+        print "JDBG:", "test:", res, msg
+
+        self.assert_(res=='err', msg)
+        # Should really be:
+        # self.assertResult([ob1, fr1, fp2])
+
 
 class GitMetapackageObsoletesTests(OperationsTests):
 

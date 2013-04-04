@@ -192,6 +192,11 @@ command with the clean_requirements_on_remove turned on. However you can also
 specify no arguments, at which point it tries to remove any packages that
 weren't installed explicitly by the user and which aren't required by
 anything (so called leaf packages).
+
+Because autoremove does a lot of work to make it as easy as possible to use,
+there are also a few specific autoremove commands "\fBautoremove-n\fP", 
+"\fBautoremove-na\fP" and "\fBautoremove-nevra\fP". These only work on package
+names, and do not process wildcards etc.
 .IP "\fBlist\fP"
 Is used to list various information about available
 packages; more complete details are available in the \fIList Options\fP

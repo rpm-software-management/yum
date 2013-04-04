@@ -903,6 +903,7 @@ class Depsolve(object):
                 if True: # Always have to check obsoletes...
                     if self._checkObsoletes():
                         CheckDeps = True
+                        CheckRemoves = True
                         self._last_req = None
 
                 if CheckDeps:
@@ -1318,6 +1319,8 @@ class Depsolve(object):
             # was maybe used to resolve something ... ?
             self.pkgSack.delPackage(otxmbr.po)
             self.up.delPackage(otxmbr.pkgtup)
+            # Remove it from the installed file requires cache
+            (self.installedFileRequires or {}).pop(otxmbr.pkgtup, None)
 
         for po in self.rpmdb.returnObsoletePackages():
             if self.tsInfo.getMembersWithState(po.pkgtup, output_states=TS_REMOVE_STATES):

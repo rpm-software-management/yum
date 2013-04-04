@@ -1187,10 +1187,10 @@ class Depsolve(object):
 
         # get file requirements from new packages
         for txmbr in self._tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
+            files = []
             for name, flag, evr in txmbr.po.requires:
                 if name.startswith('/'):
-                    pt = txmbr.po.pkgtup
-                    self.installedFileRequires.setdefault(pt, []).append(name)
+                    files.append(name)
                     # check if file requires was already unresolved in update
                     if name in self.installedUnresolvedFileRequires:
                         already_broken = False
@@ -1204,6 +1204,7 @@ class Depsolve(object):
                         nfileRequires.add(name)
                     fileRequires.add(name)
                     reverselookup.setdefault(name, []).append(txmbr.po.pkgtup)
+            self.installedFileRequires[txmbr.po.pkgtup] = files
 
         todel = []
         for fname in self.installedFileProviders:

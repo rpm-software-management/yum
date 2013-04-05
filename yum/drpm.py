@@ -21,7 +21,7 @@ from yum.constants import TS_UPDATE
 from yum.Errors import RepoError
 from yum.i18n import exception2msg, _
 from yum.Errors import MiscError
-from misc import checksum, repo_gen_decompress
+from yum.misc import checksum, repo_gen_decompress, unlink_f
 from urlgrabber import grabber
 async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
@@ -249,6 +249,7 @@ class DeltaInfo:
         # this runs when worker finishes
         def callback(code):
             if code != 0:
+                unlink_f(po.rpm.localpath)
                 adderror(po, _('Delta RPM rebuild failed'))
                 return
             if not po.rpm.verifyLocalPkg():

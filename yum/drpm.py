@@ -239,31 +239,26 @@ class DeltaInfo:
             # urlgrabber spawns child jobs, too.  But they exit synchronously,
             # so we should never see an unknown pid here.
             assert pid in self.jobs
-            callback = self.jobs.pop(pid)
-            callback(code)
+            po = self.jobs.pop(pid)
+            if code != 0:
+                unlink_f(po.rpm.localpath)
+                self.adderror(po, _('Delta RPM rebuild failed'))
+            elif not po.rpm.verifyLocalPkg():
+                self.adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
+            else:
+                os.unlink(po.localpath)
+                po.localpath = po.rpm.localpath # for --downloadonly
             num += 1
         return num
 
     def rebuild(self, po):
         """ Turn a drpm into an rpm, by adding it to the queue and trying to
             service the queue. """
-        # this runs when worker finishes
-        def callback(code):
-            if code != 0:
-                unlink_f(po.rpm.localpath)
-                self.adderror(po, _('Delta RPM rebuild failed'))
-                return
-            if not po.rpm.verifyLocalPkg():
-                self.adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
-                return
-            os.unlink(po.localpath)
-            po.localpath = po.rpm.localpath # for --downloadonly
-
         args = ()
         if po.oldrpm: args += '-r', po.oldrpm
         args += po.localpath, po.rpm.localpath
 
-        self.queue(args, callback)
+        self.queue(args, po)
         self.dequeue_max()
 
     def queue(self, args, callback):

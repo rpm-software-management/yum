@@ -254,16 +254,8 @@ class DeltaInfo:
     def rebuild(self, po):
         """ Turn a drpm into an rpm, by adding it to the queue and trying to
             service the queue. """
-        args = ()
-        if po.oldrpm: args += '-r', po.oldrpm
-        args += po.localpath, po.rpm.localpath
-
-        self.queue(args, po)
+        self._future_jobs.append(po)
         self.dequeue_max()
-
-    def queue(self, args, callback):
-        """ Queue a delta rebuild up. """
-        self._future_jobs.append((args, callback))
 
     def dequeue_all(self):
         """ De-Queue all delta rebuilds and spawn the rebuild processes. """
@@ -297,11 +289,11 @@ class DeltaInfo:
                 return False
             self.wait((self.limit - len(self.jobs)) + 1)
 
-        args, callback = self._future_jobs.pop(0)
-        self._spawn(args, callback)
+        po = self._future_jobs.pop(0)
+        args = ()
+        if po.oldrpm: args += '-r', po.oldrpm
+        args += po.localpath, po.rpm.localpath
 
-        return True
-
-    def _spawn(self, args, callback):
         pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
-        self.jobs[pid] = callback
+        self.jobs[pid] = po
+        return True

@@ -22,7 +22,7 @@ from yum.Errors import RepoError
 from yum.i18n import exception2msg, _
 from yum.Errors import MiscError
 from yum.misc import checksum, repo_gen_decompress, unlink_f
-from urlgrabber import grabber
+from urlgrabber import grabber, progress
 async = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
 import os, re
@@ -111,6 +111,7 @@ class DeltaInfo:
         self.adderror = adderror
         self.jobs = {}
         self._future_jobs = []
+        self.progress = None
         self.limit = ayum.conf.deltarpm
         if self.limit < 0:
             nprocs = _num_cpus_online()
@@ -240,6 +241,9 @@ class DeltaInfo:
             # so we should never see an unknown pid here.
             assert pid in self.jobs
             po = self.jobs.pop(pid)
+            if self.progress:
+                self.done += po.rpm.size
+                self.progress.update(self.done)
             if code != 0:
                 unlink_f(po.rpm.localpath)
                 self.adderror(po, _('Delta RPM rebuild failed'))
@@ -260,6 +264,18 @@ class DeltaInfo:
     def dequeue_all(self):
         """ De-Queue all delta rebuilds and spawn the rebuild processes. """
 
+        count = total = 0
+        for po in self.jobs.values() + self._future_jobs:
+            count += 1
+            total += po.rpm.size
+        if total:
+            self.verbose_logger.info(_('Finishing delta rebuilds of %d package(s) (%s)'),
+                                     count, progress.format_number(total))
+            if hasattr(progress, 'text_meter_total_size'):
+                progress.text_meter_total_size(0)
+            self.progress = po.repo.callback
+            self.progress.start(text='<locally rebuilding deltarpms>', size=total)
+            self.done = 0
         while self._future_jobs:
             self.dequeue()
 

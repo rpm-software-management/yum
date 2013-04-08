@@ -2256,13 +2256,13 @@ much more problems).
             pkgs.append(po)
 
         # download presto metadata and use drpms
-        presto = DeltaInfo(self, pkgs)
+        presto = DeltaInfo(self, pkgs, adderror)
         deltasize = rpmsize = 0
         for po in pkgs:
             if isinstance(po, DeltaPackage):
                 if verify_local(po):
                     # there's .drpm already, use it
-                    presto.rebuild(po, adderror)
+                    presto.rebuild(po)
                     continue
                 deltasize += po.size
                 rpmsize += po.rpm.size
@@ -2300,7 +2300,7 @@ much more problems).
                         urlgrabber.progress.text_meter_total_size(remote_size,
                                                                   local_size[0])
                     if isinstance(po, DeltaPackage):
-                        presto.rebuild(po, adderror)
+                        presto.rebuild(po)
                         return
                     else:
                         presto.dequeue_max()

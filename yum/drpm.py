@@ -106,8 +106,9 @@ def _num_cpus_online(unknown=1):
     return unknown
 
 class DeltaInfo:
-    def __init__(self, ayum, pkgs):
+    def __init__(self, ayum, pkgs, adderror):
         self.verbose_logger = ayum.verbose_logger
+        self.adderror = adderror
         self.jobs = {}
         self._future_jobs = []
         self.limit = ayum.conf.deltarpm
@@ -243,17 +244,17 @@ class DeltaInfo:
             num += 1
         return num
 
-    def rebuild(self, po, adderror):
+    def rebuild(self, po):
         """ Turn a drpm into an rpm, by adding it to the queue and trying to
             service the queue. """
         # this runs when worker finishes
         def callback(code):
             if code != 0:
                 unlink_f(po.rpm.localpath)
-                adderror(po, _('Delta RPM rebuild failed'))
+                self.adderror(po, _('Delta RPM rebuild failed'))
                 return
             if not po.rpm.verifyLocalPkg():
-                adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
+                self.adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
                 return
             os.unlink(po.localpath)
             po.localpath = po.rpm.localpath # for --downloadonly

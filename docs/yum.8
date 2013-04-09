@@ -630,8 +630,13 @@ processing logic. For more information see the \fBupdate\fP command above.
 .br
 Configuration Option: \fBobsoletes\fP
 .IP "\fB\-x, \-\-exclude=package\fP"
-Exclude a specific package by name or glob from updates on all repositories.
-Configuration Option: \fBexclude\fP
+Exclude a specific package by name or glob from all repositories, so yum works
+as if that package was never in the repositories.
+This is commonly used so a package isn't upgraded or installed accidentally, but
+can be used to remove packages in any way that "yum list" will show packages.
+
+Can be disabled using --disableexcludes.
+Configuration Option: \fBexclude\fP, \fBincludepkgs\fP
 .br
 .IP "\fB\-\-color=[always|auto|never]\fP"
 Display colorized output automatically, depending on the output terminal,

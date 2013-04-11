@@ -9,6 +9,11 @@
 %define yum_cron_systemd 0
 %endif
 
+%if ! 0%{?rhel}
+# we don't have this in rhel yet...
+BuildRequires: bash-completion
+%endif
+
 %if 0%{?fedora} <= 18
 # yum in Fedora <= 18 doesn't use systemd unit files...
 %define yum_cron_systemd 0
@@ -54,7 +59,6 @@ BuildRequires: python-sqlite
 BuildRequires: python-urlgrabber >= 3.9.0-8
 BuildRequires: yum-metadata-parser >= 1.1.0
 BuildRequires: pygpgme
-BuildRequires: bash-completion
 # End of CheckRequires
 Conflicts: pirut < 1.1.4
 Requires: python >= 2.4

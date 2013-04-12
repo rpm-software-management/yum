@@ -628,8 +628,26 @@ class YumRepository(Repository, config.RepoConf):
         if self.metalink:
             urls = map(add_mc, urls)
 
+        def mirror_failure(obj):
+            action = {}
+
+            # special handling of 503 errors
+            if getattr(obj.exception, 'code', 0) == 503:
+                tries = getattr(obj, 'tries', self.retries)
+                if tries <= self.retries - len(self.urls):
+                    # don't remove this mirror yet
+                    action['remove'] = False
+
+            # No known user of this callback, but just in case...
+            cb = self.mirror_failure_obj
+            if cb:
+                fun, arg, karg = callable(cb) and (cb, (), {}) or cb
+                action.update(fun(obj, *arg, **karg))
+
+            return action
+
         self._grab = mgclass(self._grabfunc, urls,
-                             failure_callback=self.mirror_failure_obj)
+                             failure_callback=mirror_failure)
 
     def _default_grabopts(self, cache=True):
         opts = { 'keepalive': self.keepalive,

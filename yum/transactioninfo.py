@@ -379,7 +379,7 @@ class TransactionData:
 
         for txmbr in self.getMembers():
             if txmbr.output_state == TS_UPDATE:
-                if txmbr.isDep:
+                if txmbr.isDep and txmbr.reason != 'user':
                     self.depupdated.append(txmbr)
                 else:
                     self.updated.append(txmbr)
@@ -401,7 +401,7 @@ class TransactionData:
                     for evg in txmbr.environments:
                         if evg not in self.instenvironments:
                             self.instenvironments.append(evg)
-                if txmbr.isDep:
+                if txmbr.isDep and txmbr.reason != 'user':
                     self.depinstalled.append(txmbr)
                 else:
                     self.installed.append(txmbr)

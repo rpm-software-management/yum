@@ -359,8 +359,10 @@ exit 0
 %files cron
 %defattr(-,root,root)
 %doc COPYING
-%{_sysconfdir}/cron.daily/0yum-update.cron
+%{_sysconfdir}/cron.daily/0yum-daily.cron
+%{_sysconfdir}/cron.hourly/0yum-hourly.cron
 %config(noreplace) %{_sysconfdir}/yum/yum-cron.conf
+%config(noreplace) %{_sysconfdir}/yum/yum-cron-hourly.conf
 %if %{yum_cron_systemd}
 %{_unitdir}/yum-cron.service
 %else

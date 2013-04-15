@@ -31,3 +31,4 @@ install:
 	install -m 644 yum.bash $(DESTDIR)/$(compdir)/yum
 	ln -s yum $(DESTDIR)/$(compdir)/yummain.py
 	install -m 644 yum-cron.conf $(YUMETC)
+	install -m 644 yum-cron-hourly.conf $(YUMETC)

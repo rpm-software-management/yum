@@ -271,11 +271,12 @@ class DeltaInfo:
         if total:
             self.verbose_logger.info(_('Finishing delta rebuilds of %d package(s) (%s)'),
                                      count, progress.format_number(total))
-            if hasattr(progress, 'text_meter_total_size'):
-                progress.text_meter_total_size(0)
-            self.progress = po.repo.callback
-            self.progress.start(text='<locally rebuilding deltarpms>', size=total)
-            self.done = 0
+            if po.repo.callback:
+                if hasattr(progress, 'text_meter_total_size'):
+                    progress.text_meter_total_size(0)
+                self.progress = po.repo.callback
+                self.progress.start(text='<locally rebuilding deltarpms>', size=total)
+                self.done = 0
         while self._future_jobs:
             self.dequeue()
 

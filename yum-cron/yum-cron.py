@@ -701,6 +701,7 @@ class YumCronConfig(BaseConfig):
     email_host = Option("localhost")
     email_port = IntOption(25)
     update_messages = BoolOption(False)
+    update_cmd = Option("default")
     apply_updates = BoolOption(False)
     download_updates = BoolOption(False)
     yum_config_file = Option("/etc/yum.conf")
@@ -831,27 +832,37 @@ class YumCronBase(yum.YumBase):
            available
         """
         try:
-            updatesTuples = self.up.getUpdatesTuples()
-            # If there are no updates, return False
-            if not updatesTuples:
-                return False
+            #  Just call .update() because it does obsoletes loops, and group
+            # objects. etc.
 
-            # figure out the updates
-            for (new, old) in updatesTuples:
-                updates_available = True
-                updating = self.getPackageObject(new)
-                updated = self.rpmdb.searchPkgTuple(old)[0]
-            
-                self.tsInfo.addUpdate(updating, updated)
+            update_cmd = self.opts.update_cmd
+            idx = update_cmd.find("security-severity:")
+            if idx != -1:
+                sevs       = update_cmd[idx + len("security-severity:"):]
+                update_cmd = update_cmd[:idx + len("security")]
+                self.updateinfo_filters['sevs'] = sevs.split(",")
 
-            # and the obsoletes
-            if self.conf.obsoletes:
-                for (obs, inst) in self.up.getObsoletesTuples():
-                    obsoleting = self.getPackageObject(obs)
-                    installed = self.rpmdb.searchPkgTuple(inst)[0]
-                
-                    self.tsInfo.addObsoleting(obsoleting, installed)
-                    self.tsInfo.addObsoleted(installed, obsoleting)
+
+            if self.opts.update_cmd in ('minimal', 'minimal-security'):
+                if not updateinfo.update_minimal(self):
+                    return False
+                self.updateinfo_filters['bugfix'] = True
+            elif self.opts.update_cmd in ('default', 'security',
+                                          'default-security'):
+                if not self.update():
+                    return False
+            else:
+                # return False ?
+                self.opts.update_cmd = 'default'
+                if not self.update():
+                    return False
+
+            if self.opts.update_cmd.endswith("security"):
+                self.updateinfo_filters['security'] = True
+                updateinfo.remove_txmbrs(self)
+            elif self.opts.update_cmd == 'minimal':
+                self.updateinfo_filters['bugfix'] = True
+                updateinfo.remove_txmbrs(self)
 
         except Exception, e:
             self.emitCheckFailed("%s" %(e,))

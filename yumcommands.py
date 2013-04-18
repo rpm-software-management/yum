@@ -13,6 +13,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2006 Duke University 
+# Copyright 2013 Red Hat
 # Written by Seth Vidal
 
 """
@@ -34,6 +35,7 @@ import tempfile
 import glob
 
 import yum.config
+from yum import updateinfo
 
 def _err_mini_usage(base, basecmd):
     if basecmd not in base.yum_cli_commands:
@@ -484,7 +486,9 @@ class UpdateCommand(YumCommand):
         """
         self.doneCommand(base, _("Setting up Update Process"))
         try:
-            return base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
+            ret = base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
+            updateinfo.remove_txmbrs(base)
+            return ret
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
 
@@ -545,7 +549,9 @@ class DistroSyncCommand(YumCommand):
         self.doneCommand(base, _("Setting up Distribution Synchronization Process"))
         try:
             base.conf.obsoletes = 1
-            return base.distroSyncPkgs(extcmds)
+            ret = base.distroSyncPkgs(extcmds)
+            updateinfo.remove_txmbrs(base)
+            return ret
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
 
@@ -618,6 +624,12 @@ class InfoCommand(YumCommand):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+
+        if extcmds and extcmds[0] in ('updates', 'obsoletes'):
+            updateinfo.exclude_updates(base)
+        else:
+            updateinfo.exclude_all(base)
+
         try:
             highlight = base.term.MODE['bold']
             #  If we are doing: "yum info installed blah" don't do the highlight
@@ -1028,7 +1040,9 @@ class GroupsCommand(YumCommand):
             if cmd == 'install':
                 return base.installGroups(extcmds)
             if cmd == 'upgrade':
-                return base.installGroups(extcmds, upgrade=True)
+                ret = base.installGroups(extcmds, upgrade=True)
+                updateinfo.remove_txmbrs(base)
+                return ret
             if cmd == 'remove':
                 return base.removeGroups(extcmds)
 
@@ -1490,6 +1504,7 @@ class ProvidesCommand(YumCommand):
         """
         base.logger.debug("Searching Packages: ")
         try:
+            updateinfo.exclude_updates(base)
             return base.provides(extcmds)
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
@@ -1556,6 +1571,7 @@ class CheckUpdateCommand(YumCommand):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+        updateinfo.exclude_updates(base)
         obscmds = ['obsoletes'] + extcmds
         base.extcmds.insert(0, 'updates')
         result = 0
@@ -1591,6 +1607,12 @@ class CheckUpdateCommand(YumCommand):
                     base.updatesObsoletesList(obtup, 'obsoletes',
                                               columns=columns)
                 result = 100
+
+            # Add check_running_kernel call, if updateinfo is available.
+            if updateinfo._repos_downloaded(base.repos.listEnabled()):
+                def _msg(x):
+                    base.verbose_logger.info("%s", x)
+                updateinfo._check_running_kernel(base, base.upinfo, _msg)
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
         else:
@@ -1660,6 +1682,7 @@ class SearchCommand(YumCommand):
         """
         base.logger.debug(_("Searching Packages: "))
         try:
+            updateinfo.exclude_updates(base)
             return base.search(extcmds)
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
@@ -1743,7 +1766,9 @@ class UpgradeCommand(YumCommand):
         base.conf.obsoletes = 1
         self.doneCommand(base, _("Setting up Upgrade Process"))
         try:
-            return base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
+            ret = base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
+            updateinfo.remove_txmbrs(base)
+            return ret
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
 
@@ -1872,6 +1897,7 @@ class ResolveDepCommand(YumCommand):
         """
         base.logger.debug(_("Searching Packages for Dependency:"))
         try:
+            updateinfo.exclude_updates(base)
             return base.resolveDepCli(extcmds)
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
@@ -2010,6 +2036,7 @@ class DepListCommand(YumCommand):
         """
         self.doneCommand(base, _("Finding dependencies: "))
         try:
+            updateinfo.exclude_updates(base)
             return base.deplist(extcmds)
         except yum.Errors.YumBaseError, e:
             return 1, [exception2msg(e)]
@@ -3489,6 +3516,7 @@ class RepoPkgsCommand(YumCommand):
                 num += len(txmbrs)
 
             if num:
+                updateinfo.remove_txmbrs(base)
                 return 2, P_('%d package to update', '%d packages to update',
                              num)
 
@@ -3499,6 +3527,7 @@ class RepoPkgsCommand(YumCommand):
                 num += len(txmbrs)
 
             if num:
+                updateinfo.remove_txmbrs(base)
                 return 2, P_('%d package to update', '%d packages to update',
                              num)
 
@@ -3676,3 +3705,393 @@ class RepoPkgsCommand(YumCommand):
         if cmd in ('info', 'list'):
             return InfoCommand().cacheRequirement(base, cmd, extcmds[2:])
         return 'write'
+
+# Using this a lot, so make it easier...
+_upi = updateinfo
+class UpdateinfoCommand(YumCommand):
+    # Old command names...
+    direct_cmds = {'list-updateinfo'    : 'list',
+                   'list-security'      : 'list',
+                   'list-sec'           : 'list',
+                   'info-updateinfo'    : 'info',
+                   'info-security'      : 'info',
+                   'info-sec'           : 'info',
+                   'summary-updateinfo' : 'summary'}
+
+    #  Note that this code (instead of using inheritance and multiple
+    # cmd classes) means that "yum help" only displays the updateinfo command.
+    # Which is what we want, because the other commands are just backwards
+    # compatible gunk we don't want the user using).
+    def getNames(self):
+        return ['updateinfo'] + sorted(self.direct_cmds.keys())
+
+    def getUsage(self):
+        return "[info|list|...] [security|...] [installed|available|all] [pkgs|id]"
+
+    def getSummary(self):
+        return "Acts on repository update information"
+
+    def doCheck(self, base, basecmd, extcmds):
+        pass
+
+    def list_show_pkgs(self, base, md_info, list_type, show_type,
+                       iname2tup, data, msg):
+        n_maxsize = 0
+        r_maxsize = 0
+        t_maxsize = 0
+        for (notice, pkgtup, pkg) in data:
+            n_maxsize = max(len(notice['update_id']), n_maxsize)
+            tn = notice['type']
+            if tn == 'security' and notice['severity']:
+                tn = notice['severity'] + '/Sec.'
+            t_maxsize = max(len(tn),                  t_maxsize)
+            if show_type:
+                for ref in _upi._ysp_safe_refs(notice['references']):
+                    if ref['type'] != show_type:
+                        continue
+                    r_maxsize = max(len(str(ref['id'])), r_maxsize)
+
+        for (notice, pkgtup, pkg) in data:
+            mark = ''
+            if list_type == 'all':
+                mark = '  '
+                if _upi._rpm_tup_vercmp(iname2tup[pkgtup[0]], pkgtup) >= 0:
+                    mark = 'i '
+            tn = notice['type']
+            if tn == 'security' and notice['severity']:
+                tn = notice['severity'] + '/Sec.'
+
+            if show_type and _upi._ysp_has_info_md(show_type, notice):
+                for ref in _upi._ysp_safe_refs(notice['references']):
+                    if ref['type'] != show_type:
+                        continue
+                    msg("%s %-*s %-*s %s" % (mark, r_maxsize, str(ref['id']),
+                                             t_maxsize, tn, pkg))
+            elif hasattr(pkg, 'name'):
+                print base.fmtKeyValFill("%s: " % pkg.name,
+                                         base._enc(pkg.summary))
+            else:
+                msg("%s%-*s %-*s %s" % (mark, n_maxsize, notice['update_id'],
+                                        t_maxsize, tn, pkg))
+
+    def info_show_pkgs(self, base, md_info, list_type, show_type,
+                       iname2tup, data, msg):
+        show_pkg_info_done = {}
+        for (notice, pkgtup, pkg) in data:
+            if notice['update_id'] in show_pkg_info_done:
+                continue
+            show_pkg_info_done[notice['update_id']] = notice
+
+            if hasattr(notice, 'text'):
+                debug_log_lvl = yum.logginglevels.DEBUG_3
+                vlog = base.verbose_logger
+                if vlog.isEnabledFor(debug_log_lvl):
+                    obj = notice.text(skip_data=[])
+                else:
+                    obj = notice.text()
+            else:
+                # Python-2.4.* doesn't understand str(x) returning unicode
+                obj = notice.__str__()
+
+            if list_type == 'all':
+                if _upi._rpm_tup_vercmp(iname2tup[pkgtup[0]], pkgtup) >= 0:
+                    obj = obj + "\n  Installed : true"
+                else:
+                    obj = obj + "\n  Installed : false"
+            msg(obj)
+
+    def summary_show_pkgs(self, base, md_info, list_type, show_type,
+                          iname2tup, data, msg):
+        def _msg(x):
+            base.verbose_logger.info("%s", x)
+        counts = {}
+        sev_counts = {}
+        show_pkg_info_done = {}
+        for (notice, pkgtup, pkg) in data:
+            if notice['update_id'] in show_pkg_info_done:
+                continue
+            show_pkg_info_done[notice['update_id']] = notice
+            counts[notice['type']] = counts.get(notice['type'], 0) + 1
+            if notice['type'] == 'security':
+                sev = notice['severity']
+                if sev is None:
+                    sev = ''
+                sev_counts[sev] = sev_counts.get(sev, 0) + 1
+
+        maxsize = 0
+        for T in ('newpackage', 'security', 'bugfix', 'enhancement'):
+            if T not in counts:
+                continue
+            size = len(str(counts[T]))
+            if maxsize < size:
+                maxsize = size
+        if not maxsize:
+            _upi._check_running_kernel(base, md_info, _msg)
+            return
+
+        outT = {'newpackage' : 'New Package',
+                'security' : 'Security',
+                'bugfix' : 'Bugfix',
+                'enhancement' : 'Enhancement'}
+        print "Updates Information Summary:", list_type
+        for T in ('newpackage', 'security', 'bugfix', 'enhancement'):
+            if T not in counts:
+                continue
+            n = outT[T]
+            if T == 'security' and len(sev_counts) == 1:
+                sn = sev_counts.keys()[0]
+                if sn != '':
+                    n = sn + " " + n
+            print "    %*u %s notice(s)" % (maxsize, counts[T], n)
+            if T == 'security' and len(sev_counts) != 1:
+                def _sev_sort_key(key):
+                    # We want these in order, from "highest" to "lowest".
+                    # Anything unknown is "higher". meh.
+                    return {'Critical' : "zz1",
+                            'Important': "zz2",
+                            'Moderate' : "zz3",
+                            'Low'      : "zz4",
+                            }.get(key, key)
+
+                for sn in sorted(sev_counts, key=_sev_sort_key):
+                    args = (maxsize, sev_counts[sn],sn or '?', outT['security'])
+                    print "        %*u %s %s notice(s)" % args
+        _upi._check_running_kernel(base, md_info, _msg)
+        self.show_pkg_info_done = {}
+
+    def _get_new_pkgs(self, md_info):
+        for notice in md_info.notices:
+            if notice['type'] != "newpackage":
+                continue
+            for upkg in notice['pkglist']:
+                for pkg in upkg['packages']:
+                    pkgtup = (pkg['name'], pkg['arch'], pkg['epoch'] or '0',
+                              pkg['version'], pkg['release'])
+                    yield (notice, pkgtup)
+
+    _cmd2filt = {"bugzillas" : "bugzilla",
+                 "bugzilla" : "bugzilla",
+                 "bzs" : "bugzilla",
+                 "bz" : "bugzilla",
+
+                 "sec" : "security",
+
+                 "cves" : "cve",
+                 "cve" : "cve",
+
+                 "newpackages" : "newpackage",
+                 "new-packages" : "newpackage",
+                 "newpackage" : "newpackage",
+                 "new-package" : "newpackage",
+                 "new" : "newpackage"}
+    for filt_type in _upi._update_info_types_:
+        _cmd2filt[filt_type] = filt_type
+
+    def doCommand(self, base, basecmd, extcmds):
+        if basecmd in self.direct_cmds:
+            subcommand = self.direct_cmds[basecmd]
+        elif extcmds and extcmds[0] in ('list', 'info', 'summary',
+                                        'remove-pkgs-ts', 'exclude-updates',
+                                        'exclude-all',
+                                        'check-running-kernel'):
+            subcommand = extcmds[0]
+            extcmds = extcmds[1:]
+        elif extcmds and extcmds[0] in self._cmd2filt:
+            subcommand = 'list'
+        elif extcmds:
+            subcommand = 'info'
+        else:
+            subcommand = 'summary'
+
+        if subcommand == 'list':
+            return self.doCommand_li(base, 'updateinfo list', extcmds,
+                                     self.list_show_pkgs)
+        if subcommand == 'info':
+            return self.doCommand_li(base, 'updateinfo info', extcmds,
+                                     self.info_show_pkgs)
+
+        if subcommand == 'summary':
+            return self.doCommand_li(base, 'updateinfo summary', extcmds,
+                                     self.summary_show_pkgs)
+
+        if subcommand == 'remove-pkgs-ts':
+            filters = None
+            if extcmds:
+                filters = updateinfo._args2filters(extcmds)
+            updateinfo.remove_txmbrs(base, filters)
+            return 0, [basecmd + ' ' + subcommand + ' done']
+
+        if subcommand == 'exclude-all':
+            filters = None
+            if extcmds:
+                filters = updateinfo._args2filters(extcmds)
+            updateinfo.exclude_all(base, filters)
+            return 0, [basecmd + ' ' + subcommand + ' done']
+
+        if subcommand == 'exclude-updates':
+            filters = None
+            if extcmds:
+                filters = updateinfo._args2filters(extcmds)
+            updateinfo.exclude_updates(base, filters)
+            return 0, [basecmd + ' ' + subcommand + ' done']
+
+        if subcommand == 'check-running-kernel':
+            def _msg(x):
+                base.verbose_logger.info("%s", x)
+            updateinfo._check_running_kernel(base, base.upinfo, _msg)
+            return 0, [basecmd + ' ' + subcommand + ' done']
+
+    def doCommand_li_new(self, base, list_type, extcmds, md_info, msg,
+                         show_pkgs):
+        done_pkgs = set()
+        data = []
+        for (notice, pkgtup) in sorted(self._get_new_pkgs(md_info),
+                                       key=lambda x: x[1][0]):
+            if extcmds and not _upi._match_sec_cmd(extcmds, pkgtup[0], notice):
+                continue
+            n = pkgtup[0]
+            if n in done_pkgs:
+                continue
+            ipkgs = list(reversed(sorted(base.rpmdb.searchNames([n]))))
+            if list_type in ('installed', 'updates') and not ipkgs:
+                done_pkgs.add(n)
+                continue
+            if list_type == 'available' and ipkgs:
+                done_pkgs.add(n)
+                continue
+
+            pkgs = base.pkgSack.searchPkgTuple(pkgtup)
+            if not pkgs:
+                continue
+            if list_type == "updates" and pkgs[0].verLE(ipkgs[0]):
+                done_pkgs.add(n)
+                continue
+            done_pkgs.add(n)
+            data.append((notice, pkgtup, pkgs[0]))
+        show_pkgs(base, md_info, list_type, None, {}, data, msg)
+
+    def _parse_extcmds(self, extcmds):
+        filt_type = None
+        show_type = None
+        if len(extcmds) >= 1:
+            filt_type = None
+            
+            if extcmds[0] in self._cmd2filt:
+                filt_type = self._cmd2filt[extcmds.pop(0)]
+            show_type = filt_type
+            if filt_type and filt_type in _upi._update_info_types_:
+                show_type = None
+        return extcmds, show_type, filt_type
+
+    def doCommand_li(self, base, basecmd, extcmds, show_pkgs):
+        md_info = base.upinfo
+        def msg(x):
+            #  Don't use: logger.log(logginglevels.INFO_2, x)
+            # or -q deletes everything.
+            print x
+
+        opts = _upi._updateinfofilter2opts(base.updateinfo_filters)
+        extcmds, show_type, filt_type = self._parse_extcmds(extcmds)
+
+        list_type = "available"
+        if extcmds and extcmds[0] in ("updates","available","installed", "all"):
+            list_type = extcmds.pop(0)
+
+        if filt_type == "newpackage":
+            # No filtering here, as we want what isn't installed...
+            self.doCommand_li_new(base, list_type, extcmds, md_info, msg,
+                                  show_pkgs)
+            return 0, [basecmd + ' new done']
+
+        opts.sec_cmds = extcmds
+        used_map = _upi._ysp_gen_used_map(base.updateinfo_filters)
+        iname2tup = {}
+        if False: pass
+        elif list_type in ('installed', 'all'):
+            name2tup = _upi._get_name2allpkgtup(base)
+            iname2tup = _upi._get_name2instpkgtup(base)
+        elif list_type == 'updates':
+            name2tup = _upi._get_name2oldpkgtup(base)
+        elif list_type == 'available':
+            name2tup = _upi._get_name2instpkgtup(base)
+
+        def _show_pkgtup(pkgtup):
+            name = pkgtup[0]
+            notices = reversed(md_info.get_applicable_notices(pkgtup))
+            for (pkgtup, notice) in notices:
+                if filt_type and not _upi._ysp_has_info_md(filt_type, notice):
+                    continue
+
+                if list_type == 'installed':
+                    # Remove any that are newer than what we have installed
+                    if _upi._rpm_tup_vercmp(iname2tup[name], pkgtup) < 0:
+                        continue
+
+                if _upi._ysp_should_filter_pkg(opts, name, notice, used_map):
+                    yield (pkgtup, notice)
+
+        data = []
+        for pkgname in sorted(name2tup):
+            for (pkgtup, notice) in _show_pkgtup(name2tup[pkgname]):
+                d = {}
+                (d['n'], d['a'], d['e'], d['v'], d['r']) = pkgtup
+                if d['e'] == '0':
+                    d['epoch'] = ''
+                else:
+                    d['epoch'] = "%s:" % d['e']
+                data.append((notice, pkgtup,
+                            "%(n)s-%(epoch)s%(v)s-%(r)s.%(a)s" % d))
+        show_pkgs(base, md_info, list_type, show_type, iname2tup, data, msg)
+
+        _upi._ysp_chk_used_map(used_map, msg)
+
+        return 0, [basecmd + ' done']
+
+
+class UpdateMinimalCommand(YumCommand):
+    def getNames(self):
+        return ['update-minimal', 'upgrade-minimal']
+
+    def getUsage(self):
+        return "[PACKAGE-wildcard]"
+
+    def getSummary(self):
+        return _("Works like upgrade, but goes to the 'newest' package match which fixes a problem that affects your system")
+
+    def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that the program is being run by the root user,
+        that there are enabled repositories with gpg keys, and that
+        this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
+        checkRootUID(base)
+        checkGPGKey(base)
+
+    def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+
+        num = len(base.tsInfo)
+        _upi.update_minimal(base, extcmds)
+        num -= len(base.tsInfo)
+        
+        if num > 0:
+            msg = '%d packages marked for minimal Update' % num
+            return 2, [msg]
+        else:
+            return 0, ['No Packages marked for minimal Update']

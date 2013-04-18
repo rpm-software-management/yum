@@ -109,6 +109,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.LoadTransactionCommand())
         self.registerCommand(yumcommands.SwapCommand())
         self.registerCommand(yumcommands.RepoPkgsCommand())
+        self.registerCommand(yumcommands.UpdateinfoCommand())
+        self.registerCommand(yumcommands.UpdateMinimalCommand())
 
     def registerCommand(self, command):
         """Register a :class:`yumcommands.YumCommand` so that it can be called by
@@ -2130,6 +2132,14 @@ class YumOptionParser(OptionParser):
             self.base.conf.downloadonly = opts.dlonly
             self.base.conf.downloaddir = opts.dldir
 
+            # Store all the updateinfo filters somewhere...
+            self.base.updateinfo_filters['security'] = opts.security
+            self.base.updateinfo_filters['bugfix'] = opts.bugfix
+            self.base.updateinfo_filters['advs'] = self._splitArg(opts.advs)
+            self.base.updateinfo_filters['bzs']  = self._splitArg(opts.bzs)
+            self.base.updateinfo_filters['cves'] = self._splitArg(opts.cves)
+            self.base.updateinfo_filters['sevs'] = self._splitArg(opts.sevs)
+
             #  Treat users like root as much as possible:
             if not self.base.setCacheDir():
                 self.base.conf.cache = 1
@@ -2356,6 +2366,22 @@ class YumOptionParser(OptionParser):
                 help=_("specifies an alternate directory to store packages"))
         group.add_option("", "--setopt", dest="setopts", default=[],
                 action="append", help=_("set arbitrary config and repo options"))
+
+        # Updateinfo options...
+        group.add_option("--bugfix", action="store_true", 
+                help=_("Include bugfix relevant packages, in updates"))
+        group.add_option("--security", action="store_true", 
+                help=_("Include security relevant packages, in updates"))
+
+        group.add_option("--advisory", "--advisories", dest="advs", default=[],
+                action="append", help=_("Include packages needed to fix the given advisory, in updates"))
+        group.add_option("--bzs", default=[],
+                action="append", help=_("Include packages needed to fix the given BZ, in updates"))
+        group.add_option("--cves", default=[],
+                action="append", help=_("Include packages needed to fix the given CVE, in updates"))
+        group.add_option("--sec-severity", "--secseverity", default=[],
+                         dest="sevs", action="append",
+                help=_("Include security relevant packages matching the severity, in updates"))
 
         
 def _filtercmdline(novalopts, valopts, args):

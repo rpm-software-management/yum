@@ -110,6 +110,8 @@ Obsoletes: yum-plugin-downloadonly <= 1.1.31-7.fc18
 Provides: yum-plugin-downloadonly = 3.4.3-44.yum
 Obsoletes: yum-presto < 3.4.3-66.yum
 Provides: yum-presto = 3.4.3-66.yum
+Obsoletes: yum-plugin-security < 1.1.32
+Provides: yum-plugin-security = 3.4.3-84.yum
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 
@@ -139,7 +141,7 @@ can notify you when they are available via email, syslog or dbus.
 %package cron
 Summary: Files needed to run yum updates as a cron job
 Group: System Environment/Base
-Requires: yum >= 3.0 cronie crontabs findutils
+Requires: yum >= 3.4.3-84 cronie crontabs findutils
 %if %{yum_cron_systemd}
 BuildRequires: systemd-units
 Requires(post): systemd

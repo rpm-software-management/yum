@@ -10,7 +10,6 @@ from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption
 from yum.parser import ConfigPreProcessor
 from ConfigParser import ConfigParser, ParsingError
 from yum.constants import *
-from yum.update_md import UpdateMetadata
 from email.mime.text import MIMEText
 from yum.i18n import to_str, to_utf8, to_unicode, utf8_width, utf8_width_fill, utf8_text_fill
 from yum import  _, P_
@@ -796,6 +795,9 @@ class YumCronBase(yum.YumBase):
             if os.geteuid() != 0:
                 self.setCacheDir()
 
+            # Turn off the plugins line
+            self.preconf.debuglevel = 0
+
             # Create the configuration
             self.conf
 
@@ -820,22 +822,7 @@ class YumCronBase(yum.YumBase):
 
     def populateUpdateMetadata(self):
         """Populate the metadata for the packages in the update."""
-
-        self.updateMetadata = UpdateMetadata()
-        repos = []
-
-        for (new, old) in self.up.getUpdatesTuples():
-            pkg = self.getPackageObject(new)
-            if pkg.repoid not in repos:
-                repo = self.repos.getRepo(pkg.repoid)
-                repos.append(repo.id)
-                try: # grab the updateinfo.xml.gz from the repodata
-                    md = repo.retrieveMD('updateinfo')
-                except Exception: # can't find any; silently move on
-                    continue
-                md = gzip.open(md)
-                self.updateMetadata.add(md)
-                md.close()
+        self.upinfo
 
     def refreshUpdates(self):
         """Check whether updates are available.
@@ -880,6 +867,9 @@ class YumCronBase(yum.YumBase):
         :return: Boolean indicating whether there are any updates to
            the group available
         """
+        if self.conf.group_command == 'objects':
+            return False
+
         update_available = False
         try:
             for group_string in self.opts.group_list:

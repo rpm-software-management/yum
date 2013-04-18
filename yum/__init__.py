@@ -80,6 +80,7 @@ import yumRepo
 import callbacks
 import yum.history
 import yum.igroups
+import update_md
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
@@ -194,6 +195,7 @@ class YumBase(depsolve.Depsolve):
         self._pkgSack = None
         self._lockfile = None
         self._tags = None
+        self._upinfo = None
         self._ts_save_file = None
         self.skipped_packages = []   # packages skip by the skip-broken code
         self._not_found_a = {}
@@ -219,6 +221,8 @@ class YumBase(depsolve.Depsolve):
         self.run_with_package_names = set()
         self._cleanup = []
         self.exit_code = 0
+
+        self.updateinfo_filters = {}
 
     def __del__(self):
         self.close()
@@ -971,6 +975,35 @@ class YumBase(depsolve.Depsolve):
         self.verbose_logger.debug('tags time: %0.3f' % (time.time() - tag_st))
         return self._tags
         
+
+    def _getUpdateinfo(self):
+        """ create the Update Info object used to search/report the updateinfo
+            metadata"""
+
+        upi_st = time.time()
+        self.verbose_logger.log(logginglevels.DEBUG_4,
+                                _('Getting updateinfo metadata'))
+
+        if self._upinfo is None:
+            self._upinfo = update_md.UpdateMetadata()
+
+            for repo in self.repos.listEnabled():
+                if 'updateinfo' not in repo.repoXML.fileTypes():
+                    continue
+
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('Adding Update Info from repository: %s'), repo)
+
+                try:
+                    self._upinfo.add(repo)
+                except Errors.RepoMDError, e:
+                    msg = _('Failed to add Update Info for repository: %s - %s') % (repo, exception2msg(e))
+                    self.logger.critical(msg)
+
+        self.verbose_logger.debug('updateinfo time: %0.3f' %
+                                  (time.time() - upi_st))
+        return self._upinfo
+
     def _getHistory(self):
         """auto create the history object that to access/append the transaction
            history information. """
@@ -1035,6 +1068,11 @@ class YumBase(depsolve.Depsolve):
                        fset=lambda self, value: setattr(self, "_tags",value),
                        fdel=lambda self: setattr(self, "_tags", None),
                        doc="Yum Package Tags Object")
+
+    upinfo = property(fget=lambda self: self._getUpdateinfo(),
+                      fset=lambda self, value: setattr(self, "_upinfo", value),
+                      fdel=lambda self: setattr(self, "_upinfo", None),
+                      doc="Yum Update Info Object")
     
     
     def doSackFilelistPopulate(self):

@@ -13,6 +13,7 @@ from yum.constants import *
 from email.mime.text import MIMEText
 from yum.i18n import to_str, to_utf8, to_unicode, utf8_width, utf8_width_fill, utf8_text_fill
 from yum import  _, P_
+import yum.updateinfo
 import smtplib
 from random import random
 from time import sleep
@@ -844,7 +845,7 @@ class YumCronBase(yum.YumBase):
 
 
             if self.opts.update_cmd in ('minimal', 'minimal-security'):
-                if not updateinfo.update_minimal(self):
+                if not yum.updateinfo.update_minimal(self):
                     return False
                 self.updateinfo_filters['bugfix'] = True
             elif self.opts.update_cmd in ('default', 'security',
@@ -859,10 +860,10 @@ class YumCronBase(yum.YumBase):
 
             if self.opts.update_cmd.endswith("security"):
                 self.updateinfo_filters['security'] = True
-                updateinfo.remove_txmbrs(self)
+                yum.updateinfo.remove_txmbrs(self)
             elif self.opts.update_cmd == 'minimal':
                 self.updateinfo_filters['bugfix'] = True
-                updateinfo.remove_txmbrs(self)
+                yum.updateinfo.remove_txmbrs(self)
 
         except Exception, e:
             self.emitCheckFailed("%s" %(e,))

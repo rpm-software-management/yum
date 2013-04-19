@@ -25,6 +25,8 @@ gnome\-packagekit application\&.
 .br 
 .I \fR * update-to [package1] [package2] [\&.\&.\&.]
 .br 
+.I \fR * minimal-update [package1] [package2] [\&.\&.\&.]
+.br 
 .I \fR * check\-update
 .br 
 .I \fR * upgrade [package1] [package2] [\&.\&.\&.] 
@@ -80,6 +82,8 @@ gnome\-packagekit application\&.
 .br
 .I \fR * load-transaction [txfile]
 .br
+.I \fR * updateinfo [summary | list | info | remove-pkgs-ts | exclude-updates | exclude-all | check-running-kernel]
+.br
 .I \fR * check
 .br 
 .I \fR * help [command] 
@@ -133,6 +137,11 @@ if you'd prefer that nothing happen in the above case.
 .IP "\fBupdate-to\fP"
 This command works like "\fBupdate\fP" but always specifies the version of the
 package we want to update to.
+.IP 
+.IP "\fBupdate-minimal\fP"
+This works like the update command, but if you have the package foo-1
+installed and have foo-2 (bugfix) and foo-3 (enhancement) available with
+updateinfo.xml then update-minimal --bugfix will update you to foo-2.
 .IP 
 .IP "\fBcheck\-update\fP"
 Implemented so you could know if your machine had any updates that needed to
@@ -506,6 +515,7 @@ In "history list" output the Altered column also gives some extra information
 if there was something not good with the transaction (this is also shown at the
 end of the package column in the packages-list command).
 
+.br
 .I \fB>\fR - The rpmdb was changed, outside yum, after the transaction.
 .br
 .I \fB<\fR - The rpmdb was changed, outside yum, before the transaction.
@@ -536,6 +546,108 @@ still available, if the rpmdb matches the current rpmdb, how many transaction
 members are in the saved transaction and what the filename is.
 
 .IP
+.IP "\fBupdateinfo\fP"
+This command has a bunch of sub-commands to act on the updateinfo in the
+repositories. The simplest commands are:
+
+.br
+.I \fR yum updateinfo info [all | available | installed | updates]
+.br 
+.I \fR yum updateinfo list [all | available | installed | updates]
+.br 
+.I \fR yum updateinfo [summary] [all | available | installed | updates]
+.br 
+
+which all display information about the available update information relevant
+to your machine (including anything installed, if you supply "all").
+.br
+
+.br
+.I \fR "\fB* all\fP"
+Is used to display information about both install and available advisories.
+.br
+.I \fR "\fB* available\fP"
+Is used to display information about just available advisories. This is the
+default.
+.br
+.I \fR "\fB* installed\fP"
+Is used to display information about just install advisories.
+.br
+.I \fR "\fB* updates\fP"
+This is mostly the same as "available" but it only shows advisory information
+for packages that can be updated to.
+
+
+.br
+They all take as arguments:
+
+.br
+.br
+.I \fR "\fB* <advisory> [advisory...]\fP"
+Is used to display information about one or more advisories.
+
+.br
+.I \fR "\fB* <package> [package...]\fP"
+Is used to display information about one or more packages.
+
+.br
+.I \fR "\fB* bugzillas / bzs\fP"
+Is the subset of the updateinfo information, pertaining to the bugzillas.
+
+.br
+.I \fR "\fB* cves\fP"
+Is the subset of the updateinfo information, pertaining to the CVEs.
+
+.br
+.I \fR "\fB* enhancement\fP"
+Is the subset of the updateinfo information, pertaining to enhancements.
+
+.br
+.I \fR "\fB* bugfix\fP"
+Is the subset of the updateinfo information, pertaining to bugfixes.
+
+.br
+.I \fR "\fB* security / sec\fP"
+Is the subset of the updateinfo information, pertaining to security.
+
+.br
+.I \fR "\fB* recommended\fP"
+Is the subset of the updateinfo information, pertaining to recommended updates.
+
+.br
+.I \fR "\fB* new-packages\fP"
+Is the subset of the updateinfo information, pertaining to new packages. These
+are packages which weren't available at the initial release of your
+distribution.
+.br
+
+There are also three sub-commands to remove packages when using "yum shell", 
+they are:
+
+.br
+.I \fR yum updateinfo remove-pkgs-ts
+
+.br 
+.I \fR yum updateinfo exclude-updates
+
+.br 
+.I \fR yum updateinfo exclude-all
+.br 
+
+they all take the following arguments:
+
+.br
+.I \fR* [bzs=foo] [advisories=foo] [cves=foo] [security-severity=foo] [security] [bugfix]
+.br 
+
+and finally there is a command to manually check the running kernel against
+updateinfo data:
+
+.br
+.I \fR yum updateinfo check-running-kernel
+.br 
+
+.PP
 .IP "\fBcheck\fP"
 Checks the local rpmdb and produces information on any problems it finds. You
 can pass the check command the arguments "dependencies" or "duplicates", to

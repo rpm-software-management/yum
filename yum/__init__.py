@@ -2423,7 +2423,7 @@ much more problems).
             urlgrabber.grabber.reset_curl_obj()
 
         if downloadonly and not errors: # caller handles errors
-            self.verbose_logger.info(_('exiting because --downloadonly specified'))
+            self.verbose_logger.info(_('exiting because "Download Only" specified'))
             sys.exit(self.exit_code)
         return errors
 

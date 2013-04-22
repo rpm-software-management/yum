@@ -958,20 +958,23 @@ class YumOutput:
                 return 1, ['No Packages to list']
             return 0, []
         
-    
-        
-    def userconfirm(self):
-        """Get a yes or no from the user, and default to No
+    def userconfirm(self, prompt=_('Is this ok [y/N]: '), extra={}):
+        """Get a yes or no from the user, and default to No, and maybe more.
 
-        :return: True if the user selects yes, and False if the user
-           selects no
+        :param extra: a dict of ui responses to a list of their inputs.
+        :return: the UI response or None for no. At it's simplest this is 'yes' or None
         """
-        yui = (to_unicode(_('y')), to_unicode(_('yes')))
-        nui = (to_unicode(_('n')), to_unicode(_('no')))
-        aui = (yui[0], yui[1], nui[0], nui[1])
+
+        # Allow the one letter english versions in all langs.
+        yui = (u'y', to_unicode(_('y')), to_unicode(_('yes')))
+        nui = (u'n', to_unicode(_('n')), to_unicode(_('no')))
+        aui = set(yui + nui)
+        for xui in extra:
+            aui.update(extra[xui])
+
         while True:
             try:
-                choice = raw_input(_('Is this ok [y/N]: '))
+                choice = raw_input(prompt)
             except UnicodeEncodeError:
                 raise
             except UnicodeDecodeError:
@@ -982,17 +985,19 @@ class YumOutput:
             choice = choice.lower()
             if len(choice) == 0 or choice in aui:
                 break
-            # If the enlish one letter names don't mix, allow them too
-            if u'y' not in aui and u'y' == choice:
-                choice = yui[0]
-                break
-            if u'n' not in aui and u'n' == choice:
-                break
 
-        if len(choice) == 0 or choice not in yui:
-            return False
-        else:            
-            return True
+        if not choice:
+            # Default, maybe configure this?
+            #  Would need to never allow default=yes as that's really bad.
+            return None
+
+        if choice in yui:
+            return 'yes'
+        for xui in extra:
+            if choice in extra[xui]:
+                return xui
+
+        return None
     
     def _cli_confirm_gpg_key_import(self, keydict):
         # FIXME what should we be printing here?

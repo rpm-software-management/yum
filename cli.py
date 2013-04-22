@@ -529,6 +529,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            errors.  A negative return code indicates that errors
            occurred in the pre-transaction checks
         """
+        def _downloadonly_userconfirm(self):
+            return self.userconfirm(prompt=_('Is this ok [y/d/N]: '),
+                                    extra={'downloadonly' :
+                                           (u'd', _('d'), _('download'),
+                                            _('downloadonly'))})
+
         # just make sure there's not, well, nothing to do
         if len(self.tsInfo) == 0:
             self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
@@ -586,12 +592,22 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # confirm with user
         if self._promptWanted():
-            if self.conf.assumeno or not self.userconfirm():
+            uc = None
+            if not self.conf.assumeno:
+                uc = _downloadonly_userconfirm(self)
+
+            if not uc:
                 self.verbose_logger.info(_('Exiting on user command'))
                 return -1
+            elif uc == 'downloadonly':
+                self.conf.downloadonly = True
 
-        self.verbose_logger.log(yum.logginglevels.INFO_2,
-            _('Downloading packages:'))
+        if self.conf.downloadonly:
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                    _('Background downloading packages, then exiting:'))
+        else:
+            self.verbose_logger.log(yum.logginglevels.INFO_2,
+                                    _('Downloading packages:'))
         problems = self.downloadPkgs(downloadpkgs, callback_total=self.download_callback_total_cb) 
 
         if len(problems) > 0:

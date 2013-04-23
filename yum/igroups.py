@@ -172,7 +172,8 @@ class InstalledGroups(object):
             fo.write("%u\n" % len(evgrp.grp_names))
             for grpname in sorted(evgrp.grp_names):
                 fo.write("%s\n" % grpname)
-                if self.groups[grpname].environment == evgrp.evgid:
+                if (grpname in self.groups and
+                    self.groups[grpname].environment == evgrp.evgid):
                     fo.write("%s\n" % "true")
                 else:
                     fo.write("%s\n" % "false")

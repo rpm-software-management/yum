@@ -824,6 +824,10 @@ class YumCronBase(yum.YumBase):
 
     def populateUpdateMetadata(self):
         """Populate the metadata for the packages in the update."""
+
+        for repo in base.repos.findRepos('*'):
+            repo.metadata_expire = 0
+
         self.upinfo
 
     def refreshUpdates(self):

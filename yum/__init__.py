@@ -1849,8 +1849,11 @@ much more problems).
                 po.yumdb_info.reason = txmbr.reason
                 po.yumdb_info.releasever = self.conf.yumvar['releasever']
                 for var in self.conf.yumvar: # Store all yum variables.
+                    # Skip some of the variables...
                     if var == 'releasever': continue
                     if var == 'basearch': continue # This "never" changes.
+                    if var == 'arch':     continue
+                    # Skip uuid?
                     setattr(po.yumdb_info, 'var_' + var, self.conf.yumvar[var])
                 if hasattr(self, 'args') and self.args:
                     po.yumdb_info.command_line = ' '.join(self.args)

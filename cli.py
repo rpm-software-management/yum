@@ -1975,7 +1975,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
-        if self.conf.assumeyes and not self.conf.assumeno:
+        if (self.conf.assumeyes or self.conf.downloadonly) and not self.conf.assumeno:
             return False
         if self.conf.alwaysprompt:
             return True

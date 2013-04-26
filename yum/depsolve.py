@@ -200,7 +200,8 @@ class Depsolve(object):
                 self.logger.critical(_('Invalid tsflag in config file: %s'), flag)
 
         if not self.conf.diskspacecheck:
-            self._add_prob_flags(rpm.RPMPROB_FILTER_DISKSPACE)
+            self._add_prob_flags(rpm.RPMPROB_FILTER_DISKSPACE,
+                                 rpm.RPMPROB_FILTER_DISKNODES)
 
         probfilter = 0
         for flag in self.tsInfo.probFilterFlags:

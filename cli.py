@@ -661,8 +661,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         tt_st = time.time()            
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             _('Running transaction test'))
-        if not self.conf.diskspacecheck:
-            self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_DISKSPACE)
             
         self.ts.order() # order the transaction
         self.ts.clean() # release memory not needed beyond this point

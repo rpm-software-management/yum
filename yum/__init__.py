@@ -79,6 +79,7 @@ import logginglevels
 import yumRepo
 import callbacks
 import yum.history
+import yum.fssnapshots
 import yum.igroups
 import update_md
 
@@ -196,6 +197,7 @@ class YumBase(depsolve.Depsolve):
         self._lockfile = None
         self._tags = None
         self._upinfo = None
+        self._fssnap = None
         self._ts_save_file = None
         self.skipped_packages = []   # packages skip by the skip-broken code
         self._not_found_a = {}
@@ -1022,6 +1024,15 @@ class YumBase(depsolve.Depsolve):
                                                    releasever=self.conf.yumvar['releasever'])
         return self._history
     
+    def _getFSsnap(self):
+        """ create the fssnap object used to query/create snapshots. """
+        if self._fssnap is None:
+            devices = self.conf.fssnap_devices
+            self._fssnap = yum.fssnapshots._FSSnap(root=self.conf.installroot,
+                                                   devices=devices)
+
+        return self._fssnap
+
     def _getIGroups(self):
         """auto create the installed groups object that to access/change the
            installed groups information. """
@@ -1081,7 +1092,11 @@ class YumBase(depsolve.Depsolve):
                       fset=lambda self, value: setattr(self, "_upinfo", value),
                       fdel=lambda self: setattr(self, "_upinfo", None),
                       doc="Yum Update Info Object")
-    
+
+    fssnap = property(fget=lambda self: self._getFSsnap(),
+                      fset=lambda self, value: setattr(self, "_fssnap",value),
+                      fdel=lambda self: setattr(self, "_fssnap", None),
+                      doc="Yum FS snapshot Object")
     
     def doSackFilelistPopulate(self):
         """Convenience function to populate the repositories with the
@@ -1677,6 +1692,38 @@ much more problems).
         :raises: :class:`yum.Errors.YumRPMTransError` if there is a
            transaction cannot be completed
         """
+        if ((self.conf.fssnap_automatic_pre or
+             self.conf.fssnap_automatic_post) and
+            self.conf.fssnap_automatic_keep):
+            # Automatically kill old snapshots...
+            snaps = self.fssnap.old_snapshots()
+            snaps = sorted(snaps, key=lambda x: (x['ctime'], x['origin_dev']),
+                           reverse=True)
+            last = '<n/a>'
+            num = 0
+            todel = []
+            for snap in snaps:
+                num += 1
+
+                if last != snap['origin_dev']:
+                    last = snap['origin_dev']
+                    num = 1
+                    continue
+
+                if num > self.conf.fssnap_automatic_keep:
+                    todel.append(snap['dev'])
+            # Display something to the user?
+            self.fssnap.del_snapshots(devices=todel)
+
+        if (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
+            self.conf.fssnap_automatic_pre):
+            if not self.fssnap.has_space(self.conf.fssnap_percentage):
+                msg = _("Not enough space to create pre. FS snapshot, aborting transaction.")
+                raise Errors.YumRPMTransError(msg=msg, errors=[])
+            else:
+                tags = {'*': ['reason=automatic']} # FIXME: pre. tags
+                self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+
         self.plugins.run('pretrans')
 
         #  We may want to put this other places, eventually, but for now it's
@@ -1807,6 +1854,16 @@ much more problems).
             self.verifyTransaction(resultobject, vTcb)
             if self.conf.group_command == 'objects':
                 self.igroups.save()
+
+        if (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
+            self.conf.fssnap_automatic_post):
+            if not self.fssnap.has_space(self.conf.fssnap_percentage):
+                msg = _("Not enough space to create post trans FS snapshot.")
+                self.logger.critical(msg)
+            else:
+                tags = {'*': ['reason=automatic']} # FIXME: post tags
+                self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+
         return resultobject
 
     def verifyTransaction(self, resultobject=None, txmbr_cb=None):

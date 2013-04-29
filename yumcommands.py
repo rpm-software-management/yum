@@ -4077,3 +4077,126 @@ class UpdateMinimalCommand(YumCommand):
             return 2, [msg]
         else:
             return 0, ['No Packages marked for minimal Update']
+
+
+class FSSnapshotCommand(YumCommand):
+    def getNames(self):
+        return ['fssnapshot', 'fssnap']
+
+    def getUsage(self):
+        return "[]"
+
+    def getSummary(self):
+        return _("Creates filesystem snapshots, or lists/deletes current snapshots.")
+
+    def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that the program is being run by the root user,
+        that there are enabled repositories with gpg keys, and that
+        this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
+        checkRootUID(base)
+
+    @staticmethod
+    def _li_snaps(base, snaps):
+        snaps = sorted(snaps, key=lambda x: x['dev'])
+
+        max_dev = utf8_width(_('Snapshot'))
+        max_ori = utf8_width(_('Origin'))
+        for data in snaps:
+            max_dev = max(max_dev, len(data['dev']))
+            max_ori = max(max_ori, len(data['origin']))
+
+        done = False
+        for data in snaps:
+            if not done:
+                print ("%s %s %s %s %s %s" %
+                       (utf8_width_fill(_('Snapshot'), max_dev),
+                        utf8_width_fill(_('Size'), 6, left=False),
+                        utf8_width_fill(_('Used'), 6, left=False),
+                        utf8_width_fill(_('Free'), 6, left=False),
+                        utf8_width_fill(_('Origin'), max_ori), _('Tags')))
+                done = True
+            print ("%*s %6s %5.1f%% %6s %*s %s" %
+                   (max_dev, data['dev'], base.format_number(data['size']),
+                    data['used'],
+                    base.format_number(data['free']),
+                    max_ori, data['origin'], ",".join(data['tags'])))
+
+    def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+        if extcmds and extcmds[0] in ('list', 'delete', 'create', 'summary',
+                                      'have-space', 'has-space'):
+            subcommand = extcmds[0]
+            extcmds = extcmds[1:]
+        else:
+            subcommand = 'summary'
+
+        if subcommand == 'list':
+            snaps = base.fssnap.old_snapshots()
+            print _("List of %u snapshosts:") % len(snaps)
+            self._li_snaps(base, snaps)
+
+        if subcommand == 'delete':
+            snaps = base.fssnap.old_snapshots()
+            devs = [x['dev'] for x in snaps]
+            snaps = set()
+            for dev in devs:
+                if dev in snaps:
+                    continue
+
+                for extcmd in extcmds:
+                    if dev == extcmd or fnmatch.fnmatch(dev, extcmd):
+                        snaps.add(dev)
+                        break
+            snaps = base.fssnap.del_snapshots(devices=snaps)
+            print _("Deleted %u snapshosts:") % len(snaps)
+            self._li_snaps(base, snaps)
+
+        if subcommand in ('have-space', 'has-space'):
+            pc = base.conf.fssnap_percentage
+            if base.fssnap.has_space(pc):
+                print _("Space available to take a snapshot.")
+            else:
+                print _("Not enough space available to take a snapshot.")
+
+        if subcommand == 'create':
+            tags = {'*': ['reason=manual']}
+            pc = base.conf.fssnap_percentage
+            for (odev, ndev) in base.fssnap.snapshot(pc, tags=tags):
+                print _("Created snapshot from %s, results is: %s") %(odev,ndev)
+            else:
+                print _("Failed to create snapshots")
+
+        if subcommand == 'summary':
+            snaps = base.fssnap.old_snapshots()
+            if not snaps:
+                print _("No snapshots")
+                return 0, [basecmd + ' ' + subcommand + ' done']
+
+            used = 0
+            dev_oris = set()
+            for snap in snaps:
+                used += snap['used']
+                dev_oris.add(snap['origin_dev'])
+
+            msg = _("Have %u snapshots, using %s space, from %u origins.")
+            print msg % (len(snaps), base.format_number(used), len(dev_oris))
+
+        return 0, [basecmd + ' ' + subcommand + ' done']

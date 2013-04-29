@@ -886,6 +886,14 @@ class YumConf(StartupConf):
 
     recheck_installed_requires = BoolOption(False)
 
+    fssnap_automatic_pre  = BoolOption(False)
+    fssnap_automatic_post = BoolOption(False)
+    fssnap_automatic_keep = IntOption(1)
+    fssnap_percentage = IntOption(100, range_min=1, range_max=100)
+    fssnap_devices = ListOption("!*/swap !*/lv_swap "
+                                "glob:/etc/yum/fssnap.d/*.conf",
+                                parse_default=True)
+
     _reposlist = []
 
     def dump(self):

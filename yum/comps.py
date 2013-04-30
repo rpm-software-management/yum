@@ -295,6 +295,7 @@ class Environment(CompsObj):
         self.installed = False
         self._groups = {}
         self._options = {}
+        self._defaultoptions = {}
 
         if elem:
             self.parse(elem)
@@ -315,6 +316,11 @@ class Environment(CompsObj):
         return self._options.keys()
 
     options = property(_optioniter)
+
+    def _defaultoptioniter(self):
+        return self._defaultoptions.keys()
+
+    defaultoptions = property(_defaultoptioniter)
 
     def parse(self, elem):
         for child in elem:
@@ -366,12 +372,19 @@ class Environment(CompsObj):
             if child.tag == 'groupid':
                 optionid = child.text
                 self._options[optionid] = 1
+                defopt = child.attrib.get('default')
+                default = parse_boolean(defopt)
+                if default:
+                    self._defaultoptions[optionid] = 1
 
     def add(self, obj):
         """Add another category object to this object"""
 
         for grp in obj.groups:
             self._groups[grp] = 1
+
+        for grp in obj.defaultoptions:
+            self._defaultoptions[grp] = 1
 
         for grp in obj.options:
             self._options[grp] = 1
@@ -406,7 +419,10 @@ class Environment(CompsObj):
         msg += """    </grouplist>\n"""
         msg += """    <optionlist>\n"""
         for grp in self.options:
-            msg += """     <groupid>%s</groupid>\n""" % grp
+            if grp in self.defaultoptions:
+                msg += """     <groupid default="true">%s</groupid>\n""" % grp
+            else:
+                msg += """     <groupid>%s</groupid>\n""" % grp
         msg += """    </optionlist>\n"""
         msg += """  </environment>\n"""
 

@@ -173,7 +173,7 @@ class DeltaInfo:
                 kwargs['failfunc'] = failfunc
                 kwargs['async'] = True
             try: mdpath[repo] = repo._retrieveMD(name, **kwargs)
-            except Errors.RepoError, e: failfunc(e)
+            except RepoError, e: failfunc(e)
         if async:
             grabber.parallel_wait()
 

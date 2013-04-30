@@ -3218,6 +3218,14 @@ class LoadTransactionCommand(YumCommand):
                 return False # Bad...
 
             return True
+        def _pkg_counts(l, counts):
+            if not l.startswith('  ts_state: '):
+                return
+            state = l[len('  ts_state: '):]
+            if state in ('e', 'od', 'ud'):
+                counts['remove'] += 1
+            elif state in ('i', 'u'):
+                counts['install'] += 1
 
         if not extcmds:
             extcmds = [tempfile.gettempdir()]
@@ -3253,6 +3261,11 @@ class LoadTransactionCommand(YumCommand):
                 except:
                     continue
 
+                counts = {'install' : 0, 'remove' : 0}
+                for l in data[pkgstart:]:
+                    l = l.rstrip()
+                    _pkg_counts(l, counts)
+
                 # Check to see if all the packages are available..
                 bad = ' '
                 for l in data[pkgstart:]:
@@ -3263,19 +3276,30 @@ class LoadTransactionCommand(YumCommand):
                     bad = '*'
                     break
 
+                # assert (counts['install'] + counts['remove']) == numpkgs
                 current = '%s%s' % (bad, current)
                 if not done:
-                    pkgtitle = _("Members")
-                    pkglen = utf8_width(pkgtitle)
-                    if pkglen < 6:
-                        pkglen = 6
-                    pkgtitle = utf8_width_fill(pkgtitle, pkglen)
-                    print "?? |", pkgtitle, "|", _("Filename")
+                    pkgititle = _("Install")
+                    pkgilen = utf8_width(pkgititle)
+                    if pkgilen < 6:
+                        pkgilen = 6
+                    pkgititle = utf8_width_fill(pkgititle, pkgilen)
+
+                    pkgetitle = _("Remove")
+                    pkgelen = utf8_width(pkgetitle)
+                    if pkgelen < 6:
+                        pkgelen = 6
+                    pkgetitle = utf8_width_fill(pkgetitle, pkgelen)
+                    print "?? |", pkgititle, "|", pkgetitle, "|", _("Filename")
                     
                     done = True
 
-                numpkgs = "%*s" % (pkglen, locale.format("%d", numpkgs, True))
-                print current, '|', numpkgs, '|', os.path.basename(yumtx)
+                numipkgs = locale.format("%d", counts['install'], True)
+                numipkgs = "%*s" % (pkgilen, numipkgs)
+                numepkgs = locale.format("%d", counts['remove'], True)
+                numepkgs = "%*s" % (pkgelen, numepkgs)
+                print "%s | %s | %s | %s" % (current, numipkgs, numepkgs,
+                                             os.path.basename(yumtx))
             return 0, [_('Saved transactions from %s; looked at %u files') %
                        (load_file, len(yumtxs))]
 

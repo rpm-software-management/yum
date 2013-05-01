@@ -64,6 +64,7 @@ class FakeConf(object):
         self.config_file_age = 0
         self.yumvar = {}
         self.reposdir = '/tmp/XXXX'
+        self.diskspacecheck = True
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""

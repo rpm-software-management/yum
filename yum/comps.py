@@ -373,7 +373,10 @@ class Environment(CompsObj):
                 optionid = child.text
                 self._options[optionid] = 1
                 defopt = child.attrib.get('default')
-                default = parse_boolean(defopt)
+                if defopt:
+                    default = parse_boolean(defopt)
+                else:
+                    default = False
                 if default:
                     self._defaultoptions[optionid] = 1
 

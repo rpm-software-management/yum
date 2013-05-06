@@ -689,9 +689,9 @@ class YumOutput:
                 # we can.
                 msg += u"%s%s%s%s "
                 if (align == u'-'):
-                    data.extend([hibeg, val, " " * (width - val_width), hiend])
+                    data.extend([hibeg, val, hiend, " " * (width - val_width)])
                 else:
-                    data.extend([hibeg, " " * (width - val_width), val, hiend])
+                    data.extend([" " * (width - val_width), hibeg, val, hiend])
             else:
                 msg += u"%s%s%s\n" + " " * (total_width + width + 1)
                 data.extend([hibeg, val, hiend])

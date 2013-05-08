@@ -602,7 +602,23 @@ class RPMDBPackageSack(PackageSackBase):
                 # will pick up any loads :)
                 pkgs = self.searchNames([pat])
                 if not pkgs:
-                    break
+                    # We need to do a big search for 'pkg*'
+                    if misc.re_glob(pat):
+                        break
+                    # We need to do a big search for 'pkg-1.2'
+                    if '-' in pat:
+                        break
+                    # We need to do a big search for 'pkg.noarch'
+                    if '.' in pat:
+                        break
+                    #  We don't need to do a big search for '0:pkg', because
+                    # <en> isn't possible ... and envra matches the above.
+                    # if ':' in pat:
+                    #    break
+
+                    #  At this point we have just found something that doesn't
+                    # match, like "yum list zzuf" ... we don't want this to take
+                    # the much slower path.
                 ret.extend(pkgs)
             else:
                 return ret

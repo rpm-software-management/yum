@@ -503,12 +503,14 @@ class UpdateMetadata(object):
         """ Parse a metadata from a given YumRepository, file, or filename. """
         if not obj:
             raise UpdateNoticeException
+        repoid = None
         if type(obj) in (type(''), type(u'')):
             unfile = decompress(obj)
             infile = open(unfile, 'rt')
 
         elif isinstance(obj, YumRepository):
             if obj.id not in self._repos:
+                repoid = obj.id
                 self._repos.append(obj.id)
                 md = obj.retrieveMD(mdtype)
                 if not md:
@@ -529,7 +531,11 @@ class UpdateMetadata(object):
                     # what else should we do?
                     continue
                 if not self.add_notice(un):
-                    print >> sys.stderr, "An update notice is broken, or duplicate, skipping:", un['update_id']
+                    if repoid is None:
+                        upid = un['update_id']
+                    else:
+                        upid = "%s/%s" % (repoid, un['update_id'])
+                    print >> sys.stderr, "An update notice is broken, or duplicate, skipping:", upid
 
     def __unicode__(self):
         ret = u''

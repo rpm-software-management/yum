@@ -104,8 +104,23 @@ class UpdateNotice(object):
                      'severity', 'release',
                      'issued', 'updated', 'version', 'pushcount',
                      'from', 'title', 'summary', 'description', 'solution'):
+            if data == 'status': # FIXME: See below...
+                continue
             if self._md[data] != other._md[data]:
                 return False
+        # FIXME: Massive hack, Fedora is really broken and gives status=stable
+        # and status=testing for updateinfo notices, just depending on which
+        # repo. they come from.
+        data = 'status'
+        if self._md[data] != other._md[data]:
+            if self._md[data]  not in ('stable', 'testing'):
+                return False
+            if other._md[data] not in ('stable', 'testing'):
+                return False
+            # They are both really "stable" ...
+            self._md[data]  = 'stable'
+            other._md[data] = 'stable'
+
         return True
 
     def __ne__(self, other):

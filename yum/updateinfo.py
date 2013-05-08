@@ -287,7 +287,6 @@ def remove_txmbrs(base, filters=None):
     '''
     Remove packages from the transaction, using the updateinfo data.
     '''
-    md_info = base.upinfo
 
     def ysp_del_pkg(tspkg):
         """ Deletes a package within a transaction. """
@@ -303,6 +302,7 @@ def remove_txmbrs(base, filters=None):
     if _no_options(opts):
         return 0, 0, 0
 
+    md_info = base.upinfo
     tot = 0
     cnt = 0
     used_map = _ysp_gen_used_map(opts)
@@ -372,8 +372,6 @@ def exclude_updates(base, filters=None):
     Exclude all packages to do with updates, using the updateinfo data.
     '''
     
-    md_info = base.upinfo
-
     def ysp_del_pkg(pkg, reason="updateinfo"):
         """ Deletes a package from all trees that yum knows about """
         base.verbose_logger.log(INFO_1,
@@ -387,6 +385,8 @@ def exclude_updates(base, filters=None):
 
     if _no_options(opts):
         return 0, 0
+
+    md_info = base.upinfo
 
     used_map = _ysp_gen_used_map(opts)
 
@@ -429,8 +429,6 @@ def exclude_all(base, filters=None):
     Exclude all packages, using the updateinfo data.
     '''
     
-    md_info = base.upinfo
-
     def ysp_del_pkg(pkg, reason="updateinfo"):
         """ Deletes a package from all trees that yum knows about """
         base.verbose_logger.log(INFO_1,
@@ -444,6 +442,8 @@ def exclude_all(base, filters=None):
 
     if _no_options(opts):
         return 0, 0
+
+    md_info = base.upinfo
 
     used_map = _ysp_gen_used_map(opts)
 

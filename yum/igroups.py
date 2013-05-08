@@ -40,6 +40,12 @@ class InstalledGroup(object):
         pkg_names = set(pkg_names)
         return sorted(pkg_names.difference(self.pkg_names))
 
+    groupid = property(fget=lambda self: self.gid,
+                      fset=lambda self, value: setattr(self, "gid", value),
+                      fdel=lambda self: setattr(self, "gid", None),
+                      doc="Compat. to treat comps groups/igroups the same")
+
+
 
 class InstalledEnvironment(object):
     def __init__(self, evgid):
@@ -58,6 +64,11 @@ class InstalledEnvironment(object):
     def _removals(self, grp_names):
         grp_names = set(grp_names)
         return sorted(grp_names.difference(self.grp_names))
+
+    environmentid = property(fget=lambda self: self.evgid,
+                      fset=lambda self, value: setattr(self, "evgid", value),
+                      fdel=lambda self: setattr(self, "evgid", None),
+                      doc="Compat. to treat comps groups/igroups the same")
 
 
 class InstalledGroups(object):

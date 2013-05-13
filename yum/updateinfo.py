@@ -37,10 +37,16 @@ def _match_sec_cmd(sec_cmds, pkgname, notice):
             return i
         if fnmatch.fnmatch(notice['update_id'], i):
             return i
+
+        cvei = i
+        if not (i.startswith("CVE-") or i.startswith("*")):
+            cvei = 'CVE-' + i
         for ref in _ysp_safe_refs(notice['references']):
             if ref['id'] is None:
                 continue
             if fnmatch.fnmatch(ref['id'], i):
+                return i
+            if fnmatch.fnmatch(ref['id'], cvei):
                 return i
     return None
 

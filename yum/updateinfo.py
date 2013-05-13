@@ -35,8 +35,13 @@ def _match_sec_cmd(sec_cmds, pkgname, notice):
     for i in sec_cmds:
         if fnmatch.fnmatch(pkgname, i):
             return i
-        if notice['update_id'] == i:
+        if fnmatch.fnmatch(notice['update_id'], i):
             return i
+        for ref in _ysp_safe_refs(notice['references']):
+            if ref['id'] is None:
+                continue
+            if fnmatch.fnmatch(ref['id'], i):
+                return i
     return None
 
 def _has_id(used_map, refs, ref_type, ref_ids):

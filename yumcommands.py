@@ -4020,6 +4020,8 @@ class UpdateinfoCommand(YumCommand):
         list_type = "available"
         if extcmds and extcmds[0] in ("updates","available","installed", "all"):
             list_type = extcmds.pop(0)
+            if filt_type is None:
+                extcmds, show_type, filt_type = self._parse_extcmds(extcmds)
 
         if filt_type == "newpackage":
             # No filtering here, as we want what isn't installed...

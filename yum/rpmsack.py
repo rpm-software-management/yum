@@ -1320,7 +1320,7 @@ class RPMDBPackageSack(PackageSackBase):
                 if not pkgs:
                     self._pkgname_fails.add(name)
             else:
-                pkgs = self.returnPkgs()
+                pkgs = self.returnPackages()
             for po in pkgs:
                 for tag in ('arch', 'rel', 'ver', 'epoch'):
                     if loc[tag] is not None and loc[tag] != getattr(po, tag):

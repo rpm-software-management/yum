@@ -2319,6 +2319,8 @@ much more problems).
             self.closeRpmDB()
             self.doUnlock()
 
+        beg_download = time.time()
+        all_remote_pkgs = remote_pkgs
         while True:
             remote_pkgs.sort(mediasort)
             #  This is kind of a hack and does nothing in non-Fedora versions,
@@ -2326,7 +2328,6 @@ much more problems).
             if (hasattr(urlgrabber.progress, 'text_meter_total_size') and
                 len(remote_pkgs) > 1):
                 urlgrabber.progress.text_meter_total_size(remote_size)
-            beg_download = time.time()
             i = 0
             local_size = [0]
             done_repos = set()
@@ -2380,8 +2381,6 @@ much more problems).
 
             if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                 urlgrabber.progress.text_meter_total_size(0)
-            if callback_total is not None and not errors:
-                callback_total(remote_pkgs, remote_size, beg_download)
 
             if downloadonly:
                 for po in remote_pkgs:
@@ -2409,13 +2408,16 @@ much more problems).
 
             # there were drpm related errors *only*
             remote_pkgs = []
-            remote_size = 0
             for po in errors:
                 po = po.rpm
                 remote_pkgs.append(po)
                 remote_size += po.size
+            # callback_total needs the total pkg count
+            all_remote_pkgs.extend(remote_pkgs)
             errors.clear()
             self.verbose_logger.warn(_('Some delta RPMs failed to download or rebuild. Retrying..'))
+        if callback_total and not errors:
+            callback_total(all_remote_pkgs, remote_size, beg_download)
 
         if not downloadonly:
             # XXX: Run unlocked?  Skip this for now..

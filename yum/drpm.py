@@ -275,7 +275,8 @@ class DeltaInfo:
                 if hasattr(progress, 'text_meter_total_size'):
                     progress.text_meter_total_size(0)
                 self.progress = po.repo.callback
-                self.progress.start(text='<locally rebuilding deltarpms>', size=total)
+                self.progress.start(filename=None, url=None, # BZ 963023
+                                    text='<locally rebuilding deltarpms>', size=total)
                 self.done = 0
         while self._future_jobs:
             self.dequeue()

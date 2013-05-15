@@ -201,6 +201,10 @@ class Group(CompsObj):
                     continue
 
                 package = child.text
+                if not package:
+                    #  Ignore this too, or we end up doing:
+                    # .searchNevra(name=None)
+                    continue
                 if genre == 'mandatory':
                     self.mandatory_packages[package] = 1
                 elif genre == 'default':

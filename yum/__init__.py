@@ -2321,6 +2321,7 @@ much more problems).
 
         beg_download = time.time()
         all_remote_pkgs = remote_pkgs
+        all_remote_size = remote_size
         while True:
             remote_pkgs.sort(mediasort)
             #  This is kind of a hack and does nothing in non-Fedora versions,
@@ -2408,16 +2409,18 @@ much more problems).
 
             # there were drpm related errors *only*
             remote_pkgs = []
+            remote_size = 0
             for po in errors:
                 po = po.rpm
                 remote_pkgs.append(po)
                 remote_size += po.size
             # callback_total needs the total pkg count
             all_remote_pkgs.extend(remote_pkgs)
+            all_remote_size += remote_size
             errors.clear()
             self.verbose_logger.warn(_('Some delta RPMs failed to download or rebuild. Retrying..'))
         if callback_total and not errors:
-            callback_total(all_remote_pkgs, remote_size, beg_download)
+            callback_total(all_remote_pkgs, all_remote_size, beg_download)
 
         if not downloadonly:
             # XXX: Run unlocked?  Skip this for now..

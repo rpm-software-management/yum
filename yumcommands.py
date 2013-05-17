@@ -1053,7 +1053,10 @@ class GroupsCommand(YumCommand):
                     base.igroups.add_environment(evgrp.environmentid,
                                                  evgrp.allgroups)
                 for grp in grps:
-                    base.igroups.add_group(grp.groupid, grp.packages)
+                    pkg_names = set() # Only see names that are installed.
+                    for pkg in base.rpmdb.searchNames(grp.packages):
+                        pkg_names.add(pkg.name)
+                    base.igroups.add_group(grp.groupid, pkg_names)
                 base.igroups.save()
                 return 0, ['Marked install: ' + ','.join(extcmds)]
 
@@ -1158,13 +1161,17 @@ class GroupsCommand(YumCommand):
                 def _convert_grp(grp):
                     if not grp.installed:
                         return
-                    pkg_names = grp.packages
-                    base.igroups.add_group(grp.groupid, pkg_names)
-
+                    pkg_names = []
                     for pkg in base.rpmdb.searchNames(pkg_names):
                         if 'group_member' in pkg.yumdb_info:
                             continue
                         pkg.yumdb_info.group_member = grp.groupid
+                        pkg_names.append(pkg.name)
+
+                    #  We only mark the packages installed as a known part of
+                    # the group. This way "group update" will work and install
+                    # any remaining packages, as it would before the conversion.
+                    base.igroups.add_group(grp.groupid, pkg_names)
 
                 # Blank everything.
                 for gid in base.igroups.groups.keys():

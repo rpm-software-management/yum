@@ -279,6 +279,19 @@ groups own packages need updating). If you pass the \-v option, to enable verbos
 mode, then the package names are matched against installed/available packages
 similar to the list command.
 
+When using group_command=objects, the info command will display markers next
+to each package saying how that pacakge relates to the group object. The
+meaning of these markers is:
+
+.br
+"-" = Pacakge isn't installed, and won't be installed as part of the group (Eg. group install foo -pkgA … this will have pkgA marked as '-')
+.br
+"+" = Package isn't installed, but will be the next time you run "yum upgrade" or "yum group upgrade foo"
+.br
+" " = Package is installed, but wasn't installed via. the group (so "group remove foo" won't remove it).
+.br
+"=" = Package is installed, and was installed via. the group.
+
 "\fBgroup summary\fP" is used to give a quick summary of how many groups
 are installed and available.
 
@@ -287,8 +300,9 @@ in group_command=objects mode. These commands then allow you to alter yum's idea
 of which groups are installed, and the packages that belong to them.
 
 "\fBgroup mark install\fP" mark the group as installed. When
-installed "\fByum upgrade\fP" and "\fByum group upgrade\fP" will installing new
-packages for the group.
+installed "\fByum upgrade\fP" and "\fByum group upgrade\fP" will install new
+packages for the group (only those packages already installed will be marked as
+members of the installed group to start with).
 
 "\fBgroup mark remove\fP" the opposite of mark install.
 

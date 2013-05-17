@@ -633,7 +633,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.verbose_logger.log(yum.logginglevels.INFO_2, 
              _('Running transaction check'))
         msgs = self._run_rpm_check()
-        depsolve = True
+        depsolve = False
         if msgs:
             rpmlib_only = True
             for msg in msgs:
@@ -644,7 +644,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 print _("ERROR You need to update rpm to handle:")
             else:
                 print _('ERROR with transaction check vs depsolve:')
-                depsolve = False
+                depsolve = True
 
             for msg in msgs:
                 print to_utf8(msg)

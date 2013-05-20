@@ -423,10 +423,7 @@ class InstallCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         self.doneCommand(base, _("Setting up Install Process"))
-        try:
-            return base.installPkgs(extcmds, basecmd=basecmd)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        return base.installPkgs(extcmds, basecmd=basecmd)
 
 
 class UpdateCommand(YumCommand):
@@ -485,12 +482,9 @@ class UpdateCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         self.doneCommand(base, _("Setting up Update Process"))
-        try:
-            ret = base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
-            updateinfo.remove_txmbrs(base)
-            return ret
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        ret = base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
+        updateinfo.remove_txmbrs(base)
+        return ret
 
 class DistroSyncCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
@@ -547,13 +541,10 @@ class DistroSyncCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         self.doneCommand(base, _("Setting up Distribution Synchronization Process"))
-        try:
-            base.conf.obsoletes = 1
-            ret = base.distroSyncPkgs(extcmds)
-            updateinfo.remove_txmbrs(base)
-            return ret
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        base.conf.obsoletes = 1
+        ret = base.distroSyncPkgs(extcmds)
+        updateinfo.remove_txmbrs(base)
+        return ret
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
     """ Get the length of each pkg's column. Add that to data.
@@ -630,7 +621,7 @@ class InfoCommand(YumCommand):
         else:
             updateinfo.exclude_all(base)
 
-        try:
+        if True: # Try, YumBase...
             highlight = base.term.MODE['bold']
             #  If we are doing: "yum info installed blah" don't do the highlight
             # because the usability of not accessing the repos. is still higher
@@ -639,9 +630,7 @@ class InfoCommand(YumCommand):
                 highlight = False
             ypl = base.returnPkgLists(extcmds, installed_available=highlight,
                                       repoid=repoid)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
-        else:
+
             update_pkgs = {}
             inst_pkgs   = {}
             local_pkgs  = {}
@@ -860,10 +849,7 @@ class EraseCommand(YumCommand):
                     extcmds.append(pkg)
 
         self.doneCommand(base, _("Setting up Remove Process"))
-        try:
-            ret = base.erasePkgs(extcmds, pos=pos, basecmd=basecmd)
-        except yum.Errors.YumBaseError, e:
-            ret = (1, [exception2msg(e)])
+        ret = base.erasePkgs(extcmds, pos=pos, basecmd=basecmd)
 
         return ret
 
@@ -931,7 +917,7 @@ class GroupsCommand(YumCommand):
         except yum.Errors.GroupsError:
             return 1, [_('No Groups on which to run command')]
         except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+            raise
 
     def _grp_cmd(self, basecmd, extcmds):
         if basecmd in self.direct_commands:
@@ -1034,7 +1020,7 @@ class GroupsCommand(YumCommand):
         if cmd == 'list':
             return base.returnGroupLists(extcmds)
 
-        try:
+        if True: # Try, YumBase...
             if cmd == 'info':
                 return base.returnGroupInfo(extcmds)
             if cmd == 'install':
@@ -1218,10 +1204,6 @@ class GroupsCommand(YumCommand):
                 return 0, ['Marked remove: ' + ','.join(extcmds)]
 
 
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
-
-
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
@@ -1330,7 +1312,7 @@ class MakeCacheCommand(YumCommand):
         if extcmds and extcmds[0] == 'fast':
             fast = True
 
-        try:
+        if True: # Try, YumBase...
             for repo in base.repos.findRepos('*'):
                 repo.metadata_expire = 0
                 if not fast:
@@ -1365,8 +1347,6 @@ class MakeCacheCommand(YumCommand):
                                              fname_map[MD],
                                              cached=repo.cache)
 
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
         return 0, [_('Metadata Cache Created')]
 
     def needTs(self, base, basecmd, extcmds):
@@ -1510,11 +1490,8 @@ class ProvidesCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         base.logger.debug("Searching Packages: ")
-        try:
-            updateinfo.exclude_updates(base)
-            return base.provides(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        updateinfo.exclude_updates(base)
+        return base.provides(extcmds)
 
     def cacheRequirement(self, base, basecmd, extcmds):
         """Return the cache requirements for the remote repos.
@@ -1582,7 +1559,7 @@ class CheckUpdateCommand(YumCommand):
         obscmds = ['obsoletes'] + extcmds
         base.extcmds.insert(0, 'updates')
         result = 0
-        try:
+        if True:
             ypl = base.returnPkgLists(extcmds)
             if (base.conf.obsoletes or
                 base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
@@ -1620,10 +1597,7 @@ class CheckUpdateCommand(YumCommand):
                 def _msg(x):
                     base.verbose_logger.info("%s", x)
                 updateinfo._check_running_kernel(base, base.upinfo, _msg)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
-        else:
-            return result, []
+        return result, []
 
     def cacheRequirement(self, base, basecmd, extcmds):
         """Return the cache requirements for the remote repos.
@@ -1688,11 +1662,8 @@ class SearchCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         base.logger.debug(_("Searching Packages: "))
-        try:
-            updateinfo.exclude_updates(base)
-            return base.search(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        updateinfo.exclude_updates(base)
+        return base.search(extcmds)
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -1772,12 +1743,9 @@ class UpgradeCommand(YumCommand):
         """
         base.conf.obsoletes = 1
         self.doneCommand(base, _("Setting up Upgrade Process"))
-        try:
-            ret = base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
-            updateinfo.remove_txmbrs(base)
-            return ret
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        ret = base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
+        updateinfo.remove_txmbrs(base)
+        return ret
 
 class LocalInstallCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
@@ -1841,10 +1809,7 @@ class LocalInstallCommand(YumCommand):
         self.doneCommand(base, _("Setting up Local Package Process"))
 
         updateonly = basecmd == 'localupdate'
-        try:
-            return base.localInstall(filelist=extcmds, updateonly=updateonly)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        return base.localInstall(filelist=extcmds, updateonly=updateonly)
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -1903,11 +1868,8 @@ class ResolveDepCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         base.logger.debug(_("Searching Packages for Dependency:"))
-        try:
-            updateinfo.exclude_updates(base)
-            return base.resolveDepCli(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        updateinfo.exclude_updates(base)
+        return base.resolveDepCli(extcmds)
 
     def cacheRequirement(self, base, basecmd, extcmds):
         """Return the cache requirements for the remote repos.
@@ -1972,10 +1934,7 @@ class ShellCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         self.doneCommand(base, _('Setting up Yum Shell'))
-        try:
-            return base.doShell()
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        return base.doShell()
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -2042,11 +2001,8 @@ class DepListCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         self.doneCommand(base, _("Finding dependencies: "))
-        try:
-            updateinfo.exclude_updates(base)
-            return base.deplist(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        updateinfo.exclude_updates(base)
+        return base.deplist(extcmds)
 
     def cacheRequirement(self, base, basecmd, extcmds):
         """Return the cache requirements for the remote repos.
@@ -2546,11 +2502,7 @@ class ReInstallCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         self.doneCommand(base, _("Setting up Reinstall Process"))
-        try:
-            return base.reinstallPkgs(extcmds)
-            
-        except yum.Errors.YumBaseError, e:
-            return 1, [to_unicode(e)]
+        return base.reinstallPkgs(extcmds)
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -2621,10 +2573,7 @@ class DowngradeCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         self.doneCommand(base, _("Setting up Downgrade Process"))
-        try:
-            return base.downgradePkgs(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [exception2msg(e)]
+        return base.downgradePkgs(extcmds)
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -2754,7 +2703,7 @@ class VersionCommand(YumCommand):
         ba  = base.conf.yumvar['basearch']
         cols = []
         if vcmd in ('installed', 'all', 'group-installed', 'group-all'):
-            try:
+            if True: # Try, YumBase...
                 data = base.rpmdb.simpleVersion(not verbose, groups=groups)
                 lastdbv = base.history.last()
                 if lastdbv is not None:
@@ -2773,10 +2722,9 @@ class VersionCommand(YumCommand):
                         cols.append(("%s %s" % (_("Group-Installed:"), grp),
                                      str(data[2][grp])))
                         _append_repos(cols, data[3][grp])
-            except yum.Errors.YumBaseError, e:
-                return 1, [exception2msg(e)]
+
         if vcmd in ('available', 'all', 'group-available', 'group-all'):
-            try:
+            if True: # Try, YumBase...
                 data = base.pkgSack.simpleVersion(not verbose, groups=groups)
                 if vcmd not in ('group-available', 'group-all'):
                     cols.append(("%s %s/%s" % (_("Available:"), rel, ba),
@@ -2792,8 +2740,6 @@ class VersionCommand(YumCommand):
                                      str(data[2][grp])))
                         if verbose:
                             _append_repos(cols, data[3][grp])
-            except yum.Errors.YumBaseError, e:
-                return 1, [exception2msg(e)]
 
         data = {'rid' : {}, 'ver' : {}}
         for (rid, ver) in cols:
@@ -3312,10 +3258,7 @@ class LoadTransactionCommand(YumCommand):
 
         self.doneCommand(base, _("loading transaction from %s") % load_file)
         
-        try:
-            base.load_ts(load_file)
-        except yum.Errors.YumBaseError, e:
-            return 1, [to_unicode(e)]
+        base.load_ts(load_file)
         return 2, [_('Transaction loaded from %s with %s members') % (load_file, len(base.tsInfo.getMembers()))]
 
 

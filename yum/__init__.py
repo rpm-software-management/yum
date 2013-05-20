@@ -4053,6 +4053,10 @@ much more problems).
                         raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
                     depflags = SYMBOLFLAGS[flagsymbol]
 
+        if depflags is None: # This does wildcards...
+            return self.pkgSack.searchProvides(depstring)
+
+        # This does flags+versions, but no wildcards...
         return self.pkgSack.getProvides(depname, depflags, depver).keys()
 
     def returnPackageByDep(self, depstring):
@@ -4569,7 +4573,7 @@ much more problems).
                     self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
                         arg)
 
-                    mypkgs = self.pkgSack.searchProvides(arg)
+                    mypkgs = self.pkgSack.returnPackagesByDep(arg)
                     if not misc.re_glob(arg):
                         mypkgs = self.bestPackagesFromList(mypkgs,
                                                            single_name=True,

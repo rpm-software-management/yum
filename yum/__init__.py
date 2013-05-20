@@ -4120,6 +4120,10 @@ much more problems).
                         raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
                     depflags = SYMBOLFLAGS[flagsymbol]
 
+        if depflags is None: # This does wildcards...
+            return self.rpmdb.searchProvides(depstring)
+
+        # This does flags+versions, but no wildcards...
         return self.rpmdb.getProvides(depname, depflags, depver).keys()
 
     def returnInstalledPackageByDep(self, depstring):

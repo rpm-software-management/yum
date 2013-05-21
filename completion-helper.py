@@ -23,7 +23,7 @@ import sys
 
 import cli
 import yumcommands
-from yum.Errors import GroupsError, ConfigError
+from yum.Errors import GroupsError, ConfigError, RepoError
 
 
 class GroupsCompletionCommand(yumcommands.GroupsCommand):
@@ -85,7 +85,8 @@ def main(args):
         for repo in base.repos.listEnabled():
             repo.skip_if_unavailable = True
         base.doCommands()
-    except (GroupsError, ConfigError), e:
+    except (GroupsError, ConfigError, RepoError), e:
+    # Any reason to not just catch YumBaseError ?
         base.logger.error(e)
 
 if __name__ == "__main__":

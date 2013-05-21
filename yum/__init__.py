@@ -4577,7 +4577,7 @@ much more problems).
                     self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
                         arg)
 
-                    mypkgs = self.pkgSack.returnPackagesByDep(arg)
+                    mypkgs = self.returnPackagesByDep(arg)
                     if not misc.re_glob(arg):
                         mypkgs = self.bestPackagesFromList(mypkgs,
                                                            single_name=True,

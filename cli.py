@@ -530,6 +530,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            occurred in the pre-transaction checks
         """
         def _downloadonly_userconfirm(self):
+            if not stuff_to_download:
+                return self.userconfirm()
             return self.userconfirm(prompt=_('Is this ok [y/d/N]: '),
                                     extra={'downloadonly' :
                                            (u'd', _('d'), _('download'),

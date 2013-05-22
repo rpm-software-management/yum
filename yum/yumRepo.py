@@ -657,6 +657,7 @@ class YumRepository(Repository, config.RepoConf):
                  'throttle': self.throttle,
                  'proxies': self.proxy_dict,
                  'timeout': self.timeout,
+                 'minrate': self.minrate,
                  'ip_resolve': self.ip_resolve,
                  'http_headers': tuple(self.__headersListFromDict(cache=cache)),
                  'ssl_verify_peer': self.sslverify,

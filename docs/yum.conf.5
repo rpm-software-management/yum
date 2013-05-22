@@ -356,6 +356,12 @@ the maximum available bandwidth.
 Set to `0' to disable bandwidth throttling. This is the default.
 
 .IP
+\fBminrate \fR
+This sets the low speed threshold in bytes per second. If the server
+is sending data slower than this for at least `timeout' seconds, Yum
+aborts the connection. The default is `1000'.
+
+.IP
 \fBbandwidth \fR
 Use to specify the maximum available network bandwidth in bytes/second.  Used
 with the \fBthrottle\fR option (above). If \fBthrottle\fR is a percentage and

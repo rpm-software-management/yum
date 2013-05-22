@@ -786,6 +786,7 @@ class YumConf(StartupConf):
     
     timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 
+    minrate = IntOption(0)
     bandwidth = BytesOption(0)
     throttle = ThrottleOption(0)
     ip_resolve = CaselessSelectionOption(
@@ -948,6 +949,7 @@ class RepoConf(BaseConfig):
     keepalive = Inherit(YumConf.keepalive)
     enablegroups = Inherit(YumConf.enablegroups)
 
+    minrate = Inherit(YumConf.minrate)
     bandwidth = Inherit(YumConf.bandwidth)
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)

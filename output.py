@@ -2887,6 +2887,18 @@ class DepSolveProgressCallBack:
                 done = True
                 msg += _('\n        %s') % yum.misc.prco_tuple_to_string(pkgtup)
             if not done:
+                nneedname = needname.translate(None, "0123456789")
+                if nneedname != needname:
+                    #  Sometimes things change numbers, so compare without.
+                    # Eg. libXYZ.so.0() libXYZ.so.1()
+                    for pkgtup in pkg.provides:
+                        name = pkgtup[0]
+                        name = name.translate(None, "0123456789")
+                        if name == nneedname:
+                            done = True
+                            pkgtup = yum.misc.prco_tuple_to_string(pkgtup)
+                            msg += _('\n       ~%s') % pkgtup
+            if not done:
                 msg += _('\n        Not found')
             return msg
 

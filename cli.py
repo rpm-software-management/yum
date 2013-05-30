@@ -530,12 +530,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
            occurred in the pre-transaction checks
         """
         def _downloadonly_userconfirm(self):
+            #  Note that we shouldn't just remove the 'd' option, or the options
+            # yum accepts will be different which is bad. So always accept it,
+            # but change the prompt.
+            dl_only = extra={'downloadonly' :
+                             (u'd', _('d'), _('download'),
+                              _('downloadonly'))}
             if not stuff_to_download:
-                return self.userconfirm()
+                ret = self.userconfirm(extra=dl_only)
+                if ret == 'downloadonly':
+                    ret = None
+                return ret
             return self.userconfirm(prompt=_('Is this ok [y/d/N]: '),
-                                    extra={'downloadonly' :
-                                           (u'd', _('d'), _('download'),
-                                            _('downloadonly'))})
+                                    extra=dl_only)
 
         # just make sure there's not, well, nothing to do
         if len(self.tsInfo) == 0:

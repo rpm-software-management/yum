@@ -216,6 +216,9 @@ class InstalledGroups(object):
     def return_groups(self, group_pattern, case_sensitive=False):
         returns = {}
 
+        if not group_pattern:
+            return []
+
         for item in group_pattern.split(','):
             item = item.strip()
             if item in self.groups:
@@ -256,6 +259,9 @@ class InstalledGroups(object):
 
     def return_environments(self, evgroup_pattern, case_sensitive=False):
         returns = {}
+
+        if not evgroup_pattern:
+            return []
 
         for item in evgroup_pattern.split(','):
             item = item.strip()

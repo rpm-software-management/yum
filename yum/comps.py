@@ -638,6 +638,9 @@ class Comps(object):
         """return all groups which match either by glob or exact match"""
         returns = {}
 
+        if not group_pattern:
+            return []
+
         for item in group_pattern.split(','):
             item = item.strip()
             if item in self._groups:
@@ -688,6 +691,9 @@ class Comps(object):
     def return_environments(self, env_pattern, case_sensitive=False):
         """return all environments which match either by glob or exact match"""
         returns = {}
+
+        if not env_pattern:
+            return []
 
         for item in env_pattern.split(','):
             item = item.strip()

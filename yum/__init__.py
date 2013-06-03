@@ -3353,7 +3353,11 @@ much more problems).
         if group.groupid in self.igroups.groups:
             pkg_names = self.igroups.groups[group.groupid].pkg_names
 
-        for pkg_name in set(group.packages + list(pkg_names)):
+        all_pkg_names = set(list(pkg_names))
+        if hasattr(group, 'packages'): # If a comps. group, add remote pkgs.
+            all_pkg_names.update(group.packages)
+
+        for pkg_name in all_pkg_names:
             ipkgs = self.rpmdb.searchNames([pkg_name])
             if pkg_name not in pkg_names and not ipkgs:
                 ret[pkg_name] = 'available'
@@ -3388,7 +3392,11 @@ much more problems).
             grp_names = self.igroups.environments[evgroup.environmentid]
             grp_names = grp_names.grp_names
 
-        for grp_name in set(evgroup.allgroups + list(grp_names)):
+        all_grp_names = set(list(grp_names))
+        if hasattr(evgroup, 'allgroups'): # If a comps. evgroup, add remote grps
+            all_grp_names.update(evgroup.allgroups)
+
+        for grp_name in all_grp_names:
             igrp = self.igroups.groups.get(grp_name)
             if grp_name not in grp_names and not igrp:
                 ret[grp_name] = 'available'

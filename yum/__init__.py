@@ -3732,7 +3732,7 @@ much more problems).
                     if (pkg not in igroup_data or
                         igroup_data[pkg].startswith('blacklisted')):
                         # (upgrade and igroup_data[pkg] == 'available')):
-                        msg = _('Skipping package %s from group %s'),
+                        msg = _('Skipping package %s from group %s')
                         self.verbose_logger.log(logginglevels.DEBUG_2,
                                                 msg, pkg, thisgroup.groupid)
                         continue
@@ -3904,7 +3904,7 @@ much more problems).
                 for grpid in evgrp.groups:
                     if (grpid not in igroup_data or
                         igroup_data[grpid].startswith('blacklisted')):
-                        msg = _('Skipping group %s from environment %s'),
+                        msg = _('Skipping group %s from environment %s')
                         self.verbose_logger.log(logginglevels.DEBUG_2,
                                                 msg, grpid, evgrp.environmentid)
                         continue

@@ -84,6 +84,7 @@ SLOT_TO_CONDUIT = {
     'args': 'ArgsPluginConduit',
     'predownload': 'DownloadPluginConduit',
     'postdownload': 'DownloadPluginConduit',
+    'prelistenabledrepos': 'PreRepoSetupPluginConduit',
     'prereposetup': 'PreRepoSetupPluginConduit',
     'postreposetup': 'PostRepoSetupPluginConduit',
     'close': 'PluginConduit',

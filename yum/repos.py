@@ -69,6 +69,10 @@ class RepoStorage:
         self._cache_enabled_repos = []
         self.quick_enable_disable = {}
 
+        #  This allows plugins to setup a repo. just before the first
+        # listEnabled() call.
+        self._list_enabled_hasrun = False
+
     def retrieveAllMD(self):
         """ Download metadata for all enabled repositories,
             based on mdpolicy.
@@ -112,6 +116,10 @@ class RepoStorage:
 
     def doSetup(self, thisrepo = None):
         
+        if thisrepo is None:
+            # Just in case the prelistenabledrepos plugin point hasn't run.
+            self.listEnabled()
+
         self.ayum.plugins.run('prereposetup')
         
         if thisrepo is None:
@@ -245,6 +253,10 @@ class RepoStorage:
         
     def listEnabled(self):
         """return list of enabled repo objects"""
+
+        if not self._list_enabled_hasrun:
+            self.ayum.plugins.run('prelistenabledrepos')
+            self._list_enabled_hasrun = True
 
         if (self._cache_enabled_repos is not None and
             not self.quick_enable_disable):

@@ -248,6 +248,11 @@ def checkEnabledRepo(base, possible_local_files=[]):
         if lfile.endswith(".rpm") and os.path.exists(lfile):
             return
 
+    # runs prereposetup (which "most" plugins currently use to add repos.)
+    base.pkgSack
+    if base.repos.listEnabled():
+        return
+
     msg = _('There are no enabled repos.\n'
             ' Run "yum repolist all" to see the repos you have.\n'
             ' You can enable repos with yum-config-manager --enable <repo>')

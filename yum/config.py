@@ -237,6 +237,14 @@ class UrlOption(Option):
         else:
             return '%s or %s' % (', '.join(self.schemes[:-1]), self.schemes[-1])
 
+class ProxyOption(UrlOption):
+    """ Just like URLOption but accept "libproxy" too.
+    """
+    def parse(self, proxy):
+        if proxy.strip().lower() == 'libproxy':
+            return 'libproxy'
+        return UrlOption.parse(self, proxy)
+
 class UrlListOption(ListOption):
     """Option for handling lists of URLs with validation of the URL
     scheme.
@@ -735,7 +743,7 @@ class YumConf(StartupConf):
     commands = ListOption()
     exclude = ListOption()
     failovermethod = Option(__main_failovermethod_default__)
-    proxy = UrlOption(default=False, schemes=('http', 'ftp', 'https',
+    proxy = ProxyOption(default=False, schemes=('http', 'ftp', 'https',
         'socks4', 'socks4a', 'socks5', 'socks5h'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()

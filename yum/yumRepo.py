@@ -655,7 +655,6 @@ class YumRepository(Repository, config.RepoConf):
                  'bandwidth': self.bandwidth,
                  'retry': self.retries,
                  'throttle': self.throttle,
-                 'proxies': self.proxy_dict,
                  'timeout': self.timeout,
                  'minrate': self.minrate,
                  'ip_resolve': self.ip_resolve,
@@ -669,6 +668,10 @@ class YumRepository(Repository, config.RepoConf):
                  'username': self.username,
                  'password': self.password,
                  }
+        if self.proxy == 'libproxy':
+            opts['libproxy'] = True
+        else:
+            opts['proxies'] = self.proxy_dict
         return opts
 
     def _getgrabfunc(self):

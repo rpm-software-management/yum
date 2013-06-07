@@ -134,16 +134,20 @@ def checkRepoPackageArg(base, basecmd, extcmds):
         _err_mini_usage(base, basecmd)
         raise cli.CliError
 
-    repos = base.repos.findRepos(extcmds[0])
+    repos = base.repos.findRepos(extcmds[0], name_match=True, ignore_case=True)
     if not repos:
         base.logger.critical(
                 _('Error: Need to pass a single valid repoid. to %s') % basecmd)
         _err_mini_usage(base, basecmd)
         raise cli.CliError
 
-    if len(repos) != 1 or repos[0].id != extcmds[0]:
+    if len(repos) > 1:
+        repos = [r for r in repos if r.isEnabled()]
+
+    if len(repos) > 1:
+        repos = ", ".join([r.id for r in repos])
         base.logger.critical(
-                _('Error: Need to pass a single valid repoid. to %s') % basecmd)
+                _('Error: Need to pass only a single valid repoid. to %s, passed: %s') % (basecmd, repos))
         _err_mini_usage(base, basecmd)
         raise cli.CliError
     if not repos[0].isEnabled():
@@ -2068,12 +2072,9 @@ class RepoListCommand(YumCommand):
             return base.format_number(ret)
 
         def _repo_match(repo, patterns):
-            rid = repo.id.lower()
-            rnm = repo.name.lower()
             for pat in patterns:
-                if fnmatch.fnmatch(rid, pat):
-                    return True
-                if fnmatch.fnmatch(rnm, pat):
+                if repo in base.repos.findRepos(pat, name_match=True,
+                                                ignore_case=True):
                     return True
             return False
 

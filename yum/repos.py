@@ -202,17 +202,28 @@ class RepoStorage:
             raise Errors.RepoError, \
                 'Error getting repository data for %s, repository not found' % (repoid)
 
-    def findRepos(self,pattern):
-        """find all repositories matching fnmatch `pattern`"""
+    def findRepos(self, pattern, name_match=False, ignore_case=False):
+        """ Find all repositories matching fnmatch `pattern` on the repo.id,
+            can also do case insensitive searches and/or search on the name."""
+
+        if pattern in self.repos: # Minor opt. as we do this a lot...
+            return [self.repos[pattern]]
 
         result = []
         
         for item in pattern.split(','):
             item = item.strip()
-            match = re.compile(fnmatch.translate(item)).match
+            if ignore_case:
+                match = re.compile(fnmatch.translate(item), re.I).match
+            else:
+                match = re.compile(fnmatch.translate(item)).match
             for name,repo in self.repos.items():
+                assert name == repo.id
                 if match(name):
                     result.append(repo)
+                elif name_match and match(repo.name):
+                    result.append(repo)
+
         return result
         
     def disableRepo(self, repoid):

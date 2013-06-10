@@ -422,6 +422,11 @@ class Repository:
     def __del__(self):
         self.close()
 
+    def _ui_id(self):
+        """ Show self.id, so we can use it and override it. """
+        return self.id
+    ui_id = property(_ui_id)
+
     def close(self):
         pass
 

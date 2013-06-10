@@ -145,16 +145,16 @@ def checkRepoPackageArg(base, basecmd, extcmds):
         repos = [r for r in repos if r.isEnabled()]
 
     if len(repos) > 1:
-        repos = ", ".join([r.id for r in repos])
+        repos = ", ".join([r.ui_id for r in repos])
         base.logger.critical(
                 _('Error: Need to pass only a single valid repoid. to %s, passed: %s') % (basecmd, repos))
         _err_mini_usage(base, basecmd)
         raise cli.CliError
     if not repos[0].isEnabled():
+        # Might as well just fix this...
+        base.repos.enableRepo(repos[0].id)
         base.logger.critical(
-                _('Error: Repo %s is not enabled') % extcmds[0])
-        _err_mini_usage(base, basecmd)
-        raise cli.CliError
+                _('Repo %s has been automatically enabled') % repos[0].ui_id)
 
 
 def checkItemArg(base, basecmd, extcmds):

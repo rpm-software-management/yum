@@ -875,7 +875,12 @@ class YumBase(depsolve.Depsolve):
             # if we unset the comps object, we need to undo which repos have
             # been added to the group file as well
             if self._repos:
-                for repo in self._repos.listGroupsEnabled():
+                #  Used to do listGroupsEnabled(), which seems fine but requires
+                # calling .listEnalbed() ... which doesn't work on __del__ path
+                # if we haven't already called that (due to
+                # "prelistenabledrepos" plugins). So just blank it for
+                # all repos.
+                for repo in self._repos.sort():
                     repo.groups_added = False
         self._comps = val
     

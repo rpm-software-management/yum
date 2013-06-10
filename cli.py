@@ -389,6 +389,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                   self.basecmd, sys.argv[0])
             raise CliError
     
+        cmd = self.yum_cli_commands[self.basecmd]
+        cacheReq = 'write'
+        if hasattr(cmd, 'cacheRequirement'):
+            cacheReq = cmd.cacheRequirement(self, self.basecmd, self.extcmds)
+        for repo in self.repos.sort():
+            repo._metadata_cache_req = cacheReq
+
         self.yum_cli_commands[self.basecmd].doCheck(self, self.basecmd, self.extcmds)
 
     def _shell_history_write(self):
@@ -513,10 +520,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.YumBaseError, e:
                 return 1, [exception2msg(e)]
 
+        #  This should already have been done at doCheck() time, but just in
+        # case repos. got added or something do it again.
         cacheReq = 'write'
         if hasattr(cmd, 'cacheRequirement'):
             cacheReq = cmd.cacheRequirement(self, self.basecmd, self.extcmds)
-        for repo in self.repos.listEnabled():
+        for repo in self.repos.sort():
             repo._metadata_cache_req = cacheReq
 
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)

@@ -153,8 +153,8 @@ def checkRepoPackageArg(base, basecmd, extcmds):
     if not repos[0].isEnabled():
         # Might as well just fix this...
         base.repos.enableRepo(repos[0].id)
-        base.logger.critical(
-                _('Repo %s has been automatically enabled') % repos[0].ui_id)
+        base.verbose_logger.info(
+                _('Repo %s has been automatically enabled.') % repos[0].ui_id)
 
 
 def checkItemArg(base, basecmd, extcmds):
@@ -1322,7 +1322,7 @@ class MakeCacheCommand(YumCommand):
             fast = True
 
         if True: # Try, YumBase...
-            for repo in base.repos.findRepos('*'):
+            for repo in base.repos.sort():
                 repo.metadata_expire = 0
                 if not fast:
                     repo.mdpolicy = "group:all"

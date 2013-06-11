@@ -64,7 +64,7 @@ options are: 'critical', 'emergency', 'error', 'warn' and 'debug'.
 .IP
 \fBprotected_packages\fR
 This is a list of packages that yum should never completely remove. They are
-protected via. Obsoletes as well as user/plugin removals.
+protected via Obsoletes as well as user/plugin removals.
 
 The default is: yum glob:/etc/yum/protected.d/*.conf
 So any packages which should be protected can do so by including a file in 
@@ -180,7 +180,7 @@ will also apply to kernel-debug-devel, etc.
 Number of packages listed in installonlypkgs to keep installed at the same
 time. Setting to 0 disables this feature. Default is '0'. Note that this
 functionality used to be in the "installonlyn" plugin, where this option was
-altered via. tokeep.
+altered via tokeep.
 Note that as of version 3.2.24, yum will now look in the yumdb for a installonly
 attribute on installed packages. If that attribute is "keep", then they will
 never be removed.

@@ -2283,6 +2283,7 @@ much more problems).
                 po.localpath += '.%d.tmp' % os.getpid()
                 try: os.rename(local, po.localpath)
                 except OSError: pass
+                po.returnIdSum()
                 po.basepath # prefetch now; fails when repos are closed
             return False
 

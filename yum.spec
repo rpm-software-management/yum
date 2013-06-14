@@ -333,6 +333,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/yum/version-groups.conf
 %dir %{_sysconfdir}/yum
 %dir %{_sysconfdir}/yum/protected.d
+%dir %{_sysconfdir}/yum/fssnap.d
 %dir %{_sysconfdir}/yum/vars
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %(dirname %{compdir})

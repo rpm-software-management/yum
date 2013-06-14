@@ -89,6 +89,9 @@ class DeltaPackage:
         # hooray
         return True
 
+    def returnIdSum(self):
+        return self.csum
+
 def _num_cpus_online(unknown=1):
     if not hasattr(os, "sysconf"):
         return unknown

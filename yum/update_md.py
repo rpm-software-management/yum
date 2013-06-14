@@ -23,23 +23,28 @@ Update metadata (updateinfo.xml) parsing.
 
 import sys
 
-from yum.i18n import utf8_text_wrap, to_utf8, to_unicode
+from yum.i18n import utf8_text_wrap, to_utf8, to_unicode, _
 from yum.yumRepo import YumRepository
 from yum.packages import FakeRepository
 from yum.misc import to_xml, decompress, repo_gen_decompress
 from yum.misc import cElementTree_iterparse as iterparse 
 import Errors
 
+import logginglevels
+
 import rpmUtils.miscutils
 
 
-def safe_iterparse(filename):
+def safe_iterparse(filename, logger=None):
     """ Works like iterparse, but hides XML errors (prints a warning). """
     try:
         for event, elem in iterparse(filename):
             yield event, elem
     except SyntaxError: # Bad XML
-        print >> sys.stderr, "File is not valid XML:", filename
+        if logger:
+            logger.critical(_("Updateinfo file is not valid XML: %s"), filename)
+        else:
+            print >> sys.stderr, "Updateinfo file is not valid XML:", filename
 
 class UpdateNoticeException(Exception):
     """ An exception thrown for bad UpdateNotice data. """
@@ -404,11 +409,15 @@ class UpdateMetadata(object):
     The root update metadata object.
     """
 
-    def __init__(self, repos=[]):
+    def __init__(self, repos=[], logger=None, vlogger=None):
         self._notices = {}
         self._cache = {}    # a pkg nvr => notice cache for quick lookups
         self._no_cache = {}    # a pkg name only => notice list
         self._repos = []    # list of repo ids that we've parsed
+
+        self._logger  = logger
+        self._vlogger = vlogger
+
         for repo in repos:
             try: # attempt to grab the updateinfo.xml.gz from the repodata
                 self.add(repo)
@@ -516,6 +525,12 @@ class UpdateMetadata(object):
 
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
+
+        def _rid(repoid, fmt=_(' (from %s)')):
+            if not repoid:
+                return ''
+            return fmt % repoid
+
         if not obj:
             raise UpdateNoticeException
         repoid = None
@@ -537,20 +552,28 @@ class UpdateMetadata(object):
         else:   # obj is a file object
             infile = obj
 
-        for event, elem in safe_iterparse(infile):
+        have_dup = False
+        for event, elem in safe_iterparse(infile, logger=self._logger):
             if elem.tag == 'update':
                 try:
                     un = UpdateNotice(elem)
                 except UpdateNoticeException, e:
-                    print >> sys.stderr, "An update notice is broken, skipping."
-                    # what else should we do?
-                    continue
-                if not self.add_notice(un):
-                    if repoid is None:
-                        upid = un['update_id']
+                    msg = _("An update notice%s is broken, skipping.") % _rid(repoid)
+                    if self._vlogger:
+                        self._vlogger.log(logginglevels.DEBUG_1, "%s", msg)
                     else:
-                        upid = "%s/%s" % (repoid, un['update_id'])
-                    print >> sys.stderr, "An update notice is broken, or duplicate, skipping:", upid
+                        print >> sys.stderr, msg
+                    continue
+
+                if not self.add_notice(un):
+                    msg = _("Update notice %s%s is broken, or a bad duplicate, skipping.") % (un['update_id'], _rid(repoid))
+                    if not have_dup:
+                        msg += _('\nYou should report this problem to the owner of the %srepository.') % _rid(repoid, "%s ")
+                    have_dup = True
+                    if self._vlogger:
+                        self._vlogger.warn("%s", msg)
+                    else:
+                        print >> sys.stderr, msg
 
     def __unicode__(self):
         ret = u''

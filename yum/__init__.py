@@ -990,7 +990,10 @@ class YumBase(depsolve.Depsolve):
                                 _('Getting updateinfo metadata'))
 
         if self._upinfo is None:
-            self._upinfo = update_md.UpdateMetadata()
+            logger = logging.getLogger("yum.update_md")
+            vlogger = logging.getLogger("yum.verbose.update_md")
+            self._upinfo = update_md.UpdateMetadata(logger=logger,
+                                                    vlogger=vlogger)
 
             for repo in self.repos.listEnabled():
                 if 'updateinfo' not in repo.repoXML.fileTypes():

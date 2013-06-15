@@ -196,6 +196,7 @@ class _FSSnap(object):
     def has_space(self, percentage=100):
         """ See if we have enough space to try a snapshot. """
 
+        ret = False
         for vgname in self._vgnames:
             use = self._use_dev(vgname)
             if use is not None and not use:
@@ -216,10 +217,14 @@ class _FSSnap(object):
 
             vg.close()
 
+            if not lvssize:
+                continue
+            ret = True
+
             if (lvssize * percentage) > (100*vgfsize):
                 return False
 
-        return True
+        return ret
 
     def _get_postfix(self):
         if self._postfix is None:

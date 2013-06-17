@@ -207,7 +207,7 @@ class MetaLinkRepoMD:
                 self.old_repomds.append(MetaLinkFile(celem))
 
             for celem in elem.findall(__ML_RESOURCES__):
-                max_connections = int(celem.get("maxconnections"))
+                max_connections = int(celem.get("maxconnections") or 2)
                 for uelem in celem:
                     if uelem.tag == "{%s}url"  % __XML_NS_ML__:
                         self.mirrors.append(MetaLinkURL(uelem, max_connections))

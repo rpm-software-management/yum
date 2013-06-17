@@ -1692,9 +1692,9 @@ much more problems).
         :raises: :class:`yum.Errors.YumRPMTransError` if there is a
            transaction cannot be completed
         """
-        if ((self.conf.fssnap_automatic_pre or
-             self.conf.fssnap_automatic_post) and
-            self.conf.fssnap_automatic_keep):
+        if self.fssnap.available and ((self.conf.fssnap_automatic_pre or
+                                       self.conf.fssnap_automatic_post) and
+                                      self.conf.fssnap_automatic_keep):
             # Automatically kill old snapshots...
             snaps = self.fssnap.old_snapshots()
             snaps = sorted(snaps, key=lambda x: (x['ctime'], x['origin_dev']),
@@ -1715,8 +1715,9 @@ much more problems).
             # Display something to the user?
             self.fssnap.del_snapshots(devices=todel)
 
-        if (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
-            self.conf.fssnap_automatic_pre):
+        if (self.fssnap.available and
+            (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
+            self.conf.fssnap_automatic_pre)):
             if not self.fssnap.has_space(self.conf.fssnap_percentage):
                 msg = _("Not enough space to create pre. FS snapshot, aborting transaction.")
                 raise Errors.YumRPMTransError(msg=msg, errors=[])
@@ -1855,8 +1856,9 @@ much more problems).
             if self.conf.group_command == 'objects':
                 self.igroups.save()
 
-        if (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
-            self.conf.fssnap_automatic_post):
+        if (self.fssnap.available and
+            (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
+            self.conf.fssnap_automatic_post)):
             if not self.fssnap.has_space(self.conf.fssnap_percentage):
                 msg = _("Not enough space to create post trans FS snapshot.")
                 self.logger.critical(msg)

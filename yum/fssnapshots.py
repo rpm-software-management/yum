@@ -143,6 +143,7 @@ class _FSSnap(object):
             devices = []
 
         self.version = _ver
+        self.available = bool(lvm)
         self.postfix_static = "_yum_"
         self._postfix = None
         self._root = root

@@ -4148,6 +4148,10 @@ class FSSnapshotCommand(YumCommand):
         else:
             subcommand = 'summary'
 
+        if not base.fssnap.available:
+            print _("Snapshot support not available.")
+            return 0, [basecmd + ' ' + subcommand + ' done']
+
         if subcommand == 'list':
             snaps = base.fssnap.old_snapshots()
             print _("List of %u snapshosts:") % len(snaps)
@@ -4187,7 +4191,7 @@ class FSSnapshotCommand(YumCommand):
         if subcommand == 'summary':
             snaps = base.fssnap.old_snapshots()
             if not snaps:
-                print _("No snapshots")
+                print _("No snapshots, LVM version:"), base.fssnap.version
                 return 0, [basecmd + ' ' + subcommand + ' done']
 
             used = 0

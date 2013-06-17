@@ -4149,7 +4149,10 @@ class FSSnapshotCommand(YumCommand):
             subcommand = 'summary'
 
         if not base.fssnap.available:
-            print _("Snapshot support not available.")
+            if not base.rpmdb.searchNames(['python-lvm']):
+                print _("Snapshot support not available, no python-lvm package installed.")
+            else:
+                print _("Snapshot support not available, python-lvm is old/broken.")
             return 0, [basecmd + ' ' + subcommand + ' done']
 
         if subcommand == 'list':

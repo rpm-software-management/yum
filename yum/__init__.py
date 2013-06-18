@@ -6272,6 +6272,10 @@ much more problems).
 
         if self.conf.installonly_limit < 1 :
             return 
+
+        # We shouldn't alter the transaction if this is set...
+        if self.tsInfo._check_future_rpmdbv:
+            return
             
         toremove = []
         #  We "probably" want to use either self.ts or self.rpmdb.ts if either

@@ -139,11 +139,9 @@ Default is `1'.
 
 .IP
 \fBtolerant\fR
-Either `1' or `0'. If enabled, then yum will be tolerant of errors on the
-command line with regard to packages. For example: if you request to install
-foo, bar and baz and baz is installed; yum won't error out complaining that baz
-is already installed. Default to `0' (not tolerant).
-Note: This option currently does nothing.
+Either `1' or `0'. If enabled, yum will go slower, checking for things that
+shouldn't be possible making it more tolerant of external errors.
+Default to `0' (not tolerant).
 .br
 Command-line option: \fB\-t\fP
 

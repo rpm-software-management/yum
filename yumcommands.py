@@ -2644,6 +2644,14 @@ class VersionCommand(YumCommand):
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
+        if vcmd in ('grouplist', 'groupinfo',
+                    'nogroups', 'nogroups-installed', 'nogroups-available',
+                    'nogroups-all',
+                    'installed', 'all', 'group-installed', 'group-all',
+                    'available', 'all', 'group-available', 'group-all'):
+            extcmds = extcmds[1:]
+        else:
+            vcmd = 'installed'
 
         def _append_repos(cols, repo_data):
             for repoid in sorted(repo_data):
@@ -2685,7 +2693,7 @@ class VersionCommand(YumCommand):
 
         if vcmd == 'groupinfo':
             for group in groups:
-                if group not in extcmds[1:]:
+                if group not in extcmds:
                     continue
                 print _(" Group   :"), group
                 print _(" Packages:")
@@ -2705,6 +2713,30 @@ class VersionCommand(YumCommand):
 
             return 0, ['version groupinfo']
 
+        # Have a way to manually specify a dynamic group of packages, whee.
+        if not vcmd.startswith("group-") and extcmds:
+            for dgrp in extcmds:
+                if '/' not in dgrp:
+                    # It's a package name, add it to the cmd line group...
+                    if '<cmd line>' not in groups:
+                        groups['<cmd line>'] = set()
+                    groups['<cmd line>'].add(dgrp)
+                else: # It's a file containing a list of packages...
+                    if not os.path.exists(dgrp):
+                        base.logger.warn(_(" File doesn't exist: %s"), dgrp)
+                    else:
+                        pkg_names = open(dgrp).readlines()
+                        pkg_names = set(n.strip() for n in pkg_names)
+                        dgrp = os.path.basename(dgrp)
+                        if dgrp in groups:
+                            for num in range(1, 100):
+                                ndgrp = dgrp + str(num)
+                                if ndgrp in groups:
+                                    continue
+                                dgrp = ndgrp
+                                break
+                        groups[dgrp] = pkg_names
+
         rel = base.conf.yumvar['releasever']
         ba  = base.conf.yumvar['basearch']
         cols = []
@@ -2723,7 +2755,7 @@ class VersionCommand(YumCommand):
                 if groups:
                     for grp in sorted(data[2]):
                         if (vcmd.startswith("group-") and
-                            len(extcmds) > 1 and grp not in extcmds[1:]):
+                            extcmds and grp not in extcmds):
                             continue
                         cols.append(("%s %s" % (_("Group-Installed:"), grp),
                                      str(data[2][grp])))
@@ -2740,7 +2772,7 @@ class VersionCommand(YumCommand):
                 if groups:
                     for grp in sorted(data[2]):
                         if (vcmd.startswith("group-") and
-                            len(extcmds) > 1 and grp not in extcmds[1:]):
+                            extcmds and grp not in extcmds):
                             continue
                         cols.append(("%s %s" % (_("Group-Available:"), grp),
                                      str(data[2][grp])))

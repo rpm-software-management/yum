@@ -40,13 +40,11 @@ except ImportError:
 try:
     import hashlib
     _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
-    _default_checksums = ['sha256']
 except ImportError:
     # Python-2.4.z ... gah!
     import sha
     import md5
     _available_checksums = set(['md5', 'sha1'])
-    _default_checksums = ['sha1']
     class hashlib:
 
         @staticmethod
@@ -56,6 +54,20 @@ except ImportError:
             if algo == 'sha1':
                 return sha.new()
             raise ValueError, "Bad checksum type"
+
+# some checksum types might be disabled
+for ctype in list(_available_checksums):
+    try:
+        hashlib.new(ctype)
+    except:
+        print >> sys.stderr, 'Checksum type %s disabled' % repr(ctype)
+        _available_checksums.remove(ctype)
+for ctype in 'sha256', 'sha1':
+    if ctype in _available_checksums:
+        _default_checksums = [ctype]
+        break
+else:
+    raise ImportError, 'broken hashlib'
 
 from Errors import MiscError
 # These are API things, so we can't remove them even if they aren't used here.

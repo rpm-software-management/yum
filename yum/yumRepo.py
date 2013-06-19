@@ -638,6 +638,9 @@ class YumRepository(Repository, config.RepoConf):
                 if tries <= self.retries - len(self.urls):
                     # don't remove this mirror yet
                     action['remove'] = False
+            elif e.errno == -3:
+                # unsupported checksum type, fail now
+                action['fail'] = True
 
             # No known user of this callback, but just in case...
             cb = self.mirror_failure_obj

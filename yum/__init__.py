@@ -3775,6 +3775,9 @@ much more problems).
             
             thisgroup.selected = True
             
+            # Can move to upgrade, if installed and calling install
+            lupgrade = upgrade
+
             pkgs = []
             if 'mandatory' in package_types:
                 pkgs.extend(thisgroup.mandatory_packages)
@@ -3788,6 +3791,7 @@ much more problems).
             if igroup_data:
                 if thisgroup.groupid in self.igroups.groups:
                     igrp = self.igroups.groups[thisgroup.groupid]
+                    lupgrade = True
                 else:
                     self.igroups.add_group(thisgroup.groupid,
                                            thisgroup.packages, ievgrp)
@@ -3801,7 +3805,7 @@ much more problems).
                     assert pkg in igroup_data
                     if (pkg not in igroup_data or
                         igroup_data[pkg].startswith('blacklisted')):
-                        # (upgrade and igroup_data[pkg] == 'available')):
+                        # (lupgrade and igroup_data[pkg] == 'available')):
                         msg = _('Skipping package %s from group %s')
                         self.verbose_logger.log(logginglevels.DEBUG_2,
                                                 msg, pkg, thisgroup.groupid)
@@ -3816,7 +3820,7 @@ much more problems).
 
                 txmbrs = []
                 try:
-                    if (upgrade and
+                    if (lupgrade and
                         (self.conf.group_command == 'simple' or
                          (igroup_data and igroup_data[pkg] == 'installed'))):
                         txmbrs = self.update(name = pkg,
@@ -3843,7 +3847,7 @@ much more problems).
             count_cond_test = 0
             # FIXME: What do we do about group conditionals when group==objects
             #        or group upgrade for group_command=simple?
-            if not upgrade and group_conditionals:
+            if not lupgrade and group_conditionals:
                 for condreq, cond in thisgroup.conditional_packages.iteritems():
                     if self.isPackageInstalled(cond):
                         try:
@@ -3881,7 +3885,7 @@ much more problems).
                             self.tsInfo.conditionals[cond] = []
                         self.tsInfo.conditionals[cond].extend(pkgs)
 
-            if not upgrade and len(txmbrs_used) == old_txmbrs:
+            if not lupgrade and len(txmbrs_used) == old_txmbrs:
                 self.logger.critical(_('Warning: Group %s does not have any packages to install.'), thisgroup.groupid)
                 if count_cond_test:
                     self.logger.critical(_('Group %s does have %u conditional packages, which may get installed.'),

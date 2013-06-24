@@ -660,6 +660,7 @@ class YumBase(depsolve.Depsolve):
         self._tsInfo = None
         self._up = None
         self.comps = None
+        self.igroups = None
     
     def _deleteTs(self):
         del self._ts

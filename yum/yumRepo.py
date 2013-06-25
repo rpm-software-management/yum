@@ -1570,7 +1570,7 @@ Insufficient space in download directory %s
             self._oldRepoMDData['old_MD_files'] = reverts
 
         # Inited twice atm. ... sue me
-        self._oldRepoMDData['new_MD_files'] = []
+        newmdfiles = self._oldRepoMDData['new_MD_files'] = []
         downloading = []
         for mdtype in all_mdtypes:
             (nmdtype, ndata) = self._get_mdtype_data(mdtype)
@@ -1609,6 +1609,7 @@ Insufficient space in download directory %s
             if self._groupCheckDataMDValid(ndata, nmdtype, mdtype):
                 continue
             downloading.append((ndata, nmdtype))
+            newmdfiles.append(self._get_mdtype_fname(ndata, False))
         return downloading
 
     def _commonRetrieveDataMD_done(self, downloading):
@@ -1616,7 +1617,6 @@ Insufficient space in download directory %s
 
         for (ndata, nmdtype) in downloading:
             local = self._get_mdtype_fname(ndata, False)
-            self._oldRepoMDData['new_MD_files'].append(local)
         self._doneOldRepoXML()
 
     def _groupLoadRepoXML(self, text=None, mdtypes=None):

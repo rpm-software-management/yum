@@ -5,6 +5,7 @@ Assorted utility functions for yum.
 
 import types
 import os
+import sys
 import os.path
 from cStringIO import StringIO
 import base64
@@ -991,7 +992,6 @@ def getloginuid():
 
 # ---------- i18n ----------
 import locale
-import sys
 def setup_locale(override_codecs=True, override_time=False):
     # This test needs to be before locale.getpreferredencoding() as that
     # does setlocale(LC_CTYPE, "")

@@ -311,7 +311,7 @@ class DeltaInfo:
             self.wait((self.limit - len(self.jobs)) + 1)
 
         po = self._future_jobs.pop(0)
-        args = ()
+        args = ('-a', po.arch)
         if po.oldrpm: args += '-r', po.oldrpm
         args += po.localpath, po.rpm.localpath
 

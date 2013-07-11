@@ -39,6 +39,7 @@ class RepoData:
         self.dbversion = None
         self.size      = None
         self.opensize  = None
+        self.deltas    = []
 
         if elem:
             self.parse(elem)
@@ -70,6 +71,10 @@ class RepoData:
                 self.size = child.text
             elif child_name == 'open-size':
                 self.opensize = child.text
+            elif child_name == 'delta':
+                delta = RepoData(child)
+                delta.type = self.type
+                self.deltas.append(delta)
 
     def dump_xml(self):
         msg = ""
@@ -103,10 +108,21 @@ class RepoData:
                                                  xmlname)
                 msg += d_xml
 
+        for delta in self.deltas:
+            # change tag to "delta" and increase indent
+            body = '\n  '.join(delta.dump_xml().split('\n')[1:-2])
+            msg += '  <delta>\n  %s\n  </delta>\n' % body
+
         bottom = """</data>\n"""
         msg += bottom
         return msg
         
+    def getDelta(self, old_timestamp):
+        old_timestamp = int(old_timestamp)
+        for deltamd in self.deltas:
+            if int(deltamd.timestamp) <= old_timestamp:
+                return deltamd
+
 class RepoMD:
     """represents the repomd xml file"""
     

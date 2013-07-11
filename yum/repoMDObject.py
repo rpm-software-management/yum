@@ -234,7 +234,14 @@ class RepoMD:
             for item in self.tags['repo']:
                 tag = """   <repo>%s</repo>\n""" % (to_xml(item))
                 tags += tag
-            for (cpeid, item) in self.tags['distro']:
+            distro = self.tags['distro']
+            if isinstance(distro, dict):
+                lst = []
+                for cpeid in sorted(distro):
+                    for item in sorted(distro[cpeid]):
+                        lst.append((cpeid, item))
+                distro = lst
+            for (cpeid, item) in distro:
                 if cpeid:
                     tag = """   <distro cpeid="%s">%s</distro>\n""" % (
                                 to_xml(cpeid, attrib=True), to_xml(item))

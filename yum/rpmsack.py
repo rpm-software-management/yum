@@ -233,6 +233,11 @@ class RPMDBPackageSack(PackageSackBase):
             self._persistdir = root +  '/' + persistdir
         else:
             self._persistdir = persistdir
+        if hasattr(rpm, 'expandMacro'):
+            dbpath = rpm.expandMacro('%_dbpath')
+        else:
+            dbpath = '/var/lib/rpm'
+        self._rpmdbpath = os.path.normpath(root + '/' + dbpath)
         self._have_cached_rpmdbv_data = None
         self._cached_conflicts_data = None
         # Store the result of what happens, if a transaction completes.
@@ -336,7 +341,7 @@ class RPMDBPackageSack(PackageSackBase):
 
         #  We are keeping some data from before, and sometimes (Eg. remove only)
         # we never open the rpmdb again ... so get the mtime now.
-        rpmdbfname  = self.root + "/var/lib/rpm/Packages"
+        rpmdbfname  = self._rpmdbpath + "/Packages"
         self._cached_rpmdb_mtime = os.path.getmtime(rpmdbfname)
 
         def _safe_del(x, y):
@@ -1146,7 +1151,7 @@ class RPMDBPackageSack(PackageSackBase):
         # http://lists.rpm.org/pipermail/rpm-maint/2007-November/001719.html
         # ...if anything gets implemented, we should change.
         rpmdbvfname = self._cachedir + "/version"
-        rpmdbfname  = self.root + "/var/lib/rpm/Packages"
+        rpmdbfname  = self._rpmdbpath + "/Packages"
 
         if os.path.exists(rpmdbvfname) and os.path.exists(rpmdbfname):
             # See if rpmdb has "changed" ...
@@ -1169,7 +1174,7 @@ class RPMDBPackageSack(PackageSackBase):
         if self._cached_rpmdb_mtime is None:
             return # We haven't loaded any packages!!!
 
-        rpmdbfname  = self.root + "/var/lib/rpm/Packages"
+        rpmdbfname  = self._rpmdbpath + "/Packages"
         if not os.path.exists(rpmdbfname):
             return # haha
 
@@ -1365,7 +1370,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._name2pkg.setdefault(po.name, []).append(po)
         self._tup2pkg[po.pkgtup] = po
         if self.__cache_rpmdb__ and self._cached_rpmdb_mtime is None:
-            rpmdbfname  = self.root + "/var/lib/rpm/Packages"
+            rpmdbfname  = self._rpmdbpath + "/Packages"
             self._cached_rpmdb_mtime = os.path.getmtime(rpmdbfname)
 
         return po

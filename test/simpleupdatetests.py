@@ -1080,3 +1080,24 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((pax2, pai2, pa2))
 
+    def testUpdateForDeps(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'EQ', ('0', '1', '2'))
+
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar11.yumdb_info.reason = 'dep'
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+
+        res, msg = self.runOperation(['install', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        for txmbr in self.tsInfo:
+            print txmbr,
+            print txmbr.reason
+        self.assertEquals([], self.tsInfo.depupdated)

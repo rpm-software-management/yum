@@ -305,7 +305,7 @@ def getCanonPPCArch(arch):
         return arch
 
     try:
-        if platform.startswith("power") and int(platform[5:]) >= 7:
+        if platform.startswith("power") and int(platform[5:].rstrip('+')) >= 7:
             return "ppc64p7"
     except:
         pass

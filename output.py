@@ -851,7 +851,7 @@ class YumOutput:
         print self.fmtKeyValFill(_("Description : "),self._enc(pkg.description))
         print ""
     
-    def updatesObsoletesList(self, uotup, changetype, columns=None):
+    def updatesObsoletesList(self, uotup, changetype, columns=None, repoid=None):
         """Print a simple string that explains the relationship
         between the members of an update or obsoletes tuple.
 
@@ -867,8 +867,11 @@ class YumOutput:
            negative, the text in the column will be left justified,
            and if it is positive, the text will be right justified.
            The columns of output are the package name, version, and repository
+        :param repoid: a repoid that the new package should belong to
         """
         (changePkg, instPkg) = uotup
+        if repoid and changePkg.repoid != repoid:
+            return
 
         if columns is not None:
             # New style, output all info. for both old/new with old indented

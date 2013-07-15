@@ -15,7 +15,6 @@
 # Copyright 2004 Duke University 
 
 import re
-import fnmatch
 import types
 import logging
 import misc
@@ -213,10 +212,7 @@ class RepoStorage:
         
         for item in pattern.split(','):
             item = item.strip()
-            if ignore_case:
-                match = re.compile(fnmatch.translate(item), re.I).match
-            else:
-                match = re.compile(fnmatch.translate(item)).match
+            match = misc.compile_pattern(item.strip(), ignore_case)
             for name,repo in self.repos.items():
                 assert name == repo.id
                 if match(name):

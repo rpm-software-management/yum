@@ -711,7 +711,10 @@ class Depsolve(object):
             # FIXME: we should probably handle updating multiple packages...
             txmbr = self.tsInfo.addUpdate(best, inst[0])
             txmbr.setAsDep(po=requiringPo)
-            txmbr.reason = "dep"
+            if 'reason' in inst[0].yumdb_info:
+                txmbr.reason = inst[0].yumdb_info.reason
+            else:
+                txmbr.reason = 'dep'
             checkdeps = True
             self._last_req = best
         else:

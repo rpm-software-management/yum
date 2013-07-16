@@ -379,7 +379,7 @@ class TransactionData:
 
         for txmbr in self.getMembers():
             if txmbr.output_state == TS_UPDATE:
-                if txmbr.isDep and txmbr.reason != 'user':
+                if txmbr.isDep:
                     self.depupdated.append(txmbr)
                 else:
                     self.updated.append(txmbr)
@@ -401,6 +401,8 @@ class TransactionData:
                     for evg in txmbr.environments:
                         if evg not in self.instenvironments:
                             self.instenvironments.append(evg)
+                #  "user" here is kind of a hack ... we really shouldn't have
+                # .isDep == True, but this probably doesn't hurt.
                 if txmbr.isDep and txmbr.reason != 'user':
                     self.depinstalled.append(txmbr)
                 else:
@@ -459,7 +461,6 @@ class TransactionData:
         txmbr.output_state = TS_INSTALL
         txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'u'
-        txmbr.reason = 'user'
 
         if self.rpmdb.contains(po=txmbr.po):
             txmbr.reinstall = True
@@ -477,7 +478,6 @@ class TransactionData:
         txmbr.output_state = TS_TRUEINSTALL
         txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'i'
-        txmbr.reason = 'user'
 
         if self.rpmdb.contains(po=txmbr.po):
             txmbr.reinstall = True
@@ -546,6 +546,10 @@ class TransactionData:
         txmbr.ts_state = 'ud'
         txmbr.relatedto.append((updating_po, 'updatedby'))
         txmbr.updated_by.append(updating_po)
+
+        if 'reason' in po.yumdb_info: # Propbably worthless, but...
+            txmbr.reason = po.yumdb_info.reason
+
         self.add(txmbr)
         return txmbr
 
@@ -578,6 +582,10 @@ class TransactionData:
         txmbr.ts_state = 'od'
         txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         txmbr.obsoleted_by.append(obsoleting_po)
+
+        if 'reason' in po.yumdb_info: # Propbably worthless, but...
+            txmbr.reason = po.yumdb_info.reason
+
         self.add(txmbr)
         for otxmbr in self.getMembersWithState(obsoleting_po.pkgtup,
                                                [TS_OBSOLETING]):

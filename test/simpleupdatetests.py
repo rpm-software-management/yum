@@ -1195,3 +1195,19 @@ class SimpleUpdateTests(OperationsTests):
 
         self.tsInfo.makelists()
         self.assertEquals([foo12], self.tsInfo.depinstalled)
+
+    def testUpdateForDeps8(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+        foo12.yumdb_info.reason = 'user'
+        bar12.yumdb_info.reason = 'blahg'
+
+        res, msg = self.runOperation(['downgrade', 'foo', 'bar'], [foo12, bar12], [foo11, bar11, foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo11, bar11))
+
+        for txmbr in self.tsInfo:
+            if txmbr.po == foo11:
+                self.assert_(txmbr.reason == 'user')
+            if txmbr.po == bar11:
+                self.assert_(txmbr.reason == 'blahg')

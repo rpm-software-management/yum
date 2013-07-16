@@ -1080,7 +1080,7 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((pax2, pai2, pa2))
 
-    def testUpdateForDeps(self):
+    def testUpdateForDeps0(self):
         foo11 = FakePackage('foo', '1', '1', '0', 'i386')
         foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
 
@@ -1097,7 +1097,101 @@ class SimpleUpdateTests(OperationsTests):
         self.assertResult((foo12, bar12))
 
         self.tsInfo.makelists()
-        for txmbr in self.tsInfo:
-            print txmbr,
-            print txmbr.reason
         self.assertEquals([], self.tsInfo.depupdated)
+
+    def _testUpdateForDeps_setup(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'EQ', ('0', '1', '2'))
+
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar11.addRequires('foo', 'EQ', ('0', '1', '1'))
+
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+        bar12.addRequires('foo', 'EQ', ('0', '1', '2'))
+
+        return foo11, foo12, bar11, bar12
+
+    def testUpdateForDeps1(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+
+        res, msg = self.runOperation(['install', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        self.assertEquals([], self.tsInfo.depupdated)
+
+    def testUpdateForDeps2(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+
+        res, msg = self.runOperation(['upgrade', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        self.assertEquals([], self.tsInfo.depupdated)
+
+    def testUpdateForDeps3(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+        bar11.yumdb_info.reason = 'dep'
+
+        res, msg = self.runOperation(['upgrade', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        self.assertEquals([], self.tsInfo.depupdated)
+
+    def testUpdateForDeps4(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+        foo11.yumdb_info.reason = 'user'
+        bar11.yumdb_info.reason = 'dep'
+
+        res, msg = self.runOperation(['upgrade', 'foo'], [foo11, bar11], [foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        self.assertEquals([bar12], self.tsInfo.depupdated)
+
+    def testUpdateForDeps5(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+        foo11.yumdb_info.reason = 'user'
+        bar11.yumdb_info.reason = 'dep'
+
+        res, msg = self.runOperation(['upgrade', 'bar'], [foo11, bar11], [foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        self.assertEquals([foo12], self.tsInfo.depupdated)
+
+    def testUpdateForDeps6(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+
+        res, msg = self.runOperation(['install', 'foo'], [], [foo11, bar11, foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        self.assertEquals([bar12], self.tsInfo.depinstalled)
+
+    def testUpdateForDeps7(self):
+        foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
+
+        res, msg = self.runOperation(['install', 'bar'], [], [foo11, bar11, foo12, bar12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((foo12, bar12))
+
+        self.tsInfo.makelists()
+        self.assertEquals([foo12], self.tsInfo.depinstalled)

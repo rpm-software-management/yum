@@ -530,6 +530,10 @@ class TransactionData:
         if not atxmbr: # Fail?
             self.remove(itxmbr.pkgtup)
             return None
+
+        if 'reason' in oldpo.yumdb_info:
+            atxmbr.reason = oldpo.yumdb_info.reason
+
         atxmbr.relatedto.append((oldpo, 'downgrades'))
         atxmbr.downgrades.append(oldpo)
 

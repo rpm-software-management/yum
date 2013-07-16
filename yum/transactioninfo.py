@@ -826,11 +826,12 @@ class TransactionMember:
             po.yumdb_info.get('releasever')
             po.yumdb_info.get('changed_by')
 
-    def setAsDep(self, po=None):
+    def setAsDep(self, po=None, relonly=False):
         """sets the transaction member as a dependency and maps the dep into the
            relationship list attribute"""
-        
-        self.isDep = 1
+
+        if not relonly:
+            self.isDep = 1
         if po:
             self.relatedto.append((po, 'dependson'))
             self.depends_on.append(po)

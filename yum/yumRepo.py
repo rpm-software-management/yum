@@ -697,9 +697,6 @@ class YumRepository(Repository, config.RepoConf):
         if os.path.exists(dpath) and os.path.isdir(dpath):
             return
 
-        if self.cache:
-            raise Errors.RepoError, "Cannot access repository dir %s" % dpath
-
         try:
             os.makedirs(dpath, mode=0755)
         except OSError, e:
@@ -1802,30 +1799,20 @@ Insufficient space in download directory %s
             # got it, move along
             return local
 
-        if self.cache == 1:
-            if os.path.exists(local):
-                try:
-                    self.checkMD(local, mdtype)
-                except URLGrabError, e:
-                    if retrieve_can_fail:
-                        return None
-                    raise Errors.RepoError, \
-                        "Caching enabled and local cache: %s does not match checksum" % local
-                else:
-                    return local
-
-            else: # ain't there - raise
-                if retrieve_can_fail:
-                    return None
-                raise Errors.RepoError, \
-                    "Caching enabled but no local cache of %s from %s" % (local,
-                           self.ui_id)
-
         if (os.path.exists(local) or
             self._preload_md_from_system_cache(os.path.basename(local))):
             if self._checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
+
+        if self.cache == 1:
+            if retrieve_can_fail:
+                return None
+            if os.path.exists(local):
+                msg = "Caching enabled and local cache: %s does not match checksum" % local
+            else:
+                msg = "Caching enabled but no local cache of %s from %s" % (local, self.ui_id)
+            raise Errors.RepoError, msg
 
         try:
             def checkfunc(obj):

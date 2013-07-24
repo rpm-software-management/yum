@@ -764,6 +764,7 @@ class YumCronBase(yum.YumBase):
         self.opts.populate(confparser, 'emitters')
         self.opts.populate(confparser, 'email')
         self.opts.populate(confparser, 'groups')
+        self.opts.populate(confparser, 'base')
 
         #If the system name is not given, set it by getting the hostname
         if self.opts.system_name == 'None' :

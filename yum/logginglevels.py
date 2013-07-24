@@ -87,7 +87,9 @@ def logLevelFromErrorLevel(error_level):
 
 def logLevelFromDebugLevel(debug_level):
     """ Convert an old-style debug logging level to the new style. """
-    debug_table = {-1 : __NO_LOGGING, 0 : logging.INFO, 1 : INFO_1, 2 : INFO_2,
+    debug_table = {
+        -4 : logging.CRITICAL, -3 : logging.ERROR, -2 : logging.WARNING,
+        -1 : __NO_LOGGING, 0 : logging.INFO, 1 : INFO_1, 2 : INFO_2,
         3 : logging.DEBUG, 4 : DEBUG_1, 5 : DEBUG_2, 6 : DEBUG_3, 7 : DEBUG_4}
 
     return __convertLevel(debug_level, debug_table)

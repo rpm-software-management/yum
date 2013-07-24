@@ -709,6 +709,7 @@ class YumCronConfig(BaseConfig):
     group_list = ListOption([])
     group_package_types = ListOption(['mandatory', 'default'])
     skip_broken = BoolOption()
+    debuglevel = IntOption(-2, -4, 10)
 
 
 class YumCronBase(yum.YumBase):
@@ -792,13 +793,11 @@ class YumCronBase(yum.YumBase):
         try :
             # Set the configuration file
             self.preconf.fn = self.opts.yum_config_file
+            self.preconf.debuglevel = self.opts.debuglevel
 
             # if we are not root do the special subdir thing
             if os.geteuid() != 0:
                 self.setCacheDir()
-
-            # Turn off the plugins line
-            self.preconf.debuglevel = 0
 
             # Create the configuration
             self.conf

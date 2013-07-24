@@ -943,7 +943,7 @@ class YumCronBase(yum.YumBase):
                                             self.tsInfo.getMembers()))
         try:
             # Download the updates
-            self.conf.download_only = not self.opts.apply_updates
+            self.conf.downloadonly = not self.opts.apply_updates
             self.downloadPkgs(dlpkgs)
         except Exception, e:
             self.emitDownloadFailed("%s" % e)

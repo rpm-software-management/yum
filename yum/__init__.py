@@ -4429,10 +4429,16 @@ much more problems).
         group_string = pattern[1:]
         tx_return = []
 
+        try: comps = self.comps
+        except yum.Errors.GroupsError, e:
+            # No Groups Available in any repository?
+            self.logger.warning(e)
+            return tx_return
+
         if group_string and group_string[0] == '^':
             group_string = group_string[1:]
             # Actually dealing with "environment groups".
-            for env_grp in self.comps.return_environments(group_string):
+            for env_grp in comps.return_environments(group_string):
                 try:
                     txmbrs = self.selectEnvironment(env_grp.environmentid,
                                                     upgrade=upgrade)
@@ -4442,7 +4448,7 @@ much more problems).
                     continue
             return tx_return
 
-        for group in self.comps.return_groups(group_string):
+        for group in comps.return_groups(group_string):
             try:
                 txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
                 tx_return.extend(txmbrs)

@@ -1160,7 +1160,7 @@ def repo_gen_decompress(filename, generated_name, cached=False):
     dest = os.path.dirname(filename) + '/gen/' + generated_name
     try:
         return decompress(filename, dest=dest, check_timestamps=True)
-    except IOError, e:
+    except (OSError, IOError), e:
         if cached and e.errno == errno.EACCES:
             return None
         raise

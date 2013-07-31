@@ -1000,6 +1000,11 @@ class GroupsCommand(YumCommand):
 
         if base.conf.group_command != 'objects':
             pass
+        elif not os.path.exists(os.path.dirname(base.igroups.filename)):
+            base.logger.critical(_("There is no installed groups file."))
+        elif not os.access(os.path.dirname(base.igroups.filename), os.R_OK):
+            base.logger.critical(_("You don't have access to the groups DBs."))
+            raise cli.CliError
         elif not os.path.exists(base.igroups.filename):
             base.logger.critical(_("There is no installed groups file."))
         elif not os.access(base.igroups.filename, os.R_OK):

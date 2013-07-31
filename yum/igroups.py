@@ -21,6 +21,28 @@ import os
 import fnmatch
 import re
 
+def _open_no_umask(*args):
+    """ Annoying people like to set umask's for root, which screws everything
+        up for user readable stuff. """
+    oumask = os.umask(022)
+    try:
+        ret = open(*args)
+    finally:
+        os.umask(oumask)
+
+    return ret
+
+def _makedirs_no_umask(*args):
+    """ Annoying people like to set umask's for root, which screws everything
+        up for user readable stuff. """
+    oumask = os.umask(022)
+    try:
+        ret = os.makedirs(*args)
+    finally:
+        os.umask(oumask)
+
+    return ret
+
 class InstalledGroup(object):
     def __init__(self, gid):
         self.gid       = gid
@@ -147,7 +169,7 @@ class InstalledGroups(object):
         db_path = os.path.dirname(self.filename)
         if not os.path.exists(db_path):
             try:
-                os.makedirs(db_path)
+                _makedirs_no_umask(db_path)
             except (IOError, OSError), e:
                 # some sort of useful thing here? A warning?
                 return False
@@ -161,7 +183,7 @@ class InstalledGroups(object):
         self.changed = False
 
     def _write_pkg_grps(self):
-        fo = open(self.filename + '.tmp', 'w')
+        fo = _open_no_umask(self.filename + '.tmp', 'w')
 
         fo.write("1\n") # version
         fo.write("%u\n" % len(self.groups))
@@ -174,7 +196,7 @@ class InstalledGroups(object):
         os.rename(self.filename + '.tmp', self.filename)
 
     def _write_grp_grps(self):
-        fo = open(self.grp_filename + '.tmp', 'w')
+        fo = _open_no_umask(self.grp_filename + '.tmp', 'w')
 
         fo.write("1\n") # version
         fo.write("%u\n" % len(self.environments))

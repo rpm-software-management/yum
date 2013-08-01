@@ -2079,6 +2079,9 @@ much more problems).
 
         :param repo: the repository to use
         """
+        for di in getattr(self.conf, 'disable_includes', []):
+            if di == 'all' or di == repo.id:
+                return
         includelist = repo.getIncludePkgList()
         
         if len(includelist) == 0:

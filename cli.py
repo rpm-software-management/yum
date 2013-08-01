@@ -2208,11 +2208,8 @@ class YumOptionParser(OptionParser):
                 if opts.color != 'auto':
                     self.base.term.reinit(color=opts.color)
 
-            if opts.disableexcludes:
-                disable_excludes = self._splitArg(opts.disableexcludes)
-            else:
-                disable_excludes = []
-            self.base.conf.disable_excludes = disable_excludes
+            self.base.conf.disable_excludes = self._splitArg(opts.disableexcludes)
+            self.base.conf.disable_includes = self._splitArg(opts.disableincludes)
 
             for exclude in self._splitArg(opts.exclude):
                 try:
@@ -2374,6 +2371,9 @@ class YumOptionParser(OptionParser):
                 help=_("exclude package(s) by name or glob"), metavar='[package]')
         group.add_option("", "--disableexcludes", default=[], action="append",
                 help=_("disable exclude from main, for a repo or for everything"),
+                        metavar='[repo]')
+        group.add_option("", "--disableincludes", default=[], action="append",
+                help=_("disable includepkgs for a repo or for everything"),
                         metavar='[repo]')
         group.add_option("--obsoletes", action="store_true", 
                 help=_("enable obsoletes processing during updates"))

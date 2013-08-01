@@ -804,6 +804,13 @@ main == disable excludes defined in [main] in yum.conf
 .br
 repoid == disable excludes defined for that repo
 .br
+.IP "\fB\-\-disableincludes=[all|repoid]\fP"
+Disable the includes defined in your config files. Takes one of two options:
+.br
+all == disable all includes
+.br
+repoid == disable includes defined for that repo
+.br
 .IP "\fB\-\-disableplugin=plugin\fP"
 Run with one or more plugins disabled, the argument is a comma separated list
 of wildcards to match against plugin names.

@@ -50,7 +50,7 @@ _yum_baseopts()
         --verbose --assumeyes --assumeno --version --installroot --enablerepo
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
         --nogpgcheck --skip-broken --color --releasever --setopt --downloadonly
-        --downloaddir'
+        --downloaddir --disableincludes'
     [[ $COMP_LINE == *--noplugins* ]] || \
         opts+=" --disableplugin --enableplugin"
     printf %s "$opts"
@@ -111,9 +111,11 @@ _yum_complete_baseopts()
             return 0
             ;;
 
-        --disableexcludes)
+        --disableexcludes|--disableincludes)
             _yum_helper repolist all "$1"
-            COMPREPLY=( $( compgen -W '${COMPREPLY[@]} all main' -- "$1" ) )
+            local main=
+            [[ $2 == *excludes ]] && main=main
+            COMPREPLY=( $( compgen -W '${COMPREPLY[@]} all $main' -- "$1" ) )
             return 0
             ;;
 

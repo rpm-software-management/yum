@@ -256,6 +256,10 @@ class DeltaInfo:
                 os.unlink(po.localpath)
                 po.localpath = po.rpm.localpath # for --downloadonly
             num += 1
+
+            # when blocking, one is enough
+            if block:
+                break
         return num
 
     def rebuild(self, po):
@@ -308,7 +312,7 @@ class DeltaInfo:
         if self.limit <= len(self.jobs):
             if not block:
                 return False
-            self.wait((self.limit - len(self.jobs)) + 1)
+            self.wait(len(self.jobs) - self.limit + 1)
 
         po = self._future_jobs.pop(0)
         args = ('-a', po.arch)

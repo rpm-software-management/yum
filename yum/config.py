@@ -818,7 +818,7 @@ class YumConf(StartupConf):
     skip_broken = BoolOption(False)
     #  Note that "instant" is the old behaviour, but group:primary is very
     # similar but better :).
-    mdpolicy = ListOption(['group:primary'])
+    mdpolicy = ListOption(['group:small'])
     mddownloadpolicy = SelectionOption('sqlite', ('sqlite', 'xml'))
     #  ('instant', 'group:all', 'group:main', 'group:small', 'group:primary'))
     multilib_policy = SelectionOption(__main_multilib_policy_default__,

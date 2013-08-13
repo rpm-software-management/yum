@@ -600,12 +600,12 @@ always did, however it now does some checking on the index and reverts if
 it classifies it as bad.
 
 `group:primary' - Download the primary metadata with the index. This contains
-most of the package information and so is almost always required anyway. This
-is the default.
+most of the package information and so is almost always required anyway.
 
-`group:small' - With the primary also download the updateinfo metadata, this is
-required for yum-security operations and it also used in the graphical clients.
-This file also tends to be significantly smaller than most others.
+`group:small' - With the primary also download the updateinfo metadata, groups,
+and pkgtags. This is required for yum-security operations and it also used in
+the graphical clients. This file also tends to be significantly smaller than
+most others. This is the default.
 
 `group:main' - With the primary and updateinfo download the filelists metadata
 and the group metadata. The filelists data is required for operations like

@@ -282,6 +282,10 @@ class DeltaInfo:
                 if hasattr(progress, 'text_meter_total_size'):
                     progress.text_meter_total_size(0)
                 self.progress = po.repo.callback
+                # default timescale 5s works fine with 0.3s dl updates.
+                # drpm rebuild jobs do not finish that often, so bump it
+                try: self.progress.re.timescale = 30
+                except: pass # accessing private api
                 self.progress.start(filename=None, url=None, # BZ 963023
                                     text='<locally rebuilding deltarpms>', size=total)
                 self.done = 0

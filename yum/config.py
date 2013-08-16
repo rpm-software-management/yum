@@ -710,7 +710,7 @@ class StartupConf(BaseConfig):
     the other [main] options can be parsed.
     """
     # xemacs highlighting hack: '
-    debuglevel = IntOption(2, 0, 10)
+    debuglevel = IntOption(2, -4, 10)
     errorlevel = IntOption(2, 0, 10)
 
     distroverpkg = Option('redhat-release')

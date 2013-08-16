@@ -709,8 +709,6 @@ class YumCronConfig(BaseConfig):
     yum_config_file = Option("/etc/yum.conf")
     group_list = ListOption([])
     group_package_types = ListOption(['mandatory', 'default'])
-    skip_broken = BoolOption()
-    debuglevel = IntOption(-2, -4, 10)
 
 
 class YumCronBase(yum.YumBase):
@@ -765,7 +763,7 @@ class YumCronBase(yum.YumBase):
         self.opts.populate(confparser, 'emitters')
         self.opts.populate(confparser, 'email')
         self.opts.populate(confparser, 'groups')
-        self.opts.populate(confparser, 'base')
+        self._confparser = confparser
 
         #If the system name is not given, set it by getting the hostname
         if self.opts.system_name == 'None' :
@@ -795,7 +793,10 @@ class YumCronBase(yum.YumBase):
         try :
             # Set the configuration file
             self.preconf.fn = self.opts.yum_config_file
-            self.preconf.debuglevel = self.opts.debuglevel
+
+            # This needs to be set early, errors are handled later.
+            try: self.preconf.debuglevel = int(self._confparser.get('base', 'debuglevel'))
+            except: pass
 
             # if we are not root do the special subdir thing
             if os.geteuid() != 0:
@@ -804,15 +805,15 @@ class YumCronBase(yum.YumBase):
             # Create the configuration
             self.conf
 
+            # override base yum options
+            self.conf.populate(self._confparser, 'base')
+            del self._confparser
+
         except Exception, e:
             # If there are any exceptions, send a message about them,
             # and return False
             self.emitSetupFailed('%s' % e)
             sys.exit(1)
-
-        # override yum options
-        if self.opts.skip_broken is not None:
-            self.conf.skip_broken = self.opts.skip_broken
 
     def acquireLock(self):
         """ Wrapper method around doLock to emit errors correctly."""

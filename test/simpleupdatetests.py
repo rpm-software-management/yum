@@ -1099,6 +1099,11 @@ class SimpleUpdateTests(OperationsTests):
         self.tsInfo.makelists()
         self.assertEquals([], self.tsInfo.depupdated)
 
+    def _pkg2txmbr(self, pkg):
+        for txmbr in self.tsInfo.getMembers(pkg.pkgtup):
+            return txmbr
+        return None
+
     def _testUpdateForDeps_setup(self):
         foo11 = FakePackage('foo', '1', '1', '0', 'i386')
         foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
@@ -1114,7 +1119,7 @@ class SimpleUpdateTests(OperationsTests):
 
         return foo11, foo12, bar11, bar12
 
-    def testUpdateForDeps1(self):
+    def testUpdateForDeps_install_all1(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
 
         res, msg = self.runOperation(['install', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
@@ -1125,7 +1130,7 @@ class SimpleUpdateTests(OperationsTests):
         self.tsInfo.makelists()
         self.assertEquals([], self.tsInfo.depupdated)
 
-    def testUpdateForDeps2(self):
+    def testUpdateForDeps_upgrade_all2(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
 
         res, msg = self.runOperation(['upgrade', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
@@ -1133,10 +1138,12 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
+        self.assert_(self._pkg2txmbr(bar12).reason == 'user')
+
         self.tsInfo.makelists()
         self.assertEquals([], self.tsInfo.depupdated)
 
-    def testUpdateForDeps3(self):
+    def testUpdateForDeps_upgrade_all3(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
         bar11.yumdb_info.reason = 'dep'
 
@@ -1145,10 +1152,12 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
+        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+
         self.tsInfo.makelists()
         self.assertEquals([], self.tsInfo.depupdated)
 
-    def testUpdateForDeps4(self):
+    def testUpdateForDeps_upgrade_foo4(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
         foo11.yumdb_info.reason = 'user'
         bar11.yumdb_info.reason = 'dep'
@@ -1158,10 +1167,14 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
+        print foo12.yumdb_info.reason
+        self.assert_(self._pkg2txmbr(foo12).reason == 'user')
+        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+
         self.tsInfo.makelists()
         self.assertEquals([bar12], self.tsInfo.depupdated)
 
-    def testUpdateForDeps5(self):
+    def testUpdateForDeps_upgrade_bar5(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
         foo11.yumdb_info.reason = 'user'
         bar11.yumdb_info.reason = 'dep'
@@ -1171,10 +1184,13 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
+        self.assert_(self._pkg2txmbr(foo12).reason == 'user')
+        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+
         self.tsInfo.makelists()
         self.assertEquals([foo12], self.tsInfo.depupdated)
 
-    def testUpdateForDeps6(self):
+    def testUpdateForDeps_install_foo6(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
 
         res, msg = self.runOperation(['install', 'foo'], [], [foo11, bar11, foo12, bar12])
@@ -1182,10 +1198,13 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
+        self.assert_(self._pkg2txmbr(foo12).reason == 'user')
+        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+
         self.tsInfo.makelists()
         self.assertEquals([bar12], self.tsInfo.depinstalled)
 
-    def testUpdateForDeps7(self):
+    def testUpdateForDeps_install_bar7(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
 
         res, msg = self.runOperation(['install', 'bar'], [], [foo11, bar11, foo12, bar12])
@@ -1193,10 +1212,13 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
+        self.assert_(self._pkg2txmbr(foo12).reason == 'dep')
+        self.assert_(self._pkg2txmbr(bar12).reason == 'user')
+
         self.tsInfo.makelists()
         self.assertEquals([foo12], self.tsInfo.depinstalled)
 
-    def testUpdateForDeps8(self):
+    def testUpdateForDeps_downgrade_all8(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
         foo12.yumdb_info.reason = 'user'
         bar12.yumdb_info.reason = 'blahg'
@@ -1206,8 +1228,5 @@ class SimpleUpdateTests(OperationsTests):
         self.assert_(res=='ok', msg)
         self.assertResult((foo11, bar11))
 
-        for txmbr in self.tsInfo:
-            if txmbr.po == foo11:
-                self.assert_(txmbr.reason == 'user')
-            if txmbr.po == bar11:
-                self.assert_(txmbr.reason == 'blahg')
+        self.assert_(self._pkg2txmbr(foo11).reason == 'user')
+        self.assert_(self._pkg2txmbr(bar11).reason == 'blahg')

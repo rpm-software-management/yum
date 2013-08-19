@@ -756,7 +756,7 @@ class YumCronBase(yum.YumBase):
         # list of the files that were read successfully, so check that it
         # contains config_file
         if config_file_name not in confparser.read(config_file_name):
-            print >> sys.stderr, "Error reading config file"
+            print >> sys.stderr, "Error reading config file:", config_file_name
             sys.exit(1)
 
         # Populate the values into  the opts object

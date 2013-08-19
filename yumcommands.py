@@ -1002,11 +1002,13 @@ class GroupsCommand(YumCommand):
             pass
         elif not os.path.exists(os.path.dirname(base.igroups.filename)):
             base.logger.critical(_("There is no installed groups file."))
+            base.logger.critical(_("Maybe run: yum groups mark convert"))
         elif not os.access(os.path.dirname(base.igroups.filename), os.R_OK):
             base.logger.critical(_("You don't have access to the groups DBs."))
             raise cli.CliError
         elif not os.path.exists(base.igroups.filename):
             base.logger.critical(_("There is no installed groups file."))
+            base.logger.critical(_("Maybe run: yum groups mark convert"))
         elif not os.access(base.igroups.filename, os.R_OK):
             base.logger.critical(_("You don't have access to the groups DB."))
             raise cli.CliError

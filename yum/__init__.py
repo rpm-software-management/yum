@@ -2079,6 +2079,9 @@ much more problems).
 
         :param repo: the repository to use
         """
+        for di in getattr(self.conf, 'disable_includes', []):
+            if di == 'all' or di == repo.id:
+                return
         includelist = repo.getIncludePkgList()
         
         if len(includelist) == 0:
@@ -2457,17 +2460,17 @@ much more problems).
 
             if downloadonly:
                 for po in remote_pkgs:
-                    rpmfile = po.localpath.rsplit('.', 2)[0]
+                    if not po.localpath.endswith('.tmp'):
+                        # file:// repos don't "download"
+                        continue
                     if po in errors:
                         # we may throw away partial file here- but we don't lock,
                         # so can't rename tempfile to rpmfile safely
                         misc.unlink_f(po.localpath)
-
-                    #  Note that for file:// repos. urlgrabber won't "download"
-                    # so we have to check that po.localpath exists.
-                    elif os.path.exists(po.localpath):
+                    else:
                         # verifyPkg() didn't complain, so (potentially)
                         # overwriting another copy should not be a problem
+                        rpmfile = po.localpath.rsplit('.', 2)[0]
                         os.rename(po.localpath, rpmfile)
                         po.localpath = rpmfile
                     

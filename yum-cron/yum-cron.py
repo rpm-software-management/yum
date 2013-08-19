@@ -17,6 +17,7 @@ import yum.updateinfo
 import smtplib
 from random import random
 from time import sleep
+from yum.misc import setup_locale
 
 # FIXME: is it really sane to use this from here?
 sys.path.append('/usr/share/yum-cli')
@@ -1110,6 +1111,7 @@ class YumCronBase(yum.YumBase):
 
 def main():
     """Configure and run the update check."""
+    setup_locale(override_time=True)
     # If a file name was passed in, use it as the config file name.
     base = None
     if len(sys.argv) > 1:

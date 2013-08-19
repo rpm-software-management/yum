@@ -240,7 +240,7 @@ the \fIClean Options\fP section below\&.
 .IP 
 .IP "\fBmakecache\fP"
 Is used to download and make usable all the metadata for the currently enabled
-\fByum\fP repos. If the arguemnt "fast" is passed, then we just try to make
+\fByum\fP repos. If the argument "fast" is passed, then we just try to make
 sure the repos. are current (much like "yum clean expire-cache").
 .IP 
 .IP "\fBgroups\fP"
@@ -286,7 +286,7 @@ to each package saying how that package relates to the group object. The
 meaning of these markers is:
 
 .br
-"-" = Pacakge isn't installed, and won't be installed as part of the group (Eg. group install foo -pkgA … this will have pkgA marked as '-')
+"-" = Package isn't installed, and won't be installed as part of the group (Eg. group install foo -pkgA … this will have pkgA marked as '-')
 .br
 "+" = Package isn't installed, but will be the next time you run "yum upgrade" or "yum group upgrade foo"
 .br
@@ -410,21 +410,21 @@ Treat a repo. as a collection of packages (like "yum groups") allowing the user
 to install or remove them as a single entity.
 
 "repository\-packages <repo> list" - Works like the "yum list" command, but
-only shows packages from the givien repository.
+only shows packages from the given repository.
 
 "repository\-packages <repo> info" - Works like the "yum info" command, but
-only shows packages from the givien repository.
+only shows packages from the given repository.
 
 "repository\-packages <repo> install" - Install all of the packages in the
-repository, basicallly the same as: yum install $(repoquery --repoid=<repo> -a).
+repository, basically the same as: yum install $(repoquery --repoid=<repo> -a).
 Specific packages/wildcards can be specified.
 
 "repository\-packages <repo> upgrade" - Update all of the packages in the
-repository, basicallly the same as: yum upgrade $(repoquery --repoid=<repo> -a).
+repository, basically the same as: yum upgrade $(repoquery --repoid=<repo> -a).
 Specific packages/wildcards can be specified.
 
 "repository\-packages <repo> upgrade-to" - Update all of the packages in the
-repository, basicallly the same as: yum upgrade $(repoquery --repoid=<repo> -a).
+repository, basically the same as: yum upgrade $(repoquery --repoid=<repo> -a).
 Without arguments it works the same as upgrade, with arguments it just
 interprets them as the versions you want to move to.
 
@@ -445,7 +445,7 @@ repopkgsremove_leaf_only option is obeyed.
 
 "repo\-pkgs <repo> remove-or-reinstall" - Works like remove for any package
 that doesn't have the exact same version in another repository. For any package
-that does have the exact NEVRA in another repoitory then that version will be
+that does have the exact NEVRA in another repository then that version will be
 reinstalled.
 
 "repo\-pkgs <repo> remove-or-distro-sync" - Works like remove for any package
@@ -803,6 +803,13 @@ all == disable all excludes
 main == disable excludes defined in [main] in yum.conf
 .br
 repoid == disable excludes defined for that repo
+.br
+.IP "\fB\-\-disableincludes=[all|repoid]\fP"
+Disable the includes defined in your config files. Takes one of two options:
+.br
+all == disable all includes
+.br
+repoid == disable includes defined for that repo
 .br
 .IP "\fB\-\-disableplugin=plugin\fP"
 Run with one or more plugins disabled, the argument is a comma separated list

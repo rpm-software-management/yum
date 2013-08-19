@@ -1630,9 +1630,9 @@ Insufficient space in download directory %s
     def _mdpolicy2mdtypes(self):
         md_groups = {'instant'       : ['__None__'],
                      'group:primary' : ['primary'],
-                     'group:small'   : ["primary", "updateinfo"],
-                     'group:main'    : ["primary", "group", "filelists",
-                                        "updateinfo", "prestodelta"]}
+                     'group:small'   : ["primary", "updateinfo", "group", "pkgtags"],
+                     'group:main'    : ["primary", "updateinfo", "group", "pkgtags",
+                                        "filelists", "prestodelta"]}
         mdtypes = set()
         if type(self.mdpolicy) in types.StringTypes:
             mdtypes.update(md_groups.get(self.mdpolicy, [self.mdpolicy]))

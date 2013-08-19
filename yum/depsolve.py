@@ -691,7 +691,7 @@ class Depsolve(object):
             #  Always do compare providers for multiple pkgs, it deals with
             # newest etc. ... so no need to do NewestNameArch() ... and it
             # stops compare_providers from being clever.
-            pkgresults = self._compare_providers(pkgs, requiringPo)
+            pkgresults = self._compare_providers(pkgs, requiringPo,req=needname)
             best = pkgresults[0][0]
         
         if self.rpmdb.contains(po=best): # is it already installed?

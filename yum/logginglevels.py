@@ -87,7 +87,7 @@ def logLevelFromErrorLevel(error_level):
 
 def logLevelFromDebugLevel(debug_level):
     """ Convert an old-style debug logging level to the new style. """
-    debug_table = {
+    debug_table = {-5 : __NO_LOGGING,
         -4 : logging.CRITICAL, -3 : logging.ERROR, -2 : logging.WARNING,
         -1 : __NO_LOGGING, 0 : logging.INFO, 1 : INFO_1, 2 : INFO_2,
         3 : logging.DEBUG, 4 : DEBUG_1, 5 : DEBUG_2, 6 : DEBUG_3, 7 : DEBUG_4}
@@ -100,7 +100,7 @@ def __convertLevel(level, table):
     try:
         new_level = table[level]
     except KeyError:
-        keys = table.keys()
+        keys = sorted(table.keys())
         # We didn't find the level in the table, check if it's smaller
         # than the smallest level
         if level < keys[0]:

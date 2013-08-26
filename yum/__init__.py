@@ -1845,8 +1845,7 @@ much more problems).
                                           errors=errors)
 
                           
-        if (not self.conf.keepcache and
-            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
+        if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self.cleanUsedHeadersPackages()
         
         for i in ('ts_all_fn', 'ts_done_fn'):
@@ -2685,6 +2684,8 @@ much more problems).
             if txmbr.po.repoid == "installed":
                 continue
             if txmbr.po.repoid not in self.repos.repos:
+                continue
+            if txmbr.po.repo.keepcache:
                 continue
             
             # make sure it's not a local file

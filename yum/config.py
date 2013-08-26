@@ -942,6 +942,7 @@ class RepoConf(BaseConfig):
 
     name = Option()
     enabled = Inherit(YumConf.enabled)
+    keepcache = Inherit(YumConf.keepcache)
     baseurl = UrlListOption()
     mirrorlist = UrlOption()
     metalink   = UrlOption()

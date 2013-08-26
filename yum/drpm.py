@@ -253,7 +253,9 @@ class DeltaInfo:
             elif not po.rpm.verifyLocalPkg():
                 self.adderror(po, _('Checksum of the delta-rebuilt RPM failed'))
             else:
-                os.unlink(po.localpath)
+                # done with drpm file, unlink when local
+                if po.localpath.startswith(po.repo.pkgdir):
+                    os.unlink(po.localpath)
                 po.localpath = po.rpm.localpath # for --downloadonly
             num += 1
 

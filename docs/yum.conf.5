@@ -353,6 +353,10 @@ the maximum available bandwidth.
 
 Set to `0' to disable bandwidth throttling. This is the default.
 
+Note that when multiple downloads run simultaneously the total bandwidth might
+exceed the throttle limit. You may want to also set max_connections=1 or scale
+your throttle option down accordingly.
+
 .IP
 \fBminrate \fR
 This sets the low speed threshold in bytes per second. If the server

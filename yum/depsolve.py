@@ -1598,10 +1598,13 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                                         _('provides vercmp: %s') % str(req))
                 newest = sorted(prov_depsolve,
-                                key = lambda x: PackageEVR(*prov_depsolve[x]))[-1]
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                                        _(' Winner: %s') % newest)
-                pkgresults[newest] += 1
+                                key = lambda x: PackageEVR(*prov_depsolve[x]))
+                for winner in reversed(newest):
+                    if prov_depsolve[winner] != prov_depsolve[newest[-1]]:
+                        break
+                    self.verbose_logger.log(logginglevels.DEBUG_4,
+                                            _(' Winner: %s') % winner)
+                    pkgresults[winner] += 1
                 
         #  If we have more than one "best", see what would happen if we picked
         # each package ... ie. what things do they require that _aren't_ already

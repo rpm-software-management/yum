@@ -120,7 +120,10 @@ def main(args):
     except (OSError, IOError), e:
         return exIOError(e)
 
-    base.waitForLock()
+    try:
+        base.waitForLock()
+    except Errors.YumBaseError, e:
+        return exFatal(e)
 
     try:
         result, resultmsgs = base.doCommands()

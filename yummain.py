@@ -68,6 +68,51 @@ def main(args):
         if unlock(): return 200
         return 1
 
+    def exRepoError(e):
+        # For RepoErrors ... help out by forcing new repodata next time.
+        base.cleanExpireCache()
+
+        msg = _("""\
+ One of the configured repositories failed (%(repo)s), and yum doesn't have
+enough cached data to continue. At this point the only safe thing yum can do
+is fail.
+ There are a few ways to work "fix" this:
+
+     1. Contact the upstream for the repository and get them to fix the problem.
+
+     2. Reconfigure the baseurl/etc. for the repository, to point to a working
+        upstream. This is most often useful if you are using a newer
+        distribution release than is supported by the repository (and the
+        packages for the previous distribution release still work).
+
+     3. Disable the repository, so yum won't use it by default. Yum will then
+        just ignore the repository until you permanently enable it again or use
+        --enablerepo for temporary usage:
+
+            yum-config-manager --disable %(repoid)s
+
+     4. Configure the failing repository to be skipped, if it is unavailable.
+        Note that yum will try to contact the repo. when it runs most commands,
+        so will have to try and fail each time (and thus. yum will be be much
+        slower). If it is a very temporary problem though, this is often a nice
+        compromise:
+
+            yum-config-manager --save --setopt=skip_if_unavailable=true %(repoid)s
+""")
+
+        repoui = _('Unknown')
+        repoid = _('<repoid>')
+        if hasattr(e, 'repo'):
+            repoid = e.repo.id
+            repoui = e.repo.name
+
+        msg = msg % {'repoid' : repoid, 'repo' : repoui}
+
+        logger.critical('\n\n%s\n%s', msg, exception2msg(e))
+
+        if unlock(): return 200
+        return 1
+
     def unlock():
         try:
             base.closeRpmDB()
@@ -130,10 +175,7 @@ def main(args):
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.RepoError, e:
-        result = 1
-        resultmsgs = [exception2msg(e)]
-        # For RepoErrors ... help out by forcing new repodata next time.
-        base.cleanExpireCache()
+        return exRepoError(e)
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [exception2msg(e)]
@@ -176,10 +218,7 @@ def main(args):
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.RepoError, e:
-        result = 1
-        resultmsgs = [exception2msg(e)]
-        # For RepoErrors ... help out by forcing new repodata next time.
-        base.cleanExpireCache()
+        return exRepoError(e)
     except Errors.YumBaseError, e:
         result = 1
         resultmsgs = [exception2msg(e)]
@@ -223,10 +262,7 @@ def main(args):
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.RepoError, e:
-        result = 1
-        resultmsgs = [exception2msg(e)]
-        # For RepoErrors ... help out by forcing new repodata next time.
-        base.cleanExpireCache()
+        return exRepoError(e)
     except Errors.YumBaseError, e:
         return exFatal(e)
     except KeyboardInterrupt:

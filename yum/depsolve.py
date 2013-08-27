@@ -1343,8 +1343,7 @@ class Depsolve(object):
                     if po.obsoletedBy([otxmbr.po]): # Loops, hope for rpm.
                         continue
                     msg = _('Removing %s due to obsoletes from installed %s')
-                    self.verbose_logger.log(logginglevels.DEBUG_1,
-                                            msg, otxmbr, po)
+                    self.verbose_logger.warning(msg, otxmbr, po)
                     _do_obs(otxmbr)
                     ret = True
 
@@ -1368,8 +1367,7 @@ class Depsolve(object):
                         # Have to deal with loops! Hope rpm behaves too.
                         continue
                     msg = _('Removing %s due to obsoletes from %s')
-                    self.verbose_logger.log(logginglevels.DEBUG_1,
-                                            msg, otxmbr, txmbr)
+                    self.verbose_logger.warning(msg, otxmbr, txmbr)
                     _do_obs(otxmbr)
                     ret = True
 

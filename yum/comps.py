@@ -124,6 +124,8 @@ class Group(CompsObj):
         self.installed = False
         self.toremove = False
 
+        self._weak = False
+
         if elem:
             self.parse(elem)
 
@@ -301,6 +303,8 @@ class Environment(CompsObj):
         self._options = {}
         self._defaultoptions = {}
 
+        self._weak = False
+
         if elem:
             self.parse(elem)
 
@@ -385,7 +389,7 @@ class Environment(CompsObj):
                     self._defaultoptions[optionid] = 1
 
     def add(self, obj):
-        """Add another category object to this object"""
+        """Add another environment object to this object"""
 
         for grp in obj.groups:
             self._groups[grp] = 1
@@ -765,6 +769,11 @@ class Comps(object):
     def add_group(self, group):
         if group.groupid in self._groups:
             thatgroup = self._groups[group.groupid]
+            if thatgroup._weak:
+                # If what we had was weak, use this one and merge the weak one.
+                tmp = group
+                group = thatgroup
+                thatgroup = self._groups[group.groupid] = tmp
             thatgroup.add(group)
         else:
             self._groups[group.groupid] = group
@@ -772,6 +781,11 @@ class Comps(object):
     def add_environment(self, environment):
         if environment.environmentid in self._environments:
             env = self._environments[environment.environmentid]
+            if env._weak:
+                # If what we had was weak, use this one and merge the weak one.
+                tmp = environment
+                environment = env
+                env = self._environments[environment.environmentid] = tmp
             env.add(environment)
         else:
             self._environments[environment.environmentid] = environment

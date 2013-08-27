@@ -920,6 +920,21 @@ class YumBase(depsolve.Depsolve):
         overwrite = self.conf.overwrite_groups
         self._comps = comps.Comps(overwrite_groups = overwrite)
 
+        if self.conf.group_command == 'objects':
+            #  Add the ids for installed groups/envs as though sys is a repo.
+            # makes everything easier (comps.return_groups() etc. works)...
+            self._comps.compscount += 1
+            for gid in self.igroups.groups:
+                grp = comps.Group()
+                grp.name = grp.groupid = gid
+                grp._weak = True
+                self._comps.add_group(grp)
+            for evgid in self.igroups.environments:
+                env = comps.Environment()
+                env.name = env.environmentid = evgid
+                env._weak = True
+                self._comps.add_environment(env)
+
         for repo in reposWithGroups:
             if repo.groups_added: # already added the groups from this repo
                 continue
@@ -4435,6 +4450,7 @@ much more problems).
         try: comps = self.comps
         except yum.Errors.GroupsError, e:
             # No Groups Available in any repository?
+            # This also means no installed groups, when using objects.
             self.logger.warning(e)
             return tx_return
 

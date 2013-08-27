@@ -83,7 +83,6 @@ doccheck:
 
 test:
 	@nosetests -i ".*test" test
-	-@test/check-po-yes-no.py
 	cd po; make test
 
 test-skipbroken:

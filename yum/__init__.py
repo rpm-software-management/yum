@@ -3658,10 +3658,7 @@ much more problems).
         """
         txmbrs_used = []
 
-        if self.conf.group_command == 'objects':
-            thesegroups = self.igroups.return_groups(grpid)
-        else:
-            thesegroups = self.comps.return_groups(grpid)
+        thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
@@ -3670,12 +3667,8 @@ much more problems).
 
             thisgroup.toremove = True
 
-            if self.conf.group_command == 'objects':
-                pkgs = thisgroup.pkg_names
-                gid  = thisgroup.gid
-            else:
-                pkgs = thisgroup.packages
-                gid  = thisgroup.groupid
+            pkgs = thisgroup.packages
+            gid  = thisgroup.groupid
 
             for pkg in pkgs:
                 if pkg in igroup_data and igroup_data[pkg] != 'installed':
@@ -3728,22 +3721,15 @@ much more problems).
         """
         txmbrs_used = []
 
-        if self.conf.group_command == 'objects':
-            thesegroups = self.igroups.return_environments(evgrpid)
-        else:
-            thesegroups = self.comps.return_environments(evgrpid)
+        thesegroups = self.comps.return_environments(evgrpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Environment named %s exists") % to_unicode(evgrpid)
 
         for thisgroup in thesegroups:
             igroup_data = self._groupInstalledEnvData(thisgroup)
 
-            if self.conf.group_command == 'objects':
-                grps  = thisgroup.grp_names
-                evgid = thisgroup.evgid
-            else:
-                grps  = thisgroup.allgroups
-                evgid = thisgroup.environmentid
+            grps  = thisgroup.allgroups
+            evgid = thisgroup.environmentid
 
             for grp in grps:
                 if grp in igroup_data and igroup_data[grp] != 'installed':

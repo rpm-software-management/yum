@@ -1953,10 +1953,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
             groups = []
             if grp_grp:
-                if self.conf.group_command == 'objects':
-                    groups = self.igroups.return_environments(group_string)
-                else:
-                    groups = self.comps.return_environments(group_string)
+                groups = self.comps.return_environments(group_string)
                 if not groups:
                     self.logger.critical(_('No environment named %s exists'), group_string)
             for group in groups:
@@ -1969,10 +1966,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
             groups = []
             if pkg_grp:
-                if self.conf.group_command == 'objects':
-                    groups = self.igroups.return_groups(group_string)
-                else:
-                    groups = self.comps.return_groups(group_string)
+                groups = self.comps.return_groups(group_string)
                 if not groups:
                     self.logger.critical(_('No group named %s exists'), group_string)
             for group in groups:

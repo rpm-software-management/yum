@@ -1756,7 +1756,7 @@ Insufficient space in download directory %s
         if l_csum:
             fsize = misc.stat_f(file)
             if fsize is not None: # We just got an xattr, so it should be there
-                if size is None and l_csum == r_csum:
+                if size is None and l_csum == r_csum and fsize.st_size > 0:
                     return 1
                 if size == fsize.st_size and l_csum == r_csum:
                     return 1

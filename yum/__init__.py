@@ -1171,8 +1171,9 @@ class YumBase(depsolve.Depsolve):
             misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir)):
             msg = _('There are unfinished transactions remaining. You might ' \
                     'consider running yum-complete-transaction, or' \
-                    ' "yum history redo last", first to finish them. If that' \
-                    ' doesn\'t work you\'ll have to try removing/installing' \
+                    ' "yum-complete-transaction --cleanup-only" and' \
+                    ' "yum history redo last", first to finish them. If those' \
+                    ' don\'t work you\'ll have to try removing/installing' \
                     ' packages by hand (maybe package-cleanup can help).')
             self.logger.critical(msg)
             self.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")

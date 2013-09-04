@@ -73,9 +73,9 @@ def main(args):
         base.cleanExpireCache()
 
         msg = _("""\
- One of the configured repositories failed (%(repo)s), and yum doesn't have
-enough cached data to continue. At this point the only safe thing yum can do
-is fail.
+ One of the configured repositories failed (%(repo)s),
+and yum doesn't have enough cached data to continue. At this point the only
+afe thing yum can do is fail.
  There are a few ways to work "fix" this:
 
      1. Contact the upstream for the repository and get them to fix the problem.
@@ -97,7 +97,7 @@ is fail.
         slower). If it is a very temporary problem though, this is often a nice
         compromise:
 
-            yum-config-manager --save --setopt=skip_if_unavailable=true %(repoid)s
+            yum-config-manager --save --setopt=%(repoid)s.skip_if_unavailable=true %(repoid)s
 """)
 
         repoui = _('Unknown')

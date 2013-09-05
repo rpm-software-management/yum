@@ -2174,6 +2174,11 @@ class RepoListCommand(YumCommand):
 
             if not verbose:
                 rid = repo.ui_id # can't use str()
+                if repo.metadata_expire >= 0:
+                    if os.path.exists(repo.metadata_cookie):
+                        last = os.stat(repo.metadata_cookie).st_mtime
+                        if last + repo.metadata_expire < time.time():
+                            rid = '!' + rid
                 if enabled and repo.metalink:
                     mdts = repo.metalink_data.repomd.timestamp
                     if mdts > repo.repoXML.timestamp:

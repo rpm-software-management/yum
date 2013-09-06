@@ -385,13 +385,14 @@ class UpdateNotice(object):
                       to_xml(coll['name']))
   
                 for pkg in coll['packages']:
-                    msg += """      <package arch="%s" name="%s" release="%s" src="%s" version="%s">
+                    msg += """      <package arch="%s" name="%s" release="%s" src="%s" version="%s" epoch="%s">
         <filename>%s</filename>
       </package>\n""" % (to_xml(pkg['arch'], attrib=True),
                                 to_xml(pkg['name'], attrib=True),
                                 to_xml(pkg['release'], attrib=True),
                                 to_xml(pkg['src'], attrib=True),
                                 to_xml(pkg['version'], attrib=True),
+                                pkg['epoch'] or '0',
                                 to_xml(pkg['filename']))
                 msg += """    </collection>\n"""
             msg += """  </pkglist>\n"""

@@ -394,6 +394,43 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         cacheReq = 'write'
         if hasattr(cmd, 'cacheRequirement'):
             cacheReq = cmd.cacheRequirement(self, self.basecmd, self.extcmds)
+
+        #  The main thing we want to do here is that if the user has done a
+        # "yum makecache fast" or has yum-cron running or something, then try
+        # not to update the repo. caches ... thus. not turning 0.5s ops. into
+        # 100x longer ops.
+        #  However if the repos. are not in sync. that's probably not going to
+        # work well (Eg. user enables updates-testing). Also give a warning if
+        # they are _really_ old.
+        ts_min = None
+        ts_max = None
+        for repo in self.repos.sort():
+            if not os.path.exists(repo.metadata_cookie):
+                ts_min = None
+                break
+
+            rts = os.stat(repo.metadata_cookie).st_mtime
+            if not ts_min:
+                ts_min = rts
+                ts_max = rts
+            elif rts > ts_max:
+                ts_max = rts
+            elif rts < ts_min:
+                ts_min = rts
+
+        if ts_min:
+            #  If caches are within 5 days of each other, they are ok to work
+            # together (lol, random numbers)...
+            if (ts_max - ts_min) > (60 * 60 * 24 * 5):
+                ts_min = None
+            elif ts_max > time.time():
+                ts_min = None
+
+        if not ts_min:
+            cacheReq = 'write'
+        elif (time.time() - ts_max) > (60 * 60 * 24 * 14):
+            self.logger.warning(_("Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache fast"))
+
         for repo in self.repos.sort():
             repo._metadata_cache_req = cacheReq
 

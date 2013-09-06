@@ -1090,19 +1090,16 @@ Insufficient space in download directory %s
 
         mC_def = self.withinCacheAge(self.metadata_cookie, self.metadata_expire)
         if not mC_def: # Normal path...
-            self._metadataCurrent = mC_def
             return mC_def
 
         # Edge cases, both repomd.xml and metalink (if used). Must exist.
         repomdfn = self.cachedir + '/' + 'repomd.xml'
         if not os.path.exists(repomdfn):
-            self._metadataCurrent = False
             return False
 
         self._hack_mirrorlist_for_anaconda()
         mlfn = self.cachedir + '/' + 'metalink.xml'
         if self.metalink and not os.path.exists(mlfn):
-            self._metadataCurrent = False
             return False
 
         self._metadataCurrent = True

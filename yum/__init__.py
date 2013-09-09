@@ -2265,10 +2265,10 @@ much more problems).
             cursize = os.stat(fo)[6]
             totsize = long(po.size)
             if cursize >= totsize and not po.repo.cache:
-                # if the path to the file is NOT inside the cachedir then don't
-                # unlink it b/c it is probably a file:// url and possibly
+                # if the path to the file is NOT inside the pkgdir then don't
+                # unlink it b/c it is probably a file:// url and possibly not
                 # unlinkable
-                if fo.startswith(po.repo.cachedir):
+                if fo.startswith(po.repo.pkgdir):
                     os.unlink(fo)
 
             if raiseError:

@@ -128,7 +128,13 @@ class DeltaInfo:
         pinfo = {}
         reposize = {}
         for index, po in enumerate(pkgs):
-            if po.repo.deltarpm_percentage == 1:
+            perc = po.repo.deltarpm_percentage
+            if perc is None:
+                urls = po.repo.urls
+                perc = ayum.conf.deltarpm_percentage
+                if len(urls) == 1 and urls[0].startswith('file:'):
+                    perc = 0 # for local repos, default to off.
+            if perc == 0:
                 continue # Allow people to turn off a repo. (meh)
             if po.state == TS_UPDATE: pass
             elif po.name in ayum.conf.installonlypkgs: pass
@@ -193,7 +199,10 @@ class DeltaInfo:
                 index = pinfo_repo.get(new)
                 if index is not None:
                     po = pkgs[index]
-                    best = po.size * (repo.deltarpm_percentage / 100.0)
+                    perc = repo.deltarpm_percentage
+                    if perc is None:
+                        perc = ayum.conf.deltarpm_percentage
+                    best = po.size * (perc / 100.0)
                     have = oldrpms.get(repo, {}).get((name, arch), {})
                     for el in el.findall('delta'):
                         size = int(el.find('size').text)

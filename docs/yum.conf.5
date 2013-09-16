@@ -401,9 +401,10 @@ slower).
 
 .IP
 \fBdeltarpm_percentage\fR
-
 When the relative size of delta vs pkg is larger than this, delta is not used.
 Default value is 75 (Deltas must be at least 25% smaller than the pkg).
+Use `0' to turn off delta rpm processing. Local repositories (with file://
+baseurl) have delta rpms turned off by default.
 
 .IP
 \fBsslcacert \fR
@@ -1018,7 +1019,6 @@ repository.
 
 .IP
 \fBdeltarpm_percentage\fR
-
 Overrides the \fBdeltarpm_percentage\fR option from the [main] section
 for this repository.
 

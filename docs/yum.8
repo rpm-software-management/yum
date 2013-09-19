@@ -324,7 +324,7 @@ convert to groups as objects without having to reinstall.
 .IP
 .IP "\fBshell\fP"
 Is used to enter the 'yum shell', when a filename is specified the contents of
-that file is executed in yum shell mode. See \fIyum-shell(8)\fP for more info
+that file is executed in yum shell mode. See \fIyum-shell(8)\fP for more info.
 .IP
 .IP "\fBresolvedep\fP"
 Is used to list packages providing the specified dependencies, at most one
@@ -369,10 +369,12 @@ command line.
 
 Examples:
 
+.nf
 swap foo bar
 swap -- remove foo -- install bar
 swap foo group install bar-grp
 swap -- group remove foo-grp -- group install bar-grp
+.fi
 .IP
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those

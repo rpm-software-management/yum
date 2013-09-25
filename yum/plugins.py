@@ -254,6 +254,16 @@ class YumPlugins:
         dir, modname = os.path.split(modulefile)
         modname = modname.split('.py')[0]
 
+        #  This should really work like enable/disable repo. and be based on the
+        # cmd line order ... but the API doesn't really allow that easily.
+        # FIXME: Fix for 4.* (lol)
+        # Do disabled cmd line checks before loading the module code.
+        if (self._plugin_cmdline_match(modname, self.disabledPlugins,
+                                       self._used_disable_plugin) and
+            not self._plugin_cmdline_match(modname, self.enabledPlugins,
+                                           self._used_enable_plugin)):
+            return
+
         conf = self._getpluginconf(modname)
         if (not conf or
             (not config.getOption(conf, 'main', 'enabled',
@@ -307,15 +317,6 @@ class YumPlugins:
 
             if plugintype not in types:
                 return
-
-        #  This should really work like enable/disable repo. and be based on the
-        # cmd line order ... but the API doesn't really allow that easily.
-        # FIXME: Fix for 4.*
-        if (self._plugin_cmdline_match(modname, self.disabledPlugins,
-                                       self._used_disable_plugin) and
-            not self._plugin_cmdline_match(modname, self.enabledPlugins,
-                                           self._used_enable_plugin)):
-            return
 
         self.verbose_logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
                                 modname)

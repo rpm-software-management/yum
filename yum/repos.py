@@ -88,7 +88,6 @@ class RepoStorage:
                 dl = repo._async and repo._commonLoadRepoXML(repo)
             except Errors.RepoError, e:
                 if not repo.skip_if_unavailable:
-                    e.repo = repo
                     raise
                 self.disableRepo(repo.id)
                 dl = False
@@ -386,7 +385,6 @@ class RepoStorage:
                 if mdtype in ['all', 'metadata'] and repo.skip_if_unavailable:
                     self.disableRepo(repo.id)
                 else:
-                    e.repo = repo
                     raise
             else:
                 self.pkgSack.addSack(repo.id, sack)

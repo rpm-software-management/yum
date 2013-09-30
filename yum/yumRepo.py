@@ -1003,8 +1003,9 @@ Insufficient space in download directory %s
             except URLGrabError, e:
                 self._del_dl_file(local, size)
                 errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self, e)
-                raise Errors.RepoError, errstr
-
+                e = Errors.RepoError(errstr)
+                e.repo = self
+                raise e
 
         else:
             headers = tuple(self.__headersListFromDict(cache=cache))
@@ -1023,7 +1024,9 @@ Insufficient space in download directory %s
                 self._del_dl_file(local, size)
                 errstr = "failure: %s from %s: %s" % (relative, self, e)
                 errors = getattr(e, 'errors', None)
-                raise Errors.NoMoreMirrorsRepoError(errstr, errors)
+                e = Errors.NoMoreMirrorsRepoError(errstr, errors)
+                e.repo = self
+                raise e
 
         return result
     __get = _getFile

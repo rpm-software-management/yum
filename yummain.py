@@ -97,7 +97,7 @@ def main(args):
         slower). If it is a very temporary problem though, this is often a nice
         compromise:
 
-            yum-config-manager --save --setopt=%(repoid)s.skip_if_unavailable=true %(repoid)s
+            yum-config-manager --save --setopt=%(repoid)s.skip_if_unavailable=true
 """)
 
         repoui = _('Unknown')

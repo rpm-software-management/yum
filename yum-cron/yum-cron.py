@@ -1019,11 +1019,16 @@ class YumCronBase(yum.YumBase):
         # Update the metadata
         self.populateUpdateMetadata()
 
-        # Exit if we don't need to send messages, or there are no
-        # updates
-        if not (self.opts.update_messages and (self.refreshUpdates()
-                                             or self.refreshGroupUpdates())):
-                sys.exit(0)
+        # Exit if we don't need to send messages
+        if not self.opts.update_messages:
+            sys.exit(0)
+
+        # Check for updates in packages, or groups ... need to run both.
+        pups = self.refreshUpdates()
+        gups = self.refreshGroupUpdates()
+        # If neither have updates, we can just exit.
+        if not (pups or gups):
+            sys.exit(0)
 
         # Build the transaction to find the additional dependencies
         self.findDeps()

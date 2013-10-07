@@ -951,7 +951,7 @@ def unlink_f(filename):
     try:
         os.unlink(filename)
     except OSError, e:
-        if e.errno not in (errno.ENOENT, errno.EPERM, errno.EROFS):
+        if e.errno not in (errno.ENOENT, errno.EPERM, errno.EACCES, errno.EROFS):
             raise
 
 def stat_f(filename, ignore_EACCES=False):

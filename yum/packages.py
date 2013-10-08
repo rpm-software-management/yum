@@ -38,6 +38,7 @@ import struct
 from constants import *
 from operator import itemgetter
 
+import urllib
 import urlparse
 urlparse.uses_fragment.append("media")
 from urlgrabber.grabber import URLGrabber, URLGrabError
@@ -849,7 +850,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
     size = property(fget=lambda self: self._size())
     remote_path = property(_remote_path)
-    remote_url = property(_remote_url)
+    remote_url = property(lambda self: self._remote_url())
 
     def _committer(self):
         "Returns the name of the last person to do a commit to the changelog."
@@ -1359,6 +1360,9 @@ class YumHeaderPackage(YumAvailablePackage):
         self.installedsize = _rpm_long_size_hack(self.hdr, 'size')
         self.__mode_cache = {}
         self.__prcoPopulated = False
+
+    def _remote_url(self):
+        return 'file://' + urllib.quote(os.path.abspath(self.localPkg()))
 
     def _loadSummary(self):
         # Summaries "can be" empty, which rpm return [], see BZ 473239, *sigh*

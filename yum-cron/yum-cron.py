@@ -998,7 +998,8 @@ class YumCronBase(yum.YumBase):
             self.emitUpdateFailed([str(err)])
             sys.exit(1)
 
-        self.emitInstalled()
+        if emit :
+            self.emitInstalled()
         self.emitMessages()
 
     def updatesCheck(self):
@@ -1019,8 +1020,8 @@ class YumCronBase(yum.YumBase):
         # Update the metadata
         self.populateUpdateMetadata()
 
-        # Exit if we don't need to send messages
-        if not self.opts.update_messages:
+        # Exit if we don't need to check for updates
+        if not (self.opts.update_messages or self.opts.download_updates or self.opts.apply_updates):
             sys.exit(0)
 
         # Check for updates in packages, or groups ... need to run both.
@@ -1048,7 +1049,7 @@ class YumCronBase(yum.YumBase):
             self.releaseLocks()
             sys.exit(0)
 
-        self.installUpdates(True)
+        self.installUpdates(self.opts.update_messages)
 
         self.releaseLocks()
         sys.exit(0)

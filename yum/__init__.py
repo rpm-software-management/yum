@@ -4462,6 +4462,10 @@ much more problems).
             except yum.Errors.GroupsError:
                 self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
+        else:
+            self.logger.error(_('Warning: group %s does not exist.'),
+                              group_string)
+
         return tx_return
 
     def _at_groupupgrade(self, pattern):

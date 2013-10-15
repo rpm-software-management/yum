@@ -38,6 +38,7 @@ if not _use_iniparse:
     from ConfigParser import NoSectionError, NoOptionError, ParsingError
     from ConfigParser import ConfigParser
 import rpmUtils.transaction
+import rpmUtils.miscutils
 import Errors
 import types
 from misc import get_uuid, read_in_items_from_dot_dir
@@ -713,7 +714,7 @@ class StartupConf(BaseConfig):
     debuglevel = IntOption(2, -4, 10)
     errorlevel = IntOption(2, 0, 10)
 
-    distroverpkg = Option('redhat-release')
+    distroverpkg = ListOption(['system-release(releasever)', 'redhat-release'])
     installroot = Option('/')
     config_file_path = Option('/etc/yum/yum.conf')
     plugins = BoolOption(False)
@@ -1177,7 +1178,10 @@ def _getsysver(installroot, distroverpkg):
     ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     try:
-        idx = ts.dbMatch('provides', distroverpkg)
+        for distroverpkg_prov in distroverpkg:
+            idx = ts.dbMatch('provides', distroverpkg_prov)
+            if idx.count():
+                break
     except TypeError, e:
         # This is code for "cannot open rpmdb"
         # this is for pep 352 compliance on python 2.6 and above :(
@@ -1200,6 +1204,18 @@ def _getsysver(installroot, distroverpkg):
         except StopIteration:
             raise Errors.YumBaseError("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
         releasever = hdr['version']
+
+        off = hdr[getattr(rpm, 'RPMTAG_PROVIDENAME')].index(distroverpkg_prov)
+        flag = hdr[getattr(rpm, 'RPMTAG_PROVIDEFLAGS')][off]
+        flag = rpmUtils.miscutils.flagToString(flag)
+        ver  = hdr[getattr(rpm, 'RPMTAG_PROVIDEVERSION')][off]
+        if flag == 'EQ' and ver:
+            releasever = rpmUtils.miscutils.stringToVersion(releasever)
+            if releasever[2]:
+                releasever = "%s-%s" % (releasever[1], releasever[2]) # No epoch
+            else:
+                releasever = releasever[1] # No epoch or release, just version
+
         del hdr
     del idx
     del ts

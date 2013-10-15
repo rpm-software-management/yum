@@ -284,9 +284,15 @@ Command-line option: \fB\-\-installroot\fP
 
 .IP
 \fBdistroverpkg\fR
-The package used by yum to determine the "version" of the distribution. This
-can be any installed package. Default is `redhat-release'. You can see what
-provides this manually by using: "yum whatprovides redhat-release".
+The package used by yum to determine the "version" of the distribution, this
+sets $releasever for use in config. files. This
+can be any installed package. Default is `system-release(releasever)',
+`redhat-release'. Yum will now look at the version provided by the provide,
+and if that is non-empty then will use the full V(-R), otherwise it uses the
+version of the package.
+ You can see what provides this manually by using: 
+"yum whatprovides 'system-release(releasever)' redhat-release" and you can see
+what $releasever is most easily by using: "yum version".
 
 .IP
 \fBdiskspacecheck\fR

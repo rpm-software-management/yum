@@ -392,7 +392,7 @@ class UpdateNotice(object):
                                 to_xml(pkg['release'], attrib=True),
                                 to_xml(pkg['src'], attrib=True),
                                 to_xml(pkg['version'], attrib=True),
-                                pkg['epoch'] or '0',
+                                to_xml(pkg['epoch'] or '0', attrib=True),
                                 to_xml(pkg['filename']))
                 msg += """    </collection>\n"""
             msg += """  </pkglist>\n"""

@@ -495,7 +495,13 @@ class YumBase(depsolve.Depsolve):
                 thisrepo.base_persistdir = self.conf._repos_persistdir
 
             # do the wildcard ones first
-            for i in self.repo_setopts:
+            # The keys are in indeterminate order at this point, *sigh*.
+            for i in sorted(self.repo_setopts):
+                #  Skip normal names, as we want to do wildcard matches first
+                # and then override with specific id stuff.
+                if not misc.re_glob(i):
+                    continue
+
                 if fnmatch.fnmatch(thisrepo.id, i):
                     for opt in self.repo_setopts[i].items:
                         if not hasattr(thisrepo, opt):

@@ -192,7 +192,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 bad_setopt_ne.append(item)
                 continue
             k,v = vals
-            period = k.find('.') 
+            period = k.rfind('.')
             if period != -1:
                 repo = k[:period]
                 k = k[period+1:]

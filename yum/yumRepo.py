@@ -631,9 +631,10 @@ class YumRepository(Repository, config.RepoConf):
         def mirror_failure(obj):
             action = {}
 
-            # timeouts and 503 errors may retry
+            # timeout, refused connect, and HTTP 503 may retry
             e = obj.exception
-            if e.errno == 12 or getattr(e, 'code', 0) == 503:
+            if e.errno == 12 or \
+               e.errno == 14 and getattr(e, 'code', 0) in (7, 503):
                 tries = getattr(obj, 'tries', self.retries)
                 if tries <= self.retries - len(self.urls):
                     # don't remove this mirror yet

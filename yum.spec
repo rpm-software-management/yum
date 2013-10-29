@@ -3,10 +3,12 @@
 %define yum_updatesd 0
 %define disable_check 0
 %define yum_cron_systemd 1
+%define yum_makecache_systemd 1
 
 %if 0%{?rhel} <= 6
 # rhel-6 doesn't have the systemd stuff...
 %define yum_cron_systemd 0
+%define yum_makecache_systemd 0
 %endif
 
 %if ! 0%{?rhel}
@@ -17,6 +19,11 @@ BuildRequires: bash-completion
 %if 0%{?fedora} <= 18
 # yum in Fedora <= 18 doesn't use systemd unit files...
 %define yum_cron_systemd 0
+%endif
+
+%if 0%{?fedora} <= 20
+# Don't use .timer's before 20
+%define yum_makecache_systemd 0
 %endif
 
 %if %{auto_sitelib}
@@ -228,6 +235,11 @@ rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/yum-cron
 rm -f $RPM_BUILD_ROOT/%{_unitdir}/yum-cron.service
 %endif
 
+%if %{yum_makecache_systemd}
+cp -a etc/yum-makecache.service /usr/lib/systemd/system
+cp -a etc/yum-makecache.timer   /usr/lib/systemd/system
+%endif
+
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
@@ -319,6 +331,16 @@ fi
 exit 0
 %endif
 
+%if %{yum_makecache_systemd}
+%post
+%systemd_post yum-makecache.timer
+
+%preun
+%systemd_preun yum-makecache.timer
+
+%postun
+%systemd_postun_with_restart yum-makecache.timer
+%endif
 
 %files -f %{name}.lang
 %defattr(-, root, root, -)
@@ -358,6 +380,10 @@ exit 0
 %dir %{_sysconfdir}/yum/pluginconf.d 
 %dir %{yum_pluginslib}
 %dir %{yum_pluginsshare}
+%if %{yum_makecache_systemd}
+%{_unitdir}/yum-makecache.service
+%{_unitdir}/yum-makecache.timer
+%endif
 
 %files cron
 %defattr(-,root,root)

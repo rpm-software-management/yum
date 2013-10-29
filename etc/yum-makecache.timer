@@ -1,0 +1,11 @@
+[Unit]
+Description=yum makecache timer
+ConditionKernelCommandLine=!rd.live.image
+
+[Timer]
+OnBootSec=10min
+OnUnitInactiveSec=1h
+Unit=yum-makecache.service
+
+[Install]
+WantedBy=basic.target

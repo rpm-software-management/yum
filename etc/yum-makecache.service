@@ -1,0 +1,9 @@
+[Unit]
+Description=yum makecache
+
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=2
+IOSchedulingPriority=7
+ExecStart=/usr/bin/yum makecache fast

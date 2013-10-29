@@ -869,7 +869,9 @@ class Depsolve(object):
 
         if self.dsCallback: self.dsCallback.start()
 
-        while True:
+        depsolve_loop_count = 0
+        while depsolve_loop_count < self.conf.depsolve_loop_limit:
+            depsolve_loop_count += 1
 
             CheckDeps = True
 
@@ -919,6 +921,9 @@ class Depsolve(object):
                     continue
 
             break
+
+        if depsolve_loop_count >= self.conf.depsolve_loop_limit:
+            return (1, [_("Depsolving loop limit reached.")] + unique(errors))
 
         # FIXME: this doesn't belong here at all...
         for txmbr in self.tsInfo.getMembers():

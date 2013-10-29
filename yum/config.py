@@ -894,6 +894,8 @@ class YumConf(StartupConf):
                                 "glob:/etc/yum/fssnap.d/*.conf",
                                 parse_default=True)
 
+    depsolve_loop_limit = PositiveIntOption(100, names_of_0=["<forever>"])
+
     _reposlist = []
 
     def dump(self):

@@ -65,6 +65,7 @@ class FakeConf(object):
         self.yumvar = {}
         self.reposdir = '/tmp/XXXX'
         self.diskspacecheck = True
+        self.depsolve_loop_limit = 10
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""

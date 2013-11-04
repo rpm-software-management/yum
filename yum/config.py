@@ -1240,6 +1240,9 @@ def _readRawRepoFile(repo):
         for sect in ini._sections.keys():
             if varReplace(sect, repo.yumvar) == repo.id:
                 section_id = sect
+                break
+        else:
+            return None
     return ini, section_id
 
 def writeRawRepoFile(repo,only=None):

@@ -5,16 +5,24 @@
 %define yum_cron_systemd 1
 %define yum_makecache_systemd 1
 
+%if 0%{?rhel}
+# If we are building for RHEL ...
+
 %if 0%{?rhel} <= 6
 # rhel-6 doesn't have the systemd stuff...
 %define yum_cron_systemd 0
 %define yum_makecache_systemd 0
 %endif
 
-%if ! 0%{?rhel}
-# we don't have this in rhel yet...
-BuildRequires: bash-completion
+# END OF: If we are building for RHEL ...
 %endif
+
+
+%if 0%{?fedora}
+# If we are building for Fedora ...
+
+# we don't have this as of RHEL-7.0.
+BuildRequires: bash-completion
 
 %if 0%{?fedora} <= 18
 # yum in Fedora <= 18 doesn't use systemd unit files...
@@ -25,6 +33,10 @@ BuildRequires: bash-completion
 # Don't use .timer's before 20
 %define yum_makecache_systemd 0
 %endif
+
+# END OF: If we are building for Fedora ...
+%endif
+
 
 %if %{auto_sitelib}
 

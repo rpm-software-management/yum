@@ -69,6 +69,9 @@ BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
 BuildRequires: intltool
+%if %{yum_makecache_systemd}
+BuildRequires: systemd-units
+%endif
 # This is really CheckRequires ...
 BuildRequires: python-nose
 BuildRequires: python >= 2.4
@@ -248,8 +251,8 @@ rm -f $RPM_BUILD_ROOT/%{_unitdir}/yum-cron.service
 %endif
 
 %if %{yum_makecache_systemd}
-cp -a etc/yum-makecache.service /usr/lib/systemd/system
-cp -a etc/yum-makecache.timer   /usr/lib/systemd/system
+cp -a etc/yum-makecache.service $RPM_BUILD_ROOT/%{_unitdir}
+cp -a etc/yum-makecache.timer   $RPM_BUILD_ROOT/%{_unitdir}
 %endif
 
 %clean

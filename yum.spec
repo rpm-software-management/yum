@@ -29,8 +29,8 @@ BuildRequires: bash-completion
 %define yum_cron_systemd 0
 %endif
 
-%if 0%{?fedora} <= 20
-# Don't use .timer's before 20
+%if 0%{?fedora} <= 19
+# Don't use .timer's before 20, maybe 19?
 %define yum_makecache_systemd 0
 %endif
 

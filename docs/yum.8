@@ -103,9 +103,13 @@ satisfied\&.  (See \fBSpecifying package names\fP for more information)
 If no package matches the given package name(s), they are assumed to be a shell 
 glob and any matches are then installed\&. If the name starts with @^ then it
 is treated as an environment group (group install @^foo), an @ character and
-it's treated as a group (plain group install)\&. If the name starts with
-a - character, then a search is done within
-the transaction and any matches are removed. If the name is a file, then install works
+it's treated as a group (plain group install)\&.
+
+If the name starts with a "-" character, then a search is done within the
+transaction and any matches are removed. Note that Yum options use the same
+syntax and it may be necessary to use "--" to resolve any possible conflicts.
+
+If the name is a file, then install works
 like localinstall\&. If the name doesn't match a package, then package
 "provides" are searched (e.g. "_sqlitecache.so()(64bit)") as are
 filelists (Eg. "/usr/bin/yum"). Also note that for filelists, wildcards will

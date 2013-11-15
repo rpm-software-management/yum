@@ -18,7 +18,7 @@
 #      Boston, MA  02111-1307  USA
 
 from yum.constants import TS_UPDATE
-from yum.Errors import RepoError
+from yum.Errors import RepoError, MiscError
 from yum.i18n import exception2msg, _
 from yum.Errors import MiscError
 from yum.misc import checksum, repo_gen_decompress, unlink_f
@@ -334,6 +334,9 @@ class DeltaInfo:
         if po.oldrpm: args += '-r', po.oldrpm
         args += po.localpath, po.rpm.localpath
 
-        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
+        try:
+            pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
+        except OSError, e:
+            raise MiscError, _('Couldn\'t spawn %s: %s') % (APPLYDELTA, exception2msg(e))
         self.jobs[pid] = po
         return True

@@ -506,7 +506,7 @@ class DistroSyncCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['distribution-synchronization', 'distro-sync']
+        return ['distribution-synchronization', 'distro-sync', 'distupgrade']
 
     def getUsage(self):
         """Return a usage string for this command.

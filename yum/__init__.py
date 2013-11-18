@@ -3845,6 +3845,8 @@ much more problems).
                                               pkg_warning_level='debug2')
                         for txmbr in txmbrs:
                             txmbr.group_member = thisgroup.groupid
+                            if lupgrade: # For list transaction.
+                                txmbr._ugroup_member = thisgroup
                 except Errors.InstallError, e:
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)

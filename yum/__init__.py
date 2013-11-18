@@ -5000,7 +5000,8 @@ much more problems).
                     tx_return.extend(self.update(po=new))
 
             # Upgrade the installed groups, as part of generic "yum upgrade"
-            if self.conf.group_command == 'objects':
+            if (self.conf.group_command == 'objects' and
+                self.conf.upgrade_group_objects_upgrade):
                 for ievgrp in self.igroups.environments:
                     tx_return.extend(self._at_groupupgrade('@^' + ievgrp))
                 for igrp in self.igroups.groups:

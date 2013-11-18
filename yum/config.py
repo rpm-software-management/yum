@@ -792,6 +792,7 @@ class YumConf(StartupConf):
     group_package_types = ListOption(['mandatory', 'default'])
     group_command = SelectionOption(__group_command_default__,
                                     ('compat', 'objects', 'simple'))
+    upgrade_group_objects_upgrade = BoolOption(True)
     
     timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 

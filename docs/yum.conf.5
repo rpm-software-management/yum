@@ -270,6 +270,12 @@ packages for all groups).
 Default is: compat
 
 .IP
+\fBupgrade_group_objects_upgrade\fR
+Either `0' or `1'. Set this to `0' to disable the automatic running of
+"group upgrade" when running the "upgrade" command, and group_command is set to
+"objects". Default is `1' (perform the check).
+
+.IP
 \fBinstallroot \fR
 Specifies an alternative installroot, relative to which all packages will be
 installed. 

@@ -426,10 +426,31 @@ class UpdateEmitter(object):
 
             return a_wid
 
-        
+        ninstalled = self.tsInfo.installed
+        ginstalled = {}
+        if self.conf.group_command == 'objects' and ninstalled:
+            # Show new pkgs. that are installed via. a group.
+            ninstalled = []
+            for txmbr in self.tsInfo.installed:
+                if not hasattr(txmbr, '_ugroup_member'):
+                    ninstalled.append(txmbr)
+                    continue
+                if txmbr._ugroup_member not in ginstalled:
+                    ginstalled[txmbr._ugroup_member] = []
+                ginstalled[txmbr._ugroup_member].append(txmbr)
+
+        for grp in sorted(ginstalled, key=lambda x: x.ui_name):
+            action = _('Installing for group upgrade "%s"') % grp.ui_name
+            pkglist = ginstalled[grp]
+
+            lines = []
+            for txmbr in pkglist:
+                a_wid = _add_line(lines, data, a_wid, txmbr.po, txmbr.obsoletes)
+
+            pkglist_lines.append((action, lines))        
 
         # Iterate through the different groups of packages
-        for (action, pkglist) in [(_('Installing'), tsInfo.installed),
+        for (action, pkglist) in [(_('Installing'), ninstalled),
                             (_('Updating'), tsInfo.updated),
                             (_('Removing'), tsInfo.removed),
                             (_('Reinstalling'), tsInfo.reinstalled),

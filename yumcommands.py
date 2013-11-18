@@ -1609,7 +1609,8 @@ class CheckUpdateCommand(YumCommand):
                 result = 100
 
             # Add check_running_kernel call, if updateinfo is available.
-            if updateinfo._repos_downloaded(base.repos.listEnabled()):
+            if (base.conf.autocheck_running_kernel and
+                updateinfo._repos_downloaded(base.repos.listEnabled())):
                 def _msg(x):
                     base.verbose_logger.info("%s", x)
                 updateinfo._check_running_kernel(base, base.upinfo, _msg)
@@ -3850,7 +3851,8 @@ class UpdateinfoCommand(YumCommand):
             if maxsize < size:
                 maxsize = size
         if not maxsize:
-            _upi._check_running_kernel(base, md_info, _msg)
+            if base.conf.autocheck_running_kernel:
+                _upi._check_running_kernel(base, md_info, _msg)
             return
 
         outT = {'newpackage' : 'New Package',
@@ -3880,7 +3882,8 @@ class UpdateinfoCommand(YumCommand):
                 for sn in sorted(sev_counts, key=_sev_sort_key):
                     args = (maxsize, sev_counts[sn],sn or '?', outT['security'])
                     print "        %*u %s %s notice(s)" % args
-        _upi._check_running_kernel(base, md_info, _msg)
+        if base.conf.autocheck_running_kernel:
+            _upi._check_running_kernel(base, md_info, _msg)
         self.show_pkg_info_done = {}
 
     def _get_new_pkgs(self, md_info):

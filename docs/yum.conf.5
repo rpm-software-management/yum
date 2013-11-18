@@ -273,7 +273,14 @@ Default is: compat
 \fBupgrade_group_objects_upgrade\fR
 Either `0' or `1'. Set this to `0' to disable the automatic running of
 "group upgrade" when running the "upgrade" command, and group_command is set to
-"objects". Default is `1' (perform the check).
+"objects". Default is `1' (perform the operation).
+
+.IP
+\fBautocheck_running_kernel\fR
+Either `0' or `1'. Set this to `0' to disable the automatic checking of the
+running kernel against updateinfo ("yum updateinfo check-running-kernel"), in
+the "check-update" and "updateinfo summary" commands.
+Default is `1' (perform the check).
 
 .IP
 \fBinstallroot \fR

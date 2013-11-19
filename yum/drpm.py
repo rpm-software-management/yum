@@ -168,8 +168,13 @@ class DeltaInfo:
                 self.verbose_logger.info(_('No Presto metadata available for %s'), repo)
                 continue
             path = repo.cachedir +'/'+ os.path.basename(data.location[1])
-            if not os.path.exists(path) and int(data.size) > reposize[repo]:
-                self.verbose_logger.info(_('Not downloading Presto metadata for %s'), repo)
+            perc = repo.deltarpm_metadata_percentage
+            data_size = int(data.size) * (perc / 100.0)
+            if perc and not os.path.exists(path) and data_size > reposize[repo]:
+                msg = _('Not downloading deltainfo for %s, MD is %s and rpms are %s')
+                self.verbose_logger.info(msg, repo,
+                                         progress.format_number(data_size),
+                                         progress.format_number(reposize[repo]))
                 continue
 
             def failfunc(e, name=name, repo=repo):

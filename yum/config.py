@@ -805,6 +805,7 @@ class YumConf(StartupConf):
     max_connections = IntOption(0, range_min=0)
     deltarpm = IntOption(2, range_min=-16, range_max=128)
     deltarpm_percentage = IntOption(75, range_min=0, range_max=100)
+    deltarpm_metadata_percentage = IntOption(100, range_min=0)
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
@@ -977,7 +978,12 @@ class RepoConf(BaseConfig):
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)
     ip_resolve = Inherit(YumConf.ip_resolve)
+    #  This isn't inherited so that we can automatically disable file:// _only_
+    # repos. if they haven't set an explicit deltarpm_percentage for the repo.
     deltarpm_percentage = IntOption(None, range_min=0, range_max=100)
+    #  Rely on the above config. to do automatic disabling, and thus. no hack
+    # needed here.
+    deltarpm_metadata_percentage = Inherit(YumConf.deltarpm_metadata_percentage)
 
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)

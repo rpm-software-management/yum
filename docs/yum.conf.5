@@ -420,6 +420,15 @@ Use `0' to turn off delta rpm processing. Local repositories (with file://
 baseurl) have delta rpms turned off by default.
 
 .IP
+\fBdeltarpm_metadata_percentage\fR
+When the relative size of deltarpm metadata vs pkgs is larger than this,
+deltarpm metadata is not downloaded from the repo.
+Default value is 100 (Deltarpm metadata must be smaller than the packages from
+the repo). Note that you can give values over 100, so 200 means that the
+metadata is required to be half the size of the packages.
+Use `0' to turn off this check, and always download metadata.
+
+.IP
 \fBsslcacert \fR
 Path to the directory containing the databases of the certificate authorities
 yum should use to verify SSL certificates. Defaults to none - uses system
@@ -1040,6 +1049,11 @@ repository.
 .IP
 \fBdeltarpm_percentage\fR
 Overrides the \fBdeltarpm_percentage\fR option from the [main] section
+for this repository.
+
+.IP
+\fBdeltarpm_metadata_percentage\fR
+Overrides the \fBdeltarpm_metadata_percentage\fR option from the [main] section
 for this repository.
 
 .IP

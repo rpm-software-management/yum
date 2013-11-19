@@ -898,6 +898,8 @@ class YumConf(StartupConf):
 
     depsolve_loop_limit = PositiveIntOption(100, names_of_0=["<forever>"])
 
+    autocheck_running_kernel = BoolOption(True)
+
     _reposlist = []
 
     def dump(self):

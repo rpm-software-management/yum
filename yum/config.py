@@ -1213,11 +1213,8 @@ def _getsysver(installroot, distroverpkg):
         flag = rpmUtils.miscutils.flagToString(flag)
         ver  = hdr[getattr(rpm, 'RPMTAG_PROVIDEVERSION')][off]
         if flag == 'EQ' and ver:
-            releasever = rpmUtils.miscutils.stringToVersion(releasever)
-            if releasever[2]:
-                releasever = "%s-%s" % (releasever[1], releasever[2]) # No epoch
-            else:
-                releasever = releasever[1] # No epoch or release, just version
+            # override the package version
+            releasever = ver
 
         del hdr
     del idx

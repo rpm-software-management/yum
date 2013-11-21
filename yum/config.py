@@ -1218,6 +1218,13 @@ def _getsysver(installroot, distroverpkg):
         flag = hdr[getattr(rpm, 'RPMTAG_PROVIDEFLAGS')][off]
         flag = rpmUtils.miscutils.flagToString(flag)
         ver  = hdr[getattr(rpm, 'RPMTAG_PROVIDEVERSION')][off]
+
+        #  Note that if distroverpkg is the name of the package, then we can't
+        # use the provide because rpm automatically adds a provide for the name
+        # of the package. So just use the version, to be compatible.
+        if hdr['name'] == distroverpkg_prov:
+            flag = None
+            ver  = None
         if flag == 'EQ' and ver:
             # override the package version
             releasever = ver

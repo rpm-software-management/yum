@@ -26,6 +26,11 @@ def ns_cleanup(qn):
     if qn.find('}') == -1: return qn 
     return qn.split('}')[1]
 
+def _ts_int(timestamp):
+    """ Timestamps are floats in the wild, and int("1.1") is a failure state in
+    python. So this hack ... """
+    return int(timestamp.split('.', 1)[0])
+
 class RepoData:
     """represents anything beneath a <data> tag"""
     def __init__(self, elem=None):
@@ -118,9 +123,9 @@ class RepoData:
         return msg
         
     def getDelta(self, old_timestamp):
-        old_timestamp = int(old_timestamp)
+        old_timestamp = _ts_int(old_timestamp)
         for deltamd in self.deltas:
-            if int(deltamd.timestamp) <= old_timestamp:
+            if _ts_int(deltamd.timestamp) <= old_timestamp:
                 return deltamd
 
 class RepoMD:
@@ -172,7 +177,7 @@ class RepoMD:
                         thisdata = old
                     self.repoData[thisdata.type] = thisdata
                     try:
-                        nts = int(thisdata.timestamp)
+                        nts = _ts_int(thisdata.timestamp)
                         if nts > self.timestamp: # max() not in old python
                             self.timestamp = nts
                     except:

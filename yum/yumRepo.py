@@ -1170,6 +1170,9 @@ Insufficient space in download directory %s
             elif cookie_info[8] > time.time():
                 val = False
 
+            if not self.check_config_file_age:
+                return val
+
             # make sure none of our config files for this repo are newer than
             # us
             if cookie_info[8] < int(self.repo_config_age):

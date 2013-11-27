@@ -901,6 +901,8 @@ class YumConf(StartupConf):
 
     autocheck_running_kernel = BoolOption(True)
 
+    check_config_file_age = BoolOption(True)
+
     _reposlist = []
 
     def dump(self):
@@ -1005,6 +1007,9 @@ class RepoConf(BaseConfig):
     async = BoolOption(True)
 
     ui_repoid_vars = Inherit(YumConf.ui_repoid_vars)
+
+    check_config_file_age = Inherit(YumConf.check_config_file_age)
+
     
 class VersionGroupConf(BaseConfig):
     """Option definitions for version groups."""

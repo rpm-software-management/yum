@@ -290,6 +290,18 @@ installed.
 Command-line option: \fB\-\-installroot\fP
 
 .IP
+\fBconfig_file_path \fR
+Specifies the path to main the configuration file.
+Default is /etc/yum/yum.conf.
+
+.IP
+\fBcheck_config_file_age \fR
+Either `0' or `1'. Specifies whether yum should auto metadata expire repos. 
+that are older than any of the configuration files that led to them (usually 
+the yum.conf file and the foo.repo file).
+Default is `1' (perform the check).
+
+.IP
 \fBdistroverpkg\fR
 The package used by yum to determine the "version" of the distribution, this
 sets $releasever for use in config. files. This

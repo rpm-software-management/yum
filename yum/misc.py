@@ -134,8 +134,9 @@ def re_filename(s):
 
 def re_primary_filename(filename):
     """ Tests if a filename string, can be matched against just primary.
-        Note that this can produce false negatives (but not false
-        positives). Note that this is a superset of re_primary_dirname(). """
+        Note that this can produce false negatives (Eg. /b?n/zsh) but not false
+        positives (because the former is a perf hit, and the later is a
+        failure). Note that this is a superset of re_primary_dirname(). """
     if re_primary_dirname(filename):
         return True
     if filename == '/usr/lib/sendmail':

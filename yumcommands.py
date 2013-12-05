@@ -1531,7 +1531,8 @@ class CheckUpdateCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['check-update']
+        return ['check-update',  'check-updates',
+                'check-upgrade', 'check-upgrades']
 
     def getUsage(self):
         """Return a usage string for this command.

@@ -423,6 +423,9 @@ only shows packages from the given repository.
 "repository\-packages <repo> info" - Works like the "yum info" command, but
 only shows packages from the given repository.
 
+"repository\-packages <repo> check-update" - Works like the
+"yum check-update" command, but only shows packages from the given repository.
+
 "repository\-packages <repo> install" - Install all of the packages in the
 repository, basically the same as: yum install $(repoquery --repoid=<repo> -a).
 Specific packages/wildcards can be specified.

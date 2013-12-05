@@ -1558,7 +1558,7 @@ class CheckUpdateCommand(YumCommand):
         """
         checkEnabledRepo(base)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, base, basecmd, extcmds, repoid=None):
         """Execute this command.
 
         :param base: a :class:`yum.Yumbase` object
@@ -1577,10 +1577,10 @@ class CheckUpdateCommand(YumCommand):
         base.extcmds.insert(0, 'updates')
         result = 0
         if True:
-            ypl = base.returnPkgLists(extcmds)
+            ypl = base.returnPkgLists(extcmds, repoid=repoid)
             if (base.conf.obsoletes or
                 base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
-                typl = base.returnPkgLists(obscmds)
+                typl = base.returnPkgLists(obscmds, repoid=repoid)
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
 
@@ -1606,7 +1606,7 @@ class CheckUpdateCommand(YumCommand):
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
                     base.updatesObsoletesList(obtup, 'obsoletes',
-                                              columns=columns)
+                                              columns=columns, repoid=repoid)
                 result = 100
 
             # Add check_running_kernel call, if updateinfo is available.
@@ -3516,6 +3516,9 @@ class RepoPkgsCommand(YumCommand):
                  'remove-or-distribution-synchronization' : 'remove-or-sync',
                  'upgrade' : 'update', # Hack, but meh.
                  'upgrade-to' : 'update-to', # Hack, but meh.
+                 'check-upgrade' : 'check-update', # Hack, but meh.
+                 'check-upgrades' : 'check-update', # Hack, but meh.
+                 'check-updates' : 'check-update', # Hack, but meh.
                  }
         cmd = remap.get(cmd, cmd)
 
@@ -3524,6 +3527,8 @@ class RepoPkgsCommand(YumCommand):
             return ListCommand().doCommand(base, cmd, args, repoid=repoid)
         elif cmd == 'info':
             return InfoCommand().doCommand(base, cmd, args, repoid=repoid)
+        elif cmd == 'check-update':
+            return CheckUpdateCommand().doCommand(base, cmd, args,repoid=repoid)
 
         elif cmd == 'install': # install is simpler version of installPkgs...
             for arg in args:
@@ -3730,6 +3735,9 @@ class RepoPkgsCommand(YumCommand):
             cmd = extcmds[1]
         if cmd in ('info', 'list'):
             return InfoCommand().cacheRequirement(base, cmd, extcmds[2:])
+        if cmd in ('check-update', 'check-upgrade',
+                   'check-updates', 'check-upgrades'):
+            return CheckUpdateCommand().cacheRequirement(base, cmd, extcmds[2:])
         return 'write'
 
 # Using this a lot, so make it easier...

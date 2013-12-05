@@ -3712,7 +3712,7 @@ class RepoPkgsCommand(YumCommand):
         if len(extcmds) > 1:
             cmd = extcmds[1]
         if cmd in ('info', 'list'):
-            return InfoCommand().cacheRequirement(base, cmd, extcmds[2:])
+            return InfoCommand().needTs(base, cmd, extcmds[2:])
 
         return True
 

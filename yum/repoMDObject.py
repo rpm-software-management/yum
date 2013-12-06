@@ -172,6 +172,9 @@ class RepoMD:
                         thisdata = old
                     self.repoData[thisdata.type] = thisdata
                     try:
+                        # NOTE: This will fail on float timestamps, this is
+                        # required for compatability. Fix is to not generate
+                        # float timestamps in repomd.xml.
                         nts = int(thisdata.timestamp)
                         if nts > self.timestamp: # max() not in old python
                             self.timestamp = nts

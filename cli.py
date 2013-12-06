@@ -390,6 +390,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                   self.basecmd, sys.argv[0])
             raise CliError
     
+        self._set_repos_cache_req()
+
+        self.yum_cli_commands[self.basecmd].doCheck(self, self.basecmd, self.extcmds)
+
+    def _set_repos_cache_req(self, warning=True):
+        """ Set the cacheReq attribute from the commands to the repos. """
+
         cmd = self.yum_cli_commands[self.basecmd]
         cacheReq = 'write'
         if hasattr(cmd, 'cacheRequirement'):
@@ -404,7 +411,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # they are _really_ old.
         ts_min = None
         ts_max = None
-        for repo in self.repos.sort():
+        for repo in self.repos.listEnabled():
             if not os.path.exists(repo.metadata_cookie):
                 ts_min = None
                 break
@@ -428,13 +435,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if not ts_min:
             cacheReq = 'write'
-        elif (time.time() - ts_max) > (60 * 60 * 24 * 14):
+        elif warning and (time.time() - ts_max) > (60 * 60 * 24 * 14):
             self.logger.warning(_("Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache fast"))
 
         for repo in self.repos.sort():
             repo._metadata_cache_req = cacheReq
-
-        self.yum_cli_commands[self.basecmd].doCheck(self, self.basecmd, self.extcmds)
 
     def _shell_history_write(self):
         if not hasattr(self, '_shell_history_cmds'):
@@ -560,11 +565,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         #  This should already have been done at doCheck() time, but just in
         # case repos. got added or something do it again.
-        cacheReq = 'write'
-        if hasattr(cmd, 'cacheRequirement'):
-            cacheReq = cmd.cacheRequirement(self, self.basecmd, self.extcmds)
-        for repo in self.repos.sort():
-            repo._metadata_cache_req = cacheReq
+        self._set_repos_cache_req(warning=False)
 
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 

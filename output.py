@@ -1837,7 +1837,7 @@ to exit.
         if dl_time <= 0: # This stops divide by zero, among other problems
             dl_time = 0.01
         ui_size = tl.add(' | %5sB' % self.format_number(remote_size))
-        ui_time = tl.add(' %9s' % self.format_time(dl_time))
+        ui_time = tl.add('  %s' % self.format_time(dl_time, tl._llen > 80))
         ui_end  = tl.add(' ' * 5)
         ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
         msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),

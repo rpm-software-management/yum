@@ -685,6 +685,9 @@ class EmailEmitter(UpdateEmitter):
         """Combine the stored messages that have been stored into a
         single email message, and send this message.
         """
+        # Don't send empty emails
+        if not self.output:
+            return
         # Build up the email to be sent
         msg = MIMEText(''.join(self.output))
         msg['Subject'] = self.subject
@@ -708,6 +711,9 @@ class StdIOEmitter(UpdateEmitter):
         """Combine the stored messages that have been stored into a
         single email message, and send this message to standard output.
         """
+        # Don't print blank lines
+        if not self.output:
+            return
         print "".join(self.output)
 
 

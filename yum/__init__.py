@@ -1929,7 +1929,7 @@ much more problems).
                     # maybe a file log here, too
                     # but raising an exception is not going to do any good
                     self.logger.critical(_('%s was supposed to be installed' \
-                                           ' but is not!' % txmbr.po))
+                                           ' but is not!') % txmbr.po)
                     # Note: Get Panu to do te.Failed() so we don't have to
                     txmbr.output_state = TS_FAILED
                     count = _call_txmbr_cb(txmbr, count)

@@ -870,7 +870,7 @@ class Depsolve(object):
         if self.dsCallback: self.dsCallback.start()
 
         depsolve_loop_count = 0
-        while depsolve_loop_count < self.conf.depsolve_loop_limit:
+        while depsolve_loop_count != (self.conf.depsolve_loop_limit or -1):
             depsolve_loop_count += 1
 
             CheckDeps = True

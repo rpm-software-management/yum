@@ -37,25 +37,23 @@ class UpdateEmitter(object):
         self.opts  = opts
         self.output = []
 
-    def updatesAvailable(self, tsInfo):
+    def updatesAvailable(self, summary):
         """Appends a message to the output list stating that there are
         updates available.
 
-        :param tsInfo: A :class:`yum.transactioninfo.TransactionData`
-           instance that contains information about the transaction.
+        :param summary: A human-readable summary of the transaction.
         """
         self.output.append('The following updates are available on %s:' % self.opts.system_name)
-        self.output.append(self._formatTransaction(tsInfo))
+        self.output.append(summary)
 
-    def updatesDownloading(self, tsInfo):
+    def updatesDownloading(self, summary):
         """Append a message to the output list stating that
         downloading updates has started.
 
-        :param tsInfo: A :class:`yum.transactioninfo.TransactionData`
-           instance that contains information about the transaction.
+        :param summary: A human-readable summary of the transaction.
         """
         self.output.append('The following updates will be downloaded on %s:' % self.opts.system_name)
-        self.output.append(self._formatTransaction(tsInfo))
+        self.output.append(summary)
 
     def updatesDownloaded(self):
         """Append a message to the output list stating that updates
@@ -63,15 +61,14 @@ class UpdateEmitter(object):
         """
         self.output.append("Updates downloaded successfully.")
 
-    def updatesInstalling(self, tsInfo):
+    def updatesInstalling(self, summary):
         """Append a message to the output list stating that
         installing updates has started.
 
-        :param tsInfo: A :class:`yum.transactioninfo.TransactionData`
-           instance that contains information about the transaction.
+        :param summary: A human-readable summary of the transaction.
         """
         self.output.append('The following updates will be applied on %s:' % self.opts.system_name)
-        self.output.append(self._formatTransaction(tsInfo))
+        self.output.append(summary)
 
     def updatesInstalled(self):
         """Append a message to the output list stating that updates
@@ -156,10 +153,6 @@ class UpdateEmitter(object):
         """
         pass
 
-    def _formatTransaction(self, tsInfo):
-        assert self.opts._base.tsInfo == tsInfo
-        return self.opts._base.listTransaction()
-
 
 class EmailEmitter(UpdateEmitter):
     """Emitter class to send messages via email."""
@@ -168,14 +161,13 @@ class EmailEmitter(UpdateEmitter):
         super(EmailEmitter, self).__init__(opts)        
         self.subject = ""
 
-    def updatesAvailable(self, tsInfo):
+    def updatesAvailable(self, summary):
         """Appends a message to the output list stating that there are
         updates available, and set an appropriate subject line.
 
-        :param tsInfo: A :class:`yum.transactioninfo.TransactionData`
-           instance that contains information about the transaction.
+        :param summary: A human-readable summary of the transaction.
         """
-        super(EmailEmitter, self).updatesAvailable(tsInfo)
+        super(EmailEmitter, self).updatesAvailable(summary)
         self.subject = "Yum: Updates Available on %s" % self.opts.system_name
 
     def updatesDownloaded(self):
@@ -317,7 +309,6 @@ class YumCronBase(yum.YumBase, YumOutput):
         self.readConfigFile(config_file_name)
         self.term.reinit(color='never')
         self.term.columns = self.opts.output_width
-        self.opts._base = self
 
 
         # Create the emitters, and add them to the list
@@ -655,11 +646,13 @@ class YumCronBase(yum.YumBase, YumOutput):
 
     def emitAvailable(self):
         """Emit a notice stating whether updates are available."""
-        map(lambda x: x.updatesAvailable(self.tsInfo), self.emitters)
+        summary = self.listTransaction()
+        map(lambda x: x.updatesAvailable(summary), self.emitters)
 
     def emitDownloading(self):
         """Emit a notice stating that updates are downloading."""
-        map(lambda x: x.updatesDownloading(self.tsInfo), self.emitters)
+        summary = self.listTransaction()
+        map(lambda x: x.updatesDownloading(summary), self.emitters)
 
     def emitDownloaded(self):
         """Emit a notice stating that updates have downloaded."""
@@ -669,7 +662,8 @@ class YumCronBase(yum.YumBase, YumOutput):
         """Emit a notice stating that automatic updates are about to
         be applied.
         """
-        map(lambda x: x.updatesInstalling(self.tsInfo), self.emitters)
+        summary = self.listTransaction()
+        map(lambda x: x.updatesInstalling(summary), self.emitters)
 
     def emitInstalled(self):
         """Emit a notice stating that automatic updates have been applied."""

@@ -19,8 +19,8 @@ _yum_list()
 {
     # Fail fast for things that look like paths or options.
     [[ $2 == */* || $2 == [.~-]* ]] && return
-    # Listing all packages takes way too long
-    [[ ${#2} -lt 1 ]] && return
+    # Listing all available packages takes way too long
+    [[ $1 != "installed" && ${#2} -lt 1 ]] && return
     _yum_helper list "$@"
 }
 

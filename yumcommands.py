@@ -890,7 +890,7 @@ class GroupsCommand(YumCommand):
 
     direct_commands = {'grouplist'    : 'list',
                        'groupinstall' : 'install',
-                       'groupupdate'  : 'install',
+                       'groupupdate'  : 'update',
                        'groupremove'  : 'remove',
                        'grouperase'   : 'remove',
                        'groupinfo'    : 'info'}

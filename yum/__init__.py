@@ -3629,6 +3629,12 @@ much more problems).
         if ievgrps is None:
             ievgrps = {}
 
+        #  Note that we used to get here with igrps/ievgrps that didn't exist
+        # in comps. but we mock them in comps now because it was hard to deal
+        # with that everywhere ... so just to confirm.
+        assert not igrps
+        assert not ievgrps
+
         for igrp in igrps.values():
             #  These are installed groups that aren't in comps anymore. so we
             # create fake comps groups for them.

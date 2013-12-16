@@ -3991,7 +3991,7 @@ much more problems).
             elif self.conf.group_command == 'objects':
                 igroup_data = self._groupInstalledEnvData(evgrp)
  
-                grps = []
+                grps = set()
                 for grpid in evgrp.groups:
                     if (grpid not in igroup_data or
                         igroup_data[grpid].startswith('blacklisted')):
@@ -3999,9 +3999,10 @@ much more problems).
                         self.verbose_logger.log(logginglevels.DEBUG_2,
                                                 msg, grpid, evgrp.environmentid)
                         continue
-                    grps.append(grpid)
+                    grps.add(grpid)
                 if evgrp.environmentid in self.igroups.environments:
                     ievgrp = self.igroups.environments[evgrp.environmentid]
+                    grps.update(ievgrp.grp_names)
                 else:
                     self.igroups.add_environment(evgrp.environmentid,
                                                  evgrp.allgroups)

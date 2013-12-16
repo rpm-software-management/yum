@@ -1913,6 +1913,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             2 = we've got work yet to do, onto the next stage
         """
         pkgs_used = []
+
+        if not grouplist and self.conf.group_command == 'objects':
+            #  Do what "yum upgrade" does when upgrade_group_objects_upgrade is
+            # set.
+            for ievgrp in self.igroups.environments:
+                pkgs_used.extend(self._at_groupupgrade('@^' + ievgrp))
+            for igrp in self.igroups.groups:
+                pkgs_used.extend(self._at_groupupgrade('@'  + igrp))
         
         for group_string in grouplist:
 

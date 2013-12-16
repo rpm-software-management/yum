@@ -4458,24 +4458,31 @@ much more problems).
         if group_string and group_string[0] == '^':
             group_string = group_string[1:]
             # Actually dealing with "environment groups".
+            found = False
             for env_grp in comps.return_environments(group_string):
+                found = True
                 try:
                     txmbrs = self.selectEnvironment(env_grp.environmentid,
                                                     upgrade=upgrade)
                     tx_return.extend(txmbrs)
                 except yum.Errors.GroupsError:
-                    self.logger.critical(_('Warning: Environment Group %s does not exist.'), group_string)
+                    assert False, "Checked in for loop."
                     continue
+            if not found:
+                self.logger.error(_('Warning: Environment group %s does not exist.'),
+                                  group_string)
             return tx_return
 
+        found = False
         for group in comps.return_groups(group_string):
+            found = True
             try:
                 txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
                 tx_return.extend(txmbrs)
             except yum.Errors.GroupsError:
-                self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
+                assert False, "Checked in for loop."
                 continue
-        else:
+        if not found:
             self.logger.error(_('Warning: group %s does not exist.'),
                               group_string)
 

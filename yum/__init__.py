@@ -3520,8 +3520,7 @@ much more problems).
             if self.conf.group_command == 'objects':
                 igrps = self.igroups.groups.values()
             evgrps = self.comps.environments
-            if False and self.conf.group_command == 'objects':
-                # FIXME: Environment groups.
+            if self.conf.group_command == 'objects':
                 ievgrps = self.igroups.environments.values()
             return igrps, grps, ievgrps, evgrps
 

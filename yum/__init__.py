@@ -3771,9 +3771,6 @@ much more problems).
            transaction set by this function
         """
 
-        if not self.comps.has_group(grpid):
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
-        
         txmbrs_used = []
         thesegroups = self.comps.return_groups(grpid)
      

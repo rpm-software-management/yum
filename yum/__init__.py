@@ -4007,10 +4007,13 @@ much more problems).
                                                  evgrp.allgroups)
                 grps = ",".join(sorted(grps))
 
-            txs = self.selectGroup(grps,
-                                   group_package_types,
-                                   enable_group_conditionals, upgrade,
-                                   ievgrp=ievgrp)
+            try:
+                txs = self.selectGroup(grps,
+                                       group_package_types,
+                                       enable_group_conditionals, upgrade,
+                                       ievgrp=ievgrp)
+            except Errors.GroupsError:
+                continue
             ret.extend(txs)
         return ret
 

@@ -879,7 +879,7 @@ class Comps(object):
                         break
             else:
                 evgroup.installed = False
-                for grpname in evgroup.optional:
+                for grpname in evgroup.options:
                     if grpname in inst_grp_names:
                         evgroup.installed = True
                         break

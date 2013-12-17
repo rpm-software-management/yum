@@ -1525,16 +1525,26 @@ class YumOutput:
             # Show new pkgs. that are installed via. a group.
             ninstalled = []
             for txmbr in self.tsInfo.installed:
-                if not hasattr(txmbr, '_ugroup_member'):
+                if hasattr(txmbr, '_igroup_member'):
+                    key = ('i', txmbr._igroup_member)
+                    if key not in ginstalled:
+                        ginstalled[key] = []
+                    ginstalled[key].append(txmbr)
+                elif hasattr(txmbr, '_ugroup_member'):
+                    key = ('u', txmbr._ugroup_member)
+                    if key not in ginstalled:
+                        ginstalled[key] = []
+                    ginstalled[key].append(txmbr)
+                else:
                     ninstalled.append(txmbr)
-                    continue
-                if txmbr._ugroup_member not in ginstalled:
-                    ginstalled[txmbr._ugroup_member] = []
-                ginstalled[txmbr._ugroup_member].append(txmbr)
 
-        for grp in sorted(ginstalled, key=lambda x: x.ui_name):
-            action = _('Installing for group upgrade "%s"') % grp.ui_name
-            pkglist = ginstalled[grp]
+        for (T, grp) in sorted(ginstalled, key=lambda x: x[1].ui_name):
+            if T == 'u':
+                msg = _('Installing for group upgrade "%s"')
+            else:
+                msg = _('Installing for group install "%s"')
+            action = msg % grp.ui_name
+            pkglist = ginstalled[(T, grp)]
 
             lines = []
             for txmbr in pkglist:

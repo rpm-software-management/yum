@@ -4012,8 +4012,8 @@ much more problems).
                             continue
                         grps.add(grp_name)
                 else:
-                    self.igroups.add_environment(evgrp.environmentid,
-                                                 evgrp.allgroups)
+                    ievgrp = self.igroups.add_environment(evgrp.environmentid,
+                                                          evgrp.allgroups)
                 grps = ",".join(sorted(grps))
 
             try:

@@ -3849,6 +3849,8 @@ much more problems).
                             txmbr.group_member = thisgroup.groupid
                             if lupgrade: # For list transaction.
                                 txmbr._ugroup_member = thisgroup
+                            else:
+                                txmbr._igroup_member = thisgroup
                 except Errors.InstallError, e:
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)

@@ -320,6 +320,10 @@ the packages as a member of the group.
 "\fBgroup mark packages-force\fP" works like mark packages, but doesn't care if
 the packages are already members of another group.
 
+"\fBgroup mark blacklist\fP" will blacklist all packages marked to be installed
+for a group. After this command a "yum group upgrade" will not install any new
+packages as part of the group.
+
 "\fBgroup mark convert-blacklist\fP"
 
 "\fBgroup mark convert-whitelist\fP"

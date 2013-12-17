@@ -965,6 +965,7 @@ class GroupsCommand(YumCommand):
         ocmds_arg = []
         if base.conf.group_command == 'objects':
             ocmds_arg = ('mark-install', 'mark-remove',
+                         'mark-blacklist',
                          'mark-packages', 'mark-packages-force',
                          'unmark-packages',
                          'mark-packages-sync', 'mark-packages-sync-force',
@@ -974,6 +975,7 @@ class GroupsCommand(YumCommand):
 
             ocmds_all = ('mark-install', 'mark-remove', 'mark-convert',
                          'mark-convert-whitelist', 'mark-convert-blacklist',
+                         'mark-blacklist',
                          'mark-packages', 'mark-packages-force',
                          'unmark-packages',
                          'mark-packages-sync', 'mark-packages-sync-force',
@@ -1062,6 +1064,24 @@ class GroupsCommand(YumCommand):
                     base.igroups.add_group(grp.groupid, pkg_names)
                 base.igroups.save()
                 return 0, ['Marked install: ' + ','.join(extcmds)]
+
+            if cmd == 'mark-blacklist':
+                gRG = base._groupReturnGroups(extcmds,ignore_case=False)
+                igrps, grps, ievgrps, evgrps = gRG
+                for ievgrp in ievgrps:
+                    evgrp = base.comps.return_environment(igrp.evgid)
+                    if not evgrp:
+                        continue
+                    base.igroups.changed = True
+                    ievgrp.grp_names.update(grp.groups)
+                for igrp in igrps:
+                    grp = base.comps.return_group(igrp.gid)
+                    if not grp:
+                        continue
+                    base.igroups.changed = True
+                    igrp.pkg_names.update(grp.packages)
+                base.igroups.save()
+                return 0, ['Marked upgrade blacklist: ' + ','.join(extcmds)]
 
             if cmd in ('mark-packages', 'mark-packages-force'):
                 if len(extcmds) < 2:

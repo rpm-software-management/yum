@@ -4002,7 +4002,15 @@ much more problems).
                     grps.add(grpid)
                 if evgrp.environmentid in self.igroups.environments:
                     ievgrp = self.igroups.environments[evgrp.environmentid]
-                    grps.update(ievgrp.grp_names)
+                    #  Add groups from the installed evgrp, for Eg. installed
+                    # only evgrps.
+                    for grp_name in ievgrp.grp_names:
+                        if grp_name not in self.igroups.groups:
+                            continue
+                        grp_evgrpid = self.igroups.groups[grp_name].environment
+                        if grp_evgrpid != evgrp.environmentid:
+                            continue
+                        grps.add(grp_name)
                 else:
                     self.igroups.add_environment(evgrp.environmentid,
                                                  evgrp.allgroups)

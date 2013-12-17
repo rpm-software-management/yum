@@ -973,6 +973,7 @@ class GroupsCommand(YumCommand):
                          'mark-groups-sync', 'mark-groups-sync-force')
 
             ocmds_all = ('mark-install', 'mark-remove', 'mark-convert',
+                         'mark-convert-whitelist', 'mark-convert-blacklist',
                          'mark-packages', 'mark-packages-force',
                          'unmark-packages',
                          'mark-packages-sync', 'mark-packages-sync-force',
@@ -1002,13 +1003,13 @@ class GroupsCommand(YumCommand):
             pass
         elif not os.path.exists(os.path.dirname(base.igroups.filename)):
             base.logger.critical(_("There is no installed groups file."))
-            base.logger.critical(_("Maybe run: yum groups mark convert"))
+            base.logger.critical(_("Maybe run: yum groups mark convert (see man yum)"))
         elif not os.access(os.path.dirname(base.igroups.filename), os.R_OK):
             base.logger.critical(_("You don't have access to the groups DBs."))
             raise cli.CliError
         elif not os.path.exists(base.igroups.filename):
             base.logger.critical(_("There is no installed groups file."))
-            base.logger.critical(_("Maybe run: yum groups mark convert"))
+            base.logger.critical(_("Maybe run: yum groups mark convert (see man yum)"))
         elif not os.access(base.igroups.filename, os.R_OK):
             base.logger.critical(_("You don't have access to the groups DB."))
             raise cli.CliError
@@ -1157,14 +1158,15 @@ class GroupsCommand(YumCommand):
                     return 0, ['Marked groups-sync: ' + ','.join(extcmds)]
 
             # FIXME: This doesn't do environment groups atm.
-            if cmd == 'mark-convert':
+            if cmd in ('mark-convert',
+                       'mark-convert-whitelist', 'mark-convert-blacklist'):
                 # Convert old style info. into groups as objects.
 
                 def _convert_grp(grp):
                     if not grp.installed:
                         return
                     pkg_names = []
-                    for pkg in base.rpmdb.searchNames(pkg_names):
+                    for pkg in base.rpmdb.searchNames(grp.packages):
                         if 'group_member' in pkg.yumdb_info:
                             continue
                         pkg.yumdb_info.group_member = grp.groupid
@@ -1173,7 +1175,10 @@ class GroupsCommand(YumCommand):
                     #  We only mark the packages installed as a known part of
                     # the group. This way "group update" will work and install
                     # any remaining packages, as it would before the conversion.
-                    base.igroups.add_group(grp.groupid, pkg_names)
+                    if cmd == 'mark-convert-whitelist':
+                        base.igroups.add_group(grp.groupid, pkg_names)
+                    else:
+                        base.igroups.add_group(grp.groupid, grp.packages)
 
                 # Blank everything.
                 for gid in base.igroups.groups.keys():

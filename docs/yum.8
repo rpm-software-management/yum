@@ -320,9 +320,19 @@ the packages as a member of the group.
 "\fBgroup mark packages-force\fP" works like mark packages, but doesn't care if
 the packages are already members of another group.
 
-"\fBgroup mark convert\fP" converts the automatic data you get without using
-groups as objects into groups as objects data. This makes it much easier to
-convert to groups as objects without having to reinstall.
+"\fBgroup mark convert-blacklist\fP"
+
+"\fBgroup mark convert-whitelist\fP"
+
+"\fBgroup mark convert\fP" converts the automatic data you get
+without using groups as objects into groups as objects data, in other words
+this will make "yum --setopt=group_command=objects groups list" look as similar
+as possible to the current output of
+"yum --setopt=group_command=simple groups list". This makes it much
+easier to convert to groups as objects without having to reinstall. For groups
+that are installed the whitelist variant will mark all uninstalled packages for
+the group as to be installed on the next "yum group upgrade", the blacklist
+variant (current default) will mark them all as blacklisted.
 
 "\fBgroup unmark packages\fP" remove a package as a member from any groups.
 .IP

@@ -1131,10 +1131,14 @@ class YumOutput:
         if group.langonly:
             print _(' Language: %s') % group.langonly
 
-        sections = ((_(' Mandatory Packages:'),   group.mandatory_packages),
-                    (_(' Default Packages:'),     group.default_packages),
-                    (_(' Optional Packages:'),    group.optional_packages),
-                    (_(' Conditional Packages:'), group.conditional_packages))
+        sections = (('mandatory', _(' Mandatory Packages:'),
+                     group.mandatory_packages),
+                    ('default',  _(' Default Packages:'),
+                     group.default_packages),
+                    ('optional', _(' Optional Packages:'),
+                     group.optional_packages),
+                    (None, _(' Conditional Packages:'),
+                     group.conditional_packages))
         columns = None
         if verb:
             data = {'envra' : {}, 'rid' : {}}
@@ -1145,12 +1149,21 @@ class YumOutput:
             columns = self.calcColumns(data)
             columns = (-columns[0], -columns[1])
 
-        for (section_name, pkg_names) in sections:
+        for (section_type, section_name, pkg_names) in sections:
+            #  Only display igroup data for things that we'll actually try to
+            # install.
+            if section_type is None:
+                tigroup_data = igroup_data
+            elif section_type in self.conf.group_package_types:
+                tigroup_data = igroup_data
+            else:
+                tigroup_data = None
+
             if len(pkg_names) > 0:
                 print section_name
                 self._displayPkgsFromNames(pkg_names, verb, pkg_names2pkgs,
                                            columns=columns,
-                                           igroup_data=igroup_data)
+                                           igroup_data=tigroup_data)
         if igrp_only:
             print _(' Installed Packages:')
             self._displayPkgsFromNames(igrp_only, verb, pkg_names2pkgs,

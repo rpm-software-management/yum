@@ -4494,7 +4494,7 @@ much more problems).
                 assert False, "Checked in for loop."
                 continue
         if not found:
-            self.logger.error(_('Warning: group %s does not exist.'),
+            self.logger.error(_('Warning: Package group %s does not exist.'),
                               group_string)
 
         return tx_return

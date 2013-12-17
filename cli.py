@@ -1944,7 +1944,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     txmbrs = self.selectEnvironment(group.environmentid,
                                                     upgrade=upgrade)
                 except yum.Errors.GroupsError:
-                    self.logger.critical(_('Warning: environment %s does not exist.'), group_string)
+                    self.logger.critical(_('Warning: Environment group %s does not exist.'), group_string)
                     continue
                 else:
                     pkgs_used.extend(txmbrs)
@@ -1958,7 +1958,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 try:
                     txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
                 except yum.Errors.GroupsError:
-                    self.logger.critical(_('Warning: group %s does not exist.'), group_string)
+                    self.logger.critical(_('Warning: Package group %s does not exist.'), group_string)
                     continue
                 else:
                     pkgs_used.extend(txmbrs)

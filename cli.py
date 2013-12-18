@@ -1968,7 +1968,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue
             
         if not pkgs_used:
-            if base.conf.group_command == 'objects':
+            if self.conf.group_command == 'objects':
                 self.logger.critical(_("Maybe run: yum groups mark install (see man yum)"))
             return 0, [_('No packages in any requested group available to install or update')]
         else:
@@ -2026,7 +2026,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     pkgs_used.extend(txmbrs)
                 
         if not pkgs_used:
-            if base.conf.group_command == 'objects':
+            if self.conf.group_command == 'objects':
                 self.logger.critical(_("Maybe run: yum groups mark remove (see man yum)"))
             return 0, [_('No packages to remove from groups')]
         else:

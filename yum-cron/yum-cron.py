@@ -380,15 +380,15 @@ class YumCronBase(yum.YumBase, YumOutput):
             self.preconf.fn = self.opts.yum_config_file
 
             # This needs to be set early, errors are handled later.
-            try: self.preconf.debuglevel = int(self._confparser.get('base', 'debuglevel'))
-            except: pass
+            try: level = int(self._confparser.get('base', 'debuglevel'))
+            except: level = -2
+            self.preconf.debuglevel = level
+            if -4 <= level <= -2:
+                self.preconf.errorlevel = level + 4
 
             # if we are not root do the special subdir thing
             if os.geteuid() != 0:
                 self.setCacheDir()
-
-            # Create the configuration
-            self.conf
 
             # override base yum options
             self.conf.populate(self._confparser, 'base')

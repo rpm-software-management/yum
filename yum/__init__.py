@@ -3506,7 +3506,6 @@ much more problems).
 
             if igrp.environment == evgroup.environmentid:
                 ret[grp_name] = 'installed'
-                break
             else:
                 ret[grp_name] = 'blacklisted-installed'
 

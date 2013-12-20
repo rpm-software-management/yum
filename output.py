@@ -1142,7 +1142,7 @@ class YumOutput:
         columns = None
         if verb:
             data = {'envra' : {}, 'rid' : {}}
-            for (section_name, pkg_names) in sections:
+            for (section_type, section_name, pkg_names) in sections:
                 self._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs,
                                          igroup_data=igroup_data)
             data = [data['envra'], data['rid']]

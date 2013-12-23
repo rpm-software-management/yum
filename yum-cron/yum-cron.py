@@ -414,7 +414,9 @@ class YumCronBase(yum.YumBase, YumOutput):
 
         for repo in self.repos.sort():
             repo.metadata_expire = 0
+            repo.skip_if_unavailable = True
 
+        self.pkgSack # honor skip_if_unavailable
         self.upinfo
 
     def refreshUpdates(self):

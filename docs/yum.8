@@ -871,7 +871,8 @@ This option makes yum go slower, checking for things that shouldn't be possible
 making it more tolerant of external errors.
 .br
 .IP "\fB\-\-downloadonly\fP"
-Don't update, just download.
+Don't update, just download. This is done in the background, so the yum lock is released for other operations. This can also be chosen by typing 'd'ownloadonly
+at the transaction confirmation prompt.
 .br
 .IP "\fB\-\-downloaddir=directory\fP"
 Specifies an alternate directory to store packages.

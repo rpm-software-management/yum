@@ -86,17 +86,6 @@ class UpdateEmitter(object):
                            % errmsg)
         self.sendMessages()
 
-    def lockFailed(self, errmsg):
-        """Append a message to the output list stating that the
-        program failed to acquire the yum lock, then call sendMessages
-        to emit the output.
-
-        :param errmsg: a string that contains the error message
-        """
-        self.output.append("Failed to acquire the yum lock with the following error message: \n%s"
-                           % errmsg)
-        self.sendMessages()
-
     def checkFailed(self, errmsg):
         """Append a message to the output stating that checking for
         updates failed, then call sendMessages to emit the output.
@@ -195,16 +184,6 @@ class EmailEmitter(UpdateEmitter):
         """
         self.subject = "Yum: Failed to perform setup on %s" % self.opts.system_name
         super(EmailEmitter, self).setupFailed(errmsg)
-
-    def lockFailed(self, errmsg):
-        """Append a message to the output list stating that the
-        program failed to acquire the yum lock, then call sendMessages
-        to emit the output, and set an appropriate subject line.
-
-        :param errmsg: a string that contains the error message
-        """
-        self.subject = "Yum: Failed to  acquire the yum lock on %s" % self.opts.system_name
-        super(EmailEmitter, self).lockFailed(errmsg)
 
     def checkFailed(self, errmsg):
         """Append a message to the output stating that checking for
@@ -406,7 +385,7 @@ class YumCronBase(yum.YumBase, YumOutput):
         try:
             self.doLock()
         except yum.Errors.LockError, e:
-            self.emitLockFailed("%s" % e)
+            self.logger.warn("Failed to acquire the yum lock: %s", e)
             sys.exit(1)
 
     def populateUpdateMetadata(self):
@@ -674,10 +653,6 @@ class YumCronBase(yum.YumBase, YumOutput):
     def emitSetupFailed(self, error):
         """Emit a notice stating that checking for updates failed."""
         map(lambda x: x.setupFailed(error), self.emitters)
-
-    def emitLockFailed(self, errmsg):
-        """Emit a notice that we failed to acquire the yum lock."""
-        map(lambda x: x.lockFailed(errmsg), self.emitters)
 
     def emitCheckFailed(self, error):
         """Emit a notice stating that checking for updates failed."""

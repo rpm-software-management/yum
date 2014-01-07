@@ -150,6 +150,19 @@ class MiscTests(DepsolveTests):
             self.assertEqual(type(actual), type(expected))
             self.assertEqual(actual, expected)
 
+    def testOptparse(self):
+        # make 'Usage: %s\n' translated
+        import gettext
+        def dgettext(domain, msg, orig=gettext.dgettext):
+            if domain=='messages' and msg == 'Usage: %s\n':
+                return 'Pou\xc5\xbeit\xc3\xad: %s\n'
+            return orig(domain, msg)
+        gettext.dgettext = dgettext
+        # run "yum --help"
+        from optparse import OptionParser
+        parser = OptionParser(usage=u'\u011b\u0161\u010d')
+        self.assertRaises(SystemExit, parser.parse_args, args=['--help'])
+
 def setup_logging():
     logging.basicConfig()    
     plainformatter = logging.Formatter("%(message)s")    

@@ -500,6 +500,13 @@ try:
     t = gettext.translation('yum', fallback=True)
     _ = t.ugettext
     P_ = t.ungettext
+
+    # we describe yum commands and options with unicode but optparse
+    # mixes this with non-unicode translations so "yum --help" may fail.
+    # It's much easier to fix this in optparse than in yum. BZ 1033416
+    import optparse
+    if optparse._ is gettext.gettext:
+        optparse._ = gettext.translation('messages', fallback=True).ugettext
 except:
     '''
     Something went wrong so we make a dummy _() wrapper there is just

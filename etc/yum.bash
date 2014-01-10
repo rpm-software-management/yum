@@ -40,6 +40,7 @@ _yum_plugins()
 #   1 = current word to be completed
 _yum_binrpmfiles()
 {
+    local IFS=$'\n'
     COMPREPLY+=( $( compgen -f -o plusdirs -X '!*.rpm' -- "$1" ) )
     COMPREPLY=( $( compgen -W '"${COMPREPLY[@]}"' -X '*.src.rpm' ) )
     COMPREPLY=( $( compgen -W '"${COMPREPLY[@]}"' -X '*.nosrc.rpm' ) )
@@ -94,11 +95,13 @@ _yum_complete_baseopts()
             ;;
 
         -c|--config)
+            local IFS=$'\n'
             COMPREPLY=( $( compgen -f -o plusdirs -X "!*.conf" -- "$1" ) )
             return 0
             ;;
 
         --installroot|--downloaddir)
+            local IFS=$'\n'
             COMPREPLY=( $( compgen -d -- "$1" ) )
             return 0
             ;;
@@ -204,6 +207,7 @@ _yum()
             ;;
 
         deplist)
+            local IFS=$'\n'
             COMPREPLY=( $( compgen -f -o plusdirs -X '!*.[rs]pm' -- "$cur" ) )
             _yum_list all "$cur"
             return 0
@@ -318,6 +322,7 @@ _yum()
             ;;
 
         load-transaction|load-ts)
+            local IFS=$'\n'
             COMPREPLY=( $( compgen -f -o plusdirs -X '!*.yumtx' -- "$cur" ) )
             return 0
             ;;
@@ -328,6 +333,7 @@ _yum()
             ;;
 
         provides|whatprovides)
+            local IFS=$'\n'
             COMPREPLY=( $( compgen -f -o plusdirs -- "$cur" ) )
             return 0
             ;;
@@ -344,8 +350,10 @@ _yum()
             ;;
 
         shell)
-            [[ $prev == $cmd ]] && \
+            if [[ $prev == $cmd ]]; then
+                local IFS=$'\n'
                 COMPREPLY=( $( compgen -f -o plusdirs -- "$cur" ) )
+            fi
             return 0
             ;;
 

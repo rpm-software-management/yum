@@ -37,7 +37,7 @@ install:
 	mkdir -p $(DESTDIR)/var/cache/yum
 	mkdir -p $(DESTDIR)/var/lib/yum
 
-	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
+	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` UNITDIR=$(UNITDIR) INIT=$(INIT) -C $$d install; [ $$? = 0 ] || exit 1; done
 
 apidocs:
 	make -C docs/sphinxdocs html

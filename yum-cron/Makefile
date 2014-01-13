@@ -1,7 +1,3 @@
-UNITDIR=/lib/systemd/system
-
-INIT=systemd
-
 all:
 	echo "Nothing to do"
 

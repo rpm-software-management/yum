@@ -547,6 +547,9 @@ class YumCronBase(yum.YumBase, YumOutput):
                 except yum.Errors.YumBaseError, errmsg:
                     self.emitUpdateFailed([str(errmsg)])
                     return False
+            else:
+                self.emitUpdateFailed(err)
+                return False
 
         del self.ts
         self.initActionTs() # make a new, blank ts to populate

@@ -545,7 +545,7 @@ class YumCronBase(yum.YumBase, YumOutput):
                 try:
                     self.getKeyForPackage(po)
                 except yum.Errors.YumBaseError, errmsg:
-                    self.emitUpdateFailed([str(errmsg)])
+                    self.emitUpdateFailed(errmsg)
                     return False
             else:
                 self.emitUpdateFailed(err)
@@ -563,8 +563,7 @@ class YumCronBase(yum.YumBase, YumOutput):
         try:
             self.runTransaction(cb=cb)
         except yum.Errors.YumBaseError, err:
-            
-            self.emitUpdateFailed([str(err)])
+            self.emitUpdateFailed(err)
             sys.exit(1)
 
         if emit :
@@ -675,9 +674,9 @@ class YumCronBase(yum.YumBase, YumOutput):
         """Emit a notice stating that downloading the updates failed."""
         map(lambda x: x.downloadFailed(error), self.emitters)
 
-    def emitUpdateFailed(self, errmsgs):
+    def emitUpdateFailed(self, errmsg):
         """Emit a notice stating that automatic updates failed."""
-        map(lambda x: x.updatesFailed(errmsgs), self.emitters)
+        map(lambda x: x.updatesFailed(errmsg), self.emitters)
 
     def emitMessages(self):
         """Emit the messages from the emitters."""

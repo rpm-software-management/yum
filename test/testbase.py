@@ -402,7 +402,7 @@ class FakeRpmDb(packageSack.PackageSack):
 #######################################################################
 
 class DepsolveTests(_DepsolveTestsBase):
-    """Run depsolver on an manually  set up transaction.
+    """Run depsolver on a manually set up transaction.
     You can add pkgs to self.rpmdb or self.tsInfo. See
     yum/transactioninfo.py for details.
     A typical test case looks like:

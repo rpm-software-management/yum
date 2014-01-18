@@ -1521,7 +1521,7 @@ much more problems).
     def _checkUpdatedLeftovers(self):
         """ 
         If multiple packages is updated the same package
-        and this package get removed because of an dep issue
+        and this package get removed because of a dep issue
         then make sure that all the TS_UPDATED get removed.
         """
         for txmbr in self.tsInfo.getMembersWithState(None, [TS_UPDATED]):

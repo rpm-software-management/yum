@@ -519,7 +519,7 @@ class TransactionData:
         return txmbr
 
     def addDowngrade(self, po, oldpo):
-        """adds a package as an downgrade takes a packages object and returns
+        """adds a package as a downgrade takes a packages object and returns
            a pair of TransactionMember Objects"""
 
         itxmbr = self.addErase(oldpo)

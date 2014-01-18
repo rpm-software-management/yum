@@ -345,7 +345,7 @@ class YumUtilBase(YumBaseCli):
 
     def doUtilYumSetup(self):
         """Do a default setup for all the normal or necessary yum components;
-           this method is mostly just a used for testing.
+           this method is mostly just used for testing.
         """
         # FIXME - we need another way to do this, I think.
         try:

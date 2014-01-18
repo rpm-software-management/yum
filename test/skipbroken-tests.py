@@ -26,7 +26,7 @@ class SkipBrokenTests(DepsolveTests):
 
     def _pkgstr_to_nevra(self, pkg_str):
         '''
-        Get a nevra from from a epoch:name-version-release.arch string
+        Get a nevra from from an epoch:name-version-release.arch string
         @param pkg_str: package string
         '''
         res = REGEX_PKG.search(pkg_str)
@@ -40,7 +40,7 @@ class SkipBrokenTests(DepsolveTests):
 
     def repoString(self, pkg_str):
         ''' 
-        Add an available package from a epoch:name-version-release.arch string
+        Add an available package from an epoch:name-version-release.arch string
         '''
         (n,e,v,r,a) = self._pkgstr_to_nevra(pkg_str)
         return self.repoPackage(n,v,r,e,a)   
@@ -48,7 +48,7 @@ class SkipBrokenTests(DepsolveTests):
             
     def instString(self, pkg_str):
         ''' 
-        Add an installed package from a epoch:name-version-release.arch string
+        Add an installed package from an epoch:name-version-release.arch string
         '''
         (n,e,v,r,a) = self._pkgstr_to_nevra(pkg_str)
         return self.instPackage(n,v,r,e,a)   
@@ -119,7 +119,7 @@ class SkipBrokenTests(DepsolveTests):
     def testUpdateRequireOld(self):
         '''update with missing req. is skipped
         The foo-1.0 -> foo-2.0 update fails, because foo-tools-2.0 need by foo-2.0
-        is not provided, the update should be skipped and result in a empty transaction
+        is not provided, the update should be skipped and result in an empty transaction
         '''
         po1 = self.instPackage('foo', '1')
         po1.addRequires('foo-tools', 'EQ', ('0', '1', '0'))

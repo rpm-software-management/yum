@@ -146,8 +146,9 @@ class UpdateEmitter(object):
 class EmailEmitter(UpdateEmitter):
     """Emitter class to send messages via email."""
 
-    def __init__(self, opts):
+    def __init__(self, opts, logger):
         super(EmailEmitter, self).__init__(opts)        
+        self.logger = logger
         self.subject = ""
 
     def updatesAvailable(self, summary):
@@ -229,10 +230,13 @@ class EmailEmitter(UpdateEmitter):
         msg['To'] = ",".join(self.opts.email_to)
 
         # Send the email
-        s = smtplib.SMTP()
-        s.connect(self.opts.email_host)
-        s.sendmail(self.opts.email_from, self.opts.email_to, msg.as_string())
-        s.close()
+        try:
+            s = smtplib.SMTP()
+            s.connect(self.opts.email_host)
+            s.sendmail(self.opts.email_from, self.opts.email_to, msg.as_string())
+            s.close()
+        except Exception, e:
+            self.logger.error("Failed to send an email to %s: %s" % (self.opts.email_host, e))
 
 
 class StdIOEmitter(UpdateEmitter):
@@ -293,7 +297,7 @@ class YumCronBase(yum.YumBase, YumOutput):
         # Create the emitters, and add them to the list
         self.emitters = []
         if 'email' in self.opts.emit_via:
-            self.emitters.append(EmailEmitter(self.opts))
+            self.emitters.append(EmailEmitter(self.opts, self.logger))
         if 'stdio' in self.opts.emit_via:
             self.emitters.append(StdIOEmitter(self.opts))
 

@@ -262,6 +262,8 @@ class YumCronConfig(BaseConfig):
     system_name = Option(gethostname())
     output_width = IntOption(80)
     random_sleep = IntOption(0)
+    lock_retries = IntOption(5)
+    lock_sleep = IntOption(60)
     emit_via = ListOption(['email','stdio'])
     email_to = ListOption(["root"])
     email_from = Option("root")
@@ -386,9 +388,14 @@ class YumCronBase(yum.YumBase, YumOutput):
     def acquireLock(self):
         """ Wrapper method around doLock to emit errors correctly."""
 
-        try:
-            self.doLock()
-        except yum.Errors.LockError, e:
+        i = 0
+        while True:
+            try: self.doLock(); break
+            except yum.Errors.LockError, e:
+                i += 1
+                if i < self.opts.lock_retries:
+                    sleep(self.opts.lock_sleep)
+                    continue
             self.logger.warn("Failed to acquire the yum lock: %s", e)
             sys.exit(1)
 

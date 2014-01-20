@@ -412,11 +412,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         ts_min = None
         ts_max = None
         for repo in self.repos.listEnabled():
-            if not os.path.exists(repo.metadata_cookie):
+            try: rts = os.stat(repo.metadata_cookie).st_mtime
+            except (yum.Errors.RepoError, OSError):
                 ts_min = None
                 break
 
-            rts = os.stat(repo.metadata_cookie).st_mtime
             if not ts_min:
                 ts_min = rts
                 ts_max = rts

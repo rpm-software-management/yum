@@ -215,7 +215,7 @@ class RepoStorage:
             match = misc.compile_pattern(item.strip(), ignore_case)
             for name,repo in self.repos.items():
                 assert name == repo.id
-                if match(name):
+                if match(name) or match(repo.ui_id):
                     result.append(repo)
                 elif name_match and match(repo.name):
                     result.append(repo)

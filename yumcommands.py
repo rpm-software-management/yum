@@ -155,6 +155,7 @@ def checkRepoPackageArg(base, basecmd, extcmds):
         base.repos.enableRepo(repos[0].id)
         base.verbose_logger.info(
                 _('Repo %s has been automatically enabled.') % repos[0].ui_id)
+    return repos[0].id
 
 
 def checkItemArg(base, basecmd, extcmds):
@@ -3501,8 +3502,7 @@ class RepoPkgsCommand(YumCommand):
         """
         checkRootUID(base)
         checkGPGKey(base)
-        checkRepoPackageArg(base, basecmd, extcmds)
-        checkEnabledRepo(base, extcmds)
+        self.repoid = checkRepoPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -3523,7 +3523,7 @@ class RepoPkgsCommand(YumCommand):
             for txmbr in txmbrs:
                 txmbr.repopkg = repoid
 
-        repoid = extcmds[0]
+        repoid = self.repoid
         cmd = extcmds[1]
         args = extcmds[2:]
         noargs = False

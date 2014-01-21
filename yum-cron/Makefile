@@ -20,5 +20,6 @@ install-common:
 # Install as 0yum-*.cron so it runs before items like
 # manpage update, mlocate, and prelink
 	install -D -m 755 yum-daily.cron.sh $(DESTDIR)/etc/cron.daily/0yum-daily.cron
+	install -D -m 755 yum-security.cron.sh $(DESTDIR)/etc/cron.daily/0yum-security.cron
 	install -D -m 755 yum-hourly.cron.sh $(DESTDIR)/etc/cron.hourly/0yum-hourly.cron
 	install -D -m 755 yum-cron.py $(DESTDIR)/usr/sbin/yum-cron

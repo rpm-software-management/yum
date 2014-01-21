@@ -161,9 +161,11 @@ yum-updatesd provides a daemon which checks for available updates and
 can notify you when they are available via email, syslog or dbus. 
 
 %package cron
-Summary: Files needed to run yum updates as a cron job
+Summary: RPM package installer/updater/manager cron service
 Group: System Environment/Base
 Requires: yum >= 3.4.3-84 cronie crontabs findutils
+Requires: yum-cron-BE = %{version}-%{release}
+# We'd probably like a suggests for yum-cron-daily here.
 %if %{yum_cron_systemd}
 BuildRequires: systemd-units
 Requires(post): systemd
@@ -178,8 +180,48 @@ Requires(postun): /sbin/service
 %endif
 
 %description cron
-These are the files needed to run yum updates as a cron job.
-Install this package if you want auto yum updates nightly via cron.
+These are the files needed to run any of the yum-cron update services.
+
+%package cron-daily
+Summary: Files needed to run yum updates as a daily cron job
+Group: System Environment/Base
+Provides: yum-cron-BE = %{version}-%{release}
+Requires: yum-cron > 3.4.3-131
+
+%description cron-daily
+This is the configuration file for the daily yum-cron update service, which
+lives %{_sysconfdir}/yum/yum-cron.conf.
+Install this package if you want auto yum updates nightly via cron (or something
+else, via. changing the configuration).
+By default this just downloads updates and does not apply them.
+
+%package cron-hourly
+Summary: Files needed to run yum updates as an hourly cron job
+Group: System Environment/Base
+Provides: yum-cron-BE = %{version}-%{release}
+Requires: yum-cron > 3.4.3-131
+
+%description cron-hourly
+This is the configuration file for the daily yum-cron update service, which
+lives %{_sysconfdir}/yum/yum-cron-hourly.conf.
+Install this package if you want automatic yum metadata updates hourly via
+cron (or something else, via. changing the configuration).
+
+%package cron-security
+Summary: Files needed to run security yum updates as once a day
+Group: System Environment/Base
+Provides: yum-cron-BE = %{version}-%{release}
+Requires: yum-cron > 3.4.3-131
+
+%description cron-security
+This is the configuration file for the security yum-cron update service, which
+lives here: %{_sysconfdir}/yum/yum-cron-security.conf
+Install this package if you want automatic yum security updates once a day
+via. cron (or something else, via. changing the configuration -- this will be
+confusing if it's not security updates anymore though).
+By default this will download and _apply_ the security updates, unlike
+yum-cron-daily which will just download all updates by default.
+This runs after yum-cron-daily, if that is installed.
 
 
 %prep
@@ -414,6 +456,21 @@ exit 0
 %endif
 %{_sbindir}/yum-cron
 %{_mandir}/man*/yum-cron.*
+
+%files cron-daily
+%defattr(-,root,root)
+%{_sysconfdir}/cron.daily/0yum-daily.cron
+%config(noreplace) %{_sysconfdir}/yum/yum-cron.conf
+
+%files cron-hourly
+%defattr(-,root,root)
+%{_sysconfdir}/cron.hourly/0yum-hourly.cron
+%config(noreplace) %{_sysconfdir}/yum/yum-cron-hourly.conf
+
+%files cron-security
+%defattr(-,root,root)
+%{_sysconfdir}/cron.daily/0yum-security.cron
+%config(noreplace) %{_sysconfdir}/yum/yum-cron-security.conf
 
 %if %{yum_updatesd}
 %files updatesd

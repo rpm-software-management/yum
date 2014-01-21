@@ -172,7 +172,7 @@ _yum()
         _get_comp_words_by_ref -n = cur prev words
 
     # Commands offered as completions
-    local cmds=( check check-update clean deplist distro-sync downgrade
+    local cmds=( autoremove check check-update clean deplist distro-sync downgrade
         groups help history info install list load-transaction makecache provides
         reinstall remove repolist search shell update upgrade version )
 
@@ -188,6 +188,11 @@ _yum()
     done
 
     case $cmd in
+
+        autoremove|erase|remove)
+            _yum_atgroups "$cur" || _yum_list installed "$cur"
+            return 0
+            ;;
 
         check|check-rpmdb)
             COMPREPLY=( $( compgen -W 'dependencies duplicates all' \
@@ -225,11 +230,6 @@ _yum()
                 _yum_binrpmfiles "$cur"
                 _yum_list installed "$cur"
             fi
-            return 0
-            ;;
-
-        erase|remove)
-            _yum_atgroups "$cur" || _yum_list installed "$cur"
             return 0
             ;;
 

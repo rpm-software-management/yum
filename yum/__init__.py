@@ -2478,7 +2478,15 @@ much more problems).
                 except Errors.RepoError, e:
                     adderror(po, exception2msg(e))
             if async:
-                urlgrabber.grabber.parallel_wait()
+                try:
+                    urlgrabber.grabber.parallel_wait()
+                except KeyboardInterrupt:
+                    for po in remote_pkgs:
+                        if po.localpath.endswith('.tmp'):
+                            misc.unlink_f(po.localpath)
+                        elif isinstance(po, DeltaPackage) and po.rpm.localpath.endswith('.tmp'):
+                            misc.unlink_f(po.rpm.localpath)
+                    raise
             presto.dequeue_all()
             presto.wait()
 

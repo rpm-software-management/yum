@@ -270,7 +270,11 @@ class DeltaInfo:
                 # done with drpm file, unlink when local
                 if po.localpath.startswith(po.repo.pkgdir):
                     os.unlink(po.localpath)
-                po.localpath = po.rpm.localpath # for --downloadonly
+                # rename the rpm if --downloadonly
+                if po.rpm.localpath.endswith('.tmp'):
+                    rpmfile = po.rpm.localpath.rsplit('.', 2)[0]
+                    os.rename(po.rpm.localpath, rpmfile)
+                    po.rpm.localpath = rpmfile
             num += 1
 
             # when blocking, one is enough

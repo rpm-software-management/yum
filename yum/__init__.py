@@ -2342,6 +2342,8 @@ much more problems).
         errors = {}
         def adderror(po, msg):
             errors.setdefault(po, []).append(msg)
+            if po.localpath.endswith('.tmp'):
+                misc.unlink_f(po.localpath) # won't resume this..
 
         #  We close the history DB here because some plugins (presto) use
         # threads. And sqlite really doesn't like threads. And while I don't
@@ -2434,6 +2436,10 @@ much more problems).
 
                 def checkfunc(obj, po=po):
                     self.verifyPkg(obj, po, 1)
+                    if po.localpath.endswith('.tmp'):
+                        rpmfile = po.localpath.rsplit('.', 2)[0]
+                        os.rename(po.localpath, rpmfile)
+                        po.localpath = rpmfile
                     local_size[0] += po.size
                     if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                         urlgrabber.progress.text_meter_total_size(remote_size,
@@ -2479,22 +2485,6 @@ much more problems).
             if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                 urlgrabber.progress.text_meter_total_size(0)
 
-            if downloadonly:
-                for po in remote_pkgs:
-                    if not po.localpath.endswith('.tmp'):
-                        # file:// repos don't "download"
-                        continue
-                    if po in errors:
-                        # we may throw away partial file here- but we don't lock,
-                        # so can't rename tempfile to rpmfile safely
-                        misc.unlink_f(po.localpath)
-                    else:
-                        # verifyPkg() didn't complain, so (potentially)
-                        # overwriting another copy should not be a problem
-                        rpmfile = po.localpath.rsplit('.', 2)[0]
-                        os.rename(po.localpath, rpmfile)
-                        po.localpath = rpmfile
-                    
             fatal = False
             for po in errors:
                 if not isinstance(po, DeltaPackage):

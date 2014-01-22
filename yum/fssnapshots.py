@@ -55,6 +55,9 @@ def _list_vg_names():
     names = lvm.listVgNames()
 
     if not names: # Could be just broken...
+        if not os.path.exists("/sbin/lvm"):
+            return [] # Minimal install etc.
+
         p = subprocess.Popen(["/sbin/lvm", "vgs", "-o", "vg_name"],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         err = p.wait()

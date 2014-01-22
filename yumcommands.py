@@ -128,12 +128,6 @@ def checkRepoPackageArg(base, basecmd, extcmds):
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
     """
-    if len(extcmds) < 2: # <repoid> install|remove [pkgs]
-        base.logger.critical(
-                _('Error: Need to pass a repoid. and command to %s') % basecmd)
-        _err_mini_usage(base, basecmd)
-        raise cli.CliError
-
     repos = base.repos.findRepos(extcmds[0], name_match=True, ignore_case=True)
     if not repos:
         base.logger.critical(
@@ -3500,7 +3494,13 @@ class RepoPkgsCommand(YumCommand):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(base)
+        if len(extcmds) < 2: # <repoid> install|remove [pkgs]
+            base.logger.critical(
+                    _('Error: Need to pass a repoid. and command to %s') % basecmd)
+            _err_mini_usage(base, basecmd)
+            raise cli.CliError
+        if extcmds[1] not in ('info', 'list'):
+            checkRootUID(base)
         checkGPGKey(base)
         self.repoid = checkRepoPackageArg(base, basecmd, extcmds)
 

@@ -2879,6 +2879,7 @@ much more problems).
                         # is much slower than calling searchNevra(). *Sigh*
                         ipkgs = self.rpmdb.searchNevra(pkg.name,
                                                        arch=pkg.arch)
+                        ipkgs = misc.filter_pkgs_repoid(ipkgs, repoid)
                         if ipkgs:
                             ndinst[key] = sorted(ipkgs)[-1]
 

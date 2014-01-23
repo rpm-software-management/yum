@@ -401,7 +401,7 @@ exit 0
 
 %files -f %{name}.lang
 %defattr(-, root, root, -)
-%doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
+%doc README AUTHORS COPYING TODO ChangeLog PLUGINS
 %if %{move_yum_conf_back}
 %config(noreplace) %{_sysconfdir}/yum.conf
 %dir %{_sysconfdir}/yum.repos.d

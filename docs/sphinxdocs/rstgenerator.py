@@ -12,7 +12,7 @@ def generateFile(input_directory, file_name, output_directory,
        source code file
     :param file_name: the name of the python source code file to generate
        a sphinx rst file describing
-    :param ouput_directory: a string specifying the directory where
+    :param output_directory: a string specifying the directory where
        the generated rst file should be placed.  If *output_directory* does
        not already exist, it will be created
     :param package_heirarchy: a list of strings, where each name is

@@ -171,7 +171,7 @@ class YumShell(cmd.Cmd):
     def do_help(self, arg):
         """Output help information.
 
-        :param arg: the command to ouput help information about. If
+        :param arg: the command to output help information about. If
            *arg* is an empty string, general help will be output.
         """
         msg = """

@@ -596,6 +596,8 @@ class YumCronBase(yum.YumBase, YumOutput):
         # Acquire the yum lock
         self.acquireLock()
 
+        self.run_with_package_names.add("yum-cron")
+
         # Update the metadata
         self.populateUpdateMetadata()
 

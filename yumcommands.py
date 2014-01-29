@@ -2976,6 +2976,9 @@ class HistoryCommand(YumCommand):
             print _("Transactions:"), 0
             return
         counts = base.history._pkg_stats()
+        if not counts:
+            msg = _("could not open history file: %s") % base.history._db_file
+            raise yum.Errors.MiscError, msg
         trans_1 = base.history.old("1")[0]
         print _("Transactions:"), trans_N.tid
         print _("Begin time  :"), time.ctime(trans_1.beg_timestamp)

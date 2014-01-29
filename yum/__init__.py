@@ -1154,10 +1154,6 @@ class YumBase(depsolve.Depsolve):
         if self.rpmdb.contains(name="yum-utils"):
             return
 
-        hibeg, hiend = "", ""
-        if hasattr(self, 'term'):
-            hibeg, hiend = self.term.MODE['bold'], self.term.MODE['normal']
-
         func(_("The program %s is found in the yum-utils package.") % self._try_bold(prog))
 
     def buildTransaction(self, unfinished_transactions_check=True):

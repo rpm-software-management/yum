@@ -11,6 +11,10 @@
 %if 0%{?rhel} <= 6
 # rhel-6 doesn't have the systemd stuff...
 %define yum_cron_systemd 0
+%endif
+
+%if 0%{?rhel} <= 7
+# rhel-7 doesn't use systemd timers...
 %define yum_makecache_systemd 0
 %endif
 

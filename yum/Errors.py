@@ -105,6 +105,9 @@ class GroupsError(YumBaseError):
 class InstallError(YumBaseError):
     pass
 
+class GroupInstallError(InstallError):
+    pass
+
 class UpdateError(YumBaseError):
     pass
     

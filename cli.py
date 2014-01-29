@@ -964,6 +964,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 else:
                     assert basecmd == 'install', basecmd
                     txmbrs = self.install(pattern=arg)
+            except yum.Errors.GroupInstallError, e:
+                self.verbose_logger.log(yum.logginglevels.INFO_2, e)
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -1922,6 +1924,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             for igrp in self.igroups.groups:
                 pkgs_used.extend(self._at_groupupgrade('@'  + igrp))
         
+        done = False
         for group_string in grouplist:
 
             grp_grp = True
@@ -1966,11 +1969,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if not group_matched:
                 self.logger.error(_('Warning: group %s does not exist.'), group_string)
                 continue
+            done = True
             
         if not pkgs_used:
             if self.conf.group_command == 'objects':
                 self.logger.critical(_("Maybe run: yum groups mark install (see man yum)"))
-            return 0, [_('No packages in any requested group available to install or update')]
+            exit_status = 1
+            if upgrade:
+                # upgrades don't fail
+                exit_status = 0
+            if done:
+                # at least one group_string was a valid group
+                exit_status = 0
+            return exit_status, [_('No packages in any requested group available to install or update')]
         else:
             return 2, [P_('%d package to Install', '%d packages to Install', len(pkgs_used)) % len(pkgs_used)]
 

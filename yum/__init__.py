@@ -1158,8 +1158,7 @@ class YumBase(depsolve.Depsolve):
         if hasattr(self, 'term'):
             hibeg, hiend = self.term.MODE['bold'], self.term.MODE['normal']
 
-        func(_("The program %s%s%s is found in the yum-utils package.") %
-             (hibeg, prog, hiend))
+        func(_("The program %s is found in the yum-utils package.") % self._try_bold(prog))
 
     def buildTransaction(self, unfinished_transactions_check=True):
         """Go through the packages in the transaction set, find them
@@ -4451,6 +4450,12 @@ much more problems).
             if node == slow:
                 return None
 
+    def _try_bold(self, string_):
+        """Attempt to make the string look bold in terminal."""
+        if hasattr(self, 'term'):
+            return '%s%s%s' % (self.term.MODE['bold'], string_, self.term.MODE['normal'])
+        return string_
+
     def _at_groupinstall(self, pattern, upgrade=False):
         " Do groupinstall via. leading @ on the cmd line, for install."
         assert pattern[0] == '@'
@@ -4464,42 +4469,31 @@ much more problems).
             self.logger.warning(e)
             return tx_return
 
+        found = False
         if group_string and group_string[0] == '^':
             group_string = group_string[1:]
             # Actually dealing with "environment groups".
-            found = False
             for env_grp in comps.return_environments(group_string):
                 found = True
-                try:
-                    txmbrs = self.selectEnvironment(env_grp.environmentid,
-                                                    upgrade=upgrade)
-                    tx_return.extend(txmbrs)
-                except yum.Errors.GroupsError:
-                    assert False, "Checked in for loop."
-                    continue
-            if not found:
-                self.logger.error(_('Warning: Environment group %s does not exist.'),
-                                  group_string)
-            return tx_return
-
-        found = False
-        for group in comps.return_groups(group_string):
-            found = True
-            try:
+                txmbrs = self.selectEnvironment(env_grp.environmentid,
+                                                upgrade=upgrade)
+                tx_return.extend(txmbrs)
+        else:
+            for group in comps.return_groups(group_string):
+                found = True
                 txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
                 tx_return.extend(txmbrs)
-            except yum.Errors.GroupsError:
-                assert False, "Checked in for loop."
-                continue
         if not found:
-            self.logger.error(_('Warning: Package group %s does not exist.'),
-                              group_string)
-
+            raise Errors.GroupInstallError, _('Group %s does not exist.') % self._try_bold(group_string)
         return tx_return
 
     def _at_groupupgrade(self, pattern):
         " Do group upgrade via. leading @ on the cmd line, for update."
-        return self._at_groupinstall(pattern, upgrade=True)
+        try:
+            return self._at_groupinstall(pattern, upgrade=True)
+        except Errors.GroupInstallError, e:
+            self.logger.warning(_('Warning: %s'), e)
+            return []
 
     def _at_groupremove(self, pattern):
         " Do groupremove via. leading @ on the cmd line, for remove."

@@ -2136,7 +2136,11 @@ much more problems).
         lockfile = os.path.normpath(lockfile) # get rid of silly preceding extra /
         
         mypid=str(os.getpid())    
-        while not self._lock(lockfile, mypid, 0644):
+        while True:
+            ret = self._lock(lockfile, mypid, 0644)
+            if ret:
+                break
+
             oldpid = self._get_locker(lockfile)
             if not oldpid:
                 # Invalid locker: unlink lockfile and retry
@@ -2147,6 +2151,13 @@ much more problems).
             # Another copy seems to be running.
             msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
             raise Errors.LockError(0, msg, oldpid)
+
+        if ret == 2:
+            #  Means lockdir isn't setup, out of bad options just run without
+            # locks.
+            return
+
+        assert ret == 1
         # We've got the lock, store it so we can auto-unlock on __del__...
         self._lockfile = lockfile
     
@@ -2186,7 +2197,12 @@ much more problems).
         lockdir = os.path.dirname(filename)
         try:
             if not os.path.exists(lockdir):
-                os.makedirs(lockdir, mode=0755)
+                #  We used to os.makedirs(lockdir, mode=0755) ... but that
+                # causes problems now due to /var/run being a magic systemd dir.
+                #  So we now just give up and run, hopefully nobody runs N
+                # instances before the magic dir. is activate.
+                return 2
+
             fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)    
             os.write(fd, contents)
             os.close(fd)

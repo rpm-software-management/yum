@@ -720,7 +720,12 @@ class Depsolve(object):
         else:
             self.verbose_logger.debug(_('TSINFO: Marking %s as install for %s'), best,
                 requiringPo)
-            reqtuple = misc.string_to_prco_tuple(needname + str(needflags) + needversion)
+            if requirement and not requirement[2]:
+                #  Stuff looks like: ('/foo', 0, '') ... might be just testing
+                # noise, but meh.
+                reqtuple = (requirement[0], requirement[1], (None, None, None))
+            else:
+                reqtuple = requirement
             txmbrs = self.install(best, provides_for=reqtuple)
             for txmbr in txmbrs:
                 txmbr.setAsDep(po=requiringPo)

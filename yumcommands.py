@@ -21,6 +21,7 @@ Classes for subcommands of the yum command line interface.
 """
 
 import os
+import sys
 import cli
 from yum import logginglevels
 from yum import _, P_
@@ -4692,9 +4693,112 @@ class FSCommand(YumCommand):
             misc.unlink_f(fname)
 
     def _fs_diff(self, base, extcmds):
-        pass
+        def deal_with_file(fpath):
+            if fpath in pfr['norm']:
+                pass
+            elif fpath in pfr['ghost']:
+                pass
+            elif fpath in pfr['not']:
+                print >>sys.stderr, _('Not installed:'), fpath
+            elif fpath in pfr['miss']:
+                pass
+            elif fpath in pfr['mod']:
+                pkg = apkgs[pfr['mod'][fpath].pkgtup]
+                # Hacky ... but works.
+                sys.stdout.flush()
+                extract_cmd = "cd %s; rpm2cpio %s | cpio --quiet -id .%s"
+                extract_cmd =  extract_cmd % (tmpdir, pkg.localPkg(), fpath)
+                os.system(extract_cmd)
+                diff_cmd = "diff -ru %s %s" % (tmpdir + fpath, fpath)
+                print diff_cmd
+                sys.stdout.flush()
+                os.system(diff_cmd)
+            else:
+                print >>sys.stderr, _('Not packaged?:'), fpath
+
+        prefix = "."
+        if extcmds:
+            prefix = extcmds[0]
+            extcmds = extcmds[1:]
+
+        pkgs = base.rpmdb.returnPackages(patterns=extcmds)
+
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+
+        pfr = self._fs_pkg_walk(pkgs, prefix, verbose=verbose, modified=True)
+
+        base.closeRpmDB() # C-c ftw.
+
+        apkgs = {}
+        downloadpkgs = []
+        for ipkg in set(pfr['mod'].values()):
+            for apkg in base.pkgSack.searchPkgTuple(ipkg.pkgtup):
+                iyi = ipkg.yumdb_info
+                if ('checksum_type' in iyi and
+                    'checksum_data' in iyi and
+                    iyi.checksum_type == apkg.checksum_type and
+                    iyi.checksum_data == apkg.pkgId):
+                    apkgs[ipkg.pkgtup] = apkg
+                    downloadpkgs.append(apkg)
+                    break
+            if ipkg.pkgtup not in apkgs:
+                raise yum.Errors.YumBaseError, _("Can't find package: %s") %ipkg
+
+        if downloadpkgs:
+            tmpdir = tempfile.mkdtemp()
+            problems = base.downloadPkgs(downloadpkgs, callback_total=base.download_callback_total_cb) 
+            if len(problems) > 0:
+                errstring = ''
+                errstring += _('Error downloading packages:\n')
+                for key in problems:
+                    errors = yum.misc.unique(problems[key])
+                    for error in errors:
+                        errstring += '  %s: %s\n' % (key, error)
+                raise yum.Errors.YumBaseError, errstring
+
+        for root, dirs, files in os.walk(prefix):
+            for fname in files:
+                fpath = os.path.normpath(root + '/' + fname)
+                if os.path.islink(fpath):
+                    continue
+
+                deal_with_file(fpath)
+
     def _fs_status(self, base, extcmds):
-        pass
+        def deal_with_file(fpath):
+            if fpath in pfr['norm']:
+                pass
+            elif fpath in pfr['ghost']:
+                pass
+            elif fpath in pfr['not']:
+                print _('Not installed:'), fpath
+            elif fpath in pfr['miss']:
+                pass
+            elif fpath in pfr['mod']:
+                print _('Modified:'), fpath
+            else:
+                print _('Not packaged?:'), fpath
+
+        prefix = "."
+        if extcmds:
+            prefix = extcmds[0]
+            extcmds = extcmds[1:]
+
+        pkgs = base.rpmdb.returnPackages(patterns=extcmds)
+
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+
+        pfr = self._fs_pkg_walk(pkgs, prefix, verbose=verbose, modified=True)
+
+        base.closeRpmDB() # C-c ftw.
+
+        for root, dirs, files in os.walk(prefix):
+            for fname in files:
+                fpath = os.path.normpath(root + '/' + fname)
+                if os.path.islink(fpath):
+                    continue
+
+                deal_with_file(fpath)
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -4732,10 +4836,10 @@ class FSCommand(YumCommand):
         elif subcommand == 'refilter-cleanup':
             ret = self._fs_refilter_cleanup(base, extcmds)
 
-        elif False and subcommand == 'diff':
+        elif subcommand == 'diff':
             ret = self._fs_diff(base, extcmds)
 
-        elif False and subcommand == 'status':
+        elif subcommand == 'status':
             ret = self._fs_status(base, extcmds)
 
         else:

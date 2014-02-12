@@ -742,12 +742,19 @@ mainly for removing languages/documentation for minimal installs:
 .br 
 .I \fR yum fs du [path]
 
+.br 
+.I \fR yum fs status [path]
+
+.br 
+.I \fR yum fs diff [path]
+
+
 the first 3 being a simple interface to change yum.conf altering the tsflags
 and override_install_langs configurations. The refilter command is an optimized
 way of calling "yum reinstall" to reinstall the packages with the new filters
 applied. The refilter-cleanup command is needed because rpm doesn't actually
-remove the files on reinstall, as it should. And the du command is included so
-you can easily see the space used/saved.
+remove the files on reinstall, as it should. And the du/status/diff commands are
+included so you can easily see the space used/saved and any other changes.
 
 .IP
 .IP "\fBcheck\fP"

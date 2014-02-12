@@ -4374,7 +4374,7 @@ class FSCommand(YumCommand):
             for pkg in pkgs:
                 _pfs = []
                 probs = pkg.verify(patterns=[prefix+'*'], fake_problems=False,
-                                   callback=scoop_pfs)
+                                   callback=scoop_pfs, failfast=True)
 
                 for pf in _pfs[0]:
                     if pf.filename in probs:

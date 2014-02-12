@@ -1779,6 +1779,7 @@ class YUMVerifyPackage:
         self._files = {}
 
 
+_last_fnmatch = {}
 class _RPMVerifyPackage(YUMVerifyPackage):
     def __init__(self, po, fi, def_csum_type, patterns, all):
         YUMVerifyPackage.__init__(self, po)
@@ -1791,18 +1792,30 @@ class _RPMVerifyPackage(YUMVerifyPackage):
         (fi, def_csum_type, patterns, all) = self._presetup
         del self._presetup
 
+        global _last_fnmatch
+        _this_fnmatch = {}
         for ft in fi:
             fn = ft[0]
             if patterns:
                 matched = False
                 for p in patterns:
-                    if fnmatch.fnmatch(fn, p):
+                    if p in _last_fnmatch:
+                        match = _last_fnmatch[p]
+                    elif p in _this_fnmatch:
+                        match = _this_fnmatch[p]
+                    else:
+                        match = misc.compile_pattern(p)
+                    _this_fnmatch[p] = match
+
+                    if match(fn):
                         matched = True
                         break
                 if not matched: 
                     continue
 
             self.add(_RPMVerifyPackageFile(fi, ft, def_csum_type, all))
+        if _this_fnmatch:
+            _last_fnmatch = _this_fnmatch
 
     def __contains__(self, *args, **kwargs):
         self._setup()
@@ -1834,7 +1847,8 @@ class YumInstalledPackage(YumHeaderPackage):
             self.yumdb_info = yumdb.get_package(self)
 
     def verify(self, patterns=[], deps=False, script=False,
-               fake_problems=True, all=False, fast=False, callback=None):
+               fake_problems=True, all=False, fast=False, callback=None,
+               failfast=False):
         """verify that the installed files match the packaged checksum
            optionally verify they match only if they are in the 'pattern' list
            returns a tuple """
@@ -1972,6 +1986,8 @@ class YumInstalledPackage(YumHeaderPackage):
 
                 verify_digest = pf.verify_digest
                 if fast and not problems and (my_st_size == pf.size):
+                    verify_digest = False
+                if failfast and problems:
                     verify_digest = False
                 if not pf.digest:
                     verify_digest = False

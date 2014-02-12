@@ -4291,3 +4291,457 @@ class FSSnapshotCommand(YumCommand):
             print msg % (len(snaps), base.format_number(used), len(dev_oris))
 
         return 0, [basecmd + ' ' + subcommand + ' done']
+
+
+class FSCommand(YumCommand):
+    def getNames(self):
+        return ['fs']
+
+    def getUsage(self):
+        return "[]"
+
+    def getSummary(self):
+        return _("Creates filesystem snapshots, or lists/deletes current snapshots.")
+
+    def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that the program is being run by the root user,
+        that there are enabled repositories with gpg keys, and that
+        this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
+        checkRootUID(base)
+
+    def _fs_pkg_walk(self, pkgs, prefix, modified=False, verbose=False):
+
+        pfr = {'norm' : {},
+               'mod' : {},
+               'ghost' : {},
+               'miss' : {},
+               'not' : {}
+               }
+
+        def quick_match(pkgs):
+            for pkg in pkgs:
+                for fname in pkg.filelist + pkg.dirlist:
+                    if not fname.startswith(prefix):
+                        continue
+                    pfr['norm'][fname] = pkg
+                for fname in pkg.ghostlist:
+                    if not fname.startswith(prefix):
+                        continue
+                    pfr['ghost'][fname] = pkg
+            return pfr
+
+        def _quick_match_iter(pkgs):
+            # Walking the fi information is much slower than filelist/dirlist
+            for pkg in pkgs:
+                found = False
+                for fname in pkg.dirlist:
+                    if fname.startswith(prefix):
+                        yield pkg
+                        found = True
+                        break
+                if found:
+                    continue
+                for fname in pkg.filelist:
+                    if fname.startswith(prefix):
+                        yield pkg
+                        found = True
+                        break
+                if found:
+                    continue
+                for fname in pkg.ghostlist:
+                    if fname.startswith(prefix):
+                        yield pkg
+                        break
+
+        def verify_match(pkgs):
+            _pfs = []
+            def scoop_pfs(pfs):
+                _pfs.append(pfs)
+
+                if not modified:
+                    return []
+
+                return pfs
+
+            if prefix != '/':
+                pkgs = _quick_match_iter(pkgs)
+            for pkg in pkgs:
+                _pfs = []
+                probs = pkg.verify(patterns=[prefix+'*'], fake_problems=False,
+                                   callback=scoop_pfs)
+
+                for pf in _pfs[0]:
+                    if pf.filename in probs:
+                        pfr['mod'][pf.filename] = pkg
+                    elif pf.rpmfile_state == 'not installed':
+                        pfr['not'][pf.filename] = pkg
+                    elif 'ghost' in pf.rpmfile_types:
+                        pfr['ghost'][pf.filename] = pkg
+                    elif 'missing ok' in pf.rpmfile_types:
+                        pfr['miss'][pf.filename] = pkg
+                    else:
+                        pfr['norm'][pf.filename] = pkg
+            return pfr
+
+        # return quick_match(pkgs)
+        return verify_match(pkgs)
+
+    def _fs_du(self, base, extcmds):
+        def _dir_prefixes(path):
+            while path != '/':
+                path = os.path.dirname(path)
+                yield path
+
+        def loc_num(x):
+            """ String of a number in the readable "locale" format. """
+            return locale.format("%d", int(x), True)
+
+        data = {'pkgs_size' : {},
+                'pkgs_not_size' : {},
+                'pkgs_ghost_size' : {},
+                'pkgs_miss_size' : {},
+                'pkgs_mod_size' : {},
+
+                'pres_size' : {},
+                'data_size' : {},
+                'data_not_size' : {},
+
+                'pkgs_count' : 0,
+                'pkgs_not_count' : 0,
+                'pkgs_ghost_count' : 0,
+                'pkgs_miss_count' : 0,
+                'pkgs_mod_count' : 0,
+
+                'data_count' : 0} # data_not_count == pkgs_not_count
+
+        def _add_size(d, v, size):
+            if v not in d:
+                d[v] = 0
+            d[v] += size
+
+        def deal_with_file(fpath, need_prefix=True):
+            size = os.path.getsize(fpath)
+            if fpath in pfr['norm']:
+                data['pkgs_count'] += size
+                _add_size(data['pkgs_size'], pfr['norm'][fpath], size)
+            elif fpath in pfr['ghost']:
+                data['pkgs_ghost_count'] += size
+                _add_size(data['pkgs_ghost_size'], pfr['ghost'][fpath], size)
+            elif fpath in pfr['not']:
+                data['pkgs_not_count'] += size
+                _add_size(data['pkgs_not_size'], pfr['not'][fpath], size)
+                data['data_not_size'][fpath] = size
+            elif fpath in pfr['miss']:
+                data['pkgs_miss_count'] += size
+                _add_size(data['pkgs_miss_size'], pfr['miss'][fpath], size)
+            elif fpath in pfr['mod']:
+                data['pkgs_mod_count'] += size
+                _add_size(data['pkgs_mod_size'], pfr['mod'][fpath], size)
+            elif need_prefix and False:
+                for fpre_path in _dir_prefixes(fpath):
+                    if fpre_path not in pkg_files:
+                        continue
+                    _add_size(data['pres_size'], pkg_files[fpre_path], size)
+                    break
+                data['data_count'] += size
+                data['data_size'][fpath] = size
+            else:
+                data['data_count'] += size
+                data['data_size'][fpath] = size
+
+        prefix = "."
+        if extcmds:
+            prefix = extcmds[0]
+            extcmds = extcmds[1:]
+
+        if not os.path.exists(prefix):
+            return 1, [_('No such file or directory: ' + prefix)]
+
+        max_show_len = 4
+        if extcmds:
+            try:
+                max_show_len = int(extcmds[0])
+            except:
+                pass
+
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+
+        pfr = self._fs_pkg_walk(base.rpmdb, prefix, verbose=verbose)
+
+        base.closeRpmDB() # C-c ftw.
+
+        num = 0
+        if os.path.isfile(prefix):
+            num += 1
+            deal_with_file(prefix)
+
+        for root, dirs, files in os.walk(prefix):
+            for fname in files:
+                num += 1
+                fpath = os.path.normpath(root + '/' + fname)
+                if os.path.islink(fpath):
+                    continue
+
+                deal_with_file(fpath, need_prefix=verbose)
+
+        # output
+        print "Files            :", loc_num(num)
+        tot = 0
+        tot += data['pkgs_count']
+        tot += data['pkgs_ghost_count']
+        tot += data['pkgs_not_count']
+        tot += data['pkgs_miss_count']
+        tot += data['pkgs_mod_count']
+        tot += data['data_count']
+        print "Total size       :", base.format_number(tot)
+        if not tot:
+            return
+
+        num = data['pkgs_count']
+        if not verbose:
+            num += data['pkgs_ghost_count']
+            num += data['pkgs_miss_count']
+            num += data['pkgs_mod_count']
+        print "       Pkgs size :", "%-5s" % base.format_number(num),
+        print "(%3.0f%%)" % ((num * 100.0) / tot)
+        if verbose:
+            for (title, num) in ((_(" Ghost pkgs size :"),
+                                  data['pkgs_ghost_count']),
+                                 (_(" Not pkgs size :"),
+                                  data['pkgs_not_count']),
+                                 (_(" Miss pkgs size :"),
+                                  data['pkgs_miss_count']),
+                                 (_(" Mod. pkgs size :"),
+                                  data['pkgs_mod_count'])):
+                if not num:
+                    continue
+                print title, "%-5s" % base.format_number(num),
+                print "(%3.0f%%)" % ((num * 100.0) / tot)
+        num = data['data_count']
+        if not verbose:
+            num += data['pkgs_not_count']
+        print _("       Data size :"), "%-5s" % base.format_number(num),
+        print "(%3.0f%%)" % ((num * 100.0) / tot)
+        if verbose:
+            print ''
+            print _("Pkgs       :"), loc_num(len(data['pkgs_size']))
+            print _("Ghost Pkgs :"), loc_num(len(data['pkgs_ghost_size']))
+            print _("Not Pkgs   :"), loc_num(len(data['pkgs_not_size']))
+            print _("Miss. Pkgs :"), loc_num(len(data['pkgs_miss_size']))
+            print _("Mod. Pkgs  :"), loc_num(len(data['pkgs_mod_size']))
+
+        def _pkgs(p_size, msg):
+            tot = min(max_show_len, len(p_size))
+            if tot:
+                print ''
+                print msg % tot
+            num = 0
+            for pkg in sorted(p_size, key=lambda x: p_size[x], reverse=True):
+                num += 1
+                print _("%*d. %60s %-5s") % (len(str(tot)), num, pkg,
+                                             base.format_number(p_size[pkg]))
+                if num >= tot:
+                    break
+
+        if verbose:
+            _pkgs(data['pkgs_size'], _('Top %d packages:'))
+            _pkgs(data['pkgs_ghost_size'], _('Top %d ghost packages:'))
+            _pkgs(data['pkgs_not_size'], _('Top %d not. packages:'))
+            _pkgs(data['pkgs_miss_size'], _('Top %d miss packages:'))
+            _pkgs(data['pkgs_mod_size'], _('Top %d mod. packages:'))
+            _pkgs(data['pres_size'], _('Top %d prefix packages:'))
+        else:
+            tmp = {}
+            tmp.update(data['pkgs_size'])
+            for d in data['pkgs_ghost_size']:
+                _add_size(tmp, d, data['pkgs_ghost_size'][d])
+            for d in data['pkgs_miss_size']:
+                _add_size(tmp, d, data['pkgs_miss_size'][d])
+            for d in data['pkgs_mod_size']:
+                _add_size(tmp, d, data['pkgs_mod_size'][d])
+            _pkgs(tmp, _('Top %d packages:'))
+
+        print ''
+        if verbose:
+            data_size = data['data_size']
+        else:
+            data_size = {}
+            data_size.update(data['data_size'])
+            data_size.update(data['data_not_size'])
+
+        tot = min(max_show_len, len(data_size))
+        if tot:
+            print _('Top %d non-package files:') % tot
+        num = 0
+        for fname in sorted(data_size,
+                            key=lambda x: data_size[x],
+                            reverse=True):
+            num += 1
+            dsznum = data_size[fname]
+            print _("%*d. %60s %-5s") % (len(str(tot)), num, fname,
+                                         base.format_number(dsznum))
+            if num >= tot:
+                break
+
+    def _fs_filters(self, base, extcmds):
+        writeRawConfigFile = yum.config._writeRawConfigFile
+
+        if not extcmds:
+            oil = base.conf.override_install_langs
+            if not oil:
+                oil = "rpm: " + rpm.expandMacro("%_install_langs")
+            print "File system filters:"
+            print "  Nodocs:", 'nodocs' in base.conf.tsflags
+            print "  Languages:", oil
+        elif extcmds[0] in ('docs', 'nodocs',
+                            'documentation', 'nodocumentation'):
+            c_f = 'nodocs' in base.conf.tsflags
+            n_f = extcmds[0].startswith('no')
+            if n_f == c_f:
+                return
+
+            nts = base.conf.tsflags
+            if n_f:
+                nts = nts + ['nodocs']
+            else:
+                nts = [x for x in nts if x != 'nodocs']
+            base.conf.tsflags = " ".join(nts)
+
+            fn = '/etc/yum/yum.conf'
+            if not os.path.exists(fn):
+                # Try the old default
+                fn = '/etc/yum.conf'
+            ybc = base.conf
+            writeRawConfigFile(fn, 'main', ybc.yumvar,
+                               ybc.cfg.options, ybc.iteritems,
+                               ybc.optionobj,
+                               only=['tsflags'])
+        elif extcmds[0] in ('langs', 'nolangs', 'lang', 'nolang',
+                            'languages', 'nolanguages',
+                            'language', 'nolanguage'):
+            if extcmds[0].startswith('no') or len(extcmds) < 2 or 'all' in extcmds:
+                val = 'all'
+            else:
+                val = ":".join(extcmds[1:])
+
+            if val == base.conf.override_install_langs:
+                return
+
+            base.conf.override_install_langs = val
+
+            fn = '/etc/yum/yum.conf'
+            if not os.path.exists(fn):
+                # Try the old default
+                fn = '/etc/yum.conf'
+            ybc = base.conf
+            writeRawConfigFile(fn, 'main', ybc.yumvar,
+                               ybc.cfg.options, ybc.iteritems,
+                               ybc.optionobj,
+                               only=['override_install_langs'])
+        else:
+            return 1, [_('Not a valid sub-command of fs filter')]
+
+    def _fs_refilter(self, base, extcmds):
+        c_f = 'nodocs' in base.conf.tsflags
+        # FIXME: C&P from init.
+        oil = base.conf.override_install_langs
+        if not oil:
+            oil = rpm.expandMacro("%_install_langs")
+        if oil == 'all':
+            oil = ''
+        elif oil:
+            oil = ":".join(sorted(oil.split(':')))
+
+        found = False
+        num = 0
+        for pkg in base.rpmdb.returnPackages(patterns=extcmds):
+            if False: pass
+            elif oil != pkg.yumdb_info.get('ts_install_langs', ''):
+                txmbrs = base.reinstall(po=pkg)
+                num += len(txmbrs)
+            elif c_f != ('true' == pkg.yumdb_info.get('tsflag_nodocs')):
+                txmbrs = base.reinstall(po=pkg)
+                num += len(txmbrs)
+            else:
+                found = True
+
+        if num:
+            return 2,P_('%d package to reinstall','%d packages to reinstall',
+                        num)
+
+        if not found:
+            return 1, [_('No valid packages: %s') % " ".join(extcmds)]
+
+    def _fs_refilter_cleanup(self, base, extcmds):
+        pkgs = base.rpmdb.returnPackages(patterns=extcmds)
+
+        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+
+        pfr = self._fs_pkg_walk(pkgs, "/", verbose=verbose, modified=True)
+
+        base.closeRpmDB() # C-c ftw.
+
+        for fname in sorted(pfr['not']):
+            print _('Removing:'), fname
+            misc.unlink_f(fname)
+
+    def _fs_diff(self, base, extcmds):
+        pass
+    def _fs_status(self, base, extcmds):
+        pass
+
+    def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+        if extcmds and extcmds[0] in ('filters', 'filter',
+                                      'refilter', 'refilter-cleanup',
+                                      'du', 'status', 'diff'):
+            subcommand = extcmds[0]
+            extcmds = extcmds[1:]
+        else:
+            subcommand = 'filters'
+
+        if False: pass
+
+        elif subcommand == 'du':
+            ret = self._fs_du(base, extcmds)
+
+        elif subcommand in ('filter', 'filters'):
+            ret = self._fs_filters(base, extcmds)
+
+        elif subcommand == 'refilter':
+            ret = self._fs_refilter(base, extcmds)
+
+        elif subcommand == 'refilter-cleanup':
+            ret = self._fs_refilter_cleanup(base, extcmds)
+
+        elif False and subcommand == 'diff':
+            ret = self._fs_diff(base, extcmds)
+
+        elif False and subcommand == 'status':
+            ret = self._fs_status(base, extcmds)
+
+        else:
+            return 1, [_('Not a valid sub-command of %s') % basecmd]
+
+        if ret is not None:
+            return ret
+
+        return 0, [basecmd + ' ' + subcommand + ' done']

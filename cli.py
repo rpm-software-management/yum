@@ -112,6 +112,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.UpdateinfoCommand())
         self.registerCommand(yumcommands.UpdateMinimalCommand())
         self.registerCommand(yumcommands.FSSnapshotCommand())
+        self.registerCommand(yumcommands.FSCommand())
 
     def registerCommand(self, command):
         """Register a :class:`yumcommands.YumCommand` so that it can be called by

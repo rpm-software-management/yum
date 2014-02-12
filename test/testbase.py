@@ -66,6 +66,7 @@ class FakeConf(object):
         self.reposdir = '/tmp/XXXX'
         self.diskspacecheck = True
         self.depsolve_loop_limit = 10
+        self.override_install_langs = ''
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""

@@ -50,6 +50,10 @@ __main_multilib_policy_default__ = 'all'
 __main_failovermethod_default__ = 'roundrobin'
 __main_installonly_limit_default__ = 0
 __group_command_default__ = 'compat'
+__exactarchlist_default__ = ['kernel', 'kernel-smp',
+                             'kernel-hugemem', 'kernel-enterprise',
+                             'kernel-bigmem',
+                             'kernel-devel', 'kernel-PAE', 'kernel-PAE-debug']
 
 class Option(object):
     """
@@ -764,9 +768,7 @@ class YumConf(StartupConf):
                                           names_of_0=["0", "<off>"])
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
-    exactarchlist = ListOption(['kernel', 'kernel-smp',
-            'kernel-hugemem', 'kernel-enterprise', 'kernel-bigmem',
-            'kernel-devel', 'kernel-PAE', 'kernel-PAE-debug'])
+    exactarchlist = ListOption(__exactarchlist_default__)
     tsflags = ListOption()
     override_install_langs = Option()
 

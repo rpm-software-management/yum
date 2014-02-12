@@ -1301,6 +1301,48 @@ def writeRawRepoFile(repo,only=None):
     fp.write(str(ini))
     fp.close()
 
+# Copied from yum-config-manager ... how we alter yu.conf ... used in "yum fs"
+def _writeRawConfigFile(filename, section_id, yumvar,
+                        cfgoptions, items, optionobj,
+                        only=None):
+    """
+    From writeRawRepoFile, but so we can alter [main] too.
+    """
+    ini = INIConfig(open(filename))
+
+    osection_id = section_id
+    # b/c repoids can have $values in them we need to map both ways to figure
+    # out which one is which
+    if section_id not in ini._sections:
+        for sect in ini._sections.keys():
+            if varReplace(sect, yumvar) == section_id:
+                section_id = sect
+
+    # Updated the ConfigParser with the changed values
+    cfgOptions = cfgoptions(osection_id)
+    for name,value in items():
+        if value is None: # Proxy
+            continue
+
+        if only is not None and name not in only:
+            continue
+
+        option = optionobj(name)
+        ovalue = option.tostring(value)
+        #  If the value is the same, but just interpreted ... when we don't want
+        # to keep the interpreted values.
+        if (name in ini[section_id] and
+            ovalue == varReplace(ini[section_id][name], yumvar)):
+            ovalue = ini[section_id][name]
+
+        if name not in cfgOptions and option.default == value:
+            continue
+
+        ini[section_id][name] = ovalue
+    fp =file(filename, "w")
+    fp.write(str(ini))
+    fp.close()
+
 #def main():
 #    mainconf = readMainConfig(readStartupConfig('/etc/yum/yum.conf', '/'))
 #    print mainconf.cachedir

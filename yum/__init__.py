@@ -1915,6 +1915,13 @@ much more problems).
                 txmbr_cb(txmbr, count)
             return count
         
+        oil = self.conf.override_install_langs
+        if not oil:
+            oil = rpm.expandMacro("%_install_langs")
+        if oil == 'all':
+            oil = ''
+        elif oil:
+            oil = ":".join(sorted(oil.split(':')))
         vt_st = time.time()
         self.plugins.run('preverifytrans')
         count = 0
@@ -1942,6 +1949,17 @@ much more problems).
                     if var == 'arch':     continue
                     # Skip uuid?
                     setattr(po.yumdb_info, 'var_' + var, self.conf.yumvar[var])
+                if oil:
+                    po.yumdb_info.ts_install_langs = oil
+                if 'nocontexts' in self.conf.tsflags:
+                    po.yumdb_info.tsflag_nocontexts = 'true'
+                if 'nodocs' in self.conf.tsflags:
+                    po.yumdb_info.tsflag_nodocs = 'true'
+                if 'noscripts' in self.conf.tsflags:
+                    po.yumdb_info.tsflag_noscripts = 'true'
+                if 'notriggers' in self.conf.tsflags:
+                    po.yumdb_info.tsflag_notriggers = 'true'
+
                 if hasattr(self, 'args') and self.args:
                     po.yumdb_info.command_line = ' '.join(self.args)
                 elif hasattr(self, 'cmds') and self.cmds:

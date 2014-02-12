@@ -4714,6 +4714,8 @@ much more problems).
                         arg)
 
                     mypkgs = self.returnPackagesByDep(arg)
+                    if repoid:
+                        mypkgs = misc.filter_pkgs_repoid(mypkgs, repoid)
                     if not misc.re_glob(arg):
                         mypkgs = self.bestPackagesFromList(mypkgs,
                                                            single_name=True,

@@ -768,6 +768,7 @@ class YumConf(StartupConf):
             'kernel-hugemem', 'kernel-enterprise', 'kernel-bigmem',
             'kernel-devel', 'kernel-PAE', 'kernel-PAE-debug'])
     tsflags = ListOption()
+    override_install_langs = Option()
 
     assumeyes = BoolOption(False)
     assumeno  = BoolOption(False)

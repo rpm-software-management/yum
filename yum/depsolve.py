@@ -180,6 +180,13 @@ class Depsolve(object):
     def initActionTs(self):
         """Set up the transaction set that will be used for all the work."""
         
+        # LOL, override rpm transaction macro.
+        # Must be done before rpmtsCreate()
+        if self.conf.override_install_langs:
+            old_install_langs = rpm.expandMacro("%_install_langs")
+            rpm.expandMacro("%define _install_langs " +
+                            self.conf.override_install_langs)
+
         self._ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
         ts_flags_to_rpm = { 'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
                             'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,

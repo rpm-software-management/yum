@@ -329,6 +329,12 @@ context of an rpm transaction set you're best leaving it alone. Default is
 an empty list.
 
 .IP
+\fBoverride_install_langs\fR
+This is a way to override rpm's _install_langs macro. without having to change
+it within rpm's macro file.
+Default is nothing (so does nothing).
+
+.IP
 \fBrecent\fR
 Number of days back to look for `recent' packages added to a repository.
 Used by the \fBlist recent\fR command. Default is `7'.

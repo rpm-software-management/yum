@@ -513,7 +513,7 @@ def update_minimal(base, extcmds=[]):
             if extcmds and not _match_sec_cmd(extcmds, name, notice):
                 continue
             if (not ndata and
-                not _ysp_should_filter_pkg(base, name, notice, used_map)):
+                not _ysp_should_filter_pkg(opts, name, notice, used_map)):
                 continue
             txmbrs.extend(base.update(name=pkgtup[0], arch=pkgtup[1],
                                       epoch=pkgtup[2],

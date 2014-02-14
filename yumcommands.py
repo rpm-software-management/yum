@@ -4156,7 +4156,7 @@ class UpdateMinimalCommand(YumCommand):
 
         num = len(base.tsInfo)
         _upi.update_minimal(base, extcmds)
-        num -= len(base.tsInfo)
+        num = len(base.tsInfo) - num
         
         if num > 0:
             msg = '%d packages marked for minimal Update' % num

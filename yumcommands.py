@@ -33,6 +33,7 @@ import fnmatch
 import time
 from yum.i18n import utf8_width, utf8_width_fill, to_unicode, exception2msg
 import tempfile
+import shutil
 import glob
 
 import yum.config
@@ -4769,6 +4770,9 @@ class FSCommand(YumCommand):
                     continue
 
                 deal_with_file(fpath)
+
+        if downloadpkgs:
+            shutil.rmtree(tmpdir)
 
     def _fs_status(self, base, extcmds):
         def deal_with_file(fpath):

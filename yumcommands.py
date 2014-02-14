@@ -4732,8 +4732,14 @@ class FSCommand(YumCommand):
         apkgs = {}
         downloadpkgs = []
         for ipkg in set(pfr['mod'].values()):
+            iyi = ipkg.yumdb_info
+            if 'from_repo' in iyi: # Updates-testing etc.
+                if iyi.from_repo in base.repos.repos:
+                    repo = base.repos.getRepo(iyi.from_repo)
+                    if not repo.isEnabled():
+                        base.repos.enableRepo(repo.id)
+
             for apkg in base.pkgSack.searchPkgTuple(ipkg.pkgtup):
-                iyi = ipkg.yumdb_info
                 if ('checksum_type' in iyi and
                     'checksum_data' in iyi and
                     iyi.checksum_type == apkg.checksum_type and

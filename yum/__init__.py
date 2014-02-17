@@ -2165,6 +2165,7 @@ much more problems).
                 self._unlock(lockfile)
                 continue
             if oldpid == os.getpid(): # if we own the lock, we're fine
+                ret = 1
                 break
             # Another copy seems to be running.
             msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)

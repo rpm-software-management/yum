@@ -787,9 +787,8 @@ class EraseCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['erase', 'remove', 'autoremove',
+        return ['erase', 'remove',
                 'erase-n', 'erase-na', 'erase-nevra',
-                'autoremove-n', 'autoremove-na', 'autoremove-nevra',
                 'remove-n', 'remove-na', 'remove-nevra']
 
     def getUsage(self):
@@ -880,6 +879,26 @@ class EraseCommand(YumCommand):
         :return: True if a remove-only transaction set is needed, False otherwise
         """
         return True
+
+
+class AutoremoveCommand(EraseCommand):
+    """A class containing methods needed by the cli to execute the
+    autremove command.
+    """
+    def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
+        return [ 'autoremove', 'autoremove-n', 'autoremove-na', 'autoremove-nevra']
+
+    def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
+        return _("Remove leaf packages")
 
  
 class GroupsCommand(YumCommand):

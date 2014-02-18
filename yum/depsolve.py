@@ -731,8 +731,18 @@ class Depsolve(object):
                 #  Stuff looks like: ('/foo', 0, '') ... might be just testing
                 # noise, but meh.
                 reqtuple = (requirement[0], requirement[1], (None, None, None))
-            else:
+            elif len(requirement) == 3 and len(requirement[2]) == 3:
+                # Without the above check, we've hit this in mash:
+                #  File "/usr/.../yum/__init__.py", line 4862, in install
+                #    if not obsoleting_pkg.provides_for(kwargs['provides_for']):
+                #  File "/usr/.../yum/packages.py", line 594, in provides_for
+                #    if self.checkPrco('provides', reqtuple):
+                #   File "/usr/.../yum/packages.py", line 544, in checkPrco
+                #    (reqn, reqf, (reqe, reqv ,reqr)) = prcotuple
+                # ValueError: too many values to unpack
                 reqtuple = requirement
+            else:
+                reqtuple = misc.string_to_prco_tuple(needname + str(needflags) + needversion)
             txmbrs = self.install(best, provides_for=reqtuple)
             for txmbr in txmbrs:
                 txmbr.setAsDep(po=requiringPo)

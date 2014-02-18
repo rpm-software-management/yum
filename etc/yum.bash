@@ -173,7 +173,7 @@ _yum()
 
     # Commands offered as completions
     local cmds=( autoremove check check-update clean deplist distro-sync downgrade
-        groups help history info install list load-transaction makecache provides
+        erase groups help history info install list load-transaction makecache provides
         reinstall remove repolist search shell update upgrade version )
 
     local i c cmd subcmd

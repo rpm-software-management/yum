@@ -45,6 +45,7 @@ import logging
 import logging.config
 import operator
 import tempfile
+import shutil
 
 import yum.i18n
 # This is required to make gaftonmode work...
@@ -688,6 +689,12 @@ class YumBase(depsolve.Depsolve):
         """ For each enabled repository set up the basics of the repository. """
         if hasattr(self, 'prerepoconf'):
             self.conf # touch the config class first
+
+            if (self.conf.installroot != '/' and
+                not hasattr(self, '_old_cachedir')):
+                # Try loading cache from outside...
+                ir = len(self.conf.installroot)
+                self._old_cachedir = self.conf.cachedir[ir:]
 
             self.getReposFromConfig()
 
@@ -2398,6 +2405,9 @@ much more problems).
                 self.verbose_logger.warn(_("ignoring a dupe of %s") % po)
                 return True
             beenthere.add(local)
+            if downloadonly and not os.path.exists(local):
+              # Check before we munge the name...
+              po.repo._preload_pkg_from_system_cache(po)
             if os.path.exists(local):
                 if self.verifyPkg(local, po, False):
                     self.verbose_logger.debug(_("using local copy of %s") % po)
@@ -2442,6 +2452,22 @@ much more problems).
                 format_number(rpmsize), format_number(deltasize), 100 - deltasize*100.0/rpmsize)
 
         if downloadonly:
+            if hasattr(self, '_old_cachedir'):
+              # Try to link/copy them out, if we have somewhere to put them.
+
+              for po in pkglist:
+                if not po.localpath.startswith(self.conf.cachedir):
+                  continue
+
+                end = po.localpath[len(self.conf.cachedir):]
+                try:
+                  os.link(po.localpath, self._old_cachedir + end)
+                except:
+                  try:
+                    shutil.copy2(po.localpath, self._old_cachedir + end)
+                  except:
+                    pass
+
             # close DBs, unlock
             self.repos.close()
             self.closeRpmDB()

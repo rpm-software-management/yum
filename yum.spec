@@ -98,6 +98,9 @@ Requires: pygpgme
 Requires: pyliblzma
 # Not really a suggests anymore, due to metadata using it.
 Requires: pyxattr
+# Suggests, needed for yum fs diff
+Requires: diffutils
+Requires: cpio
 
 Conflicts: rpm >= 5-0
 # Zif is a re-implementation of yum in C, however:

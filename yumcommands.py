@@ -23,6 +23,7 @@ Classes for subcommands of the yum command line interface.
 import os
 import sys
 import cli
+import rpm
 from yum import logginglevels
 from yum import _, P_
 from yum import misc
@@ -34,6 +35,7 @@ import time
 from yum.i18n import utf8_width, utf8_width_fill, to_unicode, exception2msg
 import tempfile
 import shutil
+import distutils.spawn
 import glob
 
 import yum.config
@@ -4334,6 +4336,14 @@ class FSCommand(YumCommand):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
+        if extcmds and extcmds[0] in ('du', 'status', 'diff'):
+            # Anyone can go for it...
+            return
+
+        if len(extcmds) == 1 and extcmds[0] in ('filters', 'filter'):
+            # Can look, but not touch.
+            return
+
         checkRootUID(base)
 
     def _fs_pkg_walk(self, pkgs, prefix, modified=False, verbose=False):
@@ -4611,21 +4621,47 @@ class FSCommand(YumCommand):
                 break
 
     def _fs_filters(self, base, extcmds):
-        writeRawConfigFile = yum.config._writeRawConfigFile
+        def _save(confkey):
+            writeRawConfigFile = yum.config._writeRawConfigFile
+
+            # Always create installroot, so we can change it.
+            if not os.path.exists(base.conf.installroot + '/etc/yum'):
+                os.makedirs(base.conf.installroot + '/etc/yum')
+
+            fn = base.conf.installroot+'/etc/yum/yum.conf'
+            if not os.path.exists(fn):
+                # Try the old default
+                nfn = base.conf.installroot+'/etc/yum.conf'
+                if not os.path.exists(nfn):
+                    shutil.copy2(base.conf.config_file_path, fn)
+            ybc = base.conf
+            writeRawConfigFile(fn, 'main', ybc.yumvar,
+                               ybc.cfg.options, ybc.iteritems,
+                               ybc.optionobj,
+                               only=[confkey])
 
         if not extcmds:
             oil = base.conf.override_install_langs
             if not oil:
                 oil = "rpm: " + rpm.expandMacro("%_install_langs")
-            print "File system filters:"
-            print "  Nodocs:", 'nodocs' in base.conf.tsflags
-            print "  Languages:", oil
+            print _("File system filters:")
+            print _("  Nodocs:"), 'nodocs' in base.conf.tsflags
+            print _("  Languages:"), oil
         elif extcmds[0] in ('docs', 'nodocs',
                             'documentation', 'nodocumentation'):
             c_f = 'nodocs' in base.conf.tsflags
-            n_f = extcmds[0].startswith('no')
+            n_f = not extcmds[0].startswith('no')
             if n_f == c_f:
+                if n_f:
+                    print _("Already enabled documentation filter.")
+                else:
+                    print _("Already disabled documentation filter.")
                 return
+
+            if n_f:
+                print _("Enabling documentation filter.")
+            else:
+                print _("Disabling documentation filter.")
 
             nts = base.conf.tsflags
             if n_f:
@@ -4634,15 +4670,8 @@ class FSCommand(YumCommand):
                 nts = [x for x in nts if x != 'nodocs']
             base.conf.tsflags = " ".join(nts)
 
-            fn = '/etc/yum/yum.conf'
-            if not os.path.exists(fn):
-                # Try the old default
-                fn = '/etc/yum.conf'
-            ybc = base.conf
-            writeRawConfigFile(fn, 'main', ybc.yumvar,
-                               ybc.cfg.options, ybc.iteritems,
-                               ybc.optionobj,
-                               only=['tsflags'])
+            _save('tsflags')
+
         elif extcmds[0] in ('langs', 'nolangs', 'lang', 'nolang',
                             'languages', 'nolanguages',
                             'language', 'nolanguage'):
@@ -4652,19 +4681,21 @@ class FSCommand(YumCommand):
                 val = ":".join(extcmds[1:])
 
             if val == base.conf.override_install_langs:
+                if val:
+                    print _("Already filtering languages to: %s") % val
+                else:
+                    print _("Already disabled language filter.")
                 return
+
+            if val:
+                print _("Setting language filter to: %s") % val
+            else:
+                print _("Disabling language filter.")
 
             base.conf.override_install_langs = val
 
-            fn = '/etc/yum/yum.conf'
-            if not os.path.exists(fn):
-                # Try the old default
-                fn = '/etc/yum.conf'
-            ybc = base.conf
-            writeRawConfigFile(fn, 'main', ybc.yumvar,
-                               ybc.cfg.options, ybc.iteritems,
-                               ybc.optionobj,
-                               only=['override_install_langs'])
+            _save('override_install_langs')
+
         else:
             return 1, [_('Not a valid sub-command of fs filter')]
 
@@ -4735,6 +4766,14 @@ class FSCommand(YumCommand):
                 os.system(diff_cmd)
             else:
                 print >>sys.stderr, _('Not packaged?:'), fpath
+
+        if not distutils.spawn.find_executable("diff"):
+            raise yum.Errors.YumBaseError, _("Can't find diff command")
+        # These just shouldn't happen...
+        if not distutils.spawn.find_executable("cpio"):
+            raise yum.Errors.YumBaseError, _("Can't find cpio command")
+        if not distutils.spawn.find_executable("rpm2cpio"):
+            raise yum.Errors.YumBaseError, _("Can't find rpm2cpio command")
 
         prefix = "."
         if extcmds:
@@ -4845,7 +4884,7 @@ class FSCommand(YumCommand):
         """
         if extcmds and extcmds[0] in ('filters', 'filter',
                                       'refilter', 'refilter-cleanup',
-                                      'du', 'status', 'diff'):
+                                      'du', 'status', 'diff', 'snap'):
             subcommand = extcmds[0]
             extcmds = extcmds[1:]
         else:
@@ -4870,6 +4909,9 @@ class FSCommand(YumCommand):
 
         elif subcommand == 'status':
             ret = self._fs_status(base, extcmds)
+
+        elif subcommand == 'snap':
+            ret = FSSnapshotCommand().doCommand(base, 'fs snap', args)
 
         else:
             return 1, [_('Not a valid sub-command of %s') % basecmd]

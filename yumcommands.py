@@ -4632,7 +4632,9 @@ class FSCommand(YumCommand):
             if not os.path.exists(fn):
                 # Try the old default
                 nfn = base.conf.installroot+'/etc/yum.conf'
-                if not os.path.exists(nfn):
+                if os.path.exists(nfn):
+                    fn = nfn
+                else:
                     shutil.copy2(base.conf.config_file_path, fn)
             ybc = base.conf
             writeRawConfigFile(fn, 'main', ybc.yumvar,

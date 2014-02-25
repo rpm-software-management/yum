@@ -1617,7 +1617,7 @@ class CheckUpdateCommand(YumCommand):
         """
         updateinfo.exclude_updates(base)
         obscmds = ['obsoletes'] + extcmds
-        base.extcmds.insert(0, 'updates')
+        extcmds.insert(0, 'updates')
         result = 0
         if True:
             ypl = base.returnPkgLists(extcmds, repoid=repoid)

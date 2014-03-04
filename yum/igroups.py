@@ -111,7 +111,10 @@ class InstalledGroups(object):
             return fo.readline()[:-1]
 
         fo = open(self.filename)
-        ver = int(_read_str(fo))
+        try:
+            ver = int(_read_str(fo))
+        except ValueError:
+            return
         if ver != 1:
             return
 

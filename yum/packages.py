@@ -54,6 +54,9 @@ except ImportError:
 import pwd
 import grp
 
+# check if rpm has the new weakdeps tags
+_rpm_has_new_weakdeps = hasattr(rpm, 'RPMTAG_ENHANCENAME')
+
 def comparePoEVR(po1, po2):
     """
     Compare two Package or PackageEVR objects.
@@ -470,6 +473,10 @@ class RpmBase(object):
         self.prco['conflicts'] = [] # (name, flag, (e,v,r))
         self.prco['requires'] = [] # (name, flag, (e,v,r))
         self.prco['provides'] = [] # (name, flag, (e,v,r))
+        self.prco['suggests'] = [] # (name, flag, (e,v,r))
+        self.prco['enhances'] = [] # (name, flag, (e,v,r))
+        self.prco['recommends'] = [] # (name, flag, (e,v,r))
+        self.prco['supplements'] = [] # (name, flag, (e,v,r))
         self.files = {}
         self.files['file'] = []
         self.files['dir'] = []
@@ -673,6 +680,8 @@ class RpmBase(object):
     provides = property(fget=lambda self: self.returnPrco('provides'))
     obsoletes = property(fget=lambda self: self.returnPrco('obsoletes'))
     conflicts = property(fget=lambda self: self.returnPrco('conflicts'))
+    # weak_requires = property(fget=lambda self: self.returnPrco('recommends'))
+    # info_requires = property(fget=lambda self: self.returnPrco('suggests'))
     provides_names = property(fget=lambda self: self.returnPrcoNames('provides'))
     requires_names = property(fget=lambda self: self.returnPrcoNames('requires'))
     strong_requires_names = property(fget=lambda self: self.returnPrcoNames('strong_requires'))
@@ -1174,6 +1183,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         msg += self._dump_requires()
         msg += self._dump_pco('conflicts')         
         msg += self._dump_pco('obsoletes')         
+        msg += self._dump_pco('suggests')
+        msg += self._dump_pco('enhances')
+        msg += self._dump_pco('recommends')
+        msg += self._dump_pco('supplements')
         msg += self._dump_files(True)
         if msg[-1] != '\n':
             msg += """\n"""
@@ -1399,6 +1412,17 @@ class YumHeaderPackage(YumAvailablePackage):
     def _get_hdr(self):
         return self.hdr
 
+    def _filter_deps(self, name, flag, vers, andmask, resmask):
+        newname = []
+        newflag = []
+        newvers = []
+        for (n, f, v) in zip(name, flag, vers):
+            if f & andmask == resmask:
+                newname.append(n)
+                newflag.append(f)
+                newvers.append(v)
+        return (newname, newflag, newvers)
+
     def _populatePrco(self):
         "Populate the package object with the needed PRCO interface."
 
@@ -1406,6 +1430,17 @@ class YumHeaderPackage(YumAvailablePackage):
                      "CONFLICT": misc.share_data("conflicts"),
                      "REQUIRE":  misc.share_data("requires"),
                      "PROVIDE":  misc.share_data("provides") }
+
+        def _end_nfv(name, flag, vers):
+            flag = map(rpmUtils.miscutils.flagToString, flag)
+            flag = map(misc.share_data, flag)
+
+            vers = map(rpmUtils.miscutils.stringToVersion, vers)
+            vers = map(lambda x: (misc.share_data(x[0]), misc.share_data(x[1]),
+                                  misc.share_data(x[2])), vers)
+
+            return map(misc.share_data, zip(name,flag,vers))
+
         hdr = self._get_hdr()
         for tag in tag2prco:
             name = hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
@@ -1418,22 +1453,44 @@ class YumHeaderPackage(YumAvailablePackage):
                 #  Rpm is a bit magic here, and if pkgA requires(pre/post): foo
                 # it will then let you remove foo _after_ pkgA has been
                 # installed. So we need to mark those deps. as "weak".
+                #  This is not the same as recommends/weak_requires.
                 bits = rpm.RPMSENSE_SCRIPT_PRE | rpm.RPMSENSE_SCRIPT_POST
                 weakreqs = [bool(flag & bits) for flag in lst]
-            flag = map(rpmUtils.miscutils.flagToString, lst)
-            flag = map(misc.share_data, flag)
 
-            lst = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
-            vers = map(rpmUtils.miscutils.stringToVersion, lst)
-            vers = map(lambda x: (misc.share_data(x[0]), misc.share_data(x[1]),
-                                  misc.share_data(x[2])), vers)
-
+            vers = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
             prcotype = tag2prco[tag]
-            self.prco[prcotype] = map(misc.share_data, zip(name,flag,vers))
+            self.prco[prcotype] = _end_nfv(name, lst, vers)
             if tag == 'REQUIRE':
                 weakreqs = zip(weakreqs, self.prco[prcotype])
                 strongreqs = [wreq[1] for wreq in weakreqs if not wreq[0]]
                 self.prco['strong_requires'] = strongreqs
+
+        # This looks horrific as we are supporting both the old and new formats:
+        tag2prco = { "SUGGEST":    ( misc.share_data("suggests"),
+                                     1156, 1157, 1158, 1 << 27, 0),
+                     "ENHANCE":    ( misc.share_data("enhances"),
+                                     1159, 1160, 1161, 1 << 27, 0),
+                     "RECOMMEND":  ( misc.share_data("recommends"),
+                                     1156, 1157, 1158, 1 << 27, 1 << 27),
+                     "SUPPLEMENT": ( misc.share_data("supplements"),
+                                     1159, 1160, 1161, 1 << 27, 1 << 27) }
+        for tag in tag2prco:
+            (prcotype, oldtagn, oldtagv, oldtagf, andmask, resmask) = tag2prco[tag]
+            name = None
+            if _rpm_has_new_weakdeps:
+                name = hdr[getattr(rpm, 'RPMTAG_%sNAME' % tag)]
+            if not name:
+                name = hdr[oldtagn]
+                if not name:
+                    continue
+                (name, flag, vers) = self._filter_deps(name, hdr[oldtagf], hdr[oldtagv], andmask, resmask)
+            else:
+                flag = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
+                vers = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
+            name = map(misc.share_data, name)
+            if not name: # empty or none or whatever, doesn't matter
+                continue
+            self.prco[prcotype] = _end_nfv(name, flag, vers)
     
     def tagByName(self, tag):
         warnings.warn("tagByName() will go away in a furture version of Yum.\n",

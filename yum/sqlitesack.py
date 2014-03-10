@@ -179,7 +179,11 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         self.prco = { 'obsoletes': (),
                       'conflicts': (),
                       'requires': (),
-                      'provides': () }
+                      'provides': (),
+                      'suggests': (),
+                      'enhances': (),
+                      'recommends': (),
+                      'supplements': () }
         self.sack = repo.sack
         self.repoid = repo.id
         self.repo = repo

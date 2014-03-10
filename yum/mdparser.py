@@ -155,7 +155,8 @@ class PrimaryEntry(BaseEntry):
                 p[name] = child.text
 
             elif name in ('provides', 'requires', 'conflicts', 
-                          'obsoletes'):
+                          'obsoletes',
+                          'suggests', 'enhances', 'recommends', 'supplements'):
                 self.prco[name] = self.getPrco(child)
 
             elif name == 'header-range':

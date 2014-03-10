@@ -505,16 +505,12 @@ class YumBase(depsolve.Depsolve):
 
                 if fnmatch.fnmatch(thisrepo.id, i):
                     for opt in self.repo_setopts[i].items:
-                        if not hasattr(thisrepo, opt):
-                            msg = "Repo %s did not have a %s attr. before setopt"
-                            self.logger.warning(msg % (thisrepo.id, opt))
+                        self._checkOption(opt, thisrepo)
                         setattr(thisrepo, opt, getattr(self.repo_setopts[i], opt))
                 
             if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
-                    if not hasattr(thisrepo, opt):
-                        msg = "Repo %s did not have a %s attr. before setopt"
-                        self.logger.warning(msg % (thisrepo.id, opt))
+                    self._checkOption(opt, thisrepo)
                     setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
                     
             if validate and not validate(thisrepo):
@@ -541,6 +537,12 @@ class YumBase(depsolve.Depsolve):
             except Errors.RepoError, e:
                 self.logger.warning(e)
         
+    def _checkOption(self, opt, thisrepo):
+        """Quit if the option is invalid"""
+        if not hasattr(thisrepo, opt):
+            msg = "Invalid option: %s"
+            raise Errors.ConfigError(msg % opt)
+
     def getReposFromConfig(self):
         """Read in repositories from the main yum conf file, and from
         .repo files.  The location of the main yum conf file is given

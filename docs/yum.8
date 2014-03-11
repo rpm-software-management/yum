@@ -250,20 +250,34 @@ Is used to download and make usable all the metadata for the currently enabled
 sure the repos. are current (much like "yum clean expire-cache").
 .IP 
 .IP "\fBgroups\fP"
-A command, new in 3.4.2, that collects all the subcommands that act on groups together.
+A command, new in 3.4.2, that collects all the subcommands that act on groups
+together. Note that recent yum using distributions (Fedora-19+, RHEL-7+) have
+configured group_command=objects which changes how group commands act in some
+important ways.
 
-"\fBgroup install\fP" is used to install all of the individual packages in a group, of the specified
-types (this works as if you'd taken each of those package names and put them on
-the command line for a "yum install" command).
+"\fBgroup install\fP" is used to install all of the individual packages in a
+group, of the specified types (this works as if you'd taken each of those
+package names and put them on the command line for a "yum install" command).
  The group_package_types configuration option specifies which types will
 be installed.
+ If you wish to "reinstall" a group so that you get a package that is currently
+blacklisted the easiest way to do that currently is to install the package
+manually and then run "groups mark packages-sync mygroup mypackagename" (or
+use yumdb to set the group_member of the package(s)).
 
-"\fBgroup update\fP" is just an alias for groupinstall, which will do the right thing because
-"yum install X" and "yum update X" do the same thing, when X is already
-installed.
+"\fBgroup update\fP" is just an alias for group install, when using
+group_command=compat. This will install packages in the group not already
+installed and upgrade existing packages. With group_command=simple it will just
+upgrade already installed packages. With group_command=objects it will try to
+upgrade the group object, installing any available packages not blacklisted
+(marked '-' in group info) and will upgrade the installed packages.
 
-"\fBgroup list\fP" is used to list the available groups from all \fByum\fP repos. Groups are marked
-as "installed" if all mandatory packages are installed, or if a group doesn't
+"\fBgroup list\fP" is used to list the available groups from all \fByum\fP
+repos. When group_command=objects the group is installed if the user
+explicitly installed it (or used the group mark* commands to mark it installed).
+It does not need to have any packages installed.
+When not using group_command=objects groups are shown as "installed" if all
+mandatory packages are installed, or if a group doesn't
 have any mandatory packages then it is installed if any of the optional or
 default package are installed (when not in group_command=objects mode).
 You can pass optional arguments to the list/summary commands: installed,
@@ -299,6 +313,9 @@ meaning of these markers is:
 " " = Package is installed, but wasn't installed via the group (so "group remove foo" won't remove it).
 .br
 "=" = Package is installed, and was installed via the group.
+
+you can move an installed package into an installed group using either
+"group mark package-sync/package-sync-forced" or "yumdb set group_member".
 
 "\fBgroup summary\fP" is used to give a quick summary of how many groups
 are installed and available.

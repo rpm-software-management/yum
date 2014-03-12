@@ -668,6 +668,7 @@ class YumHistory:
 
         self.releasever = releasever
 
+        self._db_file = None
         if not os.path.exists(self.conf.db_path):
             try:
                 os.makedirs(self.conf.db_path)
@@ -680,7 +681,6 @@ class YumHistory:
                 self.conf.writable = True
 
         DBs = glob.glob('%s/history-*-*-*.sqlite' % self.conf.db_path)
-        self._db_file = None
         for d in reversed(sorted(DBs)):
             fname = os.path.basename(d)
             fname = fname[len("history-"):-len(".sqlite")]

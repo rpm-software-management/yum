@@ -1101,6 +1101,23 @@ def get_uuid(savepath):
             pass
         
         return myid
+
+class _Dynamic_UUID(object):
+    def __init__(self, filename):
+        self.filename = filename
+        self.uuid = None
+
+    def __str__(self):
+        if self.uuid is None:
+            self.uuid = get_uuid(self.filename)
+        return self.uuid
+
+    def __unicode__(self):
+        return to_unicode(self.__str__())
+
+def get_uuid_obj(savepath):
+    """ Like get_uuid() but doesn't create the uuid file until it's needed. """
+    return _Dynamic_UUID(savepath)
         
 def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     """take a filename and decompress it into the same relative location.

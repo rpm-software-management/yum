@@ -41,7 +41,7 @@ import rpmUtils.transaction
 import rpmUtils.miscutils
 import Errors
 import types
-from misc import get_uuid, read_in_items_from_dot_dir
+from misc import get_uuid_obj, read_in_items_from_dot_dir
 
 # Alter/patch these to change the default checking...
 __pkgs_gpgcheck_default__ = False
@@ -1060,7 +1060,7 @@ def readStartupConfig(configfile, root, releasever=None):
     startupconf.releasever = releasever
 
     uuidfile = '%s/%s/uuid' % (startupconf.installroot, startupconf.persistdir)
-    startupconf.uuid = get_uuid(uuidfile)
+    startupconf.uuid = get_uuid_obj(uuidfile)
 
     return startupconf
 

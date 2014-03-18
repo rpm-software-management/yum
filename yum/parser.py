@@ -33,6 +33,7 @@ def varReplace(raw, vars):
 
         start, end = m.span()
         done.append(raw[:start])    # Keep stuff leading up to token
+        replacement = str(replacement) # Allow objects now.
         done.append(replacement)    # Append replacement value
         raw = raw[end:]             # Continue with remainder of string
 

@@ -107,13 +107,21 @@ def get_process_info(pid):
         return
     if 'vmsize' not in ps:
         return
-    boot_time = None
-    for line in open("/proc/stat"):
-        if line.startswith("btime "):
-            boot_time = int(line[len("btime "):-1])
-            break
+    boot_time = get_boot_time()
     if boot_time is None:
         return
+    ps.update(get_process_time(pid, boot_time))
+    return ps
+
+
+def get_boot_time():
+    for line in open("/proc/stat"):
+        if line.startswith("btime "):
+            return int(line[len("btime "):-1])
+
+
+def get_process_time(pid, boot_time):
+    ps = {}
     ps_stat = open("/proc/%d/stat" % pid).read().strip()
     # Filename of the executable might contain spaces, so we throw it away
     ps_stat = ps_stat[ps_stat.rfind(')') + 2:].split()

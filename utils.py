@@ -114,18 +114,20 @@ def get_process_info(pid):
             break
     if boot_time is None:
         return
-    ps_stat = open("/proc/%d/stat" % pid).read().split()
-    ps['utime'] = jiffies_to_seconds(ps_stat[13])
-    ps['stime'] = jiffies_to_seconds(ps_stat[14])
-    ps['cutime'] = jiffies_to_seconds(ps_stat[15])
-    ps['cstime'] = jiffies_to_seconds(ps_stat[16])
-    ps['start_time'] = boot_time + jiffies_to_seconds(ps_stat[21])
+    ps_stat = open("/proc/%d/stat" % pid).read().strip()
+    # Filename of the executable might contain spaces, so we throw it away
+    ps_stat = ps_stat[ps_stat.rfind(')') + 2:].split()
+    ps['utime'] = jiffies_to_seconds(ps_stat[11])
+    ps['stime'] = jiffies_to_seconds(ps_stat[12])
+    ps['cutime'] = jiffies_to_seconds(ps_stat[13])
+    ps['cstime'] = jiffies_to_seconds(ps_stat[14])
+    ps['start_time'] = boot_time + jiffies_to_seconds(ps_stat[19])
     ps['state'] = {'R' : _('Running'),
                    'S' : _('Sleeping'),
                    'D' : _('Uninterruptible'),
                    'Z' : _('Zombie'),
                    'T' : _('Traced/Stopped')
-                   }.get(ps_stat[2], _('Unknown'))
+                   }.get(ps_stat[0], _('Unknown'))
                    
     return ps
 

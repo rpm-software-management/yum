@@ -37,6 +37,7 @@ import tempfile
 import shutil
 import distutils.spawn
 import glob
+import errno
 
 import yum.config
 from yum import updateinfo
@@ -4742,7 +4743,16 @@ class FSCommand(YumCommand):
 
         for fname in sorted(pfr['not']):
             print _('Removing:'), fname
-            misc.unlink_f(fname)
+            try: # Ignore everything, unlink_f() doesn't.
+                os.unlink(fname)
+            except OSError, e:
+                if e.errno == errno.EISDIR:
+                    try:
+                        os.rmdir(fname)
+                    except:
+                        pass
+            except:
+                pass
 
     def _fs_diff(self, base, extcmds):
         def deal_with_file(fpath):

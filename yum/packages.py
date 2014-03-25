@@ -1197,7 +1197,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
     def _dump_pco(self, pcotype):
            
         msg = ""
-        mylist = getattr(self, pcotype)
+        mylist = self.returnPrco(pcotype)
         if mylist: msg = "\n    <rpm:%s>\n" % pcotype
         for (name, flags, (e,v,r)) in sorted(mylist):
             pcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)

@@ -391,7 +391,17 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
             # pkg not installed so we don't know require flags yet
             # returning all requires should work in most cases
             prcotype = 'requires'
-        if isinstance(self.prco[prcotype], tuple):
+
+        # Check for the new weak deps. tables...
+        sql_table_exists = True
+        if prcotype in ('suggests', 'enhances', 'recommends', 'supplements'):
+            cur = self._sql_MD('primary', "PRAGMA index_info(%s)" % prcotype)
+            for ob in cur:
+                break
+            else:
+                sql_table_exists = False
+
+        if sql_table_exists and isinstance(self.prco[prcotype], tuple):
             sql = "SELECT name, version, release, epoch, flags " \
                   "FROM %s WHERE pkgKey = ?" % prcotype
             cur = self._sql_MD('primary', sql, (self.pkgKey,))

@@ -1956,7 +1956,7 @@ much more problems).
                     if var == 'releasever': continue
                     if var == 'basearch': continue # This "never" changes.
                     if var == 'arch':     continue
-                    # Skip uuid?
+                    if var == 'uuid':     continue
                     setattr(po.yumdb_info, 'var_' + var, self.conf.yumvar[var])
                 if oil:
                     po.yumdb_info.ts_install_langs = oil

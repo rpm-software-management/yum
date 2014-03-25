@@ -1811,6 +1811,8 @@ class RPMDBAdditionalDataPackage(object):
         return os.path.normpath(self._mydir + '/' + attr)
 
     def _write(self, attr, value):
+        value = str(value)
+
         # check for self._conf.writable before going on?
         if not os.path.exists(self._mydir):
             _makedirs_no_umask(self._mydir)

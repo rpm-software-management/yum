@@ -306,7 +306,7 @@ to each package saying how that package relates to the group object. The
 meaning of these markers is:
 
 .br
-"-" = Package isn't installed, and won't be installed as part of the group (Eg. group install foo -pkgA … this will have pkgA marked as '-')
+"-" = Package isn't installed, and won't be installed as part of the group (Eg.  "yum group install foo -pkgA" or "yum group install foo; yum remove pkgA" … this will have pkgA marked as '-')
 .br
 "+" = Package isn't installed, but will be the next time you run "yum upgrade" or "yum group upgrade foo"
 .br

@@ -395,7 +395,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         # Check for the new weak deps. tables...
         sql_table_exists = True
         if prcotype in ('suggests', 'enhances', 'recommends', 'supplements'):
-            cur = self._sql_MD('primary', "PRAGMA index_info(%s)" % prcotype)
+            cur = self._sql_MD('primary', "PRAGMA table_info(%s)" % prcotype)
             for ob in cur:
                 break
             else:

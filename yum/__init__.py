@@ -562,6 +562,7 @@ class YumBase(depsolve.Depsolve):
             # if we don't do this then anaconda likes to not  work.
             if os.path.exists(self.conf.installroot+'/'+reposdir):
                 reposdir = self.conf.installroot + '/' + reposdir
+            reposdir = os.path.normpath(reposdir)
 
             if os.path.isdir(reposdir):
                 for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):

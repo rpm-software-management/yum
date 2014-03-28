@@ -2033,11 +2033,14 @@ class YumInstalledPackage(YumHeaderPackage):
                     problems.append(prob)
 
                 my_mode = my_st.st_mode
+                pf_mode = pf.mode
+                perm_mask = 0777
                 if 'ghost' in ftypes: #  This is what rpm does, although it
-                    my_mode &= 0777   # doesn't usually get here.
-                if check_perms and pf.verify_mode and my_mode != pf.mode:
+                    my_mode &= perm_mask   # doesn't usually get here.
+                    pf_mode &= perm_mask
+                if check_perms and pf.verify_mode and my_mode != pf_mode:
                     prob = _PkgVerifyProb('mode', 'mode does not match', ftypes)
-                    prob.database_value = pf.mode
+                    prob.database_value = pf_mode
                     prob.disk_value     = my_st.st_mode
                     problems.append(prob)
 

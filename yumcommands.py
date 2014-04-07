@@ -3716,7 +3716,7 @@ class RepoPkgsCommand(YumCommand):
                 # repo.
                 for txmbr in txmbrs[:]:
                     pkgs = base.pkgSack.searchNames([txmbr.name])
-                    apkgs = None
+                    apkgs = []
                     for pkg in sorted(pkgs):
                         if pkg.repoid == repoid: # Backwards filter_pkgs_repoid
                             continue

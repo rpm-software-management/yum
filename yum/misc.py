@@ -360,7 +360,6 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
 
         if type(file) is types.StringType:
             fo.close()
-            del fo
             
         # This screws up the length, but that shouldn't matter. We only care
         # if this checksum == what we expect.

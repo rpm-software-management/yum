@@ -4324,7 +4324,7 @@ class FSCommand(YumCommand):
         return "[]"
 
     def getSummary(self):
-        return _("Creates filesystem snapshots, or lists/deletes current snapshots.")
+        return _("Acts on the filesystem data of the host, mainly for removing docs/lanuages for minimal hosts.")
 
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.

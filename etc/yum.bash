@@ -172,9 +172,10 @@ _yum()
         _get_comp_words_by_ref -n = cur prev words
 
     # Commands offered as completions
-    local cmds=( autoremove check check-update clean deplist distro-sync downgrade
-        erase groups help history info install list load-transaction makecache provides
-        reinstall remove repolist search shell update upgrade version )
+    local cmds=( autoremove check check-update clean deplist distro-sync
+        downgrade erase fs groups help history info install list
+        load-transaction makecache provides reinstall remove repolist search
+        shell update upgrade version )
 
     local i c cmd subcmd
     for (( i=1; i < ${#words[@]}-1; i++ )) ; do
@@ -230,6 +231,31 @@ _yum()
                 _yum_binrpmfiles "$cur"
                 _yum_list installed "$cur"
             fi
+            return 0
+            ;;
+
+        fs)
+            if [[ $prev == $cmd ]] ; then
+                COMPREPLY=( $( compgen -W 'filters filter refilter
+                    refilter-cleanup du status diff' -- "$cur" ) )
+                return 0
+            fi
+            case $subcmd in
+                filter)
+                    COMPREPLY=( $( compgen -W 'languages documentation' \
+                        -- "$cur" ) )
+                    return 0
+                    ;;
+                refilter|refilter-cleanup)
+                    _yum_list installed "$cur"
+                    return 0
+                    ;;
+                du|status|diff)
+                    local IFS=$'\n'
+                    COMPREPLY=( $( compgen -f -o plusdirs -- "$cur" ) )
+                    return 0
+                    ;;
+            esac
             return 0
             ;;
 

@@ -351,7 +351,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
         if type(file) not in types.StringTypes:
             fo = file # assume it's a file-like-object
         else:           
-            fo = open(file, 'r', CHUNK)
+            fo = open(file, 'r')
 
         data = Checksums([sumtype])
         while data.read(fo, CHUNK):

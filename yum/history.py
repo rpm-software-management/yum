@@ -697,7 +697,9 @@ class YumHistory:
             break
 
         if self._db_file is None:
-            self._create_db_file()
+            if not self._create_db_file():
+                # Couldn't create a db file
+                return
         
         # make an addon path for where we're going to stick 
         # random additional history info - probably from plugins and what-not
@@ -1603,8 +1605,10 @@ class YumHistory:
             if os.path.exists(_db_file + '-journal'):
                 os.rename(_db_file  + '-journal', _db_file + '-journal.old')
         self._db_file = _db_file
+        if not self.conf.writable:
+            return False
         
-        if self.conf.writable and not os.path.exists(self._db_file):
+        if not os.path.exists(self._db_file):
             # make them default to 0600 - sysadmin can change it later
             # if they want
             fo = os.open(self._db_file, os.O_CREAT, 0600)
@@ -1659,6 +1663,7 @@ class YumHistory:
         for op in self._update_ops_3:
             cur.execute(op)
         self._commit()
+        return True
 
 # Pasted from sqlitesack
 _FULL_PARSE_QUERY_BEG = """

@@ -4139,7 +4139,8 @@ class UpdateinfoCommand(YumCommand):
 
 class UpdateMinimalCommand(YumCommand):
     def getNames(self):
-        return ['update-minimal', 'upgrade-minimal']
+        return ['update-minimal', 'upgrade-minimal',
+                'minimal-update', 'minimal-upgrade']
 
     def getUsage(self):
         return "[PACKAGE-wildcard]"

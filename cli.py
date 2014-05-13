@@ -193,7 +193,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if len(vals) < 2:
                 bad_setopt_ne.append(item)
                 continue
-            k,v = vals
+            k, v = [i.strip() for i in vals]
             period = k.rfind('.')
             if period != -1:
                 repo = k[:period]

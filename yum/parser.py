@@ -18,6 +18,8 @@ def varReplace(raw, vars):
     @return: Input raw string with substituted values.
     '''
 
+    if not vars:
+        return raw
     done = []                      # Completed chunks to return
 
     while raw:
@@ -136,6 +138,7 @@ class ConfigPreProcessor:
                              'Error parsing config %s: include must specify file to include.' % (self.name)
                     else:
                         # whooohoo a valid include line.. push it on the stack
+                        url = varReplace(url, self._vars)
                         fo = self._pushfile( url )
                 else:
                     # check if the current line starts a new section
@@ -156,9 +159,7 @@ class ConfigPreProcessor:
             line = line.lstrip()
         # at this point we have a line from the topmost file on the stack
         # or EOF if the stack is empty
-        if self._vars:
-            return varReplace(line, self._vars)
-        return line
+        return varReplace(line, self._vars)
     
     
     def _absurl( self, url ):

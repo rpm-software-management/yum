@@ -145,8 +145,9 @@ class YumPackageSack(packageSack.PackageSack):
         elif datatype in ['filelists', 'otherdata']:
             if repo in self.added:
                 if 'metadata' not in self.added[repo]:
-                    raise Errors.RepoError, '%s md for %s imported before primary' \
-                           % (datatype, repo.ui_id)
+                    raise Errors.RepoError('%s md for %s imported before primary' \
+                           % (datatype, repo.ui_id),
+                                           repo=self)
             current = 0
             for pkgid in dataobj:
                 current += 1
@@ -238,7 +239,8 @@ class YumPackageSack(packageSack.PackageSack):
                         db_un_fn = self._check_uncompressed_db_gen(repo,
                                                                    mydbtype)
                     if not db_un_fn: # Shouldn't happen?
-                        raise Errors.RepoError, '%s: Check uncompressed DB failed' % repo
+                        raise Errors.RepoError('%s: Check uncompressed DB failed' % repo,
+                                               repo=self)
 
                 dobj = repo.cacheHandler.open_database(db_un_fn)
 
@@ -252,7 +254,8 @@ class YumPackageSack(packageSack.PackageSack):
                 gen = mymdtype + '.xml'
                 ret = misc.repo_gen_decompress(xml, gen, cached=repo.cache)
                 if not ret:
-                    raise Errors.RepoError, '%s: Decompress DB failed' % repo
+                    raise Errors.RepoError('%s: Decompress DB failed' % repo,
+                                           repo=self)
                 xml = ret
                 # Convert XML => .sqlite
                 xmldata = repo.repoXML.getData(mymdtype)
@@ -492,7 +495,8 @@ class YumRepository(Repository, config.RepoConf):
         except (Errors.MiscError, EnvironmentError), e:
             if checksum_can_fail:
                 return None
-            raise Errors.RepoError, 'Error opening file for checksum: %s' % e
+            raise Errors.RepoError('Error opening file for checksum: %s' % e,
+                                   repo=self)
 
     def dump(self):
         output = '[%s]\n' % self.id
@@ -550,8 +554,8 @@ class YumRepository(Repository, config.RepoConf):
         """self-check the repo information  - if we don't have enough to move
            on then raise a repo error"""
         if len(self._urls) < 1 and not self.mediaid:
-            raise Errors.RepoError, \
-             'Cannot find a valid baseurl for repo: %s' % self.ui_id
+            raise Errors.RepoError('Cannot find a valid baseurl for repo: %s' %
+                                   self.ui_id, repo=self)
 
     def doProxyDict(self):
         if self._proxy_dict:
@@ -703,7 +707,7 @@ class YumRepository(Repository, config.RepoConf):
         except OSError, e:
             msg = "%s: %s %s: %s" % ("Error making cache directory",
                                      dpath, "error was", e)
-            raise Errors.RepoError, msg
+            raise Errors.RepoError(msg, repo=self)
 
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""
@@ -887,7 +891,7 @@ class YumRepository(Repository, config.RepoConf):
                     if not os.path.exists(self.metalink_filename):
                         msg = ("Cannot retrieve metalink for repository: %s. "
                                "Please verify its path and try again" % self.ui_id )
-                        raise Errors.RepoError, msg
+                        raise Errors.RepoError(msg, repo=self)
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
                     print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))                    
@@ -944,18 +948,16 @@ class YumRepository(Repository, config.RepoConf):
             copy_local = self.copy_local
 
         if local is None or relative is None:
-            raise Errors.RepoError, \
-                  "get request for Repo %s, gave no source or dest" % self.ui_id
+            raise Errors.RepoError("get request for Repo %s, gave no source or dest" % self.ui_id,
+                                   repo=self)
 
         if self.cache == 1:
             if os.path.exists(local): # FIXME - we should figure out a way
                 return local          # to run the checkfunc from here
 
             else: # ain't there - raise
-                raise Errors.RepoError, \
-                    "Caching enabled but no local cache of %s from %s" % (local,
-
-                           self.ui_id)
+                raise Errors.RepoError("Caching enabled but no local cache of %s from %s" % (local, self.ui_id),
+                                       repo=self)
 
         if url:
             (scheme, netloc, path, query, fragid) = urlparse.urlsplit(url)
@@ -977,11 +979,11 @@ class YumRepository(Repository, config.RepoConf):
             dirstat = os.statvfs(os.path.dirname(local))
             avail = dirstat.f_bavail * dirstat.f_bsize
             if avail < long(size):
-                raise Errors.RepoError, _('''\
+                raise Errors.RepoError(_('''\
 Insufficient space in download directory %s
     * free   %s
     * needed %s'''
-                ) % (os.path.dirname(local), format_number(avail), format_number(long(size)))
+                ) % (os.path.dirname(local), format_number(avail), format_number(long(size))), repo=self)
 
         if url and scheme != "media":
             ugopts = self._default_grabopts(cache=cache)
@@ -1004,9 +1006,7 @@ Insufficient space in download directory %s
             except URLGrabError, e:
                 self._del_dl_file(local, size)
                 errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self, e)
-                e = Errors.RepoError(errstr)
-                e.repo = self
-                raise e
+                raise Errors.RepoError(errstr, repo=self)
 
         else:
             headers = tuple(self.__headersListFromDict(cache=cache))
@@ -1025,9 +1025,7 @@ Insufficient space in download directory %s
                 self._del_dl_file(local, size)
                 errstr = "failure: %s from %s: %s" % (relative, self, e)
                 errors = getattr(e, 'errors', None)
-                e = Errors.NoMoreMirrorsRepoError(errstr, errors)
-                e.repo = self
-                raise e
+                raise Errors.NoMoreMirrorsRepoError(errstr, errors, repo=self)
 
         return result
     __get = _getFile
@@ -1062,7 +1060,7 @@ Insufficient space in download directory %s
             # Don't return as "success" when bad.
             msg = "Downloaded package %s, from %s, but it was invalid."
             msg = msg % (package, package.repo.id)
-            raise Errors.RepoError, msg
+            raise Errors.RepoError(msg, repo=self)
 
         return ret
 
@@ -1118,7 +1116,8 @@ Insufficient space in download directory %s
             return self._metadataCurrent
 
         if self.cache and not os.path.exists(self.metalink_filename):
-            raise Errors.RepoError, 'Cannot find metalink.xml file for %s' %self
+            raise Errors.RepoError('Cannot find metalink.xml file for %s' %self,
+                                   repo=self)
 
         if self.cache:
             self._metadataCurrent = True
@@ -1209,7 +1208,8 @@ Insufficient space in download directory %s
     def _cachingRepoXML(self, local):
         """ Should we cache the current repomd.xml """
         if self.cache and not os.path.exists(local):
-            raise Errors.RepoError, 'Cannot find repomd.xml file for %s' % self.ui_id
+            raise Errors.RepoError('Cannot find repomd.xml file for %s' % self.ui_id,
+                                   repo=self)
         if self.cache or self.metadataCurrent():
             return True
         return False
@@ -1237,7 +1237,8 @@ Insufficient space in download directory %s
             misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
-            raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
+            raise Errors.RepoError('Error downloading file %s: %s' % (local, e),
+                                   repo=self)
         except Errors.RepoError:
             misc.unlink_f(tfname)
             if grab_can_fail:
@@ -1252,8 +1253,9 @@ Insufficient space in download directory %s
             misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
-            raise Errors.RepoError, 'Error renaming file %s to %s' % (result,
-                                                                      local)
+            raise Errors.RepoError('Error renaming file %s to %s' % (result,
+                                                                      local),
+                                   repo=self)
         return local
 
     def _parseRepoXML(self, local, parse_can_fail=None):
@@ -1265,7 +1267,8 @@ Insufficient space in download directory %s
                 parse_can_fail = 'old_repo_XML' in self._oldRepoMDData
             if parse_can_fail:
                 return None
-            raise Errors.RepoError, 'Error importing repomd.xml from %s: %s' % (self.ui_id, e)
+            raise Errors.RepoError('Error importing repomd.xml from %s: %s' % (self.ui_id, e),
+                                   repo=self)
 
     def _saveOldRepoXML(self, local):
         """ If we have an older repomd.xml file available, save it out. """
@@ -1292,7 +1295,8 @@ Insufficient space in download directory %s
         #  We still want the old data, so we don't download twice. So we
         # pretend everything is good until the revert.
         if not self.timestamp_check:
-            raise Errors.RepoError, "Can't download or revert repomd.xml for %s" % self.ui_id
+            raise Errors.RepoError("Can't download or revert repomd.xml for %s" % self.ui_id,
+                                   repo=self)
 
         if 'old_repo_XML' not in self._oldRepoMDData:
             self._oldRepoMDData = {}
@@ -1658,7 +1662,8 @@ Insufficient space in download directory %s
         except KeyboardInterrupt:
             self._revertOldRepoXML() # Undo metadata cookie?
             raise
-        raise Errors.RepoError, 'Bad loadRepoXML policy (for %s): %s' % (self.ui_id, self.mdpolicy)
+        raise Errors.RepoError('Bad loadRepoXML policy (for %s): %s' % (self.ui_id, self.mdpolicy),
+                               repo=self)
 
     def _getRepoXML(self):
         if self._repoXML:
@@ -1816,7 +1821,7 @@ Insufficient space in download directory %s
                 msg = "Caching enabled and local cache: %s does not match checksum" % local
             else:
                 msg = "Caching enabled but no local cache of %s from %s" % (local, self.ui_id)
-            raise Errors.RepoError, msg
+            raise Errors.RepoError(msg, repo=self)
 
         try:
             def checkfunc(obj):
@@ -1851,8 +1856,8 @@ Insufficient space in download directory %s
         except URLGrabError, e:
             if retrieve_can_fail:
                 return None
-            raise Errors.RepoError, \
-                "Could not retrieve %s matching remote checksum from %s" % (local, self.ui_id)
+            raise Errors.RepoError("Could not retrieve %s matching remote checksum from %s" % (local, self.ui_id),
+                                   repo=self)
         else:
             return local
 

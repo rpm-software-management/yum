@@ -924,7 +924,8 @@ class YumBase(depsolve.Depsolve):
                 continue
                 
             if not repo.ready():
-                raise Errors.RepoError, "Repository '%s' not yet setup" % repo
+                raise Errors.RepoError("Repository '%s' not yet setup" % repo,
+                                       repo=repo)
             try:
                 groupremote = repo.getGroupLocation()
             except Errors.RepoMDError, e:
@@ -2652,8 +2653,8 @@ much more problems).
                 return
         else:
             if self.conf.cache:
-                raise Errors.RepoError, \
-                _('Header not in local cache and caching-only mode enabled. Cannot download %s') % po.hdrpath
+                raise Errors.RepoError(_('Header not in local cache and caching-only mode enabled. Cannot download %s') % po.hdrpath,
+                                       repo=repo)
         
         if self.dsCallback: self.dsCallback.downloadHeader(po.name)
         

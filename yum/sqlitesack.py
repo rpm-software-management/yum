@@ -52,6 +52,8 @@ def catchSqliteException(func):
                     raise Errors.RepoError, str(e.message)
                 else:
                     raise Errors.RepoError, str(e)
+            #  Note that we can't easily get "repo" here, AFAIK. So we can't
+            # tell what failed.
             raise Errors.RepoError, str(e)
 
     newFunc.__name__ = func.__name__
@@ -748,7 +750,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             data = self._sql_MD('primary', repo, sql, (pkgKey,)).fetchone()
             if data is None:
                 msg = "pkgKey %s doesn't exist in repo %s" % (pkgKey, repo)
-                raise Errors.RepoError, msg
+                raise Errors.RepoError(msg, repo=repo)
             if exclude and self._pkgExcludedRKD(repo, pkgKey, data):
                 return None
             po = self.pc(repo, data)
@@ -817,7 +819,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self.excludes[repo] = {}
 
         if dataobj is None:
-            raise Errors.RepoError, "Tried to add None %s to %s" % (datatype, repo)
+            raise Errors.RepoError("Tried to add None %s to %s" % (datatype, repo),
+                                   repo=repo)
 
         if datatype == 'metadata':
             self.primarydb[repo] = dataobj
@@ -827,7 +830,8 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             self.otherdb[repo] = dataobj
         else:
             # We can not handle this yet...
-            raise Errors.RepoError, "Sorry sqlite does not support %s in %s" % (datatype, repo)
+            raise Errors.RepoError("Sorry sqlite does not support %s in %s" % (datatype, repo),
+                                   repo=repo)
     
         self.added[repo].append(datatype)
 
@@ -956,7 +960,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
             pri_pkgs = self._sql_MD_pkg_num('primary',   repo)
             fil_pkgs = self._sql_MD_pkg_num('filelists', repo)
             if pri_pkgs != fil_pkgs:
-                raise Errors.RepoError
+                raise Errors.RepoError('Check of Primary and Filelists sync. failed.', repo=repo)
             repo._checked_filelists_pkgs = True
 
         sql_params = []

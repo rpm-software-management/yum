@@ -74,17 +74,24 @@ class DepError(YumBaseError):
     pass
     
 class RepoError(YumBaseError):
-    pass
+    def __init__(self, value=None, repo=None):
+        Exception.__init__(self)
+        self.value = value
+        if repo is not None:
+            self.repo = repo
 
 class DuplicateRepoError(RepoError):
     pass
 
 # Have our own custom .value with all the mirror errors.
 class NoMoreMirrorsRepoError(RepoError):
-    def __init__(self, value=None, errors=None):
+    # Weird backcompat. on argument ordering.
+    def __init__(self, value=None, errors=None, repo=None):
         Exception.__init__(self)
         self._value = value
         self.errors = errors
+        if repo is not None:
+            self.repo = repo
 
     @property
     def value(self):

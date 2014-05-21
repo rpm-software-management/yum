@@ -906,6 +906,8 @@ class YumConf(StartupConf):
 
     check_config_file_age = BoolOption(True)
 
+    usr_w_check = BoolOption(True)
+
     _reposlist = []
 
     def dump(self):

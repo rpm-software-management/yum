@@ -209,6 +209,17 @@ def main(args):
             logger.critical(msg)
         if unlock(): return 200
         return 3
+
+    # Mainly for ostree, but might be useful for others.
+    if base.conf.usr_w_check:
+        usrinstpath = base.conf.installroot + "/usr"
+        usrinstpath = usrinstpath.replace('//', '/')
+        if not os.access(usrinstpath, os.W_OK):
+            logger.critical(_('No write access to %s directory') % usrinstpath)
+            logger.critical(_('  Maybe this is an ostree image?'))
+            logger.critical(_('  To disable you can use --setopt=usr_w_check=false'))
+            if unlock(): return 200
+            return 1
             
     # Depsolve stage
     verbose_logger.log(logginglevels.INFO_2, _('Resolving Dependencies'))

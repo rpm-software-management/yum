@@ -214,7 +214,8 @@ def main(args):
     if base.conf.usr_w_check:
         usrinstpath = base.conf.installroot + "/usr"
         usrinstpath = usrinstpath.replace('//', '/')
-        if not os.access(usrinstpath, os.W_OK):
+        if (os.path.exists(usrinstpath) and
+            not os.access(usrinstpath, os.W_OK)):
             logger.critical(_('No write access to %s directory') % usrinstpath)
             logger.critical(_('  Maybe this is an ostree image?'))
             logger.critical(_('  To disable you can use --setopt=usr_w_check=false'))

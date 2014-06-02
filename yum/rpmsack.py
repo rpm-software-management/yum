@@ -1633,14 +1633,31 @@ class RPMDBPackageSack(PackageSackBase):
                 problems.append(RPMDBProblemObsoleted(pkg, obsoleter=obspo))
         return problems
 
+    def _check_provides_get(self, pkg, provtup):
+        """ This is kind of a super quick version of getProvides(), because all
+            we really care about is that the rpm provides index is functional.
+            We already know the answer to the provides. """
+
+        if False: # This is the slow/steady way...
+            name, flags, version = provtup
+            return pkg in self.getProvides(name, flags, version)
+
+        prcotype = 'provides'
+        n = provtup[0]
+        tag = self.DEP_TABLE[prcotype][0]
+        for hdr, idx in self._get_packages(tag, misc.to_utf8(n)):
+            po = self._makePackageObject(hdr, idx)
+            if po == pkg:
+                return True
+        return False
+
     def check_provides(self):
         """ For each package, check that a provides search for it's name (and
             everything it provides) finds it. """
         problems = []
         for pkg in sorted(self.returnPackages()):
             for provtup in pkg.provides:
-                name, flags, version = provtup
-                if pkg not in self.getProvides(name, flags, version):
+                if not self._check_provides_get(pkg, provtup):
                     problems.append(RPMDBProblemProvides(pkg, provide=provtup))
                     break
         return problems

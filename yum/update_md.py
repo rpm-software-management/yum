@@ -527,9 +527,9 @@ class UpdateMetadata(object):
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
 
-        def _rid(repoid, fmt=_(' (from %s)')):
+        def _rid(repoid, fmt=_('(from %s)')):
             if not repoid:
-                return ''
+                return  fmt % _("UNKNOWN")
             return fmt % repoid
 
         if not obj:
@@ -559,7 +559,7 @@ class UpdateMetadata(object):
                 try:
                     un = UpdateNotice(elem)
                 except UpdateNoticeException, e:
-                    msg = _("An update notice%s is broken, skipping.") % _rid(repoid)
+                    msg = _("An update notice %s is broken, skipping.") % _rid(repoid)
                     if self._vlogger:
                         self._vlogger.log(logginglevels.DEBUG_1, "%s", msg)
                     else:
@@ -567,9 +567,9 @@ class UpdateMetadata(object):
                     continue
 
                 if not self.add_notice(un):
-                    msg = _("Update notice %s%s is broken, or a bad duplicate, skipping.") % (un['update_id'], _rid(repoid))
+                    msg = _("Update notice %s %s is broken, or a bad duplicate, skipping.") % (un['update_id'], _rid(repoid))
                     if not have_dup:
-                        msg += _('\nYou should report this problem to the owner of the %srepository.') % _rid(repoid, "%s ")
+                        msg += _('\nYou should report this problem to the owner of the %s repository.') % _rid(repoid, "%s")
                     have_dup = True
                     if self._vlogger:
                         self._vlogger.warn("%s", msg)

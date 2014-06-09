@@ -527,9 +527,9 @@ class UpdateMetadata(object):
     def add(self, obj, mdtype='updateinfo'):
         """ Parse a metadata from a given YumRepository, file, or filename. """
 
-        def _rid(repoid, fmt=_('(from %s)')):
+        def _rid(repoid, fmt=_('(from %s)'), unknown=_("<unknown>")):
             if not repoid:
-                return  fmt % _("UNKNOWN")
+                repoid = unknown
             return fmt % repoid
 
         if not obj:

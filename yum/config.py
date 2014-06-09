@@ -1022,6 +1022,23 @@ class VersionGroupConf(BaseConfig):
     pkglist = ListOption()
     run_with_packages = BoolOption(False)
 
+def _read_yumvars(yumvars, root):
+    # Read the FS yumvars
+    try:
+        dir_fsvars = root + "/etc/yum/vars/"
+        fsvars = os.listdir(dir_fsvars)
+    except OSError:
+        fsvars = []
+    for fsvar in fsvars:
+        if os.path.islink(dir_fsvars + fsvar):
+            continue
+        try:
+            val = open(dir_fsvars + fsvar).readline()
+            if val and val[-1] == '\n':
+                val = val[:-1]
+        except (OSError, IOError):
+            continue
+        yumvars[fsvar] = val
 
 def readStartupConfig(configfile, root, releasever=None):
     """Parse Yum's main configuration file and return a
@@ -1044,6 +1061,7 @@ def readStartupConfig(configfile, root, releasever=None):
     confpp_obj = ConfigPreProcessor(configfile)
 
     yumvars = _getEnvVar()
+    _read_yumvars(yumvars, yumconf.installroot)
     confpp_obj._vars = yumvars
     startupconf.yumvars = yumvars
 
@@ -1102,22 +1120,12 @@ def readMainConfig(startupconf):
         ir_path = varReplace(ir_path, yumvars)
         setattr(yumconf, option, ir_path)
     
-    # Read the FS yumvars
-    try:
-        dir_fsvars = yumconf.installroot + "/etc/yum/vars/"
-        fsvars = os.listdir(dir_fsvars)
-    except OSError:
-        fsvars = []
-    for fsvar in fsvars:
-        if os.path.islink(dir_fsvars + fsvar):
-            continue
-        try:
-            val = open(dir_fsvars + fsvar).readline()
-            if val and val[-1] == '\n':
-                val = val[:-1]
-        except (OSError, IOError):
-            continue
-        yumvars[fsvar] = val
+    if StartupConf.installroot.default != yumconf.installroot:
+        #  Note that this isn't perfect, in that if the initial installroot has
+        # X=Y, and X doesn't exist in the new installroot ... then we'll still
+        # have X afterwards (but if the new installroot has X=Z, that will be
+        # the value after this).
+        _read_yumvars(yumvars, yumconf.installroot)
 
     # These can use the above FS yumvars
     for option in ('cachedir', 'logfile', 'persistdir'):

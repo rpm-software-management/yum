@@ -1042,6 +1042,11 @@ def readStartupConfig(configfile, root, releasever=None):
     startupconf.config_file_path = configfile
     parser = ConfigParser()
     confpp_obj = ConfigPreProcessor(configfile)
+
+    yumvars = _getEnvVar()
+    confpp_obj._vars = yumvars
+    startupconf.yumvars = yumvars
+
     try:
         parser.readfp(confpp_obj)
     except ParsingError, e:
@@ -1076,7 +1081,7 @@ def readMainConfig(startupconf):
     # ' xemacs syntax hack
 
     # Set up substitution vars
-    yumvars = _getEnvVar()
+    yumvars = startupconf.yumvars
     yumvars['basearch'] = startupconf.basearch
     yumvars['arch'] = startupconf.arch
     yumvars['releasever'] = startupconf.releasever

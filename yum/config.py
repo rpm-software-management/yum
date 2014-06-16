@@ -1061,7 +1061,7 @@ def readStartupConfig(configfile, root, releasever=None):
     confpp_obj = ConfigPreProcessor(configfile)
 
     yumvars = _getEnvVar()
-    _read_yumvars(yumvars, yumconf.installroot)
+    _read_yumvars(yumvars, startupconf.installroot)
     confpp_obj._vars = yumvars
     startupconf.yumvars = yumvars
 

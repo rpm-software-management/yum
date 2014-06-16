@@ -270,7 +270,11 @@ def main(args):
 
     # Run the transaction
     try:
-        return_code = base.doTransaction()
+        inhibit = {'what' : 'shutdown:idle',
+                   'who'  : 'yum cli',
+                   'why'  : 'Running transaction', # i18n?
+                   'mode' : 'block'}
+        return_code = base.doTransaction(inhibit=inhibit)
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.RepoError, e:

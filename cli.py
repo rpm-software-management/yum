@@ -69,6 +69,18 @@ class CliError(yum.Errors.YumBaseError):
         yum.Errors.YumBaseError.__init__(self)
         self.args = args
 
+def sys_inhibit(what, who, why, mode):
+    """ Tell systemd to inhibit shutdown, via. dbus. """
+    try:
+        import dbus
+        bus = dbus.SystemBus()
+        proxy = bus.get_object('org.freedesktop.login1',
+                               '/org/freedesktop/login1')
+        iface = dbus.Interface(proxy, 'org.freedesktop.login1.Manager')
+        return iface.Inhibit(what, who, why, mode)
+    except:
+        return None
+
 class YumBaseCli(yum.YumBase, output.YumOutput):
     """This is the base class for yum cli."""
        
@@ -571,7 +583,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 
-    def doTransaction(self):
+    def doTransaction(self, inhibit={'what' : 'shutdown:idle',
+                                     'who'  : 'yum API',
+                                     'why'  : 'Running transaction', # i18n?
+                                     'mode' : 'block'}):
         """Take care of package downloading, checking, user
         confirmation and actually running the transaction.
 
@@ -768,8 +783,23 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.conf.debuglevel < 2:
             cb.display.output = False
 
-        self.verbose_logger.log(yum.logginglevels.INFO_2, _('Running transaction'))
+        inhibited = False
+        if inhibit:
+            fd = sys_inhibit(inhibit['what'], inhibit['who'],
+                             inhibit['why'], inhibit['mode'])
+            if fd is not None:
+                msg = _('Running transaction (shutdown inhibited)')
+                inhibited = True
+        if not inhibited:
+            msg = _('Running transaction')
+
+        self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
         resultobject = self.runTransaction(cb=cb)
+
+        #  fd is either None or dbus.UnifFD() and the real API to close is thus:
+        # if fd is not None: os.close(fd.take())
+        # ...but this is easier, doesn't require a test and works.
+        del fd
 
         self.verbose_logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # close things

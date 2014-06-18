@@ -1419,12 +1419,15 @@ class YumHeaderPackage(YumAvailablePackage):
         newname = []
         newflag = []
         newvers = []
-        for (n, f, v) in zip(name, flag, vers):
-            if f & andmask == resmask:
-                newname.append(n)
-                newflag.append(f)
-                newvers.append(v)
-        return (newname, newflag, newvers)
+        try:
+            for (n, f, v) in zip(name, flag, vers):
+                if f & andmask == resmask:
+                    newname.append(n)
+                    newflag.append(f)
+                    newvers.append(v)
+            return (newname, newflag, newvers)
+        except TypeError:
+            return [], [], []
 
     def _populatePrco(self):
         "Populate the package object with the needed PRCO interface."

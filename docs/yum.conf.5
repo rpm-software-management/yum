@@ -128,10 +128,11 @@ Command-line option: \fB\--assumeno\fP
 
 .IP
 \fBalwaysprompt\fR
-Either `1' or `0'. Without this option, yum will not prompt for confirmation
+Either `1' or `0'. When set to `0', yum will not prompt for confirmation
 when the list of packages to be installed exactly matches those given on the
-command line. Unless \fBassumeyes\fR is enabled, it will still prompt when
-additional packages need to be installed to fulfill dependencies. Note that
+command line. Unless \fBassumeyes\fR is enabled, it will prompt when
+additional packages need to be installed to fulfill dependencies
+regardless of this setting. Note that
 older versions of yum would also always prompt for package removal, and that is
 no longer true.
 Default is `1'.

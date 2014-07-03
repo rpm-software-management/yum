@@ -74,7 +74,8 @@ arches = {
 
     #arm hardware floating point
     "armv7hnl": "armv7hl",
-    "armv7hl": "noarch",
+    "armv7hl": "armv6hl",
+    "armv6hl": "noarch",
 
     # arm64
     "arm64": "noarch",
@@ -288,6 +289,8 @@ def getCanonX86Arch(arch):
 def getCanonARMArch(arch):
     # the %{_target_arch} macro in rpm will let us know the abi we are using 
     target = rpm.expandMacro('%{_target_cpu}')
+    if target.startswith('armv6h'):
+        return target
     if target.startswith('armv7h'):
         return target
     return arch
@@ -439,6 +442,8 @@ def getBaseArch(myarch=None):
         return "ppc"
     elif myarch.startswith("arm64"):
         return "arm64"
+    elif myarch.startswith("armv6h"):
+        return "armhfp"
     elif myarch.startswith("armv7h"):
         return "armhfp"
     elif myarch.startswith("arm"):

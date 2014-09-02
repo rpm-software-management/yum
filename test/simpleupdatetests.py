@@ -1230,3 +1230,22 @@ class SimpleUpdateTests(OperationsTests):
 
         self.assert_(self._pkg2txmbr(foo11).reason == 'user')
         self.assert_(self._pkg2txmbr(bar11).reason == 'blahg')
+
+    def testUpdate_installed_obs(self):
+        #  Not sure how this happens (foo11 shouldn't be installed with bar11),
+        # but it did: BZ 1135715
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar11.addObsoletes('foo', None, (None, None, None))
+
+        baz11 = FakePackage('baz', '1', '1', '0', 'i386')
+        baz12 = FakePackage('baz', '1', '2', '0', 'i386')
+        baz12.addObsoletes('foo', None, (None, None, None))
+
+        res, msg = self.runOperation(['upgrade'], [foo11, bar11, baz11],
+                                     [foo11, bar11, baz11, foo12, baz12])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((bar11,baz12))

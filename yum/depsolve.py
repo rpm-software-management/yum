@@ -1364,6 +1364,8 @@ class Depsolve(object):
             opkgs.append(po)
             for obs_name,f,v in obsoletes:
                 for otxmbr in self.tsInfo.matchNaevr(name=obs_name):
+                    if (otxmbr.output_state not in TS_INSTALL_STATES):
+                        continue
                     if not otxmbr.po.obsoletedBy([po]):
                         continue
                     if po.obsoletedBy([otxmbr.po]): # Loops, hope for rpm.

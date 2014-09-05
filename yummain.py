@@ -102,9 +102,11 @@ def main(args):
 
         repoui = _('Unknown')
         repoid = _('<repoid>')
-        if hasattr(e, 'repo'):
+        try:
             repoid = e.repo.id
             repoui = e.repo.name
+        except AttributeError:
+            pass
 
         msg = msg % {'repoid' : repoid, 'repo' : repoui}
 

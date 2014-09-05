@@ -1628,6 +1628,12 @@ class CheckUpdateCommand(YumCommand):
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
 
+            opts = base.optparser.firstParse(base.args)
+            if opts.quiet:
+                if len(ypl.updates) > 0 or len(ypl.obsoletes) > 0:
+                    result = 100
+                return result, []
+
             columns = _list_cmd_calc_columns(base, ypl)
             if len(ypl.updates) > 0:
                 local_pkgs = {}

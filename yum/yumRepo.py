@@ -845,11 +845,11 @@ class YumRepository(Repository, config.RepoConf):
             if url in ['', None]:
                 continue
             url = parser.varReplace(url, self.yumvar)
-            if url[-1] != '/':
-                url= url + '/'
             try:
                 # This started throwing ValueErrors, BZ 666826
                 (s,b,p,q,f,o) = urlparse.urlparse(url)
+                if p[-1] != '/':
+                    p = p + '/'
             except (ValueError, IndexError, KeyError), e:
                 s = 'blah'
 
@@ -857,7 +857,7 @@ class YumRepository(Repository, config.RepoConf):
                 skipped = url
                 continue
             else:
-                goodurls.append(url)
+                goodurls.append(urlparse.urlunparse((s,b,p,q,f,o)))
 
         if skipped is not None:
             # Caller cleans up for us.
@@ -996,7 +996,7 @@ Insufficient space in download directory %s
                             size=size,
                             **ugopts)
 
-            remote = url + '/' + relative
+            remote = urlparse.urlunsplit((scheme, netloc, path + '/' + relative, query, fragid))
 
             try:
                 result = ug.urlgrab(misc.to_utf8(remote), local,

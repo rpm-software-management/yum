@@ -20,6 +20,7 @@
 import time
 import os, os.path
 import glob
+import re
 from weakref import proxy as weakref
 
 from sqlutils import sqlite, executeSQL, sql_esc_glob
@@ -1421,6 +1422,17 @@ class YumHistory:
         cur = self._get_cursor()
         if cur is None:
             return set()
+
+        #  This is kind of a hack, we can't do 'y[u]m' in SQL. In real yum
+        # we manually load everything and then do it inside yum (which is slow
+        # and a lot of code, but nobody uses it anyway and we already had the
+        # code). Here we don't have the code though, and still nobody will use
+        # it. So we cheat:
+        #  1. Convert 'y[u]m' into 'y?m' ... it returns more answers than it
+        #     should, but the correct answers are there.
+        #  2. Convert 'y[m' info 'y!m' ... neither will match anything, so w/e.
+        patterns = [re.sub('\[[^]]+\]', '?', x).replace('[', '!')
+                    for x in patterns]
 
         data = _setupHistorySearchSQL(patterns, ignore_case)
         (need_full, npatterns, fields, names) = data

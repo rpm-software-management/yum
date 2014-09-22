@@ -1576,6 +1576,15 @@ class RPMDBPackageSack(PackageSackBase):
 
                 (req, flags, ver) = creq
                 res = self.getProvides(req, flags, ver)
+
+                # Filter this pkg out, as self conflicts are allowed.
+                nres = {}
+                for conflicting_po in res:
+                    if conflicting_po.pkgtup[0] == pkg.pkgtup[0] and conflicting_po.pkgtup[2:] == pkg.pkgtup[2:]:
+                        continue
+                    nres[conflicting_po] = res[conflicting_po]
+                res = nres
+
                 if not res:
                     continue
                 flags = yum.depsolve.flags.get(flags, flags)

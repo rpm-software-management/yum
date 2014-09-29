@@ -4654,6 +4654,9 @@ much more problems).
             # don't have to.
             return po.pkgtup in self.up.updating_dict
 
+        if self.allowedMultipleInstalls(po):
+            return False
+
         for ipkg in ipkgs:
             if po.verLE(ipkg):
                 continue

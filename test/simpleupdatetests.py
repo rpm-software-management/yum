@@ -1249,3 +1249,18 @@ class SimpleUpdateTests(OperationsTests):
 
         self.assert_(res=='ok', msg)
         self.assertResult((bar11,baz12))
+
+    def testInstall_kernel_intermediate(self):
+        #  Make sure we don't break this again...
+        k11 = FakePackage('kernel', '1', '1', '0', 'i386')
+        k12 = FakePackage('kernel', '1', '2', '0', 'i386')
+        k13 = FakePackage('kernel', '1', '3', '0', 'i386')
+        k14 = FakePackage('kernel', '1', '4', '0', 'i386')
+        k15 = FakePackage('kernel', '1', '5', '0', 'i386')
+
+        res, msg = self.runOperation(['install', 'kernel-1-2'],
+                                     [k11, k13, k14],
+                                     [k11, k12, k13, k14, k15])
+
+        self.assert_(res=='ok', msg)
+        self.assertResult((k11, k12, k13, k14))

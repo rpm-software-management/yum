@@ -134,14 +134,15 @@ def checkRepoPackageArg(base, basecmd, extcmds):
     :raises: :class:`cli.CliError`
     """
     repos = base.repos.findRepos(extcmds[0], name_match=True, ignore_case=True)
+
+    if len(repos) > 1:
+        repos = [r for r in repos if r.isEnabled()]
+
     if not repos:
         base.logger.critical(
                 _('Error: Need to pass a single valid repoid. to %s') % basecmd)
         _err_mini_usage(base, basecmd)
         raise cli.CliError
-
-    if len(repos) > 1:
-        repos = [r for r in repos if r.isEnabled()]
 
     if len(repos) > 1:
         repos = ", ".join([r.ui_id for r in repos])

@@ -603,6 +603,9 @@ class YumBase(depsolve.Depsolve):
         repo.cfg = parser
         # Enable parallel downloading
         repo._async = repo.async
+        # Allow caching local repos
+        if repo.keepcache and any(u.startswith('file:') for u in repo.baseurl):
+            repo.copy_local = True
         return repo
 
     def disablePlugins(self):

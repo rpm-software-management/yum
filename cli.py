@@ -498,13 +498,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """
         summary = ''
         # do disk space report first
-        p = re.compile('needs (\d+)MB on the (\S+) filesystem')
+        p = re.compile('needs (\d+)(K|M)B on the (\S+) filesystem')
         disk = {}
         for m in p.finditer(errstring):
-            if m.group(2) not in disk:
-                disk[m.group(2)] = int(m.group(1))
-            if disk[m.group(2)] < int(m.group(1)):
-                disk[m.group(2)] = int(m.group(1))
+            size_in_mb = int(m.group(1)) if m.group(2) == 'M' else round(int(m.group(1))/1024.0, 3)
+            if m.group(3) not in disk:
+                disk[m.group(3)] = size_in_mb
+            if disk[m.group(3)] < size_in_mb:
+                disk[m.group(3)] = size_in_mb
                 
         if disk:
             summary += _('Disk Requirements:\n')

@@ -1727,6 +1727,13 @@ much more problems).
         :raises: :class:`yum.Errors.YumRPMTransError` if there is a
            transaction cannot be completed
         """
+        if (self.conf.fssnap_automatic_pre or self.conf.fssnap_automatic_post) and not self.fssnap.available:
+            msg = _("Snapshot support not available.")
+            if self.conf.fssnap_abort_on_errors in ('broken-setup', 'any'):
+                raise Errors.YumRPMTransError(msg="Aborting transaction.", errors=msg)
+            else:
+                self.verbose_logger.critical(msg)
+
         if self.fssnap.available and ((self.conf.fssnap_automatic_pre or
                                        self.conf.fssnap_automatic_post) and
                                       self.conf.fssnap_automatic_keep):
@@ -1748,17 +1755,30 @@ much more problems).
                 if num > self.conf.fssnap_automatic_keep:
                     todel.append(snap['dev'])
             # Display something to the user?
-            self.fssnap.del_snapshots(devices=todel)
+            snaps = self.fssnap.del_snapshots(devices=todel)
+            if len(snaps):
+                self.verbose_logger.info(_("Deleted %u snapshots.") % len(snaps))
 
         if (self.fssnap.available and
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
             self.conf.fssnap_automatic_pre)):
             if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space to create pre. FS snapshot, aborting transaction.")
-                raise Errors.YumRPMTransError(msg=msg, errors=[])
+                msg = _("Not enough space to create pre. FS snapshot.")
+                if self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
+                    raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
+                else:
+                    self.verbose_logger.critical(msg)
             else:
                 tags = {'*': ['reason=automatic']} # FIXME: pre. tags
-                self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+                if not snaps:
+                    msg = _("Failed to create snapshot")
+                    if self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
+                        raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
+                    else:
+                        self.verbose_logger.critical(msg)
+                for (odev, ndev) in snaps:
+                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
 
         self.plugins.run('pretrans')
 
@@ -1895,11 +1915,14 @@ much more problems).
             self.conf.fssnap_automatic_post)):
             if not self.fssnap.has_space(self.conf.fssnap_percentage):
                 msg = _("Not enough space to create post trans FS snapshot.")
-                self.logger.critical(msg)
+                self.verbose_logger.critical(msg)
             else:
                 tags = {'*': ['reason=automatic']} # FIXME: post tags
-                self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
-
+                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+                if not snaps:
+                    self.verbose_logger.critical(_("Failed to create snapshot"))
+                for (odev, ndev) in snaps:
+                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
         return resultobject
 
     def verifyTransaction(self, resultobject=None, txmbr_cb=None):

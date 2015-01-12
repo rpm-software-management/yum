@@ -55,9 +55,6 @@ def _list_vg_names():
     names = lvm.listVgNames()
 
     if not names: # Could be just broken...
-        if not os.path.exists("/sbin/lvm"):
-            return [] # Minimal install etc.
-
         p = subprocess.Popen(["/sbin/lvm", "vgs", "-o", "vg_name"],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         err = p.wait()
@@ -146,7 +143,8 @@ class _FSSnap(object):
             devices = []
 
         self.version = _ver
-        self.available = bool(lvm)
+        # Parts of the API seem to work even when lvm is not actually installed, hence the path test
+        self.available = bool(lvm and os.path.exists("/sbin/lvm"))
         self.postfix_static = "_yum_"
         self._postfix = None
         self._root = root

@@ -4264,11 +4264,13 @@ class FSSnapshotCommand(YumCommand):
             subcommand = 'summary'
 
         if not base.fssnap.available:
-            if not base.rpmdb.searchNames(['python-lvm']):
-                print _("Snapshot support not available, no python-lvm package installed.")
-            else:
-                print _("Snapshot support not available, python-lvm is old/broken.")
-            return 0, [basecmd + ' ' + subcommand + ' done']
+            msg = _("Snapshot support not available, please check your lvm installation.")
+            if not base.rpmdb.searchNames(['lvm2']):
+                msg += " " + _("No lvm2 package installed.")
+            if not base.rpmdb.searchNames(['lvm2-python-libs']):
+                msg += " " + _("No lvm2-python-libs package installed.")
+            print msg
+            return 1, [basecmd + ' ' + subcommand + ' done']
 
         if subcommand == 'list':
             snaps = base.fssnap.old_snapshots()
@@ -4301,10 +4303,11 @@ class FSSnapshotCommand(YumCommand):
         if subcommand == 'create':
             tags = {'*': ['reason=manual']}
             pc = base.conf.fssnap_percentage
-            for (odev, ndev) in base.fssnap.snapshot(pc, tags=tags):
-                print _("Created snapshot from %s, results is: %s") %(odev,ndev)
-            else:
+            snaps = base.fssnap.snapshot(pc, tags=tags)
+            if not snaps:
                 print _("Failed to create snapshots")
+            for (odev, ndev) in snaps:
+                print _("Created snapshot from %s, results is: %s") %(odev,ndev)
 
         if subcommand == 'summary':
             snaps = base.fssnap.old_snapshots()

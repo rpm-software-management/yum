@@ -899,6 +899,7 @@ class YumConf(StartupConf):
     fssnap_devices = ListOption("!*/swap !*/lv_swap "
                                 "glob:/etc/yum/fssnap.d/*.conf",
                                 parse_default=True)
+    fssnap_abort_on_errors = SelectionOption('any', ('broken-setup', 'snapshot-failure', 'any', 'none'))
 
     depsolve_loop_limit = PositiveIntOption(100, names_of_0=["<forever>"])
 

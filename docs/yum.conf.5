@@ -873,7 +873,7 @@ Boolean (1, 0, True, False, yes, no) Defaults to False
 .IP
 \fBfssnap_automatic_keep\fR
 How many old snapshots should yum keep when trying to automatically create a 
-new snapshot. Setting to 0 disables this feature. Default is '0'.
+new snapshot. Setting to 0 disables this feature. Default is '1'.
 
 .IP
 \fBfssnap_automatic_percentage\fR
@@ -885,6 +885,21 @@ Any number between 1 and 100. Default is '100'.
 The origin LVM devices to use for snapshots. Wildcards and negation are allowed,
 first match (positive or negative) wins.
 Default is: !*/swap !*/lv_swap glob:/etc/yum/fssnap.d/*.conf
+
+.IP
+\fBfssnap_abort_on_errors\fR
+When fssnap_automatic_pre or fssnap_automatic_post is enabled, it's possible to specify which
+fssnap errors should make the transaction fail. The default is `any'.
+
+`broken-setup' - Abort current transaction if snapshot support is unavailable because
+lvm is missing or broken.
+
+`snapshot-failure' - Abort current transaction if creating a snapshot fails (e.g. there is not enough
+free space to make a snapshot).
+
+`any' - Abort current transaction if any of the above occurs.
+
+`none' - Never abort a transaction in case of errors.
 
 .IP
 \fBdepsolve_loop_limit\fR

@@ -738,6 +738,14 @@ class YumHistory:
             # it's deep yum stuff and there should only be one yum.
             executeSQL(self._conn.cursor(), "PRAGMA locking_mode = EXCLUSIVE")
 
+            # See: http://sqlite.org/pragma.html#pragma_synchronous
+            #  It's far from the end of the world if the history DB dies, and
+            # NORMAL is very safe already. FULL means that verifyTransaction()
+            # does an fsync() for each package, which sucks.
+            executeSQL(self._conn.cursor(), "PRAGMA synchronous = NORMAL")
+            # Could/should do this when installroot'ing?
+            # executeSQL(self._conn.cursor(), "PRAGMA synchronous = OFF")
+
         return self._conn.cursor()
     def _commit(self):
         return self._conn.commit()

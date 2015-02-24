@@ -1766,8 +1766,12 @@ Insufficient space in download directory %s
             fsize = misc.stat_f(file)
             if fsize is not None: # We just got an xattr, so it should be there
                 if size is None and l_csum == r_csum and fsize.st_size > 0:
+                    if not openchecksum:
+                        self._preload_to_cashe(r_ctype, r_csum, file)
                     return 1
                 if size == fsize.st_size and l_csum == r_csum:
+                    if not openchecksum:
+                        self._preload_to_cashe(r_ctype, r_csum, file)
                     return 1
             # Anything goes wrong, run the checksums as normal...
 
@@ -1780,6 +1784,8 @@ Insufficient space in download directory %s
 
         if l_csum == r_csum:
             _xattr_set_chksum(file, r_ctype, l_csum)
+            if not openchecksum:
+                self._preload_to_cashe(r_ctype, r_csum, file)
             return 1
         else:
             if check_can_fail:
@@ -1809,7 +1815,8 @@ Insufficient space in download directory %s
             return local
 
         if (os.path.exists(local) or
-            self._preload_md_from_system_cache(os.path.basename(local))):
+            self._preload_md_from_system_cache(os.path.basename(local)) or 
+            self._preload_md_from_cashe(mdtype, local)):
             if self._checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
@@ -2016,6 +2023,27 @@ Insufficient space in download directory %s
            if possible"""
         return self._preload_file_from_system_cache(filename)
     
+    def _preload_to_cashe(self, checksum_type, checksum_data, filename):
+        if not hasattr(self, '_cashe') or self._cashe is None:
+            return False
+        obj = self._cashe.get(checksum_type, checksum_data)
+        if obj.exists:
+            return True
+        return obj.save(filename)
+
+    def _preload_from_cashe(self, checksum_type, checksum_data, filename):
+        if not hasattr(self, '_cashe') or self._cashe is None:
+            return False
+        obj = self._cashe.get(checksum_type, checksum_data)
+        return obj.load(filename)
+
+    def _preload_md_from_cashe(self, mdtype, filename):
+        """attempts to copy the metadata file from the system-wide cache,
+           if possible"""
+        thisdata = self.repoXML.getData(mdtype)
+        (checksum_type, checksum_data) = thisdata.checksum
+        return self._preload_from_cashe(checksum_type, checksum_data, filename)
+
     def _preload_pkg_from_system_cache(self, pkg):
         """attempts to copy the package from the system-wide cache,
            if possible"""

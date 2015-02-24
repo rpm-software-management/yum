@@ -740,6 +740,7 @@ class YumConf(StartupConf):
     reset_nice = BoolOption(True)
 
     cachedir = Option('/var/cache/yum')
+    cashedir = Option('/var/cache/CAShe')
 
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')

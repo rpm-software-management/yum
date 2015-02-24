@@ -102,6 +102,11 @@ from weakref import proxy as weakref
 
 from urlgrabber.grabber import default_grabber
 
+try:
+    import cashe
+except ImportError:
+    cashe = None
+
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
@@ -397,6 +402,10 @@ class YumBase(depsolve.Depsolve):
         for pkgname in self.conf.history_record_packages:
             self.run_with_package_names.add(pkgname)
 
+        self._cashe = None
+        if cashe is not None:
+            self._cashe = cashe.CAShe(self.conf.cashedir)
+
         # run the postconfig plugin hook
         self.plugins.run('postconfig')
         #  Note that Pungi has historically replaced _getConfig(), and it sets
@@ -600,6 +609,7 @@ class YumBase(depsolve.Depsolve):
         repo.old_base_cache_dir = getattr(self, '_old_cachedir', '')
         repo.basecachedir = self.conf.cachedir
         repo.yumvar.update(self.conf.yumvar)
+        repo._cashe = self._cashe
         repo.cfg = parser
         # Enable parallel downloading
         repo._async = repo.async

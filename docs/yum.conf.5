@@ -77,9 +77,10 @@ package corresponding to the running version of the kernel.
 \fBprotected_multilib\fR
 Either `1' or `0'. This tells yum whether or not it should perform a check to
 make sure that multilib packages are the same version. For example, if this
-option is off (rpm behaviour) pkgA-1.x86_64 and pkgA-2.i386 can be installed
-at the same time. However this is very rarely desired.
-Install only packages, like the kernel, are exempt from this check.
+option is off (rpm behavior) then in some cases it might be possible for
+pkgA-1.x86_64 and pkgA-2.i386 to be installed at the same time. However this
+is very rarely desired. Install only packages, like the kernel, are exempt
+from this check.
 The default is `1'.
 
 .IP

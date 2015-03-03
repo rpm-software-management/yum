@@ -1330,6 +1330,13 @@ class YumOutput:
         :param verbose: whether to output extra verbose information
         :param highlight: highlighting options for the highlighted matches
         """
+        if (po.repo.id == "installed" and
+            self.conf.query_install_excludes and self.cmdline_excludes):
+            # Very similar to _cmdline_exclude from yumcommands
+            e,m,u = yum.packages.parsePackages([po], self.cmdline_excludes)
+            if e or m:
+                return
+
         if self.conf.showdupesfromrepos:
             msg = '%s : ' % po
         else:

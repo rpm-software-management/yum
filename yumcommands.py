@@ -41,6 +41,7 @@ import errno
 
 import yum.config
 from yum import updateinfo
+from yum.packages import parsePackages
 
 def _err_mini_usage(base, basecmd):
     if basecmd not in base.yum_cli_commands:
@@ -584,6 +585,14 @@ def _list_cmd_calc_columns(base, ypl):
     columns = base.calcColumns(data, remainder_column=1)
     return (-columns[0], -columns[1], -columns[2])
 
+def _cmdline_exclude(pkgs, cmdline_excludes):
+    """ Do an extra exclude for installed packages that match the cmd line. """
+    if not cmdline_excludes:
+        return pkgs
+    e,m,u = parsePackages(pkgs, cmdline_excludes)
+    excluded = set(e + m)
+    return [po for po in pkgs if po not in excluded]
+
 class InfoCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     info command.
@@ -682,6 +691,9 @@ class InfoCommand(YumCommand):
             clin = base.conf.color_list_installed_newer
             clir = base.conf.color_list_installed_reinstall
             clie = base.conf.color_list_installed_extra
+            if base.conf.query_install_excludes:
+                ypl.installed = _cmdline_exclude(ypl.installed,
+                                                 base.cmdline_excludes)
             rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
                                 highlight_na=update_pkgs, columns=columns,
                                 highlight_modes={'>' : clio, '<' : clin,

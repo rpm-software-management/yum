@@ -2299,7 +2299,8 @@ class YumOptionParser(OptionParser):
             self.base.conf.disable_excludes = self._splitArg(opts.disableexcludes)
             self.base.conf.disable_includes = self._splitArg(opts.disableincludes)
 
-            for exclude in self._splitArg(opts.exclude):
+            self.base.cmdline_excludes = self._splitArg(opts.exclude)
+            for exclude in self.base.cmdline_excludes:
                 try:
                     excludelist = self.base.conf.exclude
                     excludelist.append(exclude)

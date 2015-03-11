@@ -818,6 +818,8 @@ def get_running_kernel_pkgtup(ts):
             e = h['epoch']
             if h['epoch'] is None:
                 e = '0'
+            else:
+                e = str(e)
             return (h['name'], h['arch'], e, h['version'], h['release'])
     
     return (None, None, None, None, None)

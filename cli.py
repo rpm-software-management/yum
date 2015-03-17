@@ -25,6 +25,7 @@ import sys
 import time
 import random
 import logging
+import math
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
 import rpm
 
@@ -501,7 +502,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         p = re.compile('needs (\d+)(K|M)B on the (\S+) filesystem')
         disk = {}
         for m in p.finditer(errstring):
-            size_in_mb = int(m.group(1)) if m.group(2) == 'M' else round(int(m.group(1))/1024.0, 3)
+            size_in_mb = int(m.group(1)) if m.group(2) == 'M' else math.ceil(int(m.group(1))/1024.0)
             if m.group(3) not in disk:
                 disk[m.group(3)] = size_in_mb
             if disk[m.group(3)] < size_in_mb:

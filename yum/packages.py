@@ -972,7 +972,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
         return self.hdrpath
     
-    def verifyLocalPkg(self, from_cashe=False):
+    def verifyLocalPkg(self, from_cashe=None):
         """check the package checksum vs the localPkg
            return True if pkg is good, False if not"""
 
@@ -1002,20 +1002,20 @@ class YumAvailablePackage(PackageObject, RpmBase):
         except Errors.MiscError:
             if from_cashe:
                 self._cashe.unlink()
-            elif nst.st_size >= self.packagesize:
-                return self.verifyLocalPkg() # Try: cashe
+            elif from_cashe is None and nst.st_size >= self.packagesize:
+                return self.verifyLocalPkg(from_cashe=False) # Try: cashe
             return False
         
         if filesum != csum:
             if from_cashe:
                 self._cashe.unlink()
-            elif nst.st_size >= self.packagesize:
-                return self.verifyLocalPkg() # Try: cashe
+            elif from_cashe is None and nst.st_size >= self.packagesize:
+                return self.verifyLocalPkg(from_cashe=False) # Try: cashe
             return False
         
         self._verify_local_pkg_cache = nst
-        if not from_cashe and self._cashe and not self._cashe.exists:
-                self._cashe.save(self.localPkg())
+        if self._cashe is not None and not self._cashe.exists:
+            self._cashe.save(self.localPkg())
 
         return True
 

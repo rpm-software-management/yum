@@ -1893,6 +1893,8 @@ much more problems).
                           
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self.cleanUsedHeadersPackages()
+            if not self.conf.keepcache and self._cashe:
+                self._cashe.cleanup()
         
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):

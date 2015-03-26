@@ -63,7 +63,7 @@ BuildRequires: bash-completion
 
 Summary: RPM package installer/updater/manager
 Name: yum
-Version: 3.4.3
+Version: 3.4.4
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
@@ -429,7 +429,7 @@ exit 0
 %if %{yum_updatesd}
 %exclude %{_datadir}/yum-cli/yumupd.py*
 %endif
-%{_bindir}/yum
+%{_bindir}/yum-deprecated
 %{python_sitelib}/yum
 %{python_sitelib}/rpmUtils
 %dir /var/cache/yum

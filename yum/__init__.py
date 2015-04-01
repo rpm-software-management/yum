@@ -404,7 +404,7 @@ class YumBase(depsolve.Depsolve):
 
         self._cashe = None
         if cashe is not None:
-            self._cashe = cashe.CAShe(self.conf.cashedir)
+            self._cashe = cashe.CAShe(self.conf.cashe_root_dir)
 
         # run the postconfig plugin hook
         self.plugins.run('postconfig')

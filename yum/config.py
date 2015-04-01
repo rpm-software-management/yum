@@ -740,7 +740,11 @@ class YumConf(StartupConf):
     reset_nice = BoolOption(True)
 
     cachedir = Option('/var/cache/yum')
-    cashedir = Option('/var/cache/CAShe')
+
+    #  Name it differently from above, to avoid confusion.
+    #  Also probably not a good idea to change this anyway, much like above,
+    # so don't name it small.
+    cashe_root_dir = Option('/var/cache/CAShe')
 
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')

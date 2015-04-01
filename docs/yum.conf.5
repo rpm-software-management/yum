@@ -28,6 +28,13 @@ Directory where yum should store its cache and db files. The default is
 `/var/cache/yum'.
 
 .IP
+\fBcashe_root_dir\fR
+Directory where yum would initialize the cashe, should almost certainly be left
+at the default. The default is`/var/cache/CAShe'. Note that unlike all other
+configuration, this does not change with installroot, the reason is so that
+multiple install root can share the same data. See man cashe for more info.
+
+.IP
 \fBpersistdir\fR
 Directory where yum should store information that should persist over multiple
 runs. The default is `/var/lib/yum'.

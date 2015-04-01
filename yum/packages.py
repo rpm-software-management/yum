@@ -1015,7 +1015,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         
         self._verify_local_pkg_cache = nst
         if self._cashe is not None and not self._cashe.exists:
-            self._cashe.save(self.localPkg())
+            try:
+                self._cashe.save(self.localPkg())
+            except:
+                pass
 
         return True
 

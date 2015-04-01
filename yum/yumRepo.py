@@ -2029,7 +2029,10 @@ Insufficient space in download directory %s
         obj = self._cashe.get(checksum_type, checksum_data)
         if obj.exists:
             return True
-        return obj.save(filename)
+        try:
+            return obj.save(filename)
+        except:
+            return None
 
     def _preload_from_cashe(self, checksum_type, checksum_data, filename):
         if not hasattr(self, '_cashe') or self._cashe is None:

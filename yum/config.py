@@ -741,6 +741,11 @@ class YumConf(StartupConf):
 
     cachedir = Option('/var/cache/yum')
 
+    #  Name it differently from above, to avoid confusion.
+    #  Also probably not a good idea to change this anyway, much like above,
+    # so don't name it small.
+    cashe_root_dir = Option('/var/cache/CAShe')
+
     keepcache = BoolOption(True)
     logfile = Option('/var/log/yum.log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])

@@ -905,6 +905,17 @@ class YumAvailablePackage(PackageObject, RpmBase):
         return self.checksums[0][1]
     checksum = property(_checksum)
 
+
+    def _get_cashe(self):
+        if not hasattr(self, '_cashe_obj'):
+            if hasattr(self.repo, '_cashe') and self.repo._cashe is not None:
+                (csum_type, csum) = self.returnIdSum()
+                self._cashe_obj = self.repo._cashe.get(csum_type, csum)
+            else:
+                self._cashe_obj = None
+        return self._cashe_obj
+    _cashe = property(_get_cashe)
+
     def getDiscNum(self):
         if self.basepath is None:
             return None
@@ -961,7 +972,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
         return self.hdrpath
     
-    def verifyLocalPkg(self):
+    def verifyLocalPkg(self, from_cashe=None):
         """check the package checksum vs the localPkg
            return True if pkg is good, False if not"""
 
@@ -970,7 +981,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         try:
             nst = os.stat(self.localPkg())
         except OSError, e:
+            if self._cashe and self._cashe.load(self.localPkg()):
+                return self.verifyLocalPkg(from_cashe=True)
             return False
+
         if (hasattr(self, '_verify_local_pkg_cache') and
             self._verify_local_pkg_cache):
             ost = self._verify_local_pkg_cache
@@ -986,12 +1000,25 @@ class YumAvailablePackage(PackageObject, RpmBase):
             filesum = misc.checksum(csum_type, self.localPkg(),
                                     datasize=self.packagesize)
         except Errors.MiscError:
+            if from_cashe:
+                self._cashe.unlink()
+            elif from_cashe is None and nst.st_size >= self.packagesize:
+                return self.verifyLocalPkg(from_cashe=False) # Try: cashe
             return False
         
         if filesum != csum:
+            if from_cashe:
+                self._cashe.unlink()
+            elif from_cashe is None and nst.st_size >= self.packagesize:
+                return self.verifyLocalPkg(from_cashe=False) # Try: cashe
             return False
         
         self._verify_local_pkg_cache = nst
+        if self._cashe is not None and not self._cashe.exists:
+            try:
+                self._cashe.save(self.localPkg())
+            except:
+                pass
 
         return True
 

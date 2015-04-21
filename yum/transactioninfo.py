@@ -237,6 +237,7 @@ class TransactionData:
         if not txmbrs:
             if self._inSack is not None:
                 pkgs = self._inSack.returnPackages(patterns=[pattern])
+            if pkgs: pass
             elif self.pkgSack is None:
                 pkgs = []
             else:

@@ -381,6 +381,13 @@ class RepoStorage:
             sack = repo.getPackageSack()
             try:
                 sack.populate(repo, mdtype, callback, cacheonly)
+            except TypeError, e:
+                if not e.args[0].startswith('Parsing'):
+                    raise
+                if mdtype in ['all', 'metadata'] and repo.skip_if_unavailable:
+                    self.disableRepo(repo.id)
+                else:
+                    raise Errors.RepoError(e.args[0])
             except Errors.RepoError, e:
                 if mdtype in ['all', 'metadata'] and repo.skip_if_unavailable:
                     self.disableRepo(repo.id)

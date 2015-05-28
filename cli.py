@@ -1840,22 +1840,22 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     msg += ' [%s]' % group.langonly
                 self.verbose_logger.info('%s', msg)
 
-        _out_grp(_('Installed environment groups:'), ievgrps)
-        _out_grp(_('Available environment groups:'), evgrps)
+        _out_grp(_('Installed Environment Groups:'), ievgrps)
+        _out_grp(_('Available Environment Groups:'), evgrps)
 
         groups = []
         for group in installed:
             if group.langonly: continue
             if not wts['pkg']: continue
             groups.append(group)
-        _out_grp(_('Installed groups:'), groups)
+        _out_grp(_('Installed Groups:'), groups)
 
         groups = []
         for group in installed:
             if not group.langonly: continue
             if not wts['lang']: continue
             groups.append(group)
-        _out_grp(_('Installed language groups:'), groups)
+        _out_grp(_('Installed Language Groups:'), groups)
 
         groups = []
         for group in available:
@@ -1869,7 +1869,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             if not group.langonly: continue
             if not wts['lang']: continue
             groups.append(group)
-        _out_grp(_('Available language groups:'), groups)
+        _out_grp(_('Available Language Groups:'), groups)
 
         if not done:
             self.logger.error(_('Warning: no environments/groups match: %s'),

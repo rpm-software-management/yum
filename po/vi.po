@@ -439,19 +439,19 @@ msgid "Cleaning up plugins"
 msgstr "Đang dọn phần bổ xung"
 
 #: ../cli.py:1811
-msgid "Installed environment groups:"
+msgid "Installed Environment Groups:"
 msgstr "Nhóm môi trường đã cài:"
 
 #: ../cli.py:1812
-msgid "Available environment groups:"
+msgid "Available Environment Groups:"
 msgstr "Nhóm môi trường sẵn có:"
 
 #: ../cli.py:1819
-msgid "Installed groups:"
+msgid "Installed Groups:"
 msgstr "Các nhóm đã cài:"
 
 #: ../cli.py:1826
-msgid "Installed language groups:"
+msgid "Installed Language Groups:"
 msgstr "Các nhóm ngôn ngữ đã cài:"
 
 #: ../cli.py:1833
@@ -459,7 +459,7 @@ msgid "Available Groups:"
 msgstr "Các nhóm sẵn có:"
 
 #: ../cli.py:1840
-msgid "Available language groups:"
+msgid "Available Language Groups:"
 msgstr "Các nhóm ngôn ngữ sẵn có:"
 
 #: ../cli.py:1843

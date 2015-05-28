@@ -398,19 +398,19 @@ msgid "Cleaning up plugins"
 msgstr ""
 
 #: ../cli.py:1732
-msgid "Installed environment groups:"
+msgid "Installed Environment Groups:"
 msgstr ""
 
 #: ../cli.py:1733
-msgid "Available environment groups:"
+msgid "Available Environment Groups:"
 msgstr ""
 
 #: ../cli.py:1740
-msgid "Installed groups:"
+msgid "Installed Groups:"
 msgstr ""
 
 #: ../cli.py:1747
-msgid "Installed language groups:"
+msgid "Installed Language Groups:"
 msgstr ""
 
 #: ../cli.py:1754
@@ -418,7 +418,7 @@ msgid "Available Groups:"
 msgstr ""
 
 #: ../cli.py:1761
-msgid "Available language groups:"
+msgid "Available Language Groups:"
 msgstr ""
 
 #: ../cli.py:1764

@@ -33,6 +33,7 @@ import Errors
 import logginglevels
 
 import rpmUtils.miscutils
+from rpmUtils.arch import ArchStorage
 
 
 def safe_iterparse(filename, logger=None):
@@ -425,6 +426,9 @@ class UpdateMetadata(object):
             except Errors.RepoMDError:
                 continue # No metadata found for this repo
 
+        self.arch_storage = ArchStorage()
+        self.archlist = self.arch_storage.archlist
+
     def get_notices(self, name=None):
         """ Return all notices. """
         if name is None:
@@ -461,16 +465,29 @@ class UpdateMetadata(object):
         name = oldpkgtup[0]
         arch = oldpkgtup[1]
         ret = []
+        other_arch_list = []
+        notices = set()
         for notice in self.get_notices(name):
             for upkg in notice['pkglist']:
                 for pkg in upkg['packages']:
+                    other_arch = False
                     if pkg['name'] != name or pkg['arch'] != arch:
-                        continue
+                        if (notice not in notices and pkg['name'] == name and pkg['arch'] in self.archlist):
+                            other_arch = True
+                        else:
+                            continue
                     pkgtup = (pkg['name'], pkg['arch'], pkg['epoch'] or '0',
                               pkg['version'], pkg['release'])
                     if _rpm_tup_vercmp(pkgtup, oldpkgtup) <= 0:
                         continue
-                    ret.append((pkgtup, notice))
+                    if other_arch:
+                        other_arch_list.append((pkgtup, notice))
+                    else:
+                        ret.append((pkgtup, notice))
+                        notices.add(notice)
+        for pkgtup, notice in other_arch_list:
+            if notice not in notices:
+                ret.append((pkgtup, notice))
         ret.sort(cmp=_rpm_tup_vercmp, key=lambda x: x[0], reverse=True)
         return ret
 

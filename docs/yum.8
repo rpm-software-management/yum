@@ -938,6 +938,20 @@ Specifies an alternate directory to store packages.
 Set any config option in yum config or repo files. For options in the global 
 config just use: \-\-setopt=option=value for repo options use: \-\-setopt=repoid.option=value
 .PP
+.IP "\fB\-\-security\fP"
+This option includes packages that say they fix a security issue, in updates.
+.br
+.IP "\fB\--advisory=ADVS, --advisories=ADVS\fP"
+This option includes in updates packages corresponding to the advisory ID, Eg. FEDORA-2201-123.
+.IP "\fB\--bz=BZS\fP"
+This option includes in updates packages that say they fix a Bugzilla ID, Eg. 123.
+.IP "\fB\--cve=CVES\fP"
+This option includes in updates packages that say they fix a CVE - Common Vulnerabilities and Exposures ID (http://cve.mitre.org/about/), Eg. CVE-2201-0123.
+.IP "\fB\--bugfix\fP"
+This option includes in updates packages that say they fix a bugfix issue.
+.IP "\fB\--sec-severity=SEVS, --secseverity=SEVS\fP"
+This option includes in updates security relevant packages of the specified severity.
+
 
 .SH "LIST OPTIONS"
 The following are the ways which you can invoke \fByum\fP in list
@@ -1044,6 +1058,56 @@ Tell any enabled plugins to eliminate their cached data.
 
 .IP "\fByum clean all\fP"
 Does all of the above.
+
+.SH "EXAMPLES"
+.PP
+To list all updates that are security relevant, and get a return code on whether there are security updates use:
+.IP
+yum --security check-update
+.PP
+To upgrade packages that have security errata (upgrades to the latest
+available package) use:
+.IP
+yum --security update
+.PP
+To upgrade packages that have security errata (upgrades to the last
+security errata package) use:
+.IP
+yum --security update-minimal
+.PP
+To get a list of all BZs that are fixed for packages you have installed use:
+.IP
+yum updateinfo list bugzillas
+.PP
+To get a list of all security advisories, including the ones you have already
+installed use:
+.IP
+yum updateinfo list all security
+.PP
+To get the information on advisory FEDORA-2707-4567 use:
+.IP
+yum updateinfo info FEDORA-2707-4567
+.PP
+To update packages to the latest version which contain fixes for Bugzillas 123, 456 and 789; and all security updates use:
+.IP
+yum --bz 123 --bz 456 --bz 789 --security update
+.PP
+To update to the packages which just update Bugzillas 123, 456 and 789; and all security updates use:
+.IP
+yum --bz 123 --bz 456 --bz 789 --security update-minimal
+.PP
+To get an info list of the latest packages which contain fixes for Bugzilla 123; CVEs CVE-2207-0123 and CVE-2207-3210; and Fedora advisories FEDORA-2707-4567 and FEDORA-2707-7654 use:
+.IP
+yum --bz 123 --cve CVE-2207-0123 --cve CVE-2207-3210 --advisory FEDORA-2707-4567 --advisory FEDORA-2707-7654 info updates
+.PP
+To get a list of packages which are "new".
+.IP
+yum updateinfo list new
+.PP
+To get a summary of advisories you haven't installed yet use:
+.IP
+yum updateinfo summary
+
 
 .PP 
 .SH "PLUGINS"

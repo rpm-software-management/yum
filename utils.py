@@ -393,10 +393,8 @@ class YumUtilBase(YumBaseCli):
             return 0
         elif result == 1:
             # Fatal error
-            for msg in resultmsgs:
-                prefix = _('Error: %s')
-                prefix2nd = (' ' * (utf8_width(prefix) - 2))
-                self.logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
+            for prefix, msg in self.pretty_output_restring(resultmsgs):
+                self.logger.critical(prefix, msg)
             if not self.conf.skip_broken:
                 self.verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
             if not self._rpmdb_warn_checks(out=self.verbose_logger.info, warn=False):

@@ -63,7 +63,7 @@ from yum.i18n import utf8_width
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.6'
+API_VERSION = '2.7'
 
 class DeprecatedInt(int):
     """A simple int subclass that is used to check when a deprecated
@@ -416,18 +416,22 @@ class PluginConduit:
         converted_level = logginglevels.logLevelFromErrorLevel(level)
         self.logger.log(converted_level, msg)
 
-    def promptYN(self, msg):
+    def promptYN(self, msg, prompt=None):
         """Return a yes or no response, either from assumeyes already
         being set, or from prompting the user.
 
-        :param msg: the message to prompt the user with
+        :param msg: the message to show to the user
+        :param prompt: the question to ask the user (optional); defaults to 'Is this ok [y/N]: '
         :return: 1 if the response is yes, and 0 if the response is no
         """
         self.info(2, msg)
+        if self._base.conf.assumeno:
+            return False
         if self._base.conf.assumeyes:
-            return 1
+            return True
         else:
-            return self._base.userconfirm()
+            kwargs = {'prompt': prompt} if prompt else {}
+            return bool(self._base.userconfirm(**kwargs))
 
     def getYumVersion(self):
         """Return a string representing the current version of yum."""
@@ -703,6 +707,14 @@ class DepsolvePluginConduit(MainPluginConduit):
         MainPluginConduit.__init__(self, parent, base, conf)
         self.resultcode = rescode
         self.resultstring = restring
+
+    @property
+    def missing_requires(self):
+        """Boolean indicating if depsolving failed due to missing dependencies."""
+        return self._base._missing_requires
+
+    def pretty_output_restring(self):
+        return '\n'.join(prefix % msg for prefix, msg in self._base.pretty_output_restring(self.resultstring))
 
 class CompareProvidersPluginConduit(MainPluginConduit):
     """Conduit to compare different providers of packages."""

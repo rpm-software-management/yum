@@ -120,6 +120,7 @@ class Depsolve(object):
 
         self.installedFileRequires = None
         self.installedUnresolvedFileRequires = None
+        self._missing_requires = False
 
     def doTsSetup(self):
         """Sets up the transaction set before it is used."""
@@ -375,6 +376,7 @@ class Depsolve(object):
         return self._prco_req_nfv2req(req[0], req[1], req[2])
             
     def _err_missing_requires(self, reqPo, reqTup):
+        self._missing_requires = True
         if hasattr(self.dsCallback, 'format_missing_requires'):
             msg = self.dsCallback.format_missing_requires(reqPo, reqTup)
             if msg is not None: # PK

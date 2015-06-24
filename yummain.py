@@ -248,10 +248,8 @@ def main(args):
         return base.exit_code
     elif result == 1:
         # Fatal error
-        for msg in resultmsgs:
-            prefix = _('Error: %s')
-            prefix2nd = (' ' * (utf8_width(prefix) - 2))
-            logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
+        for prefix, msg in base.pretty_output_restring(resultmsgs):
+            logger.critical(prefix, msg)
         if base._depsolving_failed:
             if not base.conf.skip_broken:
                 verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))

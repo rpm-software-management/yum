@@ -2795,6 +2795,13 @@ to exit.
             if lastdbv.end_rpmdbversion != rpmdbv:
                 self._rpmdb_warn_checks()
 
+    @staticmethod
+    def pretty_output_restring(restring):
+        for msg in restring:
+            prefix = _('Error: %s')
+            prefix2nd = (' ' * (utf8_width(prefix) - 2))
+            yield (prefix, msg.replace('\n', '\n' + prefix2nd))
+
 
 class DepSolveProgressCallBack:
     """A class to provide text output callback functions for Dependency Solver callback."""

@@ -504,6 +504,17 @@ class PluginConduit:
         """
         return config.getOption(self._conf, section, opt, config.BoolOption(default))
 
+    def confList(self, section, opt, default=None):
+        """Read a boolean value from the plugin's own configuration file
+
+        :param section: configuration file section to read
+        :param opt: option name to read
+        :param default: value to read if the option is missing
+        :return: boolean option value read, or *default* if the option
+            was missing or could not be parsed
+        """
+        return config.getOption(self._conf, section, opt, config.ListOption(default))
+
     def registerPackageName(self, name):
         """Register the name of a package to use.
 

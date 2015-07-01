@@ -25,21 +25,21 @@ except:
 
 
 def _is_origin(lv):
-    snap = lv.getProperty("lv_attr")
+    snap = lv.getAttr()
     # snap=(<value>, <is settable>)
     if not snap[0]: # Broken??
         return None
     return snap[0][0] in ('o', 'O')
 
 def _is_snap(lv):
-    snap = lv.getProperty("lv_attr")
+    snap = lv.getAttr()
     # snap=(<value>, <is settable>)
     if not snap[0]: # Broken??
         return None
     return snap[0][0] in ('s', 'S')
 
 def _is_virt(lv):
-    snap = lv.getProperty("lv_attr")
+    snap = lv.getAttr()
     # snap=(<value>, <is settable>)
     if not snap[0]: # Broken??
         return None

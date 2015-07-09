@@ -3,6 +3,7 @@
 import os
 import fnmatch
 import time
+from datetime import datetime
 
 import subprocess
 
@@ -228,23 +229,13 @@ class _FSSnap(object):
 
         return ret
 
-    def _get_postfix(self):
-        if self._postfix is None:
-            self._postfix = self.postfix_static
-            self._postfix += time.strftime("%Y%m%d%H%M%S")
-        return self._postfix
-
-    postfix = property(fget=lambda self: self._get_postfix(),
-                       fset=lambda self, value: setattr(self, "_postfix",value),
-                       fdel=lambda self: setattr(self, "_postfix", None),
-                       doc="postfix for snapshots")
 
     def snapshot(self, percentage=100, prefix='', postfix=None, tags={}):
         """ Attempt to take a snapshot, note that errors can happen after
             this function succeeds. """
 
         if postfix is None:
-            postfix = self.postfix
+            postfix = '%s%s' % (self.postfix_static, datetime.now().strftime("%Y%m%d%H%M%S.%f"))
 
         ret = []
         for vgname in self._vgnames:

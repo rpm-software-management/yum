@@ -155,7 +155,7 @@ class _FSSnap(object):
         if not self._devs:
             return
 
-        self._vgnames = _list_vg_names()
+        self._vgnames = _list_vg_names() if self.available else []
 
     def _use_dev(self, vgname, lv=None):
 

@@ -235,13 +235,13 @@ class TransactionData:
                 txmbrs = self.matchNaevr(na[0], na[1])
 
         if not txmbrs:
+            pkgs = []
             if self._inSack is not None:
                 pkgs = self._inSack.returnPackages(patterns=[pattern])
-            if pkgs: pass
-            elif self.pkgSack is None:
-                pkgs = []
-            else:
+
+            if not pkgs and self.pkgSack is not None:
                 pkgs = self.pkgSack.returnPackages(patterns=[pattern])
+
             if not pkgs:
                 pkgs = self.rpmdb.returnPackages(patterns=[pattern])
 

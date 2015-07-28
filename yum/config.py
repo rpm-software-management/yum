@@ -838,6 +838,11 @@ class YumConf(StartupConf):
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
                  
+    requires_policy = SelectionOption('strong', ('strong', 'weak', 'info'),
+                                      mapper={'information' : 'info',
+                                              'informational' : 'info',
+                                              'recommends' : 'weak',
+                                              'suggests' : 'info'})
     bugtracker_url = Option('https://bugzilla.redhat.com/enter_bug.cgi?product=Fedora&version=rawhide&component=yum')
 
     color = SelectionOption('auto', ('auto', 'never', 'always'),

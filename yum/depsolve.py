@@ -333,7 +333,7 @@ class Depsolve(object):
         else:
             self.dsCallback.procReq(po.name, niceformatneed)
 
-    def _processReq(self, po, requirement):
+    def _processReq(self, po, requirement, weakdep=False):
         """processes a Requires dep from the resolveDeps functions, returns a tuple
            of (CheckDeps, missingdep, conflicts, errors) the last item is an array
            of error messages"""
@@ -352,7 +352,7 @@ class Depsolve(object):
                 CheckDeps, missingdep = self._requiringFromInstalled(po, requirement, errormsgs)
     
             # Check packages with problems
-            if missingdep:
+            if missingdep and not weakdep:
                 self.po_with_problems.add((po,self._working_po,errormsgs[-1]))
             
     
@@ -365,6 +365,9 @@ class Depsolve(object):
             self.po_with_problems.add((po,self._working_po,str(e)))
             CheckDeps = 1
             missingdep = 0
+
+        if weakdep: # Try to ignore errors on the first level of weak deps.
+            return (CheckDeps, 0, [])
 
         return (CheckDeps, missingdep, errormsgs)
 
@@ -1028,7 +1031,12 @@ class Depsolve(object):
                 CheckRemoves = True
 
             missing_in_pkg = False
-            for po, dep in thisneeds:
+            for thisneed in thisneeds:
+                if len(thisneed) == 3:
+                    po, dep, weakdep = thisneed
+                else:
+                    po, dep = thisneed
+                    weakdep = False
                 if txmbr.downgraded_by: # Don't try to chain remove downgrades
                     msg = self._err_missing_requires(po, dep)
                     self.verbose_logger.log(logginglevels.DEBUG_2, msg)
@@ -1037,7 +1045,7 @@ class Depsolve(object):
                     missing_in_pkg = 1
                     continue
 
-                (checkdep, missing, errormsgs) = self._processReq(po, dep)
+                (checkdep, missing, errormsgs) = self._processReq(po, dep, weakdep)
                 CheckDeps |= checkdep
                 errors += errormsgs
                 missing_in_pkg |= missing
@@ -1081,6 +1089,22 @@ class Depsolve(object):
     def _checkInstall(self, txmbr):
         txmbr_reqs = txmbr.po.returnPrco('requires')
 
+        #  Do we want to try weak deps. We might want to try these on upgrades
+        # if it's a new one? Or not.
+        try_weaker_deps = True
+        if txmbr.updates:
+            try_weaker_deps = False
+        if txmbr.downgrades:
+            try_weaker_deps = False
+
+        #  We do these slightly differently, where we try to allow failures.
+        # Only works on one level though.
+        txmbr_wreqs = []
+        if try_weaker_deps and self.conf.requires_policy in ("weak", "info"):
+            txmbr_wreqs.extend(txmbr.po.returnPrco('weak_requires'))
+        if try_weaker_deps and self.conf.requires_policy in ("info",):
+            txmbr_wreqs.extend(txmbr.po.returnPrco('info_requires'))
+
         # if this is an update, we should check what the old
         # requires were to make things faster
         #  Note that if the rpmdb is broken, this gets annoying. So we provide
@@ -1092,11 +1116,11 @@ class Depsolve(object):
         oldreqs = set(oldreqs)
 
         ret = []
-        for req in sorted(txmbr_reqs, key=self._sort_req_key):
+        def _deal_with_req(txmbr, req, weakdep):
             if req[0].startswith('rpmlib('):
-                continue
+                return
             if req in oldreqs:
-                continue
+                return
             
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
             provs = self.tsInfo.getProvides(*req)
@@ -1105,8 +1129,8 @@ class Depsolve(object):
             # expensive to just do it, and we really don't want "false positive"
             # requires for compare_providers().
             if not provs and not txmbr.po.inPrcoRange('provides', req):
-                ret.append( (txmbr.po, self._prco_req2req(req)) )
-                continue
+                ret.append( (txmbr.po, self._prco_req2req(req), weakdep) )
+                return
 
             #Add relationship
             for po in provs:
@@ -1115,6 +1139,11 @@ class Depsolve(object):
                 for member in self.tsInfo.getMembersWithState(
                     pkgtup=po.pkgtup, output_states=TS_INSTALL_STATES):
                     member.setAsDep(txmbr.po, relonly=True)
+
+        for req in sorted(txmbr_reqs, key=self._sort_req_key):
+            _deal_with_req(txmbr, req, False)
+        for req in sorted(txmbr_wreqs, key=self._sort_req_key):
+            _deal_with_req(txmbr, req, True)
 
         return ret
 

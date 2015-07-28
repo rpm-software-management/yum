@@ -388,11 +388,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         return map(lambda x: x['fname'], cur)
 
     def returnPrco(self, prcotype, printable=False):
-        prcotype = _share_data(prcotype)
-        if prcotype == 'strong_requires':
+        prcotype = {"weak_requires" : "recommends",
+                    "info_requires" : "suggests",
+                    "weak_reverse_requires" : "supplements",
+                    "info_reverse_requires" : "enhances",
             # pkg not installed so we don't know require flags yet
             # returning all requires should work in most cases
-            prcotype = 'requires'
+                    "strong_requires" : "requires"}.get(prcotype, prcotype)
+        prcotype = _share_data(prcotype)
 
         # Check for the new weak deps. tables...
         sql_table_exists = True

@@ -513,6 +513,10 @@ class RpmBase(object):
     def returnPrco(self, prcotype, printable=False):
         """return list of provides, requires, conflicts or obsoletes"""
         
+        prcotype = {"weak_requires" : "recommends",
+                    "info_requires" : "suggests",
+                    "weak_reverse_requires" : "supplements",
+                    "info_reverse_requires" : "enhances"}.get(prcotype,prcotype)
         prcos = self.prco.get(prcotype, [])
 
         if printable:
@@ -680,8 +684,12 @@ class RpmBase(object):
     provides = property(fget=lambda self: self.returnPrco('provides'))
     obsoletes = property(fget=lambda self: self.returnPrco('obsoletes'))
     conflicts = property(fget=lambda self: self.returnPrco('conflicts'))
-    # weak_requires = property(fget=lambda self: self.returnPrco('recommends'))
-    # info_requires = property(fget=lambda self: self.returnPrco('suggests'))
+    # http://rpm.org/wiki/PackagerDocs/Dependencies#Weakdependencies
+    weak_requires = property(fget=lambda self: self.returnPrco('recommends'))
+    info_requires = property(fget=lambda self: self.returnPrco('suggests'))
+    # Yum only uses reverse requires for compare providers, but meh.
+    weak_reverse_requires = property(fget=lambda self: self.returnPrco('supplements'))
+    info_reverse_requires = property(fget=lambda self: self.returnPrco('enhances'))
     provides_names = property(fget=lambda self: self.returnPrcoNames('provides'))
     requires_names = property(fget=lambda self: self.returnPrcoNames('requires'))
     strong_requires_names = property(fget=lambda self: self.returnPrcoNames('strong_requires'))

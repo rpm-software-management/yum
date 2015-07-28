@@ -1446,6 +1446,24 @@ class Depsolve(object):
                 return False
             return x.sourcerpm == y.sourcerpm
 
+        def _weak_req(x, y):
+            for ydep in y.provides:
+                if x.checkPrco('weak_requires', ydep):
+                    return True
+            for xdep in x.provides:
+                if y.checkPrco('weak_reverse_requires', xdep):
+                    return True
+            return False
+
+        def _info_req(x, y):
+            for ydep in y.provides:
+                if x.checkPrco('info_requires', ydep):
+                    return True
+            for xdep in x.provides:
+                if y.checkPrco('info_reverse_requires', xdep):
+                    return True
+            return False
+
         def _compare_arch_distance(x, y, req_compare_arch):
             # take X and Y package objects
             # determine which has a closer archdistance to compare_arch
@@ -1599,6 +1617,14 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('common sourcerpm %s and %s' % (po, reqpo)))
                 pkgresults[po] += 20
+            if _weak_req(po, reqpo):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('weak req %s and %s' % (po, reqpo)))
+                pkgresults[po] += 666
+            if _info_req(po, reqpo):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('informational req %s and %s' % (po, reqpo)))
+                pkgresults[po] += 333
             if self.isPackageInstalled(po.base_package_name):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('base package %s is installed for %s' % (po.base_package_name, po)))

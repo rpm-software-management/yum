@@ -703,6 +703,14 @@ want to install. Therefore yum install foo will install foo.i386 and foo.x86_64 
 if it is available. Best means install the best arch for this platform, only.
 
 .IP
+\fBrequires_policy \fR
+Can be set to 'strong', 'weak' or info'. Strong means install just the needed
+requirements. Weak means also install any weak requirements. Info means install
+all requirements. This only happens on install/reinstall, upgrades/downgrades
+do not consult this at all.
+Note that yum will try to just drop weak and info requirements on errors.
+
+.IP
 \fBbugtracker_url \fR
 URL where bugs should be filed for yum. Configurable for local versions or distro-specific
 bugtrackers.

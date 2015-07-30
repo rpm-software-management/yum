@@ -902,12 +902,12 @@ How many old snapshots should yum keep when trying to automatically create a
 new snapshot. Setting to 0 disables this feature. Default is '1'.
 
 .IP
-\fBfssnap_automatic_percentage\fR
+\fBfssnap_percentage\fR
 The size of new snaphosts, expressed as a percentage of the old origin device. 
 Any number between 1 and 100. Default is '100'.
 
 .IP
-\fBfssnap_automatic_devices\fR
+\fBfssnap_devices\fR
 The origin LVM devices to use for snapshots. Wildcards and negation are allowed,
 first match (positive or negative) wins.
 Default is: !*/swap !*/lv_swap glob:/etc/yum/fssnap.d/*.conf

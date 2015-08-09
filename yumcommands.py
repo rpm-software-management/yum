@@ -42,6 +42,7 @@ import errno
 import yum.config
 from yum import updateinfo
 from yum.packages import parsePackages
+from yum.packages import YumLocalPackage # cashe and fs diff
 
 def _err_mini_usage(base, basecmd):
     if basecmd not in base.yum_cli_commands:
@@ -4778,6 +4779,13 @@ class FSCommand(YumCommand):
                 pass
 
     def _fs_diff(self, base, extcmds):
+        tmpdir = None
+        def get_tmpdir(tmpdir):
+            if tmpdir is None:
+                tmpdir = tempfile.mkdtemp()
+                os.mkdir(tmpdir + '/pkgs')
+                os.mkdir(tmpdir + '/root')
+            return tmpdir
         def deal_with_file(fpath):
             if fpath in pfr['norm']:
                 pass
@@ -4788,13 +4796,14 @@ class FSCommand(YumCommand):
             elif fpath in pfr['miss']:
                 pass
             elif fpath in pfr['mod']:
+                rtmpdir = tmpdir + '/root'
                 pkg = apkgs[pfr['mod'][fpath].pkgtup]
                 # Hacky ... but works.
                 sys.stdout.flush()
                 extract_cmd = "cd %s; rpm2cpio %s | cpio --quiet -id .%s"
-                extract_cmd =  extract_cmd % (tmpdir, pkg.localPkg(), fpath)
+                extract_cmd =  extract_cmd % (rtmpdir, pkg.localPkg(), fpath)
                 os.system(extract_cmd)
-                diff_cmd = "diff -ru %s %s" % (tmpdir + fpath, fpath)
+                diff_cmd = "diff -ru %s %s" % (rtmpdir + fpath, fpath)
                 print diff_cmd
                 sys.stdout.flush()
                 os.system(diff_cmd)
@@ -4841,10 +4850,21 @@ class FSCommand(YumCommand):
                     downloadpkgs.append(apkg)
                     break
             if ipkg.pkgtup not in apkgs:
+                if ('checksum_type' in iyi and
+                    'checksum_data' in iyi and base._cashe is not None):
+                    co = base._cashe.get(iyi.checksum_type, iyi.checksum_data)
+                    tmpdir = get_tmpdir(tmpdir)
+                    ptmpdir = tmpdir + '/pkgs'
+                    filename = ipkg.nevra + '.rpm'
+                    filename = ptmpdir + '/' + filename
+                    if co.load(filename):
+                        apkg = YumLocalPackage(base.ts, filename)
+                        apkgs[ipkg.pkgtup] = apkg
+            if ipkg.pkgtup not in apkgs:
                 raise yum.Errors.YumBaseError, _("Can't find package: %s") %ipkg
 
         if downloadpkgs:
-            tmpdir = tempfile.mkdtemp()
+            tmpdir = get_tmpdir(tmpdir)
             problems = base.downloadPkgs(downloadpkgs, callback_total=base.download_callback_total_cb) 
             if len(problems) > 0:
                 errstring = ''
@@ -4862,8 +4882,11 @@ class FSCommand(YumCommand):
                     continue
 
                 deal_with_file(fpath)
+        else:
+            if os.path.isfile(prefix):
+                deal_with_file(prefix)
 
-        if downloadpkgs:
+        if tmpdir is not None:
             shutil.rmtree(tmpdir)
 
     def _fs_status(self, base, extcmds):

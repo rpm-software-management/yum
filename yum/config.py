@@ -838,7 +838,7 @@ class YumConf(StartupConf):
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
                  
-    requires_policy = SelectionOption('strong', ('strong', 'weak', 'info'),
+    requires_policy = SelectionOption('weak', ('strong', 'weak', 'info'),
                                       mapper={'information' : 'info',
                                               'informational' : 'info',
                                               'recommends' : 'weak',

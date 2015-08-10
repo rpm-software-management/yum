@@ -67,6 +67,7 @@ class FakeConf(object):
         self.diskspacecheck = True
         self.depsolve_loop_limit = 10
         self.override_install_langs = ''
+        self.requires_policy = "weak"
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""

@@ -1476,6 +1476,8 @@ class Depsolve(object):
             return x.sourcerpm == y.sourcerpm
 
         def _weak_req(x, y):
+            if y is None:
+                return False
             for ydep in y.provides:
                 if x.checkPrco('weak_requires', ydep):
                     return True
@@ -1485,6 +1487,8 @@ class Depsolve(object):
             return False
 
         def _info_req(x, y):
+            if y is None:
+                return False
             for ydep in y.provides:
                 if x.checkPrco('info_requires', ydep):
                     return True

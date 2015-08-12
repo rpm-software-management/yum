@@ -4792,7 +4792,8 @@ class FSCommand(YumCommand):
             elif fpath in pfr['ghost']:
                 pass
             elif fpath in pfr['not']:
-                print >>sys.stderr, _('Not installed:'), fpath
+                if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+                    print >>sys.stderr, _('Not installed:'), fpath
             elif fpath in pfr['miss']:
                 pass
             elif fpath in pfr['mod']:
@@ -4807,7 +4808,7 @@ class FSCommand(YumCommand):
                 print diff_cmd
                 sys.stdout.flush()
                 os.system(diff_cmd)
-            else:
+            elif base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
                 print >>sys.stderr, _('Not packaged?:'), fpath
 
         if not distutils.spawn.find_executable("diff"):

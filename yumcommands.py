@@ -4842,17 +4842,17 @@ class FSCommand(YumCommand):
                     if not repo.isEnabled():
                         base.repos.enableRepo(repo.id)
 
+            if ('checksum_type' not in iyi or
+                'checksum_data' not in iyi):
+                raise yum.Errors.YumBaseError, _("No YumDB for (yumdb sync?): %s") %ipkg
             for apkg in base.pkgSack.searchPkgTuple(ipkg.pkgtup):
-                if ('checksum_type' in iyi and
-                    'checksum_data' in iyi and
-                    iyi.checksum_type == apkg.checksum_type and
+                if (iyi.checksum_type == apkg.checksum_type and
                     iyi.checksum_data == apkg.pkgId):
                     apkgs[ipkg.pkgtup] = apkg
                     downloadpkgs.append(apkg)
                     break
-            if ipkg.pkgtup not in apkgs:
-                if ('checksum_type' in iyi and
-                    'checksum_data' in iyi and base._cashe is not None):
+            if ipkg.pkgtup not in apkgs: # Try CAShe
+                if base._cashe is not None:
                     co = base._cashe.get(iyi.checksum_type, iyi.checksum_data)
                     tmpdir = get_tmpdir(tmpdir)
                     ptmpdir = tmpdir + '/pkgs'

@@ -4311,7 +4311,7 @@ class FSSnapshotCommand(YumCommand):
             if base.fssnap.has_space(pc):
                 print _("Space available to take a snapshot.")
             else:
-                print _("Not enough space available to take a snapshot.")
+                print _("Not enough space available on logical volumes to take a snapshot.")
 
         if subcommand == 'create':
             tags = {'*': ['reason=manual']}

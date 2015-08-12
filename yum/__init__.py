@@ -1773,7 +1773,7 @@ much more problems).
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
             self.conf.fssnap_automatic_pre)):
             if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space to create pre. FS snapshot.")
+                msg = _("Not enough space on logical volumes to create pre. FS snapshot.")
                 if self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
                     raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
                 else:
@@ -1926,7 +1926,7 @@ much more problems).
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
             self.conf.fssnap_automatic_post)):
             if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space to create post trans FS snapshot.")
+                msg = _("Not enough space on logical volumes to create post trans FS snapshot.")
                 self.verbose_logger.critical(msg)
             else:
                 tags = {'*': ['reason=automatic']} # FIXME: post tags

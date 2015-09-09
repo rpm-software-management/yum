@@ -43,6 +43,12 @@ def _makedirs_no_umask(*args):
 
     return ret
 
+def _read_str(fo):
+    for s in fo:
+        if s[:-1]:
+            return s[:-1]
+    return ''
+
 class InstalledGroup(object):
     def __init__(self, gid):
         self.gid       = gid
@@ -107,12 +113,6 @@ class InstalledGroups(object):
         if not os.access(self.filename, os.R_OK):
             return
 
-        def _read_str(fo):
-            s = fo.readline()[:-1]
-            while not s:
-                s = fo.readline()[:-1]
-            return s
-
         fo = open(self.filename)
         try:
             ver = int(_read_str(fo))
@@ -138,14 +138,11 @@ class InstalledGroups(object):
         if not os.access(self.grp_filename, os.R_OK):
             return
 
-        def _read_str(fo):
-            s = fo.readline()[:-1]
-            while not s:
-                s = fo.readline()[:-1]
-            return s
-
         fo = open(self.grp_filename)
-        ver = int(_read_str(fo))
+        try:
+            ver = int(_read_str(fo))
+        except ValueError:
+            return
         if ver != 1:
             return
 

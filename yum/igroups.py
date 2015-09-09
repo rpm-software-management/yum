@@ -108,7 +108,10 @@ class InstalledGroups(object):
             return
 
         def _read_str(fo):
-            return fo.readline()[:-1]
+            s = fo.readline()[:-1]
+            while not s:
+                s = fo.readline()[:-1]
+            return s
 
         fo = open(self.filename)
         try:
@@ -136,7 +139,10 @@ class InstalledGroups(object):
             return
 
         def _read_str(fo):
-            return fo.readline()[:-1]
+            s = fo.readline()[:-1]
+            while not s:
+                s = fo.readline()[:-1]
+            return s
 
         fo = open(self.grp_filename)
         ver = int(_read_str(fo))

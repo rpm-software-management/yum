@@ -4101,7 +4101,7 @@ class UpdateinfoCommand(YumCommand):
         opts = _upi._updateinfofilter2opts(base.updateinfo_filters)
         extcmds, show_type, filt_type = self._parse_extcmds(extcmds)
 
-        list_type = "available"
+        list_type = "updates"
         if extcmds and extcmds[0] in ("updates","available","installed", "all"):
             list_type = extcmds.pop(0)
             if filt_type is None:
@@ -4111,13 +4111,14 @@ class UpdateinfoCommand(YumCommand):
         used_map = _upi._ysp_gen_used_map(base.updateinfo_filters)
         iname2tup = {}
         if False: pass
-        elif list_type in ('installed', 'all'):
+        elif list_type == 'installed':
             name2tup = _upi._get_name2allpkgtup(base)
             iname2tup = _upi._get_name2instpkgtup(base)
         elif list_type == 'updates':
             name2tup = _upi._get_name2oldpkgtup(base)
-        elif list_type == 'available':
-            name2tup = _upi._get_name2instpkgtup(base)
+        elif list_type in ('available', 'all'):
+            name2tup = _upi._get_name2aallpkgtup(base)
+            iname2tup = _upi._get_name2instpkgtup(base)
 
         if filt_type == "newpackage":
             self.doCommand_li_new(base, list_type, extcmds, md_info, msg,
@@ -4134,6 +4135,10 @@ class UpdateinfoCommand(YumCommand):
                 if list_type == 'installed':
                     # Remove any that are newer than what we have installed
                     if _upi._rpm_tup_vercmp(iname2tup[name], pkgtup) < 0:
+                        continue
+                if list_type == 'available':
+                    # Remove any that are installed
+                    if name in iname2tup and _upi._rpm_tup_vercmp(iname2tup[name], pkgtup) >= 0:
                         continue
 
                 if _upi._ysp_should_filter_pkg(opts, name, notice, used_map):

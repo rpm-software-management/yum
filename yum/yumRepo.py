@@ -675,6 +675,7 @@ class YumRepository(Repository, config.RepoConf):
                  'user_agent': default_grabber.opts.user_agent,
                  'username': self.username,
                  'password': self.password,
+                 'ftp_disable_epsv': self.ftp_disable_epsv,
                  }
         if self.proxy == 'libproxy':
             opts['libproxy'] = True

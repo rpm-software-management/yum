@@ -439,6 +439,11 @@ default of 5 connections.  Note that there are also implicit per-mirror limits
 and the downloader honors these too.
 
 .IP
+\fBftp_disable_epsv \fR
+This options disables Extended Passive Mode (the EPSV command) which does not
+work correctly on some buggy ftp servers. Default is `0' (EPSV enabled).
+
+.IP
 \fBdeltarpm\fR
 
 When non-zero, delta-RPM files are used if available.  The value specifies
@@ -1112,6 +1117,11 @@ repository.
 \fBip_resolve \fR
 Overrides the \fBip_resolve\fR option from the [main] section for this
 repository.
+
+.IP
+\fBftp_disable_epsv\fR
+Overrides the \fBftp_disable_epsv\fR option from the [main] section
+for this repository.
 
 .IP
 \fBdeltarpm_percentage\fR

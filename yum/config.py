@@ -811,6 +811,7 @@ class YumConf(StartupConf):
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
     max_connections = IntOption(0, range_min=0)
+    ftp_disable_epsv = BoolOption(False)
     deltarpm = IntOption(2, range_min=-16, range_max=128)
     deltarpm_percentage = IntOption(75, range_min=0, range_max=100)
     deltarpm_metadata_percentage = IntOption(100, range_min=0)
@@ -1003,6 +1004,7 @@ class RepoConf(BaseConfig):
     #  Rely on the above config. to do automatic disabling, and thus. no hack
     # needed here.
     deltarpm_metadata_percentage = Inherit(YumConf.deltarpm_metadata_percentage)
+    ftp_disable_epsv = Inherit(YumConf.ftp_disable_epsv)
 
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)

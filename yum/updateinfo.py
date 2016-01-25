@@ -411,14 +411,16 @@ def exclude_updates(base, filters=None):
     name2tup = _get_name2oldpkgtup(base)
     
     cnt = 0
+    pkgs_to_del = []
     for pkg in pkgs:
         name = pkg.name
         if (name not in name2tup or
             not _ysp_should_keep_pkg(opts, name2tup[name], md_info, used_map)):
-            for p in base.doPackageLists(pkgnarrow='available', patterns=[pkg.name], showdups=True).available:
-                ysp_del_pkg(p)
+                pkgs_to_del.append(pkg.name)
             continue
         cnt += 1
+    for p in base.doPackageLists(pkgnarrow='available', patterns=pkgs_to_del, showdups=True).available:
+        ysp_del_pkg(p)
 
     _ysp_chk_used_map(used_map, lambda x: base.verbose_logger.warn("%s", x))
 

@@ -427,24 +427,23 @@ class YumCronBase(yum.YumBase, YumOutput):
                 self.updateinfo_filters['sevs'] = sevs.split(",")
 
 
-            if self.opts.update_cmd in ('minimal', 'minimal-security'):
+            if update_cmd in ('minimal', 'minimal-security'):
                 if not yum.updateinfo.update_minimal(self):
                     return False
                 self.updateinfo_filters['bugfix'] = True
-            elif self.opts.update_cmd in ('default', 'security',
-                                          'default-security'):
+            elif update_cmd in ('default', 'security', 'default-security'):
                 if not self.update():
                     return False
             else:
                 # return False ?
-                self.opts.update_cmd = 'default'
+                update_cmd = 'default'
                 if not self.update():
                     return False
 
-            if self.opts.update_cmd.endswith("security"):
+            if update_cmd.endswith("security"):
                 self.updateinfo_filters['security'] = True
                 yum.updateinfo.remove_txmbrs(self)
-            elif self.opts.update_cmd == 'minimal':
+            elif update_cmd == 'minimal':
                 self.updateinfo_filters['bugfix'] = True
                 yum.updateinfo.remove_txmbrs(self)
 

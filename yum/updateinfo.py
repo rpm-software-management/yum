@@ -419,8 +419,9 @@ def exclude_updates(base, filters=None):
                 pkgs_to_del.append(pkg.name)
             continue
         cnt += 1
-    for p in base.doPackageLists(pkgnarrow='available', patterns=pkgs_to_del, showdups=True).available:
-        ysp_del_pkg(p)
+    if pkgs_to_del:
+        for p in base.doPackageLists(pkgnarrow='available', patterns=pkgs_to_del, showdups=True).available:
+            ysp_del_pkg(p)
 
     _ysp_chk_used_map(used_map, lambda x: base.verbose_logger.warn("%s", x))
 

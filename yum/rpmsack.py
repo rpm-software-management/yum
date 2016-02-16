@@ -1756,7 +1756,10 @@ class RPMDBAdditionalDataPackage(object):
                                 'command_line'])
 
     # Validate these attributes when they are read from a file
-    _validators = {}
+    _validators = {
+        # Fixes BZ 1234967
+        'from_repo': lambda repoid: misc.validate_repoid(repoid) is None,
+    }
 
     def __init__(self, conf, pkgdir, yumdb_cache=None):
         self._conf = conf

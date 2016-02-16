@@ -95,7 +95,6 @@ from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str, exception2msg
 from yum.drpm import DeltaInfo, DeltaPackage
 
-import string
 import StringIO
 
 from weakref import proxy as weakref
@@ -476,17 +475,7 @@ class YumBase(depsolve.Depsolve):
                 continue
 
             # Check the repo.id against the valid chars
-            bad = None
-            for byte in section:
-                if byte in string.ascii_letters:
-                    continue
-                if byte in string.digits:
-                    continue
-                if byte in "-_.:":
-                    continue
-                
-                bad = byte
-                break
+            bad = misc.validate_repoid(section)
 
             if bad:
                 self.logger.warning("Bad id for repo: %s, byte = %s %d" %

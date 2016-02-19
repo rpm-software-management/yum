@@ -223,8 +223,18 @@ class EmailEmitter(UpdateEmitter):
         # Don't send empty emails
         if not self.output:
             return
-        # Build up the email to be sent
-        msg = MIMEText(''.join(self.output))
+        # Build up the email to be sent.  Encode it with us-ascii instead of
+        # utf-8 if possible.  This ensures the email package will not
+        # transfer-encode it to base64 in such a case (it decides based on the
+        # charset passed to the MIMEText constructor).
+        output = ''.join(self.output)
+        try:
+            output.encode('us-ascii')
+        except UnicodeEncodeError:
+            charset = 'utf-8'
+        else:
+            charset = 'us-ascii'
+        msg = MIMEText(output, 'plain', charset)
         msg['Subject'] = self.subject
         msg['From'] = self.opts.email_from
         msg['To'] = ",".join(self.opts.email_to)

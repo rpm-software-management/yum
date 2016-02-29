@@ -1755,6 +1755,12 @@ class RPMDBAdditionalDataPackage(object):
                                 'group_member',
                                 'command_line'])
 
+    # Validate these attributes when they are read from a file
+    _validators = {
+        # Fixes BZ 1234967
+        'from_repo': lambda repoid: misc.validate_repoid(repoid) is None,
+    }
+
     def __init__(self, conf, pkgdir, yumdb_cache=None):
         self._conf = conf
         self._mydir = pkgdir
@@ -1902,6 +1908,15 @@ class RPMDBAdditionalDataPackage(object):
         value = fo.read()
         fo.close()
         del fo
+
+        # Validate the attribute we just read from the file.  Some attributes
+        # may require being in a specific format and we can't guarantee the
+        # file has not been tampered with outside of yum.
+        if attr in self._validators:
+            valid = self._validators[attr]
+            if not valid(value):
+                raise AttributeError, \
+                    "Invalid value of attribute %s on %s" % (attr, self)
 
         if info.st_nlink > 1 and self._yumdb_cache is not None:
             self._yumdb_cache[key] = value

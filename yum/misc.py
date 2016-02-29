@@ -24,6 +24,7 @@ import bz2
 import gzip
 import shutil
 import urllib
+import string
 _available_compression = ['gz', 'bz2']
 try:
     import lzma
@@ -1248,3 +1249,12 @@ def filter_pkgs_repoid(pkgs, repoid):
             continue
         ret.append(pkg)
     return ret
+
+def validate_repoid(repoid):
+    """Return the first invalid char found in the repoid, or None."""
+    allowed_chars = string.ascii_letters + string.digits + '-_.:'
+    for char in repoid:
+        if char not in allowed_chars:
+            return char
+    else:
+        return None

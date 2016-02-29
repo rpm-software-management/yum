@@ -718,9 +718,9 @@ updateinfo data:
 .br 
 
 .IP
-.IP "\fBfssnapshot\fP"
+.IP "\fBfssnapshot\fP or \fBfssnap\fP"
 This command has a few sub-commands to act on the LVM data of the host, to list
-snapshots and the create and remove them. The simplest commands, to display
+snapshots and to create and remove them. The simplest commands, to display
 information about the configured LVM snapshotable devices, are:
 
 .br 
@@ -734,9 +734,9 @@ information about the configured LVM snapshotable devices, are:
 then you can create and delete snapshots using:
 
 .br
-.I \fR yum fssnap create
+.I \fR yum fssnapshot create
 .br 
-.I \fR yum fssnap delete <device(s)>
+.I \fR yum fssnapshot delete <device(s)>
 .br 
 
 .br

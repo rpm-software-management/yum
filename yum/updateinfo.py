@@ -416,7 +416,7 @@ def exclude_updates(base, filters=None):
         name = pkg.name
         if (name not in name2tup or
             not _ysp_should_keep_pkg(opts, name2tup[name], md_info, used_map)):
-                pkgs_to_del.append(pkg.name)
+            pkgs_to_del.append(pkg.name)
             continue
         cnt += 1
     if pkgs_to_del:

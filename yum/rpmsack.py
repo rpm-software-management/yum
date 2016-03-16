@@ -607,6 +607,9 @@ class RPMDBPackageSack(PackageSackBase):
                 # will pick up any loads :)
                 pkgs = self.searchNames([pat])
                 if not pkgs:
+                    # We could be given gliBc or mysql
+                    if ignore_case:
+                        break
                     # We need to do a big search for 'pkg*'
                     if misc.re_glob(pat):
                         break

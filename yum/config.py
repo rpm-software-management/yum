@@ -729,6 +729,8 @@ class StartupConf(BaseConfig):
     syslog_facility = Option('LOG_USER')
     syslog_device = Option('/dev/log')
     persistdir = Option('/var/lib/yum')
+    skip_missing_names_on_install = BoolOption(True)
+    skip_missing_names_on_update = BoolOption(True)
     
 class YumConf(StartupConf):
     """Configuration option definitions for yum.conf's [main] section.

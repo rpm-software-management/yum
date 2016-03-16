@@ -117,6 +117,9 @@ class GroupInstallError(InstallError):
 
 class UpdateError(YumBaseError):
     pass
+
+class UpdateMissingNameError(UpdateError):
+    pass
     
 class RemoveError(YumBaseError):
     pass

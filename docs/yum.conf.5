@@ -945,6 +945,17 @@ Either `0' or `1'. Set this to `0' to disable the checking for writability on
 /usr in the installroot (when going into the depsolving stage). Default is `1'
 (perform the check).
 
+.IP
+\fBskip_missing_names_on_install\fR
+If set to False, 'yum install' will fail if it can't find any of the provided
+names (package, group, rpm file). Boolean (1, 0, True, False, yes, no). Defaults to True.
+
+.IP
+\fBskip_missing_names_on_update\fR
+If set to False, 'yum update' will fail if it can't find any of the provided
+names (package, group, rpm file). It will also fail if the provided name is a package
+which is available, but not installed. Boolean (1, 0, True, False, yes, no). Defaults to True.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:

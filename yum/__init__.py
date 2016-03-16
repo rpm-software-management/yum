@@ -4581,7 +4581,10 @@ much more problems).
             return self._at_groupinstall(pattern, upgrade=True)
         except Errors.GroupInstallError, e:
             self.logger.warning(_('Warning: %s'), e)
-            return []
+            if self.conf.skip_missing_names_on_update:
+                return []
+            else:
+                raise
 
     def _at_groupremove(self, pattern):
         " Do groupremove via. leading @ on the cmd line, for remove."
@@ -5185,6 +5188,8 @@ much more problems).
 
             if not availpkgs and not instpkgs:
                 self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
+                if not self.conf.skip_missing_names_on_update:
+                    raise Errors.UpdateMissingNameError, _('Not tolerating missing names on update, stopping.')
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)

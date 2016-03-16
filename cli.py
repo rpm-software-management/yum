@@ -982,6 +982,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     except:
                         self.verbose_logger.warning(_('Bad %s argument %s.'),
                                                     basecmd, arg)
+                        if not self.conf.skip_missing_names_on_install:
+                            return 1, [_('Not tolerating missing names on install, stopping.')]
                         continue
                     txmbrs = self.install(name=n, arch=a)
                 elif basecmd == 'install-nevra':
@@ -992,6 +994,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     except:
                         self.verbose_logger.warning(_('Bad %s argument %s.'),
                                                     basecmd, arg)
+                        if not self.conf.skip_missing_names_on_install:
+                            return 1, [_('Not tolerating missing names on install, stopping.')]
                         continue
                     txmbrs = self.install(name=n,
                                           epoch=e, version=v, release=r, arch=a)
@@ -1000,12 +1004,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     txmbrs = self.install(pattern=arg)
             except yum.Errors.GroupInstallError, e:
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
+                if not self.conf.skip_missing_names_on_install:
+                    return 1, [_('Not tolerating missing names on install, stopping.')]
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
                                         self.term.MODE['bold'], arg,
                                         self.term.MODE['normal'])
                 self._maybeYouMeant(arg)
+                if not self.conf.skip_missing_names_on_install:
+                    return 1, [_('Not tolerating missing names on install, stopping.')]
             else:
                 done = True
                 self._install_upgraded_requires(txmbrs)
@@ -1057,10 +1065,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     self._install_upgraded_requires(txmbrs)
                     continue
 
-                txmbrs = self.update(pattern=item, update_to=update_to)
+                try:
+                    txmbrs = self.update(pattern=item, update_to=update_to)
+                except (yum.Errors.UpdateMissingNameError, yum.Errors.GroupInstallError):
+                    self._checkMaybeYouMeant(item)
+                    return 1, [_('Not tolerating missing names on update, stopping.')]
+
                 self._install_upgraded_requires(txmbrs)
                 if not txmbrs:
                     self._checkMaybeYouMeant(item)
+                    if not self.conf.skip_missing_names_on_update:
+                        matches = self.doPackageLists(pkgnarrow='all', patterns=[item], ignore_case=False)
+                        if matches.available and not matches.installed:
+                            return 1, [_('Not tolerating missing names on update, stopping.')]
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount

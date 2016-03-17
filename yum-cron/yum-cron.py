@@ -512,8 +512,14 @@ class YumCronBase(yum.YumBase, YumOutput):
             (res, resmsg) = self.buildTransaction()
         except yum.Errors.RepoError, e:
             self.emitCheckFailed("%s" %(e,))
-            sys.exit()
-        if res != 2:
+            sys.exit(1)
+        if res == 0:
+            # success, empty transaction
+            sys.exit(0)
+        elif res == 2:
+            # success, dependencies resolved
+            pass
+        else:
             self.emitCheckFailed("Failed to build transaction: %s" %(str.join("\n", resmsg),))
             sys.exit(1)
 

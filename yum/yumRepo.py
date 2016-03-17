@@ -1460,6 +1460,10 @@ Insufficient space in download directory %s
             else:
                 result = self._getFileRepoXML(local, text)
                 if result is None:
+                    if self.skip_if_unavailable and self._metadata_cache_req in ('write', 'read-only:future'):
+                        # Since skip_if_unavailable=True, we can just disable this repo
+                        raise Errors.RepoError, "Can't download repomd.xml for %s" % self.ui_id
+
                     # Ignore this as we have a copy
                     self._revertOldRepoXML()
                     return False

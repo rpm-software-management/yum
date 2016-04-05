@@ -283,6 +283,8 @@ default package are installed (when not in group_command=objects mode).
 You can pass optional arguments to the list/summary commands: installed,
 available, environment, language, packages, hidden and ids (or any of those
 prefixed by "no" to turn them off again).
+Note that groups that are available but hidden will not be listed unless
+\'hidden\' keyword is passed to the command.
 If you pass the \-v option, to enable verbose mode, then the groupids are
 displayed by default (but "yum group list ids" is often easier to read).
 

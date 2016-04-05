@@ -80,6 +80,9 @@ arches = {
     # arm64
     "arm64": "noarch",
 
+    # aarch64
+    "aarch64": "noarch",
+
     # super-h 
     "sh4a": "sh4",
     "sh4": "noarch",

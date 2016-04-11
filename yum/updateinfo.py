@@ -33,7 +33,7 @@ def _ysp_safe_refs(refs):
 
 def _match_sec_cmd(sec_cmds, pkgname, notice):
     for i in sec_cmds:
-        if fnmatch.fnmatch(pkgname, i):
+        if pkgname is not None and fnmatch.fnmatch(pkgname, i):
             return i
         if fnmatch.fnmatch(notice['update_id'], i):
             return i
@@ -172,9 +172,9 @@ def _args2filters(args):
             filters[T] = filters.get(T, []) + arg1.split(',')
         return filters
 
-def _ysp_gen_used_map(opts):
+def _ysp_gen_used_map(opts, init=False):
     used_map = {'bugzilla' : {}, 'cve' : {}, 'id' : {}, 'cmd' : {}, 'sev' : {}}
-    if True:
+    if not init:
         return used_map
     for i in opts.sec_cmds:
         used_map['cmd'][i] = False
@@ -205,6 +205,80 @@ def _ysp_chk_used_map(used_map, msg):
         if not used_map['sev'][i]:
             msg('Severity \"%s\" not found applicable for this system' % i)
 
+def _guess_opts(opts, md_info, tform_map):
+    """Try to correct some of the opts in a clever way.
+
+    Look into updateinfo to see which opts get zero matches when doing the
+    package filtering, and replace each of those with our guess of what the
+    user meant exactly.
+
+    The reason we do it this way instead of just extending opts with guesses is
+    to prevent opts consumers from matching both versions of the same option in
+    one package filtering run, if both are present in updateinfo.
+
+    tform_map is used to determine how the guessed versions are produced by
+    transforming the original items.  Only the list-type opts (sec_cmds,
+    advisory...) are supported.
+    """
+
+    def transform(items, fncs):
+        return [f(i) for i in items for f in fncs]
+
+    # Maps opts attributes to used_map keys
+    attr2umap = {
+        'sec_cmds': 'cmd',
+        'advisory': 'id',
+        'bz': 'bugzilla',
+        'cve': 'cve',
+        'severity': 'sev',
+    }
+
+    # Find out if anything can be corrected at all and just return now if not,
+    # so that we avoid unnecessary notice looping
+    for attr, fncs in tform_map.iteritems():
+        items = opts[attr]
+        if set(transform(items, fncs)) != set(items):
+            break
+    else:
+        return
+
+    # Detect the presence or absence of each option in updateinfo and store it
+    # in a used_map.  Note that we need to feed _ysp_should_filter_pkg() with
+    # each item as a separate opts instance if we want to get the whole
+    # picture.  That's because the function evaluates lazily, meaning it
+    # returns as soon as it finds the first matching item, ignoring the rest.
+    used_map = _ysp_gen_used_map(opts, True)
+    samples = []
+    for attr in tform_map:
+        for i in opts[attr]:
+            sample = _updateinfofilter2opts(dict())
+            setattr(sample, attr, [i])
+            samples.append(sample)
+    for notice in md_info.get_notices():
+        for sample in samples:
+            _ysp_should_filter_pkg(sample, None, notice, used_map)
+
+    # Modify opts by replacing unmatched data with our guesses
+    for attr, fncs in tform_map.iteritems():
+        used = used_map[attr2umap[attr]]
+        unmatched = [k for k in used if not used[k]]
+        guessed = transform(unmatched, fncs)
+        corrected = (set(used) - set(unmatched)) | set(guessed)
+        setattr(opts, attr, list(corrected))
+
+def _ysp_gen_opts(updateinfo_filters, md_info, sec_cmds=None):
+    def strip_respin(id_):
+        root, respin = misc.split_advisory(id_)
+        return root
+
+    opts = _updateinfofilter2opts(updateinfo_filters)
+    if sec_cmds is not None:
+        opts.sec_cmds = sec_cmds
+
+    tform_map = {'sec_cmds': [strip_respin], 'advisory': [strip_respin]}
+    _guess_opts(opts, md_info, tform_map)
+
+    return opts
 
 def _get_name2pkgtup(base, pkgtups):
     name2tup = {}
@@ -308,12 +382,12 @@ def remove_txmbrs(base, filters=None):
 
     if filters is None:
         filters = base.updateinfo_filters
-    opts = _updateinfofilter2opts(filters)
+    md_info = base.upinfo
+    opts = _ysp_gen_opts(filters, md_info)
 
     if _no_options(opts):
         return 0, 0, 0
 
-    md_info = base.upinfo
     tot = 0
     cnt = 0
     used_map = _ysp_gen_used_map(opts)
@@ -392,12 +466,11 @@ def exclude_updates(base, filters=None):
 
     if filters is None:
         filters = base.updateinfo_filters
-    opts = _updateinfofilter2opts(filters)
+    md_info = base.upinfo
+    opts = _ysp_gen_opts(filters, md_info)
 
     if _no_options(opts):
         return 0, 0
-
-    md_info = base.upinfo
 
     used_map = _ysp_gen_used_map(opts)
 
@@ -446,12 +519,11 @@ def exclude_all(base, filters=None):
 
     if filters is None:
         filters = base.updateinfo_filters
-    opts = _updateinfofilter2opts(filters)
+    md_info = base.upinfo
+    opts = _ysp_gen_opts(filters, md_info)
 
     if _no_options(opts):
         return 0, 0
-
-    md_info = base.upinfo
 
     used_map = _ysp_gen_used_map(opts)
 
@@ -487,7 +559,7 @@ def update_minimal(base, extcmds=[]):
     txmbrs = []
 
     used_map = _ysp_gen_used_map(base.updateinfo_filters)
-    opts     = _updateinfofilter2opts(base.updateinfo_filters)
+    opts     = _ysp_gen_opts(base.updateinfo_filters, base.upinfo)
     ndata    = _no_options(opts)
 
     # NOTE: Not doing obsoletes processing atm. ... maybe we should? --

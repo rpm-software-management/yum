@@ -1258,3 +1258,18 @@ def validate_repoid(repoid):
             return char
     else:
         return None
+
+def split_advisory(id_):
+    """Split the advisory ID into the root ID and respin suffix."""
+
+    # Regexes for different advisory formats
+    patterns = [
+        r'^(RH[BES]A\-\d+\:\d+)(?:\-(\d+))?$',  # Red Hat errata
+    ]
+
+    for pat in patterns:
+        match = re.match(pat, id_)
+        if match:
+            return match.groups()
+    else:
+        return id_, None

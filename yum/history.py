@@ -244,6 +244,9 @@ class YumHistoryRpmdbProblem:
         ret = cmp(self.rpid, other.rpid)
         return ret
 
+    def __hash__(self):
+        return hash(self.rpid)
+
     def _getProbPkgs(self):
         if self._loaded_P is None:
             self._loaded_P = sorted(self._history._old_prob_pkgs(self.rpid))

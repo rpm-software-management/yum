@@ -1,3 +1,4 @@
+import rpm
 from testbase import *
 import simpleobsoletestests
 
@@ -141,6 +142,17 @@ class KernelTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install','kernel-2.6.23.8'], p.inst, p.avail)
         self.assertResult(p.inst)
+
+    def testRequireOlderKernel(self):
+        p = self.pkgs
+
+        foo = FakePackage('foo', '1.0', '1', arch='i686')
+        foo.addRequires('kernel', 'EQ', (None, '2.6.23.5', '1'))
+        navail = [foo, FakePackage('kernel', '2.6.23.5', '1',arch='i686')]
+
+        res, msg = self.runOperation(['install', 'foo'], p.inst, navail)
+        self.assertResult(p.inst + navail)
+        self.assertEquals(self.tsInfo.probFilterFlags, [rpm.RPMPROB_FILTER_OLDPACKAGE])
 
 class MultiLibTests(OperationsTests):
 

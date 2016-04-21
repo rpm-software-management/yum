@@ -1120,8 +1120,6 @@ def readMainConfig(startupconf):
     yumvars.setdefault('arch', startupconf.arch)
     yumvars.setdefault('releasever', startupconf.releasever)
     yumvars.setdefault('uuid', startupconf.uuid)
-    # Note: We don't setup the FS yumvars here, because we want to be able to
-    #       use the core yumvars in persistdir. Which is the base of FS yumvars.
     
     # Read [main] section
     yumconf = YumConf()

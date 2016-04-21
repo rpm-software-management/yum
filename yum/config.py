@@ -1114,12 +1114,12 @@ def readMainConfig(startupconf):
     
     # ' xemacs syntax hack
 
-    # Set up substitution vars
+    # Set up substitution vars but make sure we always prefer FS yumvars
     yumvars = startupconf.yumvars
-    yumvars['basearch'] = startupconf.basearch
-    yumvars['arch'] = startupconf.arch
-    yumvars['releasever'] = startupconf.releasever
-    yumvars['uuid'] = startupconf.uuid
+    yumvars.setdefault('basearch', startupconf.basearch)
+    yumvars.setdefault('arch', startupconf.arch)
+    yumvars.setdefault('releasever', startupconf.releasever)
+    yumvars.setdefault('uuid', startupconf.uuid)
     # Note: We don't setup the FS yumvars here, because we want to be able to
     #       use the core yumvars in persistdir. Which is the base of FS yumvars.
     

@@ -646,7 +646,12 @@ Eg. yum list yum
 `read-only:future' - Commands that are likely to result in running other
 commands which will require the latest metadata. Eg. yum check-update
 
-Note that this option does not override "yum clean expire-cache".
+Note that this option requires that all the enabled repositories be roughly the
+same freshness (meaning the cache age difference from one another is at most 5
+days).  Failing that, metadata_expire will always be obeyed, just like with
+`never'.
+
+Also note that this option does not override "yum clean expire-cache".
 
 .IP
 \fBmirrorlist_expire \fR

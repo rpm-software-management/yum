@@ -2325,7 +2325,10 @@ class RepoListCommand(YumCommand):
                     num = _num2ui_num(repo.metadata_expire)
                     num = _("%s second(s) (last: %s)") % (num, last)
 
-                out += [base.fmtKeyValFill(_("Repo-expire  : "), num)]
+                out += [base.fmtKeyValFill(_("Repo-expire  : "), num),
+                        base.fmtKeyValFill(_("  Filter     : "),
+                            repo.metadata_expire_filter),
+                        ]
 
                 if repo.exclude:
                     out += [base.fmtKeyValFill(_("Repo-exclude : "),

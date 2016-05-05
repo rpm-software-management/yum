@@ -160,7 +160,10 @@ class YumPlugins:
         self.cmdlines = {}
 
         # Call close handlers when yum exit's
-        atexit.register(self.run, 'close')
+        if self._pluginfuncs['close']:
+            self.verbose_logger.error(
+                _('One or more plugins uses "close" handling but should use atexit directly.'))
+            atexit.register(self.run, 'close')
 
         # Let plugins register custom config file options
         self.run('config')

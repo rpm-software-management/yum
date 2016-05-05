@@ -30,7 +30,9 @@ def _leak_tst_yb():
     yb = yum.YumBase()
     yb.preconf.debuglevel = 0
     yb.preconf.errorlevel = 0
-    yb.repos.setCacheDir(yum.misc.getCacheDir())
+    yb.conf
+    yb.setCacheDir(force=True)
+    yb.repos
     yb.rpmdb.returnPackages()
     yb.pkgSack.returnPackages()
     yb.tsInfo
@@ -40,8 +42,9 @@ def _leak_tst_yb():
     yb.history
     yb.igroups
     yb.pkgtags
+    gc.collect()
     out_mem(os.getpid())
-    time.sleep(4)
+    time.sleep(1)
 
     if False:
        del yb
@@ -87,6 +90,7 @@ def _leak_tst_ir():
         yb.preconf.errorlevel = 0
         yb.repos.setCacheDir(yum.misc.getCacheDir())
         yb.conf.assumeyes = True
+        yb.conf.downloadonly = False
         return yb
 
     sys.path.append('/usr/share/yum-cli')

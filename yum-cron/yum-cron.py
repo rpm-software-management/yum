@@ -223,8 +223,18 @@ class EmailEmitter(UpdateEmitter):
         # Don't send empty emails
         if not self.output:
             return
-        # Build up the email to be sent
-        msg = MIMEText(''.join(self.output))
+        # Build up the email to be sent.  Encode it with us-ascii instead of
+        # utf-8 if possible.  This ensures the email package will not
+        # transfer-encode it to base64 in such a case (it decides based on the
+        # charset passed to the MIMEText constructor).
+        output = ''.join(self.output)
+        try:
+            output.encode('us-ascii')
+        except UnicodeEncodeError:
+            charset = 'utf-8'
+        else:
+            charset = 'us-ascii'
+        msg = MIMEText(output, 'plain', charset)
         msg['Subject'] = self.subject
         msg['From'] = self.opts.email_from
         msg['To'] = ",".join(self.opts.email_to)
@@ -427,24 +437,23 @@ class YumCronBase(yum.YumBase, YumOutput):
                 self.updateinfo_filters['sevs'] = sevs.split(",")
 
 
-            if self.opts.update_cmd in ('minimal', 'minimal-security'):
+            if update_cmd in ('minimal', 'minimal-security'):
                 if not yum.updateinfo.update_minimal(self):
                     return False
                 self.updateinfo_filters['bugfix'] = True
-            elif self.opts.update_cmd in ('default', 'security',
-                                          'default-security'):
+            elif update_cmd in ('default', 'security', 'default-security'):
                 if not self.update():
                     return False
             else:
                 # return False ?
-                self.opts.update_cmd = 'default'
+                update_cmd = 'default'
                 if not self.update():
                     return False
 
-            if self.opts.update_cmd.endswith("security"):
+            if update_cmd.endswith("security"):
                 self.updateinfo_filters['security'] = True
                 yum.updateinfo.remove_txmbrs(self)
-            elif self.opts.update_cmd == 'minimal':
+            elif update_cmd == 'minimal':
                 self.updateinfo_filters['bugfix'] = True
                 yum.updateinfo.remove_txmbrs(self)
 
@@ -503,8 +512,14 @@ class YumCronBase(yum.YumBase, YumOutput):
             (res, resmsg) = self.buildTransaction()
         except yum.Errors.RepoError, e:
             self.emitCheckFailed("%s" %(e,))
-            sys.exit()
-        if res != 2:
+            sys.exit(1)
+        if res == 0:
+            # success, empty transaction
+            sys.exit(0)
+        elif res == 2:
+            # success, dependencies resolved
+            pass
+        else:
             self.emitCheckFailed("Failed to build transaction: %s" %(str.join("\n", resmsg),))
             sys.exit(1)
 

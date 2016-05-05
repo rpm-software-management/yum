@@ -1317,6 +1317,13 @@ class Depsolve(object):
                 iFP.setdefault(filename, []).extend([po.pkgtup for po in nprov])
                 continue 
 
+            if filename != os.path.realpath(filename):
+                realpath = os.path.realpath(filename)
+                nprov = self.tsInfo.getNewProvides(realpath)
+                if nprov:
+                    iFP.setdefault(realpath, []).extend([po.pkgtup for po in nprov])
+                    continue
+
             for pkgtup in reverselookup[filename]:
                 po = self.tsInfo.getMembersWithState(pkgtup, TS_INSTALL_STATES)
                 if po:

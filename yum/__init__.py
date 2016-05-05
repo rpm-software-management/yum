@@ -95,7 +95,6 @@ from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str, exception2msg
 from yum.drpm import DeltaInfo, DeltaPackage
 
-import string
 import StringIO
 
 from weakref import proxy as weakref
@@ -476,17 +475,7 @@ class YumBase(depsolve.Depsolve):
                 continue
 
             # Check the repo.id against the valid chars
-            bad = None
-            for byte in section:
-                if byte in string.ascii_letters:
-                    continue
-                if byte in string.digits:
-                    continue
-                if byte in "-_.:":
-                    continue
-                
-                bad = byte
-                break
+            bad = misc.validate_repoid(section)
 
             if bad:
                 self.logger.warning("Bad id for repo: %s, byte = %s %d" %
@@ -1367,6 +1356,17 @@ much more problems).
 
         if rescode == 2:
             self.save_ts(auto=True)
+
+        # Make sure we don't fail in rpm if we're installing a package that is
+        # allowed multiple installs but has a newer version already installed.
+        # Note that we already have a similar check in install(), but here we
+        # do it to cover anything that was pulled in as a dependency.
+        if rpm.RPMPROB_FILTER_OLDPACKAGE not in self.tsInfo.probFilterFlags:
+            for m in self.tsInfo.getMembers():
+                if m.ts_state == 'i' and self.allowedMultipleInstalls(m.po):
+                    if self._enable_oldpackage_flag(m.po):
+                        break
+
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return rescode, restring
 
@@ -4592,7 +4592,10 @@ much more problems).
             return self._at_groupinstall(pattern, upgrade=True)
         except Errors.GroupInstallError, e:
             self.logger.warning(_('Warning: %s'), e)
-            return []
+            if self.conf.skip_missing_names_on_update:
+                return []
+            else:
+                raise
 
     def _at_groupremove(self, pattern):
         " Do groupremove via. leading @ on the cmd line, for remove."
@@ -4681,6 +4684,14 @@ much more problems).
         for flag in flags:
             if flag not in self.tsInfo.probFilterFlags:
                 self.tsInfo.probFilterFlags.append(flag)
+
+    def _enable_oldpackage_flag(self, po):
+        """Add RPMPROB_FILTER_OLDPACKAGE if the package requires it."""
+        for ipkg in self.rpmdb.searchNevra(name=po.name):
+            if ipkg.verGT(po) and not canCoinstall(ipkg.arch, po.arch):
+                self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
+                return True
+        return False
 
     def _install_is_upgrade(self, po, ipkgs):
         """ See if po is an upgradeable version of an installed pkg.
@@ -4977,10 +4988,7 @@ much more problems).
                     # and a remove, which also tries to remove the old version.
                     self.tsInfo.remove(ipkg.pkgtup)
                     break
-            for ipkg in self.rpmdb.searchNevra(name=po.name):
-                if ipkg.verGT(po) and not canCoinstall(ipkg.arch, po.arch):
-                    self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
-                    break
+            self._enable_oldpackage_flag(po)
             
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
             obs_pkgs = list(self._find_obsoletees_direct(po))
@@ -5196,6 +5204,8 @@ much more problems).
 
             if not availpkgs and not instpkgs:
                 self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
+                if not self.conf.skip_missing_names_on_update:
+                    raise Errors.UpdateMissingNameError, _('Not tolerating missing names on update, stopping.')
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)

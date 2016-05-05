@@ -401,30 +401,27 @@ def exclude_updates(base, filters=None):
 
     used_map = _ysp_gen_used_map(opts)
 
-    # In theory the official API is:
-    #
-    # pkgs = base.pkgSack.returnPackages()
-    #
-    # ...however that is _extremely_ slow, deleting all packages. So we ask
-    # for the list of update packages, which is all we care about.    
     upds = base.doPackageLists(pkgnarrow='updates')
-    pkgs = upds.updates
+    tot = len(upds.updates)
     # In theory we don't need to do this in some cases, but meh.
     upds = base.doPackageLists(pkgnarrow='obsoletes')
-    pkgs += upds.obsoletes
+    tot += len(upds.obsoletes)
 
+    pkgs = conduit.getPackages()
     name2tup = _get_name2oldpkgtup(base)
     
-    tot = 0
     cnt = 0
+    pkgs_to_del = []
     for pkg in pkgs:
-        tot += 1
         name = pkg.name
         if (name not in name2tup or
             not _ysp_should_keep_pkg(opts, name2tup[name], md_info, used_map)):
-            ysp_del_pkg(pkg)
+            pkgs_to_del.append(pkg.name)
             continue
         cnt += 1
+    if pkgs_to_del:
+        for p in base.doPackageLists(pkgnarrow='available', patterns=pkgs_to_del, showdups=True).available:
+            ysp_del_pkg(p)
 
     _ysp_chk_used_map(used_map, lambda x: base.verbose_logger.warn("%s", x))
 

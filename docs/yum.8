@@ -283,6 +283,8 @@ default package are installed (when not in group_command=objects mode).
 You can pass optional arguments to the list/summary commands: installed,
 available, environment, language, packages, hidden and ids (or any of those
 prefixed by "no" to turn them off again).
+Note that groups that are available but hidden will not be listed unless
+\'hidden\' keyword is passed to the command.
 If you pass the \-v option, to enable verbose mode, then the groupids are
 displayed by default (but "yum group list ids" is often easier to read).
 
@@ -630,20 +632,19 @@ to your machine (including anything installed, if you supply "all").
 .br
 
 .br
-.I \fR "\fB* all\fP"
-Is used to display information about both install and available advisories.
-.br
-.I \fR "\fB* available\fP"
-Is used to display information about just available advisories. This is the
-default.
+.I \fR "\fB* updates\fP"
+Is used to display information about advisories for packages that can be
+updated. This is the default.
 .br
 .I \fR "\fB* installed\fP"
-Is used to display information about just install advisories.
+Is used to display information only about installed advisories.
 .br
-.I \fR "\fB* updates\fP"
-This is mostly the same as "available" but it only shows advisory information
-for packages that can be updated to.
-
+.I \fR "\fB* available\fP"
+Is used to display information about advisories for packages available
+for updating or installation.
+.br
+.I \fR "\fB* all\fP"
+Is used to display information about both installed and available advisories.
 
 .br
 They all take as arguments:
@@ -719,9 +720,9 @@ updateinfo data:
 .br 
 
 .IP
-.IP "\fBfssnapshot\fP"
+.IP "\fBfssnapshot\fP or \fBfssnap\fP"
 This command has a few sub-commands to act on the LVM data of the host, to list
-snapshots and the create and remove them. The simplest commands, to display
+snapshots and to create and remove them. The simplest commands, to display
 information about the configured LVM snapshotable devices, are:
 
 .br 
@@ -735,9 +736,9 @@ information about the configured LVM snapshotable devices, are:
 then you can create and delete snapshots using:
 
 .br
-.I \fR yum fssnap create
+.I \fR yum fssnapshot create
 .br 
-.I \fR yum fssnap delete <device(s)>
+.I \fR yum fssnapshot delete <device(s)>
 .br 
 
 .br
@@ -964,6 +965,8 @@ version of the package\&.
 The format of the output of yum list is:
 
 name.arch [epoch:]version-release  repo or @installed-from-repo
+
+Note that if the repo cannot be determined, "installed" is printed instead.
 
 .IP "\fByum list [all | glob_exp1] [glob_exp2] [\&.\&.\&.]\fP"
 List all available and installed packages\&.

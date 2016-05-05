@@ -174,7 +174,7 @@ A way to permanently set the --disableexcludes command line option.
 \fBquery_install_excludes\fR
 This applies the command line exclude option (only, not the configuration
 exclude above) to installed packages being shown in some query commands
-(currently: list/info/search/provides).
+(currently: list/info/search/provides). Default is '0'.
 
 .IP
 \fBinstallonlypkgs \fR
@@ -439,6 +439,11 @@ default of 5 connections.  Note that there are also implicit per-mirror limits
 and the downloader honors these too.
 
 .IP
+\fBftp_disable_epsv \fR
+This options disables Extended Passive Mode (the EPSV command) which does not
+work correctly on some buggy ftp servers. Default is `0' (EPSV enabled).
+
+.IP
 \fBdeltarpm\fR
 
 When non-zero, delta-RPM files are used if available.  The value specifies
@@ -641,7 +646,12 @@ Eg. yum list yum
 `read-only:future' - Commands that are likely to result in running other
 commands which will require the latest metadata. Eg. yum check-update
 
-Note that this option does not override "yum clean expire-cache".
+Note that this option requires that all the enabled repositories be roughly the
+same freshness (meaning the cache age difference from one another is at most 5
+days).  Failing that, metadata_expire will always be obeyed, just like with
+`never'.
+
+Also note that this option does not override "yum clean expire-cache".
 
 .IP
 \fBmirrorlist_expire \fR
@@ -940,6 +950,17 @@ Either `0' or `1'. Set this to `0' to disable the checking for writability on
 /usr in the installroot (when going into the depsolving stage). Default is `1'
 (perform the check).
 
+.IP
+\fBskip_missing_names_on_install\fR
+If set to False, 'yum install' will fail if it can't find any of the provided
+names (package, group, rpm file). Boolean (1, 0, True, False, yes, no). Defaults to True.
+
+.IP
+\fBskip_missing_names_on_update\fR
+If set to False, 'yum update' will fail if it can't find any of the provided
+names (package, group, rpm file). It will also fail if the provided name is a package
+which is available, but not installed. Boolean (1, 0, True, False, yes, no). Defaults to True.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
@@ -1112,6 +1133,11 @@ repository.
 \fBip_resolve \fR
 Overrides the \fBip_resolve\fR option from the [main] section for this
 repository.
+
+.IP
+\fBftp_disable_epsv\fR
+Overrides the \fBftp_disable_epsv\fR option from the [main] section
+for this repository.
 
 .IP
 \fBdeltarpm_percentage\fR

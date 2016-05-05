@@ -729,6 +729,8 @@ class StartupConf(BaseConfig):
     syslog_facility = Option('LOG_USER')
     syslog_device = Option('/dev/log')
     persistdir = Option('/var/lib/yum')
+    skip_missing_names_on_install = BoolOption(True)
+    skip_missing_names_on_update = BoolOption(True)
     
 class YumConf(StartupConf):
     """Configuration option definitions for yum.conf's [main] section.
@@ -811,6 +813,7 @@ class YumConf(StartupConf):
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
     max_connections = IntOption(0, range_min=0)
+    ftp_disable_epsv = BoolOption(False)
     deltarpm = IntOption(2, range_min=-16, range_max=128)
     deltarpm_percentage = IntOption(75, range_min=0, range_max=100)
     deltarpm_metadata_percentage = IntOption(100, range_min=0)
@@ -826,7 +829,7 @@ class YumConf(StartupConf):
     # XXX rpm_check_debug is unused, left around for API compatibility for now
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
-    query_install_excludes = BoolOption(True)
+    query_install_excludes = BoolOption(False)
     skip_broken = BoolOption(False)
     #  Note that "instant" is the old behaviour, but group:primary is very
     # similar but better :).
@@ -1003,6 +1006,7 @@ class RepoConf(BaseConfig):
     #  Rely on the above config. to do automatic disabling, and thus. no hack
     # needed here.
     deltarpm_metadata_percentage = Inherit(YumConf.deltarpm_metadata_percentage)
+    ftp_disable_epsv = Inherit(YumConf.ftp_disable_epsv)
 
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
@@ -1110,14 +1114,12 @@ def readMainConfig(startupconf):
     
     # ' xemacs syntax hack
 
-    # Set up substitution vars
+    # Set up substitution vars but make sure we always prefer FS yumvars
     yumvars = startupconf.yumvars
-    yumvars['basearch'] = startupconf.basearch
-    yumvars['arch'] = startupconf.arch
-    yumvars['releasever'] = startupconf.releasever
-    yumvars['uuid'] = startupconf.uuid
-    # Note: We don't setup the FS yumvars here, because we want to be able to
-    #       use the core yumvars in persistdir. Which is the base of FS yumvars.
+    yumvars.setdefault('basearch', startupconf.basearch)
+    yumvars.setdefault('arch', startupconf.arch)
+    yumvars.setdefault('releasever', startupconf.releasever)
+    yumvars.setdefault('uuid', startupconf.uuid)
     
     # Read [main] section
     yumconf = YumConf()

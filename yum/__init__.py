@@ -6459,15 +6459,15 @@ much more problems).
                 continue
 
             if m.name not in found:
-                found[m.name] = 1
+                found[m.name] = [m.po]
             else:
-                found[m.name] += 1
+                found[m.name].append(m.po)
 
         for name in found:
             installed = self.rpmdb.searchNevra(name=name)
             installed = _sort_and_filter_installonly(installed)
 
-            total = len(installed) + found[name]
+            total = len(installed) + len(found[name])
             if total <= self.conf.installonly_limit:
                 continue # Not adding enough to trigger.
 
@@ -6479,14 +6479,20 @@ much more problems).
                     continue
                 if numleft == 0:
                     break
-                toremove.append((po,m))
+                toremove.append((po, found[name]))
                 numleft -= 1
                         
-        for po,rel in toremove:
+        for po, newpos in toremove:
             txmbr = self.tsInfo.addErase(po)
-            # Add a dep relation to the new version of the package, causing this one to be erased
-            # this way skipbroken, should clean out the old one, if the new one is skipped
-            txmbr.depends_on.append(rel)
+            # Add a dep relation to the new version of the package that causes
+            # this one to be erased.  This way skipbroken should drop the old
+            # one from the transaction if the new one is skipped.  Note that we
+            # can only do this for one new version, as skipbroken won't drop
+            # deps that are shared with some other packages.  For consistency,
+            # let's give up completely if we are installing multiple new
+            # versions (which is rather uncommon anyway).
+            if len(newpos) == 1:
+                txmbr.depends_on.append(newpos[0])
 
     def processTransaction(self, callback=None,rpmTestDisplay=None, rpmDisplay=None):
         """Process the current transaction.  This involves the

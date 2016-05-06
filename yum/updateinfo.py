@@ -407,7 +407,7 @@ def exclude_updates(base, filters=None):
     upds = base.doPackageLists(pkgnarrow='obsoletes')
     tot += len(upds.obsoletes)
 
-    pkgs = conduit.getPackages()
+    pkgs = base.pkgSack.returnPackages()
     name2tup = _get_name2oldpkgtup(base)
     
     cnt = 0

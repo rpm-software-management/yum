@@ -893,6 +893,7 @@ class YumConf(StartupConf):
     loadts_ignoremissing = BoolOption(False)
     loadts_ignorerpm = BoolOption(False)
     loadts_ignorenewrpm = BoolOption(False)
+    autosavets = BoolOption(True)
     
     clean_requirements_on_remove = BoolOption(False)
 

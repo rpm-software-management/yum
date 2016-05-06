@@ -70,6 +70,7 @@ class FakeConf(object):
         self.depsolve_loop_limit = 10
         self.override_install_langs = ''
         self.requires_policy = "weak"
+        self.autosavets = True
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""

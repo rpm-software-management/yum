@@ -1355,7 +1355,8 @@ much more problems).
             self._depsolving_failed = False
 
         if rescode == 2:
-            self.save_ts(auto=True)
+            if self.conf.autosavets:
+                self.save_ts(auto=True)
 
         # Make sure we don't fail in rpm if we're installing a package that is
         # allowed multiple installs but has a newer version already installed.

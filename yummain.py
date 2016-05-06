@@ -85,13 +85,18 @@ def main(args):
         distribution release than is supported by the repository (and the
         packages for the previous distribution release still work).
 
-     3. Disable the repository, so yum won't use it by default. Yum will then
-        just ignore the repository until you permanently enable it again or use
-        --enablerepo for temporary usage:
+     3. Run the command with the repository temporarily disabled
+            yum --disablerepo=%(repoid)s ...
+
+     4. Disable the repository permanently, so yum won't use it by default. Yum
+        will then just ignore the repository until you permanently enable it
+        again or use --enablerepo for temporary usage:
 
             yum-config-manager --disable %(repoid)s
+        or
+            subscription-manager repos --disable=%(repoid)s
 
-     4. Configure the failing repository to be skipped, if it is unavailable.
+     5. Configure the failing repository to be skipped, if it is unavailable.
         Note that yum will try to contact the repo. when it runs most commands,
         so will have to try and fail each time (and thus. yum will be be much
         slower). If it is a very temporary problem though, this is often a nice

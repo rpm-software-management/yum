@@ -89,6 +89,7 @@ class FakeRepo(object):
             sack = self.__fake_sack
         self.sack = sack
         self.cost = 1000
+        self.compare_providers_priority = 80
 
     def __cmp__(self, other):
         """ Sort base class repos. by alphanumeric on their id, also

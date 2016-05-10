@@ -1032,6 +1032,8 @@ class RepoConf(BaseConfig):
 
     check_config_file_age = Inherit(YumConf.check_config_file_age)
 
+    compare_providers_priority = IntOption(80, range_min=1, range_max=99)
+
     
 class VersionGroupConf(BaseConfig):
     """Option definitions for version groups."""

@@ -1243,6 +1243,14 @@ parallel, if possible.  Defaults to True.
 Overrides the \fBui_repoid_vars\fR option from the [main] section for this
 repository.
 
+.IP
+\fBcompare_providers_priority \fR
+During depsolving, when choosing the best provider among several, yum will respect
+the priority of each provider's repository (note that there are other factors
+which yum considers, which may overweigh the repository priority). The priority is
+an integer from 1 to 99, 1 being the most preferred repository, and 99 being
+the least preferred one. By default all repositories have the priority of 80.
+
 .SH "URL INCLUDE SYNTAX"
 .LP
 The inclusion of external configuration files is supported for /etc/yum/yum.conf

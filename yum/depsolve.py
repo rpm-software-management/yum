@@ -1653,6 +1653,12 @@ class Depsolve(object):
                         pkgresults[po] += 5
 
             # End of O(N*N): for nextpo in pkgs:
+
+            # Respect the repository priority for each provider, the default is 80
+            pkgresults[po] += (100 - po.repo.compare_providers_priority) * 10
+            self.verbose_logger.log(logginglevels.DEBUG_4,
+                _('compare_providers_priority for %s is %s' % (po, po.repo.compare_providers_priority)))
+
             if _common_sourcerpm(po, reqpo):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('common sourcerpm %s and %s' % (po, reqpo)))

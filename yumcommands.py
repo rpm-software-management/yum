@@ -262,7 +262,10 @@ def checkEnabledRepo(base, possible_local_files=[]):
 
     msg = _('There are no enabled repos.\n'
             ' Run "yum repolist all" to see the repos you have.\n'
-            ' You can enable repos with yum-config-manager --enable <repo>')
+            ' To enable Red Hat Subscription Management repositories:\n'
+            '     subscription-manager repos --enable <repo>\n'
+            ' To enable custom repositories:\n'
+            '     yum-config-manager --enable <repo>')
     base.logger.critical(msg)
     raise cli.CliError
 

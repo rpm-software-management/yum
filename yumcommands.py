@@ -4104,7 +4104,6 @@ class UpdateinfoCommand(YumCommand):
             # or -q deletes everything.
             print x
 
-        opts = _upi._updateinfofilter2opts(base.updateinfo_filters)
         extcmds, show_type, filt_type = self._parse_extcmds(extcmds)
 
         list_type = "updates"
@@ -4113,7 +4112,7 @@ class UpdateinfoCommand(YumCommand):
             if filt_type is None:
                 extcmds, show_type, filt_type = self._parse_extcmds(extcmds)
 
-        opts.sec_cmds = extcmds
+        opts = _upi._ysp_gen_opts(base.updateinfo_filters, md_info, extcmds)
         used_map = _upi._ysp_gen_used_map(base.updateinfo_filters)
         iname2tup = {}
         if False: pass

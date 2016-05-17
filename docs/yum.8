@@ -1091,6 +1091,17 @@ To get the information on advisory FEDORA-2707-4567 use:
 .IP
 yum updateinfo info FEDORA-2707-4567
 .PP
+For Red Hat advisories, respin suffixes are also accepted in the ID, although
+they won't have any effect on the actual respin selected by yum, as it will
+always select the latest one available.  For example, if you use:
+.IP
+yum updateinfo info RHSA-2016:1234-2
+.PP
+while RHSA-2016:1234-3 has been shipped already, yum will select the latter
+(provided your updateinfo.xml is current).  The same would happen if you just
+specified RHSA-2016:1234.  That said, there's no need for you to specify or
+care about the suffix at all.
+.PP
 To update packages to the latest version which contain fixes for Bugzillas 123, 456 and 789; and all security updates use:
 .IP
 yum --bz 123 --bz 456 --bz 789 --security update

@@ -818,7 +818,8 @@ class YumConf(StartupConf):
     deltarpm_percentage = IntOption(75, range_min=0, range_max=100)
     deltarpm_metadata_percentage = IntOption(100, range_min=0)
 
-    http_caching = SelectionOption('all', ('none', 'packages', 'all'))
+    http_caching = SelectionOption('all', ('none', 'packages', 'all',
+                                           'lazy:packages'))
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
     metadata_expire_filter = SelectionOption('read-only:present',
                                              ('never', 'read-only:future',

@@ -470,6 +470,12 @@ class YumOutput:
         :raises: *errobj*.exception
         """
         self.logger.error('%s: %s', errobj.url, errobj.exception)
+        if errobj.retry_no_cache and errobj.exception.errno < 0:
+            self.logger.error(_('Trying again, now avoiding proxy cache.'))
+            # Raising an exception would cause urlgrabber to jump to the next
+            # mirror and what we want here is to retry with the same, so just
+            # return.
+            return
         self.logger.error(_('Trying other mirror.'))
         raise errobj.exception
     

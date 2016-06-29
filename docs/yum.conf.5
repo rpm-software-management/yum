@@ -387,6 +387,13 @@ that Yum does. This option can take the following values:
 `packages' means that only RPM package downloads should be cached (but not
 repository metadata downloads).
 
+`lazy:packages' means that act like `packages' unless package verification
+fails (e.g. the package download doesn't match the expected checksum), in which
+case try re-downloading the package as if `none' was set.  This value is a good
+compromise if you want to avoid issues caused by stale proxy cache after remote
+RPMs change contents without changing filenames (e.g. are pushed unsigned and
+later signed) but still want the benefits of package caching whenever possible.
+
 `none' means that no HTTP downloads should be cached.
 
 The default is `all'. This is recommended unless you are experiencing caching

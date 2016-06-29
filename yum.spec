@@ -82,7 +82,7 @@ BuildRequires: python >= 2.4
 BuildRequires: rpm-python, rpm >= 0:4.4.2
 BuildRequires: python-iniparse
 BuildRequires: python-sqlite
-BuildRequires: python-urlgrabber >= 3.9.0-8
+BuildRequires: python-urlgrabber >= 3.10-8
 BuildRequires: yum-metadata-parser >= 1.1.0
 BuildRequires: pygpgme
 # End of CheckRequires
@@ -91,7 +91,7 @@ Requires: python >= 2.4
 Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-iniparse
 Requires: python-sqlite
-Requires: python-urlgrabber >= 3.9.0-8
+Requires: python-urlgrabber >= 3.10-8
 Requires: yum-metadata-parser >= 1.1.0
 Requires: pygpgme
 # rawhide is >= 0.5.3-7.fc18 ... as this is added.

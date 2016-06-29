@@ -2572,6 +2572,8 @@ much more problems).
                                        checkfunc=checkfunc,
                                        text=text,
                                        cache=po.repo.http_caching != 'none',
+                                       retry_no_cache=po.repo.http_caching == \
+                                                      'lazy:packages',
                                        **kwargs
                                        )
                 except Errors.RepoError, e:

@@ -582,14 +582,12 @@ class YumRepository(Repository, config.RepoConf):
             self._proxy_dict['https'] = proxy_string
             self._proxy_dict['ftp'] = proxy_string
 
-    def __headersListFromDict(self, cache=True):
+    def __headersListFromDict(self):
         """Convert our dict of headers to a list of 2-tuples for urlgrabber."""
         headers = []
 
         for key in self.http_headers:
             headers.append((key, self.http_headers[key]))
-        if not (cache or 'Pragma' in self.http_headers):
-            headers.append(('Pragma', 'no-cache'))
 
         return headers
 
@@ -666,7 +664,7 @@ class YumRepository(Repository, config.RepoConf):
                  'timeout': self.timeout,
                  'minrate': self.minrate,
                  'ip_resolve': self.ip_resolve,
-                 'http_headers': tuple(self.__headersListFromDict(cache=cache)),
+                 'http_headers': tuple(self.__headersListFromDict()),
                  'ssl_verify_peer': self.sslverify,
                  'ssl_verify_host': self.sslverify,
                  'ssl_ca_cert': self.sslcacert,
@@ -676,6 +674,7 @@ class YumRepository(Repository, config.RepoConf):
                  'username': self.username,
                  'password': self.password,
                  'ftp_disable_epsv': self.ftp_disable_epsv,
+                 'no_cache': not cache,
                  }
         if self.proxy == 'libproxy':
             opts['libproxy'] = True
@@ -933,7 +932,7 @@ class YumRepository(Repository, config.RepoConf):
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=None, checkfunc=None, text=None, reget='simple', 
-            cache=True, size=None, **kwargs):
+            cache=True, retry_no_cache=False, size=None, **kwargs):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -995,6 +994,7 @@ Insufficient space in download directory %s
                             interrupt_callback=self.interrupt_callback,
                             checkfunc=checkfunc,
                             size=size,
+                            retry_no_cache=retry_no_cache,
                             **ugopts)
 
             remote = urlparse.urlunsplit((scheme, netloc, path + '/' + relative, query, fragid))
@@ -1010,7 +1010,7 @@ Insufficient space in download directory %s
                 raise Errors.RepoError(errstr, repo=self)
 
         else:
-            headers = tuple(self.__headersListFromDict(cache=cache))
+            headers = tuple(self.__headersListFromDict())
             try:
                 result = self.grab.urlgrab(misc.to_utf8(relative), local,
                                            text = misc.to_utf8(text),
@@ -1020,6 +1020,8 @@ Insufficient space in download directory %s
                                            checkfunc=checkfunc,
                                            http_headers=headers,
                                            size=size,
+                                           no_cache=not cache,
+                                           retry_no_cache=retry_no_cache,
                                            **kwargs
                                            )
             except URLGrabError, e:

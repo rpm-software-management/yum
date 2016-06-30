@@ -236,7 +236,7 @@ class EmailEmitter(UpdateEmitter):
             charset = 'us-ascii'
         msg = MIMEText(output, 'plain', charset)
         msg['Subject'] = self.subject
-        msg['From'] = self.opts.email_from
+        msg['From'] = self.opts.email_from.replace('localhost', self.opts.system_name)
         msg['To'] = ",".join(self.opts.email_to)
 
         # Send the email

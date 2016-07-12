@@ -43,6 +43,7 @@ import yum.config
 from yum import updateinfo
 from yum.packages import parsePackages
 from yum.packages import YumLocalPackage # cashe and fs diff
+from yum.fssnapshots import LibLVMError
 
 def _err_mini_usage(base, basecmd):
     if basecmd not in base.yum_cli_commands:
@@ -4296,12 +4297,19 @@ class FSSnapshotCommand(YumCommand):
             return 1, [basecmd + ' ' + subcommand + ' done']
 
         if subcommand == 'list':
-            snaps = base.fssnap.old_snapshots()
+            try:
+                snaps = base.fssnap.old_snapshots()
+            except LibLVMError as e:
+                return 1, [_("Failed to list snapshots: ") + str(e)]
             print _("List of %u snapshosts:") % len(snaps)
             self._li_snaps(base, snaps)
 
         if subcommand == 'delete':
-            snaps = base.fssnap.old_snapshots()
+            msg = _("Failed to delete snapshots: ")
+            try:
+                snaps = base.fssnap.old_snapshots()
+            except LibLVMError as e:
+                return 1, [msg + str(e)]
             devs = [x['dev'] for x in snaps]
             snaps = set()
             for dev in devs:
@@ -4312,13 +4320,20 @@ class FSSnapshotCommand(YumCommand):
                     if dev == extcmd or fnmatch.fnmatch(dev, extcmd):
                         snaps.add(dev)
                         break
-            snaps = base.fssnap.del_snapshots(devices=snaps)
+            try:
+                snaps = base.fssnap.del_snapshots(devices=snaps)
+            except LibLVMError as e:
+                return 1, [msg + str(e)]
             print _("Deleted %u snapshosts:") % len(snaps)
             self._li_snaps(base, snaps)
 
         if subcommand in ('have-space', 'has-space'):
             pc = base.conf.fssnap_percentage
-            if base.fssnap.has_space(pc):
+            try:
+                has_space = base.fssnap.has_space(pc)
+            except LibLVMError as e:
+                return 1, [_("Could not determine free space on logical volumes: ") + str(e)]
+            if has_space:
                 print _("Space available to take a snapshot.")
             else:
                 print _("Not enough space available on logical volumes to take a snapshot.")
@@ -4326,14 +4341,22 @@ class FSSnapshotCommand(YumCommand):
         if subcommand == 'create':
             tags = {'*': ['reason=manual']}
             pc = base.conf.fssnap_percentage
-            snaps = base.fssnap.snapshot(pc, tags=tags)
+            msg = _("Failed to create snapshots")
+            try:
+                snaps = base.fssnap.snapshot(pc, tags=tags)
+            except LibLVMError as e:
+                msg += ": " + str(e)
+                snaps = []
             if not snaps:
-                print _("Failed to create snapshots")
+                print msg
             for (odev, ndev) in snaps:
                 print _("Created snapshot from %s, results is: %s") %(odev,ndev)
 
         if subcommand == 'summary':
-            snaps = base.fssnap.old_snapshots()
+            try:
+                snaps = base.fssnap.old_snapshots()
+            except LibLVMError as e:
+                return 1, [_("Failed to list snapshots: ") + str(e)]
             if not snaps:
                 print _("No snapshots, LVM version:"), base.fssnap.version
                 return 0, [basecmd + ' ' + subcommand + ' done']

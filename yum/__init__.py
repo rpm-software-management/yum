@@ -81,6 +81,7 @@ import yumRepo
 import callbacks
 import yum.history
 import yum.fssnapshots
+from yum.fssnapshots import LibLVMError
 import yum.igroups
 import update_md
 
@@ -1741,18 +1742,27 @@ much more problems).
 
         def create_snapshot(post=False):
             """Create the pre or post trans snapshot if we have free space."""
-            if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space on logical volumes to create %s FS snapshot." %
-                        ("post trans" if post else "pre."))
+            msg = _("Not enough space on logical volumes to create %s FS snapshot." %
+                    ("post trans" if post else "pre."))
+            try:
+                has_space = self.fssnap.has_space(self.conf.fssnap_percentage)
+            except LibLVMError as e:
+                msg = _("Could not determine free space on logical volumes: ") + str(e)
+                has_space = False
+            if not has_space:
                 if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
                     raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
                 else:
                     self.verbose_logger.critical(msg)
             else:
                 tags = {'*': ['reason=automatic']} # FIXME: pre. and post tags
-                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+                msg = _("Failed to create snapshot")
+                try:
+                    snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+                except LibLVMError as e:
+                    msg += ": " + str(e)
+                    snaps = []
                 if not snaps:
-                    msg = _("Failed to create snapshot")
                     if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
                         raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
                     else:
@@ -1771,7 +1781,13 @@ much more problems).
                                        self.conf.fssnap_automatic_post) and
                                       self.conf.fssnap_automatic_keep):
             # Automatically kill old snapshots...
-            snaps = self.fssnap.old_snapshots()
+            cleanup_fail = False
+            try:
+                snaps = self.fssnap.old_snapshots()
+            except LibLVMError as e:
+                self.verbose_logger.debug(e)
+                cleanup_fail = True
+                snaps = []
             snaps = sorted(snaps, key=lambda x: (x['ctime'], x['origin_dev']),
                            reverse=True)
             last = '<n/a>'
@@ -1788,9 +1804,17 @@ much more problems).
                 if num > self.conf.fssnap_automatic_keep:
                     todel.append(snap['dev'])
             # Display something to the user?
-            snaps = self.fssnap.del_snapshots(devices=todel)
+            try:
+                snaps = self.fssnap.del_snapshots(devices=todel)
+            except LibLVMError as e:
+                self.verbose_logger.debug(e)
+                cleanup_fail = True
+                snaps = []
             if len(snaps):
                 self.verbose_logger.info(_("Deleted %u snapshots.") % len(snaps))
+            elif cleanup_fail:
+                self.verbose_logger.warning(_("Skipping the cleanup of old "
+                                              "snapshots due to errors"))
 
         if (self.fssnap.available and
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and

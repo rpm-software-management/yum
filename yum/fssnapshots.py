@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 
 import subprocess
+from yum import _
 
 try:
     import lvm
@@ -23,6 +24,14 @@ try:
 except:
     lvm = None
     _ver = None
+
+if lvm is not None:
+    from lvm import LibLVMError
+    class _ResultError(LibLVMError):
+        """Exception raised for LVM calls resulting in bad return values."""
+        pass
+else:
+    LibLVMError = None
 
 
 def _is_origin(lv):
@@ -150,12 +159,16 @@ class _FSSnap(object):
         self._postfix = None
         self._root = root
         self._devs = devices
-        self._vgnames = []
+        self._vgname_list = None
 
         if not self._devs:
             return
 
-        self._vgnames = _list_vg_names() if self.available else []
+    @property
+    def _vgnames(self):
+        if self._vgname_list is None:
+            self._vgname_list = _list_vg_names() if self.available else []
+        return self._vgname_list
 
     def _use_dev(self, vgname, lv=None):
 
@@ -207,7 +220,8 @@ class _FSSnap(object):
 
             vg = lvm.vgOpen(vgname, 'r')
             if not vg:
-                return False
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             vgfsize = vg.getFreeSize()
             lvssize = 0
@@ -245,7 +259,8 @@ class _FSSnap(object):
 
             vg = lvm.vgOpen(vgname, 'w')
             if not vg:
-                return False
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             for lv in vg.listLVs():
                 lvname = lv.getName()
@@ -257,7 +272,8 @@ class _FSSnap(object):
                 nlv = lv.snapshot(nlvname, (lv.getSize() * percentage) / 100)
                 if not nlv: # Failed here ... continuing seems bad.
                     vg.close()
-                    return None
+                    raise _ResultError(
+                        _("Unknown error when creating snapshot ") + nlvname)
 
                 odev = "%s/%s" % (vgname,  lvname)
                 ndev = "%s/%s" % (vgname, nlvname)
@@ -289,6 +305,9 @@ class _FSSnap(object):
             # see stuff after changing config. options.
 
             vg = lvm.vgOpen(vgname, 'w')
+            if not vg:
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             for lv in vg.listLVs():
 
@@ -318,6 +337,9 @@ class _FSSnap(object):
 
         for vgname in togo:
             vg = lvm.vgOpen(vgname, 'w')
+            if not vg:
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             for lvname in togo[vgname]:
                 lv = _vg_name2lv(vg, lvname)

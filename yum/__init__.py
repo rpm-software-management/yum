@@ -1738,6 +1738,28 @@ much more problems).
         :raises: :class:`yum.Errors.YumRPMTransError` if there is a
            transaction cannot be completed
         """
+
+        def create_snapshot(post=False):
+            """Create the pre or post trans snapshot if we have free space."""
+            if not self.fssnap.has_space(self.conf.fssnap_percentage):
+                msg = _("Not enough space on logical volumes to create %s FS snapshot." %
+                        ("post trans" if post else "pre."))
+                if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
+                    raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
+                else:
+                    self.verbose_logger.critical(msg)
+            else:
+                tags = {'*': ['reason=automatic']} # FIXME: pre. and post tags
+                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+                if not snaps:
+                    msg = _("Failed to create snapshot")
+                    if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
+                        raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
+                    else:
+                        self.verbose_logger.critical(msg)
+                for (odev, ndev) in snaps:
+                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
+
         if (self.conf.fssnap_automatic_pre or self.conf.fssnap_automatic_post) and not self.fssnap.available:
             msg = _("Snapshot support not available.")
             if self.conf.fssnap_abort_on_errors in ('broken-setup', 'any'):
@@ -1773,23 +1795,7 @@ much more problems).
         if (self.fssnap.available and
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
             self.conf.fssnap_automatic_pre)):
-            if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space on logical volumes to create pre. FS snapshot.")
-                if self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
-                    raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
-                else:
-                    self.verbose_logger.critical(msg)
-            else:
-                tags = {'*': ['reason=automatic']} # FIXME: pre. tags
-                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
-                if not snaps:
-                    msg = _("Failed to create snapshot")
-                    if self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
-                        raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
-                    else:
-                        self.verbose_logger.critical(msg)
-                for (odev, ndev) in snaps:
-                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
+            create_snapshot()
 
         self.plugins.run('pretrans')
 
@@ -1926,16 +1932,7 @@ much more problems).
         if (self.fssnap.available and
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
             self.conf.fssnap_automatic_post)):
-            if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space on logical volumes to create post trans FS snapshot.")
-                self.verbose_logger.critical(msg)
-            else:
-                tags = {'*': ['reason=automatic']} # FIXME: post tags
-                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
-                if not snaps:
-                    self.verbose_logger.critical(_("Failed to create snapshot"))
-                for (odev, ndev) in snaps:
-                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
+            create_snapshot(post=True)
         return resultobject
 
     def verifyTransaction(self, resultobject=None, txmbr_cb=None):

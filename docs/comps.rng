@@ -17,16 +17,16 @@
   </start>
   <define name="comps">
     <element name="comps">
-      <oneOrMore>
-        <ref name="group"/>
-      </oneOrMore>
-      <zeroOrMore>
-        <ref name="environment"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="category"/>
-      </zeroOrMore>
       <interleave><!-- We don't care what order these are in -->
+        <oneOrMore>
+          <ref name="group"/>
+        </oneOrMore>
+        <zeroOrMore>
+          <ref name="environment"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="category"/>
+        </zeroOrMore>
         <optional>
           <ref name="whiteout"/>
         </optional>

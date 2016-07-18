@@ -62,14 +62,18 @@ def _vg_name2lv(vg, lvname):
         return None
 
 def _list_vg_names():
-    names = lvm.listVgNames()
+    try:
+        names = lvm.listVgNames()
+    except LibLVMError:
+        # Try to use the lvm binary instead
+        names = []
 
     if not names: # Could be just broken...
         p = subprocess.Popen(["/sbin/lvm", "vgs", "-o", "vg_name"],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         err = p.wait()
         if err:
-            return [] # Meh.
+            raise _ResultError(_("Failed to obtain volume group names"))
 
         output = p.communicate()[0]
         output = output.split('\n')

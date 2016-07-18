@@ -236,7 +236,10 @@ class EmailEmitter(UpdateEmitter):
             charset = 'us-ascii'
         msg = MIMEText(output, 'plain', charset)
         msg['Subject'] = self.subject
-        msg['From'] = self.opts.email_from.replace('localhost', self.opts.system_name)
+        username, at, domain = self.opts.email_from.rpartition('@')
+        if domain == 'localhost':
+            domain = self.opts.system_name
+        msg['From'] = '%s@%s' % (username, domain)
         msg['To'] = ",".join(self.opts.email_to)
 
         # Send the email

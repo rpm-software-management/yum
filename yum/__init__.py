@@ -210,6 +210,7 @@ class YumBase(depsolve.Depsolve):
         self._not_found_i = {}
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
+        self.file_logger = logging.getLogger("yum.filelogging.YumBase")
         self._override_sigchecks = False
         self._repos = RepoStorage(self)
         self.repo_setopts = {} # since we have to use repo_setopts in base and 
@@ -1065,7 +1066,8 @@ class YumBase(depsolve.Depsolve):
         if self._fssnap is None:
             devices = self.conf.fssnap_devices
             self._fssnap = yum.fssnapshots._FSSnap(root=self.conf.installroot,
-                                                   devices=devices)
+                                                   devices=devices,
+                                                   logger=self.file_logger)
 
         return self._fssnap
 

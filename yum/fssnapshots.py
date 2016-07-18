@@ -145,6 +145,17 @@ def _lv_data(vg, lv):
 
     return data
 
+def log_traceback(func):
+    """Decorator for _FSSnap methods that logs LVM tracebacks."""
+    def wrap(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except LibLVMError as e:
+            if self._logger is not None:
+                self._logger.exception(e)
+            raise
+    return wrap
+
 
 class _FSSnap(object):
 
@@ -152,7 +163,7 @@ class _FSSnap(object):
     # New style is: fedora/root fedora/swap
     # New style is: redhat/root redhat/swap
     def __init__(self, root="/", lookup_mounts=True,
-                 devices=('!*/swap', '!*/lv_swap')):
+                 devices=('!*/swap', '!*/lv_swap'), logger=None):
         if not lvm or os.geteuid():
             devices = []
 
@@ -164,6 +175,8 @@ class _FSSnap(object):
         self._root = root
         self._devs = devices
         self._vgname_list = None
+        # Logger object to be used for LVM traceback logging
+        self._logger = logger
 
         if not self._devs:
             return
@@ -213,6 +226,7 @@ class _FSSnap(object):
 
         return found_neg
 
+    @log_traceback
     def has_space(self, percentage=100):
         """ See if we have enough space to try a snapshot. """
 
@@ -248,6 +262,7 @@ class _FSSnap(object):
         return ret
 
 
+    @log_traceback
     def snapshot(self, percentage=100, prefix='', postfix=None, tags={}):
         """ Attempt to take a snapshot, note that errors can happen after
             this function succeeds. """
@@ -300,6 +315,7 @@ class _FSSnap(object):
 
         return ret
 
+    @log_traceback
     def old_snapshots(self):
         """ List data for old snapshots. """
 
@@ -323,6 +339,7 @@ class _FSSnap(object):
 
         return ret
 
+    @log_traceback
     def del_snapshots(self, devices=[]):
         """ Remove snapshots. """
 

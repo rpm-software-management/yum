@@ -43,7 +43,7 @@ import yum.config
 from yum import updateinfo
 from yum.packages import parsePackages
 from yum.packages import YumLocalPackage # cashe and fs diff
-from yum.fssnapshots import LibLVMError
+from yum.fssnapshots import LibLVMError, lvmerr2str
 
 def _err_mini_usage(base, basecmd):
     if basecmd not in base.yum_cli_commands:
@@ -4300,7 +4300,7 @@ class FSSnapshotCommand(YumCommand):
             try:
                 snaps = base.fssnap.old_snapshots()
             except LibLVMError as e:
-                return 1, [_("Failed to list snapshots: ") + str(e)]
+                return 1, [_("Failed to list snapshots: ") + lvmerr2str(e)]
             print _("List of %u snapshosts:") % len(snaps)
             self._li_snaps(base, snaps)
 
@@ -4309,7 +4309,7 @@ class FSSnapshotCommand(YumCommand):
             try:
                 snaps = base.fssnap.old_snapshots()
             except LibLVMError as e:
-                return 1, [msg + str(e)]
+                return 1, [msg + lvmerr2str(e)]
             devs = [x['dev'] for x in snaps]
             snaps = set()
             for dev in devs:
@@ -4323,7 +4323,7 @@ class FSSnapshotCommand(YumCommand):
             try:
                 snaps = base.fssnap.del_snapshots(devices=snaps)
             except LibLVMError as e:
-                return 1, [msg + str(e)]
+                return 1, [msg + lvmerr2str(e)]
             print _("Deleted %u snapshosts:") % len(snaps)
             self._li_snaps(base, snaps)
 
@@ -4332,7 +4332,7 @@ class FSSnapshotCommand(YumCommand):
             try:
                 has_space = base.fssnap.has_space(pc)
             except LibLVMError as e:
-                return 1, [_("Could not determine free space on logical volumes: ") + str(e)]
+                return 1, [_("Could not determine free space on logical volumes: ") + lvmerr2str(e)]
             if has_space:
                 print _("Space available to take a snapshot.")
             else:
@@ -4345,7 +4345,7 @@ class FSSnapshotCommand(YumCommand):
             try:
                 snaps = base.fssnap.snapshot(pc, tags=tags)
             except LibLVMError as e:
-                msg += ": " + str(e)
+                msg += ": " + lvmerr2str(e)
                 snaps = []
             if not snaps:
                 print msg
@@ -4356,7 +4356,7 @@ class FSSnapshotCommand(YumCommand):
             try:
                 snaps = base.fssnap.old_snapshots()
             except LibLVMError as e:
-                return 1, [_("Failed to list snapshots: ") + str(e)]
+                return 1, [_("Failed to list snapshots: ") + lvmerr2str(e)]
             if not snaps:
                 print _("No snapshots, LVM version:"), base.fssnap.version
                 return 0, [basecmd + ' ' + subcommand + ' done']

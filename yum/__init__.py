@@ -81,7 +81,7 @@ import yumRepo
 import callbacks
 import yum.history
 import yum.fssnapshots
-from yum.fssnapshots import LibLVMError
+from yum.fssnapshots import LibLVMError, lvmerr2str
 import yum.igroups
 import update_md
 
@@ -1749,7 +1749,7 @@ much more problems).
             try:
                 has_space = self.fssnap.has_space(self.conf.fssnap_percentage)
             except LibLVMError as e:
-                msg = _("Could not determine free space on logical volumes: ") + str(e)
+                msg = _("Could not determine free space on logical volumes: ") + lvmerr2str(e)
                 has_space = False
             if not has_space:
                 if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
@@ -1762,7 +1762,7 @@ much more problems).
                 try:
                     snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
                 except LibLVMError as e:
-                    msg += ": " + str(e)
+                    msg += ": " + lvmerr2str(e)
                     snaps = []
                 if not snaps:
                     if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
@@ -1787,7 +1787,7 @@ much more problems).
             try:
                 snaps = self.fssnap.old_snapshots()
             except LibLVMError as e:
-                self.verbose_logger.debug(e)
+                self.verbose_logger.debug(lvmerr2str(e))
                 cleanup_fail = True
                 snaps = []
             snaps = sorted(snaps, key=lambda x: (x['ctime'], x['origin_dev']),
@@ -1809,7 +1809,7 @@ much more problems).
             try:
                 snaps = self.fssnap.del_snapshots(devices=todel)
             except LibLVMError as e:
-                self.verbose_logger.debug(e)
+                self.verbose_logger.debug(lvmerr2str(e))
                 cleanup_fail = True
                 snaps = []
             if len(snaps):

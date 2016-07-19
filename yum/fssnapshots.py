@@ -156,6 +156,14 @@ def log_traceback(func):
             raise
     return wrap
 
+def lvmerr2str(exc):
+    """Convert a LibLVMError instance to a readable error message."""
+    if type(exc) == LibLVMError and len(exc.args) == 2:
+        # args[0] is the error number so ignore that
+        return exc.args[1]
+    else:
+        return str(exc)
+
 
 class _FSSnap(object):
 

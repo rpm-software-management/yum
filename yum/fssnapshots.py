@@ -145,7 +145,7 @@ def _lv_data(vg, lv):
 
     return data
 
-def log_traceback(func):
+def _log_traceback(func):
     """Decorator for _FSSnap methods that logs LVM tracebacks."""
     def wrap(self, *args, **kwargs):
         try:
@@ -234,7 +234,7 @@ class _FSSnap(object):
 
         return found_neg
 
-    @log_traceback
+    @_log_traceback
     def has_space(self, percentage=100):
         """ See if we have enough space to try a snapshot. """
 
@@ -270,7 +270,7 @@ class _FSSnap(object):
         return ret
 
 
-    @log_traceback
+    @_log_traceback
     def snapshot(self, percentage=100, prefix='', postfix=None, tags={}):
         """ Attempt to take a snapshot, note that errors can happen after
             this function succeeds. """
@@ -323,7 +323,7 @@ class _FSSnap(object):
 
         return ret
 
-    @log_traceback
+    @_log_traceback
     def old_snapshots(self):
         """ List data for old snapshots. """
 
@@ -347,7 +347,7 @@ class _FSSnap(object):
 
         return ret
 
-    @log_traceback
+    @_log_traceback
     def del_snapshots(self, devices=[]):
         """ Remove snapshots. """
 

@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 
 import subprocess
+from yum import _
 
 try:
     import lvm
@@ -23,6 +24,14 @@ try:
 except:
     lvm = None
     _ver = None
+
+if lvm is not None:
+    from lvm import LibLVMError
+    class _ResultError(LibLVMError):
+        """Exception raised for LVM calls resulting in bad return values."""
+        pass
+else:
+    LibLVMError = None
 
 
 def _is_origin(lv):
@@ -53,14 +62,18 @@ def _vg_name2lv(vg, lvname):
         return None
 
 def _list_vg_names():
-    names = lvm.listVgNames()
+    try:
+        names = lvm.listVgNames()
+    except LibLVMError:
+        # Try to use the lvm binary instead
+        names = []
 
     if not names: # Could be just broken...
         p = subprocess.Popen(["/sbin/lvm", "vgs", "-o", "vg_name"],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         err = p.wait()
         if err:
-            return [] # Meh.
+            raise _ResultError(_("Failed to obtain volume group names"))
 
         output = p.communicate()[0]
         output = output.split('\n')
@@ -132,6 +145,25 @@ def _lv_data(vg, lv):
 
     return data
 
+def _log_traceback(func):
+    """Decorator for _FSSnap methods that logs LVM tracebacks."""
+    def wrap(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except LibLVMError as e:
+            if self._logger is not None:
+                self._logger.exception(e)
+            raise
+    return wrap
+
+def lvmerr2str(exc):
+    """Convert a LibLVMError instance to a readable error message."""
+    if type(exc) == LibLVMError and len(exc.args) == 2:
+        # args[0] is the error number so ignore that
+        return exc.args[1]
+    else:
+        return str(exc)
+
 
 class _FSSnap(object):
 
@@ -139,7 +171,7 @@ class _FSSnap(object):
     # New style is: fedora/root fedora/swap
     # New style is: redhat/root redhat/swap
     def __init__(self, root="/", lookup_mounts=True,
-                 devices=('!*/swap', '!*/lv_swap')):
+                 devices=('!*/swap', '!*/lv_swap'), logger=None):
         if not lvm or os.geteuid():
             devices = []
 
@@ -150,12 +182,18 @@ class _FSSnap(object):
         self._postfix = None
         self._root = root
         self._devs = devices
-        self._vgnames = []
+        self._vgname_list = None
+        # Logger object to be used for LVM traceback logging
+        self._logger = logger
 
         if not self._devs:
             return
 
-        self._vgnames = _list_vg_names() if self.available else []
+    @property
+    def _vgnames(self):
+        if self._vgname_list is None:
+            self._vgname_list = _list_vg_names() if self.available else []
+        return self._vgname_list
 
     def _use_dev(self, vgname, lv=None):
 
@@ -196,6 +234,7 @@ class _FSSnap(object):
 
         return found_neg
 
+    @_log_traceback
     def has_space(self, percentage=100):
         """ See if we have enough space to try a snapshot. """
 
@@ -207,7 +246,8 @@ class _FSSnap(object):
 
             vg = lvm.vgOpen(vgname, 'r')
             if not vg:
-                return False
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             vgfsize = vg.getFreeSize()
             lvssize = 0
@@ -230,6 +270,7 @@ class _FSSnap(object):
         return ret
 
 
+    @_log_traceback
     def snapshot(self, percentage=100, prefix='', postfix=None, tags={}):
         """ Attempt to take a snapshot, note that errors can happen after
             this function succeeds. """
@@ -245,7 +286,8 @@ class _FSSnap(object):
 
             vg = lvm.vgOpen(vgname, 'w')
             if not vg:
-                return False
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             for lv in vg.listLVs():
                 lvname = lv.getName()
@@ -257,7 +299,8 @@ class _FSSnap(object):
                 nlv = lv.snapshot(nlvname, (lv.getSize() * percentage) / 100)
                 if not nlv: # Failed here ... continuing seems bad.
                     vg.close()
-                    return None
+                    raise _ResultError(
+                        _("Unknown error when creating snapshot ") + nlvname)
 
                 odev = "%s/%s" % (vgname,  lvname)
                 ndev = "%s/%s" % (vgname, nlvname)
@@ -280,6 +323,7 @@ class _FSSnap(object):
 
         return ret
 
+    @_log_traceback
     def old_snapshots(self):
         """ List data for old snapshots. """
 
@@ -289,6 +333,9 @@ class _FSSnap(object):
             # see stuff after changing config. options.
 
             vg = lvm.vgOpen(vgname, 'w')
+            if not vg:
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             for lv in vg.listLVs():
 
@@ -300,6 +347,7 @@ class _FSSnap(object):
 
         return ret
 
+    @_log_traceback
     def del_snapshots(self, devices=[]):
         """ Remove snapshots. """
 
@@ -318,6 +366,9 @@ class _FSSnap(object):
 
         for vgname in togo:
             vg = lvm.vgOpen(vgname, 'w')
+            if not vg:
+                raise _ResultError(
+                    _("Unknown error when opening volume group ") + vgname)
 
             for lvname in togo[vgname]:
                 lv = _vg_name2lv(vg, lvname)

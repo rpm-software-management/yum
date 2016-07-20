@@ -81,6 +81,7 @@ import yumRepo
 import callbacks
 import yum.history
 import yum.fssnapshots
+from yum.fssnapshots import LibLVMError, lvmerr2str
 import yum.igroups
 import update_md
 
@@ -209,6 +210,7 @@ class YumBase(depsolve.Depsolve):
         self._not_found_i = {}
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
+        self.file_logger = logging.getLogger("yum.filelogging.YumBase")
         self._override_sigchecks = False
         self._repos = RepoStorage(self)
         self.repo_setopts = {} # since we have to use repo_setopts in base and 
@@ -1064,7 +1066,8 @@ class YumBase(depsolve.Depsolve):
         if self._fssnap is None:
             devices = self.conf.fssnap_devices
             self._fssnap = yum.fssnapshots._FSSnap(root=self.conf.installroot,
-                                                   devices=devices)
+                                                   devices=devices,
+                                                   logger=self.file_logger)
 
         return self._fssnap
 
@@ -1738,6 +1741,37 @@ much more problems).
         :raises: :class:`yum.Errors.YumRPMTransError` if there is a
            transaction cannot be completed
         """
+
+        def create_snapshot(post=False):
+            """Create the pre or post trans snapshot if we have free space."""
+            msg = _("Not enough space on logical volumes to create %s FS snapshot." %
+                    ("post trans" if post else "pre."))
+            try:
+                has_space = self.fssnap.has_space(self.conf.fssnap_percentage)
+            except LibLVMError as e:
+                msg = _("Could not determine free space on logical volumes: ") + lvmerr2str(e)
+                has_space = False
+            if not has_space:
+                if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
+                    raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
+                else:
+                    self.verbose_logger.critical(msg)
+            else:
+                tags = {'*': ['reason=automatic']} # FIXME: pre. and post tags
+                msg = _("Failed to create snapshot")
+                try:
+                    snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
+                except LibLVMError as e:
+                    msg += ": " + lvmerr2str(e)
+                    snaps = []
+                if not snaps:
+                    if not post and self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
+                        raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
+                    else:
+                        self.verbose_logger.critical(msg)
+                for (odev, ndev) in snaps:
+                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
+
         if (self.conf.fssnap_automatic_pre or self.conf.fssnap_automatic_post) and not self.fssnap.available:
             msg = _("Snapshot support not available.")
             if self.conf.fssnap_abort_on_errors in ('broken-setup', 'any'):
@@ -1749,7 +1783,13 @@ much more problems).
                                        self.conf.fssnap_automatic_post) and
                                       self.conf.fssnap_automatic_keep):
             # Automatically kill old snapshots...
-            snaps = self.fssnap.old_snapshots()
+            cleanup_fail = False
+            try:
+                snaps = self.fssnap.old_snapshots()
+            except LibLVMError as e:
+                self.verbose_logger.debug(lvmerr2str(e))
+                cleanup_fail = True
+                snaps = []
             snaps = sorted(snaps, key=lambda x: (x['ctime'], x['origin_dev']),
                            reverse=True)
             last = '<n/a>'
@@ -1766,30 +1806,22 @@ much more problems).
                 if num > self.conf.fssnap_automatic_keep:
                     todel.append(snap['dev'])
             # Display something to the user?
-            snaps = self.fssnap.del_snapshots(devices=todel)
+            try:
+                snaps = self.fssnap.del_snapshots(devices=todel)
+            except LibLVMError as e:
+                self.verbose_logger.debug(lvmerr2str(e))
+                cleanup_fail = True
+                snaps = []
             if len(snaps):
                 self.verbose_logger.info(_("Deleted %u snapshots.") % len(snaps))
+            elif cleanup_fail:
+                self.verbose_logger.warning(_("Skipping the cleanup of old "
+                                              "snapshots due to errors"))
 
         if (self.fssnap.available and
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
             self.conf.fssnap_automatic_pre)):
-            if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space on logical volumes to create pre. FS snapshot.")
-                if self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
-                    raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
-                else:
-                    self.verbose_logger.critical(msg)
-            else:
-                tags = {'*': ['reason=automatic']} # FIXME: pre. tags
-                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
-                if not snaps:
-                    msg = _("Failed to create snapshot")
-                    if self.conf.fssnap_abort_on_errors in ('snapshot-failure', 'any'):
-                        raise Errors.YumRPMTransError(msg="Aborting transaction", errors=msg)
-                    else:
-                        self.verbose_logger.critical(msg)
-                for (odev, ndev) in snaps:
-                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
+            create_snapshot()
 
         self.plugins.run('pretrans')
 
@@ -1926,16 +1958,7 @@ much more problems).
         if (self.fssnap.available and
             (not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) and
             self.conf.fssnap_automatic_post)):
-            if not self.fssnap.has_space(self.conf.fssnap_percentage):
-                msg = _("Not enough space on logical volumes to create post trans FS snapshot.")
-                self.verbose_logger.critical(msg)
-            else:
-                tags = {'*': ['reason=automatic']} # FIXME: post tags
-                snaps = self.fssnap.snapshot(self.conf.fssnap_percentage, tags=tags)
-                if not snaps:
-                    self.verbose_logger.critical(_("Failed to create snapshot"))
-                for (odev, ndev) in snaps:
-                    self.verbose_logger.info(_("Created snapshot from %s, results is: %s") % (odev, ndev))
+            create_snapshot(post=True)
         return resultobject
 
     def verifyTransaction(self, resultobject=None, txmbr_cb=None):

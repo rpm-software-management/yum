@@ -583,12 +583,14 @@ class YumRepository(Repository, config.RepoConf):
             self._proxy_dict['https'] = proxy_string
             self._proxy_dict['ftp'] = proxy_string
 
-    def __headersListFromDict(self):
+    def __headersListFromDict(self, cache=True):
         """Convert our dict of headers to a list of 2-tuples for urlgrabber."""
         headers = []
 
         for key in self.http_headers:
             headers.append((key, self.http_headers[key]))
+        if not (cache or 'Pragma' in self.http_headers):
+            headers.append(('Pragma', 'no-cache'))
 
         return headers
 
@@ -665,7 +667,7 @@ class YumRepository(Repository, config.RepoConf):
                  'timeout': self.timeout,
                  'minrate': self.minrate,
                  'ip_resolve': self.ip_resolve,
-                 'http_headers': tuple(self.__headersListFromDict()),
+                 'http_headers': tuple(self.__headersListFromDict(cache=cache)),
                  'ssl_verify_peer': self.sslverify,
                  'ssl_verify_host': self.sslverify,
                  'ssl_ca_cert': self.sslcacert,
@@ -675,7 +677,6 @@ class YumRepository(Repository, config.RepoConf):
                  'username': self.username,
                  'password': self.password,
                  'ftp_disable_epsv': self.ftp_disable_epsv,
-                 'no_cache': not cache,
                  }
         if self.proxy == 'libproxy':
             opts['libproxy'] = True
@@ -1011,7 +1012,7 @@ Insufficient space in download directory %s
                 raise Errors.RepoError(errstr, repo=self)
 
         else:
-            headers = tuple(self.__headersListFromDict())
+            headers = tuple(self.__headersListFromDict(cache=cache))
             try:
                 result = self.grab.urlgrab(misc.to_utf8(relative), local,
                                            text = misc.to_utf8(text),
@@ -1021,7 +1022,6 @@ Insufficient space in download directory %s
                                            checkfunc=checkfunc,
                                            http_headers=headers,
                                            size=size,
-                                           no_cache=not cache,
                                            retry_no_cache=self._retry_no_cache,
                                            **kwargs
                                            )

@@ -339,6 +339,7 @@ class YumRepository(Repository, config.RepoConf):
         self._repoXML = None
         self._oldRepoMDData = {}
         self.cache = 0
+        self._retry_no_cache = False
         self.mirrorlistparsed = 0
         self.yumvar = {} # empty dict of yumvariables for $string replacement
         self._proxy_dict = {}
@@ -582,12 +583,14 @@ class YumRepository(Repository, config.RepoConf):
             self._proxy_dict['https'] = proxy_string
             self._proxy_dict['ftp'] = proxy_string
 
-    def __headersListFromDict(self):
+    def __headersListFromDict(self, cache=True):
         """Convert our dict of headers to a list of 2-tuples for urlgrabber."""
         headers = []
 
         for key in self.http_headers:
             headers.append((key, self.http_headers[key]))
+        if not (cache or 'Pragma' in self.http_headers):
+            headers.append(('Pragma', 'no-cache'))
 
         return headers
 
@@ -664,7 +667,7 @@ class YumRepository(Repository, config.RepoConf):
                  'timeout': self.timeout,
                  'minrate': self.minrate,
                  'ip_resolve': self.ip_resolve,
-                 'http_headers': tuple(self.__headersListFromDict()),
+                 'http_headers': tuple(self.__headersListFromDict(cache=cache)),
                  'ssl_verify_peer': self.sslverify,
                  'ssl_verify_host': self.sslverify,
                  'ssl_ca_cert': self.sslcacert,
@@ -674,7 +677,6 @@ class YumRepository(Repository, config.RepoConf):
                  'username': self.username,
                  'password': self.password,
                  'ftp_disable_epsv': self.ftp_disable_epsv,
-                 'no_cache': not cache,
                  }
         if self.proxy == 'libproxy':
             opts['libproxy'] = True
@@ -932,7 +934,7 @@ class YumRepository(Repository, config.RepoConf):
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
             copy_local=None, checkfunc=None, text=None, reget='simple', 
-            cache=True, retry_no_cache=False, size=None, **kwargs):
+            cache=True, size=None, **kwargs):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
            start to end, also optionally retrieve from a specific baseurl"""
@@ -994,7 +996,7 @@ Insufficient space in download directory %s
                             interrupt_callback=self.interrupt_callback,
                             checkfunc=checkfunc,
                             size=size,
-                            retry_no_cache=retry_no_cache,
+                            retry_no_cache=self._retry_no_cache,
                             **ugopts)
 
             remote = urlparse.urlunsplit((scheme, netloc, path + '/' + relative, query, fragid))
@@ -1010,7 +1012,7 @@ Insufficient space in download directory %s
                 raise Errors.RepoError(errstr, repo=self)
 
         else:
-            headers = tuple(self.__headersListFromDict())
+            headers = tuple(self.__headersListFromDict(cache=cache))
             try:
                 result = self.grab.urlgrab(misc.to_utf8(relative), local,
                                            text = misc.to_utf8(text),
@@ -1020,8 +1022,7 @@ Insufficient space in download directory %s
                                            checkfunc=checkfunc,
                                            http_headers=headers,
                                            size=size,
-                                           no_cache=not cache,
-                                           retry_no_cache=retry_no_cache,
+                                           retry_no_cache=self._retry_no_cache,
                                            **kwargs
                                            )
             except URLGrabError, e:
@@ -1049,15 +1050,22 @@ Insufficient space in download directory %s
                     misc.unlink_f(local)
                     raise URLGrabError(-1, _('Package does not match intended download.'))
 
-        ret = self._getFile(url=basepath,
-                        relative=remote,
-                        local=local,
-                        checkfunc=checkfunc,
-                        text=text,
-                        cache=cache,
-                        size=package.size,
-                        **kwargs
-                        )
+        # We would normally pass this to _getFile() directly but that could
+        # break backward compatibility with plugins that override _getFile()
+        # (BZ 1360532).
+        self._retry_no_cache = self.http_caching == 'lazy:packages'
+        try:
+            ret = self._getFile(url=basepath,
+                            relative=remote,
+                            local=local,
+                            checkfunc=checkfunc,
+                            text=text,
+                            cache=cache,
+                            size=package.size,
+                            **kwargs
+                            )
+        finally:
+            self._retry_no_cache = False
 
         if not kwargs.get('async') and not package.verifyLocalPkg():
             # Don't return as "success" when bad.

@@ -234,11 +234,14 @@ class YumBase(depsolve.Depsolve):
         self.updateinfo_filters = {}
 
     def __del__(self):
-        self.close()
-        self.closeRpmDB()
-        self.doUnlock()
-        # call cleanup callbacks
-        for cb in self._cleanup: cb()
+        try:
+            self.close()
+            self.closeRpmDB()
+            self.doUnlock()
+            # call cleanup callbacks
+            for cb in self._cleanup: cb()
+        except Errors.RepoError, e:
+            self.verbose_logger.debug("Exception %s %s in %s ignored" % (repr(e), str(e), self.__del__))
 
     def close(self):
         """Close the history and repo objects."""

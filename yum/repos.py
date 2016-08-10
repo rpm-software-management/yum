@@ -161,7 +161,10 @@ class RepoStorage:
         return str(self.repos.keys())
 
     def __del__(self):
-        self.close()
+        try:
+            self.close()
+        except Errors.RepoError, e:
+            self.logger.debug("Exception %s %s in %s ignored" % (repr(e), str(e), self.__del__))
 
     def close(self):
         for repo in self.repos.values():
@@ -423,7 +426,10 @@ class Repository:
         return hash(self.id)
         
     def __del__(self):
-        self.close()
+        try:
+            self.close()
+        except Errors.RepoError, e:
+            self.logger.debug("Exception %s %s in %s ignored" % (repr(e), str(e), self.__del__))
 
     def _ui_id(self):
         """ Show self.id, so we can use it and override it. """

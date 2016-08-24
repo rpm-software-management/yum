@@ -114,7 +114,10 @@ class YumPackageSack(packageSack.PackageSack):
         self.added = {}
 
     def __del__(self):
-        self.close()
+        try:
+            self.close()
+        except Errors.RepoError, e:
+            verbose_logger.debug("Exception %s %s in %s ignored" % (repr(e), str(e), self.__del__))
 
     def close(self):
         self.added = {}

@@ -747,7 +747,8 @@ class YumRepository(Repository, config.RepoConf):
                 
         # if we're using a cachedir that's not the system one, copy over these
         # basic items from the system one
-        self._preload_md_from_system_cache('repomd.xml')
+        if self._preload_md_from_system_cache('repomd.xml'):
+            self._metadataCurrent = False
         self._preload_md_from_system_cache('cachecookie')
         self._preload_md_from_system_cache('mirrorlist.txt')
         self._preload_md_from_system_cache('metalink.xml')
@@ -1531,9 +1532,14 @@ Insufficient space in download directory %s
         # note that we often don't get here. So we also do this in
         # YumPackageSack.populate ... and we look for the uncompressed versions
         # in retrieveMD.
-        self._preload_md_from_system_cache(os.path.basename(local))
+        preloaded = self._preload_md_from_system_cache(os.path.basename(local))
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
+            if preloaded:
+                # preloading being the reason for us getting here is probably
+                # more common than an incomplete download, so make sure we
+                # don't reget this file in _retrieveMD()
+                misc.unlink_f(local)
             return None
 
         return local
@@ -1832,12 +1838,20 @@ Insufficient space in download directory %s
             # got it, move along
             return local
 
-        if (os.path.exists(local) or
-            self._preload_md_from_system_cache(os.path.basename(local)) or 
-            self._preload_md_from_cashe(mdtype, local)):
+        if not os.path.exists(local):
+            preloaded = (self._preload_md_from_system_cache(os.path.basename(local)) or
+                         self._preload_md_from_cashe(mdtype, local))
+        else:
+            preloaded = False
+        if os.path.exists(local):
             if self._checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
+            elif preloaded:
+                # preloading being the reason for us getting here is probably
+                # more common than an incomplete download, so make sure we
+                # don't reget this file
+                misc.unlink_f(local)
 
         if self.cache == 1:
             if retrieve_can_fail:

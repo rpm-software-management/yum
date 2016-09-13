@@ -81,7 +81,6 @@ BuildRequires: python-nose
 BuildRequires: python >= 2.4
 BuildRequires: rpm-python, rpm >= 0:4.4.2
 BuildRequires: python-iniparse
-BuildRequires: python-sqlite
 BuildRequires: python-urlgrabber >= 3.10-8
 BuildRequires: yum-metadata-parser >= 1.1.0
 BuildRequires: pygpgme
@@ -90,7 +89,6 @@ Conflicts: pirut < 1.1.4
 Requires: python >= 2.4
 Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-iniparse
-Requires: python-sqlite
 Requires: python-urlgrabber >= 3.10-8
 Requires: yum-metadata-parser >= 1.1.0
 Requires: pygpgme

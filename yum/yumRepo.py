@@ -361,6 +361,7 @@ class YumRepository(Repository, config.RepoConf):
         # holder for stuff we've grabbed
         self.retrieved = { 'primary':0, 'filelists':0, 'other':0, 'group':0,
                            'updateinfo':0, 'prestodelta':0}
+        self._preloaded_repomd = False
 
         # callbacks
         self.callback = None  # for the grabber
@@ -747,7 +748,8 @@ class YumRepository(Repository, config.RepoConf):
                 
         # if we're using a cachedir that's not the system one, copy over these
         # basic items from the system one
-        self._preload_md_from_system_cache('repomd.xml')
+        if self._preload_md_from_system_cache('repomd.xml'):
+            self._preloaded_repomd = True
         self._preload_md_from_system_cache('cachecookie')
         self._preload_md_from_system_cache('mirrorlist.txt')
         self._preload_md_from_system_cache('metalink.xml')
@@ -1833,6 +1835,12 @@ Insufficient space in download directory %s
             # got it, move along
             return local
 
+        # Having preloaded the repomd means we should first try preloading this
+        # file as well (forcing it this way is only needed when dealing with
+        # simple filenames).
+        if self._preloaded_repomd:
+            misc.unlink_f(local)
+
         if (os.path.exists(local) or
             self._preload_md_from_system_cache(os.path.basename(local)) or 
             self._preload_md_from_cashe(mdtype, local)):
@@ -1849,6 +1857,20 @@ Insufficient space in download directory %s
                 msg = "Caching enabled but no local cache of %s from %s" % (local, self.ui_id)
             raise Errors.RepoError(msg, repo=self)
 
+        # Given the file already exists, is it a partial download of thisdata
+        # that we can try to reget?  With unique filenames, that's always.
+        # With simple filenames, use the old expected checksum to verify
+        # (assuming the existing file or part represents the old data but it
+        # usually does).
+        partial = True
+        orepomd = self._oldRepoMDData.get('old_repo_XML')
+        if orepomd is not None:
+            odata = orepomd.repoData.get(mdtype)
+            if odata is not None:
+                ofname = os.path.basename(odata.location[1])
+                partial = (fname != ofname or
+                           thisdata.checksum == odata.checksum)
+
         try:
             def checkfunc(obj):
                 try:
@@ -1861,7 +1883,7 @@ Insufficient space in download directory %s
                     raise
                 self.retrieved[mdtype] = 1
             text = "%s/%s" % (self.ui_id, mdtype)
-            if thisdata.size is None:
+            if thisdata.size is None or not partial:
                 reget = None
             else:
                 reget = 'simple'

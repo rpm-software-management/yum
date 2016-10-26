@@ -3109,9 +3109,13 @@ much more problems).
                 pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
                 pkgs = misc.filter_pkgs_repoid(pkgs, repoid)
                 instpo = self.getInstalledPackageObject(instTup)
-                for po in pkgs:
-                    obsoletes.append(po)
-                    obsoletesTuples.append((po, instpo))
+                if len(pkgs) > 1:
+                    self.verbose_logger.log(logginglevels.DEBUG_1,
+                        _('More than one identical match in sack for %s'),
+                        pkgs[0])
+                if len(pkgs) >= 1:
+                    obsoletes.append(pkgs[0])
+                    obsoletesTuples.append((pkgs[0], instpo))
             if patterns:
                 exactmatch, matched, unmatched = \
                    parsePackages(obsoletes, patterns, casematch=not ignore_case)

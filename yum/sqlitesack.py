@@ -175,6 +175,21 @@ def _excluder_match(excluder, match, regexp_match, data, e,v,r,a):
 
     return False
 
+def _deduplicate(cur, field):
+    """Eliminate duplicate rows from cursor based on field.
+
+    Assuming the result set can be divided into one or more equivalent groups
+    of rows based on the given field, this wrapper will yield rows from only
+    one of the groups, avoiding duplicates.
+    """
+    first_val = None
+    for ob in cur:
+        if first_val is None:
+            first_val = ob[field]
+        elif ob[field] != first_val:
+            continue
+        yield ob
+
 
 class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
     def __init__(self, repo, db_obj):
@@ -289,6 +304,14 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         setattr(self, varname, value)
             
         return value
+
+    # Note that we use pkgId instead of pkgKey to filter the files and
+    # changelog entries since we can't guarantee that pkgKeys in primarydb and
+    # filelistsdb are in sync (since self.pkgKey is obtained from primarydb).
+    #
+    # Also, because of that, we must make sure not to return duplicate entries
+    # in case we have some duplicate packages (i.e. same checksums), so we use
+    # _deduplicate().
         
     def _loadFiles(self):
         if self._loadedfiles:
@@ -299,10 +322,10 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         #FIXME - this should be try, excepting
         self.sack.populate(self.repo, mdtype='filelists')
         cur = self._sql_MD('filelists',
-                           "SELECT dirname, filetypes, filenames " \
+                           "SELECT pkgKey, dirname, filetypes, filenames " \
                            "FROM   filelist JOIN packages USING(pkgKey) " \
                            "WHERE  packages.pkgId = ?", (self.pkgId,))
-        for ob in cur:
+        for ob in _deduplicate(cur, 'pkgKey'):
             dirname = ob['dirname']
             if dirname == '.':
                 dirname = ''
@@ -329,13 +352,13 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
                     self._changelog = result
                     return
             cur = self._sql_MD('other',
-                               "SELECT date, author, changelog " \
+                               "SELECT pkgKey, date, author, changelog " \
                                "FROM   changelog JOIN packages USING(pkgKey) " \
                                "WHERE  pkgId = ? ORDER BY date DESC",
                                (self.pkgId,))
             # Check count(pkgId) here, the same way we do in searchFiles()?
             # Failure mode is much less of a problem.
-            for ob in cur:
+            for ob in _deduplicate(cur, 'pkgKey'):
                 # Note: Atm. rpm only does days, where (60 * 60 * 24) == 86400
                 #       and we have the hack in _dump_changelog() to keep the
                 #       order the same, so this is a quick way to get rid of

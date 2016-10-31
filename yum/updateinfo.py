@@ -456,8 +456,8 @@ def exclude_updates(base, filters=None):
         for p in base.doPackageLists(pkgnarrow='available', patterns=pkgs_to_del, showdups=True).available:
             ysp_del_pkg(p)
 
-    cnt = len(base.doPackageLists(pkgnarrow='updates').updates) + \
-          len(base.doPackageLists(pkgnarrow='obsoletes').obsoletes)
+    cnt = len(set(base.doPackageLists(pkgnarrow='updates').updates + \
+                  base.doPackageLists(pkgnarrow='obsoletes').obsoletes))
 
     _ysp_chk_used_map(used_map, lambda x: base.verbose_logger.warn("%s", x))
 

@@ -58,7 +58,7 @@ class UpdateNotice(object):
     A single update notice (for instance, a security fix).
     """
 
-    def __init__(self, elem=None):
+    def __init__(self, elem=None, repoid=None, vlogger=None):
         self._md = {
             'from'             : '',
             'type'             : '',
@@ -83,6 +83,9 @@ class UpdateNotice(object):
         if elem:
             self._parse(elem)
 
+        self._repoid = repoid
+        self._vlogger = vlogger
+
     def __getitem__(self, item):
         """ Allows scriptable metadata access (ie: un['update_id']). """
         if type(item) is int:
@@ -103,6 +106,24 @@ class UpdateNotice(object):
         #  Tests to see if it's "the same data", which means that the
         # packages can be different (see add_notice).
 
+        def _rid(un):
+            if hasattr(un, '_repoid') and un._repoid is not None:
+                return un._repoid
+            else:
+                return '<unknown>'
+
+        def _log_failure(data):
+            """Log the mismatched data similarly to conflict markers in git."""
+            if self._vlogger is None:
+                return
+            msg = _('Duplicate of %s differs in some fields:\n')
+            msg %= other._md['update_id']
+            msg += '<<<<<<< %s:%s\n' % (_rid(other), data)
+            msg += '%r\n=======\n%r\n' % (other._md[data], self._md[data])
+            msg += '>>>>>>> %s:%s' % (_rid(self), data)
+            # --verbose mode enables this
+            self._vlogger.log(logginglevels.DEBUG_3, msg)
+
         if not other or not hasattr(other, '_md'):
             return False
 
@@ -113,6 +134,7 @@ class UpdateNotice(object):
             if data == 'status': # FIXME: See below...
                 continue
             if self._md[data] != other._md[data]:
+                _log_failure(data)
                 return False
         # FIXME: Massive hack, Fedora is really broken and gives status=stable
         # and status=testing for updateinfo notices, just depending on which
@@ -120,8 +142,10 @@ class UpdateNotice(object):
         data = 'status'
         if self._md[data] != other._md[data]:
             if self._md[data]  not in ('stable', 'testing'):
+                _log_failure(data)
                 return False
             if other._md[data] not in ('stable', 'testing'):
+                _log_failure(data)
                 return False
             # They are both really "stable" ...
             self._md[data]  = 'stable'
@@ -574,7 +598,7 @@ class UpdateMetadata(object):
         for event, elem in safe_iterparse(infile, logger=self._logger):
             if elem.tag == 'update':
                 try:
-                    un = UpdateNotice(elem)
+                    un = UpdateNotice(elem, repoid, self._vlogger)
                 except UpdateNoticeException, e:
                     msg = _("An update notice %s is broken, skipping.") % _rid(repoid)
                     if self._vlogger:

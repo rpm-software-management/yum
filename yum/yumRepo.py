@@ -1145,6 +1145,27 @@ Insufficient space in download directory %s
             self._metadataCurrent = False
         return self._metadataCurrent
 
+    def _matchExpireFilter(self):
+        """Return whether cache_req matches metadata_expire_filter."""
+        # Never/write means we just skip this...
+        if (hasattr(self, '_metadata_cache_req') and
+                self._metadata_cache_req.startswith("read-only:") and
+                self.metadata_expire_filter.startswith("read-only:")):
+
+            cache_filt = self.metadata_expire_filter[len("read-only:"):]
+            cache_req  = self._metadata_cache_req[len("read-only:"):]
+
+            if cache_filt == 'future':
+                assert cache_req in ('past', 'present', 'future')
+                return True
+            if cache_filt == 'present':
+                if cache_req in ('past', 'present'):
+                    return True
+            if cache_filt == 'past':
+                if cache_req == 'past':
+                    return True
+        return False
+
     def withinCacheAge(self, myfile, expiration_time, expire_req_filter=True):
         """check if any file is older than a certain amount of time. Used for
            the cachecookie and the mirrorlist
@@ -1155,23 +1176,8 @@ Insufficient space in download directory %s
            file. If any of them are newer then invalidate the cache
            """
 
-        # Never/write means we just skip this...
-        if (expire_req_filter and hasattr(self, '_metadata_cache_req') and
-            self._metadata_cache_req.startswith("read-only:") and
-            self.metadata_expire_filter.startswith("read-only:")):
-
-            cache_filt = self.metadata_expire_filter[len("read-only:"):]
-            cache_req  = self._metadata_cache_req[len("read-only:"):]
-
-            if cache_filt == 'future':
-                assert cache_req in ('past', 'present', 'future')
-                expiration_time = -1
-            if cache_filt == 'present':
-                if cache_req in ('past', 'present'):
-                    expiration_time = -1
-            if cache_filt == 'past':
-                if cache_req == 'past':
-                    expiration_time = -1
+        if expire_req_filter and self._matchExpireFilter():
+            expiration_time = -1
 
         # -1 is special and should never get refreshed
         if expiration_time == -1 and os.path.exists(myfile):

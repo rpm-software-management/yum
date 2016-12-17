@@ -450,11 +450,21 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if not ts_min:
             cacheReq = 'write'
-        elif warning and (time.time() - ts_max) > (60 * 60 * 24 * 14):
-            self.logger.warning(_("Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache fast"))
 
+        all_obey = True
         for repo in self.repos.sort():
             repo._metadata_cache_req = cacheReq
+            if repo._matchExpireFilter():
+                all_obey = False
+
+        if warning and ts_min and (time.time() - ts_max) > (60 * 60 * 24 * 14):
+            # The warning makes no sense if we're already running a command
+            # that requires current repodata across all repos (such as "yum
+            # makecache" or others, depending on metadata_expire_filter), so
+            # don't give it if that's the case.
+            if all_obey:
+                return
+            self.logger.warning(_("Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache fast"))
 
     def _shell_history_write(self):
         if not hasattr(self, '_shell_history_cmds'):

@@ -1378,10 +1378,11 @@ Insufficient space in download directory %s
 
         if (self.timestamp_check and
             old_repo_XML.timestamp > self.repoXML.timestamp):
-            logger.warning("Not using downloaded repomd.xml because it is "
+            logger.warning("Not using downloaded %s/repomd.xml because it is "
                            "older than what we have:\n"
                            "  Current   : %s\n  Downloaded: %s" %
-                           (time.ctime(old_repo_XML.timestamp),
+                           (self.id,
+                            time.ctime(old_repo_XML.timestamp),
                             time.ctime(self.repoXML.timestamp)))
             return False
         return True

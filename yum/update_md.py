@@ -611,6 +611,8 @@ class UpdateMetadata(object):
                     msg = _("Update notice %s %s is broken, or a bad duplicate, skipping.") % (un['update_id'], _rid(repoid))
                     if not have_dup:
                         msg += _('\nYou should report this problem to the owner of the %s repository.') % _rid(repoid, "%s")
+                        msg += _('\nIf you are the owner, consider re-running the same command with --verbose to see the '
+                                 'exact data that caused the conflict.')
                     have_dup = True
                     if self._vlogger:
                         self._vlogger.warn("%s", msg)

@@ -4910,8 +4910,14 @@ much more problems).
             # Do we still want to return errors here?
             # We don't in the cases below, so I didn't here...
             if 'pattern' in kwargs:
-                pkgs = self.rpmdb.returnPackages(patterns=[kwargs['pattern']],
+                arg = kwargs['pattern']
+                pkgs = self.rpmdb.returnPackages(patterns=[arg],
                                                  ignore_case=False)
+                if not pkgs:
+                    self.verbose_logger.debug(
+                        _('Checking for installed virtual provide or file-provide for %s'),
+                        arg)
+                    pkgs = self.returnInstalledPackagesByDep(arg)
             if 'name' in kwargs:
                 pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
             if 'pkgtup' in kwargs:

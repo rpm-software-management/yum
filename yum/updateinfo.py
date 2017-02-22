@@ -436,11 +436,8 @@ def exclude_updates(base, filters=None):
 
     used_map = _ysp_gen_used_map(opts)
 
-    upds = base.doPackageLists(pkgnarrow='updates')
-    tot = len(upds.updates)
-    # In theory we don't need to do this in some cases, but meh.
-    upds = base.doPackageLists(pkgnarrow='obsoletes')
-    tot += len(upds.obsoletes)
+    tot = len(set(base.doPackageLists(pkgnarrow='updates').updates + \
+                  base.doPackageLists(pkgnarrow='obsoletes').obsoletes))
 
     pkgs = base.pkgSack.returnPackages()
     name2tup = _get_name2oldpkgtup(base)

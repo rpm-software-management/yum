@@ -2397,15 +2397,14 @@ class RepoListCommand(YumCommand):
                 if arg == 'disabled': # Don't output a status column.
                     base.verbose_logger.info("%s %s",
                                             utf8_width_fill(rid, id_len),
-                                            utf8_width_fill(rname, nm_len,
-                                                            nm_len))
+                                            utf8_width_fill(rname, nm_len))
                     continue
 
                 if ui_num:
                     ui_num = utf8_width_fill(ui_num, ui_len, left=False)
                 base.verbose_logger.info("%s %s %s%s",
                                         utf8_width_fill(rid, id_len),
-                                        utf8_width_fill(rname, nm_len, nm_len),
+                                        utf8_width_fill(rname, nm_len),
                                         ui_enabled, ui_num)
 
         return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]

@@ -650,7 +650,7 @@ class SkipBrokenTests(DepsolveTests):
         self.assertResult([i1, i2])
        
 
-    def testMissingfileReqIptabes(self):    
+    def testMissingfileReqIptables(self):    
         '''
         RHBZ #555528
         iptables-0:1.4.5-1.fc12.i686 provides /usr/lib/libxtables.so.2

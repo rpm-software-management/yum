@@ -18,7 +18,7 @@
 # TODOS: make all the package relationships deal with package objects
 # search by package object for TransactionData, etc.
 # provide a real TransactionData.remove(txmbr) method, It should 
-# remove the given txmbr and iterate to remove all those in depedent relationships
+# remove the given txmbr and iterate to remove all those in dependent relationships
 # with the given txmbr. 
 
 """
@@ -552,7 +552,7 @@ class TransactionData:
         txmbr.relatedto.append((updating_po, 'updatedby'))
         txmbr.updated_by.append(updating_po)
 
-        if 'reason' in po.yumdb_info: # Propbably worthless, but...
+        if 'reason' in po.yumdb_info: # Probably worthless, but...
             txmbr.reason = po.yumdb_info.reason
 
         self.add(txmbr)
@@ -588,7 +588,7 @@ class TransactionData:
         txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         txmbr.obsoleted_by.append(obsoleting_po)
 
-        if 'reason' in po.yumdb_info: # Propbably worthless, but...
+        if 'reason' in po.yumdb_info: # Probably worthless, but...
             txmbr.reason = po.yumdb_info.reason
 
         self.add(txmbr)

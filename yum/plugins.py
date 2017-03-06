@@ -46,7 +46,7 @@ from yum.i18n import utf8_width
 # TODO: consistent case of YumPlugins methods
 # TODO: allow plugins to extend shell commands
 # TODO: allow plugins to define new repository types
-# TODO: More developer docs:  use epydoc as API begins to stablise
+# TODO: More developer docs:  use epydoc as API begins to stabilize
 
 
 # The API_VERSION constant defines the current plugin API version. It is used
@@ -129,7 +129,7 @@ class YumPlugins:
         @param optparser: The OptionParser instance for this run (optional).
             Use to allow plugins to extend command line options.
         @param types: A sequence specifying the types of plugins to load.
-            This should be sequnce containing one or more of the TYPE_...
+            This should be sequence containing one or more of the TYPE_...
             constants. If None (the default), all plugins will be loaded.
         @param pluginconfpath: A list of paths to look for plugin configuration
             files. Defaults to "/etc/yum/pluginconf.d".
@@ -618,7 +618,7 @@ class ArgsPluginConduit(InitPluginConduit):
         return self._args
 
 class PreRepoSetupPluginConduit(InitPluginConduit):
-    """Conduit for use in the prererosetup slot."""
+    """Conduit for use in the prereposetup slot."""
 
 
     def getCmdLine(self):

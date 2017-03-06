@@ -525,7 +525,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
                         _del1_f(fpkg)
                 elif fpkg.state in ('Obsoleted', 'Erase'):
                     #  Should be covered by above loop which deals with
-                    # all goood state changes.
+                    # all good state changes.
                     good_states = ('Install', 'True-Install', 'Dep-Install',
                                    'Obsoleting')
                     assert npkg.state not in good_states

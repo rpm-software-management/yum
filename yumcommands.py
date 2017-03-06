@@ -905,7 +905,7 @@ class EraseCommand(YumCommand):
 
 class AutoremoveCommand(EraseCommand):
     """A class containing methods needed by the cli to execute the
-    autremove command.
+    autoremove command.
     """
     def getNames(self):
         """Return a list containing the names of this command.  This
@@ -2355,7 +2355,7 @@ class RepoListCommand(YumCommand):
                                         "\n".join(map(misc.to_unicode, out)))
 
         if not verbose and cols:
-            #  Work out the first (id) and last (enabled/disalbed/count),
+            #  Work out the first (id) and last (enabled/disabled/count),
             # then chop the middle (name)...
             id_len = utf8_width(_('repo id'))
             nm_len = 0
@@ -4382,7 +4382,7 @@ class FSCommand(YumCommand):
         return "[]"
 
     def getSummary(self):
-        return _("Acts on the filesystem data of the host, mainly for removing docs/lanuages for minimal hosts.")
+        return _("Acts on the filesystem data of the host, mainly for removing docs/languages for minimal hosts.")
 
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.

@@ -233,8 +233,8 @@ class Group(CompsObj):
         for pkg in obj.conditional_packages:
             self.conditional_packages[pkg] = obj.conditional_packages[pkg]
         
-        # Handle cases where a comps.xml without name & decription tags
-        # has been setup first, so the name & decription for this object is blank.
+        # Handle cases where a comps.xml without name & description tags
+        # has been setup first, so the name & description for this object is blank.
             
         
         if self.name == '' and obj.name != '':

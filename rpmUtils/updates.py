@@ -189,7 +189,7 @@ class Updates:
                     self._obsoletes_by_name.setdefault(name, []).append(
                         (flag, version, pkgtup) )
 
-        obsdict = {} # obseleting package -> [obsoleted package]
+        obsdict = {} # obsoleting package -> [obsoleted package]
 
         for pkgtup in pkglist:
             name = pkgtup[0]
@@ -218,7 +218,7 @@ class Updates:
         """figures out what things available obsolete things installed, returns
            them in a dict attribute of the class."""
 
-        obsdict = {} # obseleting package -> [obsoleted package]
+        obsdict = {} # obsoleting package -> [obsoleted package]
         # this needs to keep arch in mind
         # if foo.i386 obsoletes bar
         # it needs to obsoletes bar.i386 preferentially, not bar.x86_64

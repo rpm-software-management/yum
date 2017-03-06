@@ -75,7 +75,7 @@ class TransactionWrapper:
         return getattr(self.ts, method)
 
     # push/pop methods so we dont lose the previous
-    # set value, and we can potentiall debug a bit
+    # set value, and we can potentially debug a bit
     # easier
     def pushVSFlags(self, flags):
         self.tsflags.append(flags)

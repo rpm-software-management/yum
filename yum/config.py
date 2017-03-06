@@ -1169,7 +1169,7 @@ def readMainConfig(startupconf):
     yumconf.yumvar = yumvars
     yumconf.uid = 0
     yumconf.cache = 0
-    yumconf.progess_obj = None
+    yumconf.progress_obj = None
     
     # items related to the originating config file
     yumconf.config_file_path = startupconf.config_file_path

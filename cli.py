@@ -1598,7 +1598,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         :class:`yum.YumBase.findDeps`.
 
         :param args: a list of names or wildcards specifying packages
-           that should have their dependenices printed
+           that should have their dependencies printed
         :return: (exit_code, [ errors ])
 
         exit_code is::

@@ -90,7 +90,7 @@ def share_data(value):
         if the value isn't in the store this one becomes the shared version. """
     #  We don't want to change the types of strings, between str <=> unicode
     # and hash('a') == hash(u'a') ... so use different stores.
-    #  In theory eventaully we'll have all of one type, but don't hold breath.
+    #  In theory eventually we'll have all of one type, but don't hold breath.
     store = _share_data_store
     if isinstance(value, unicode):
         store = _share_data_store_u
@@ -336,7 +336,7 @@ class Checksums:
 
 class AutoFileChecksums:
     """ Generate checksum(s), on given file/fileobject. Pretending to be a file
-        object (overrrides read). """
+        object (overrides read). """
 
     def __init__(self, fo, checksums, ignore_missing=False, ignore_none=False):
         self._fo       = fo
@@ -1186,7 +1186,7 @@ def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """takes a glob of a dir (like /etc/foo.d/*.foo)
        returns a list of all the lines in all the files matching
        that glob, ignores comments and blank lines,
-       optional paramater 'line_as_list tells whether to
+       optional parameter 'line_as_list tells whether to
        treat each line as a space or comma-separated list, defaults to True"""
     results = []
     for fname in glob.glob(thisglob):

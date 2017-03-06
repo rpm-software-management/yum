@@ -46,7 +46,7 @@ def Tokenize(str, whitespace=" \t\r\n", quotes="\"", escapes="\\"):
         File "<stdin>", line 1, in ?
         File "/usr/local/lib/python2.2/site-packages/dhm/strtools.py", line 80, in Tokenize
           raise TokenizeError, "Unexpected end of string in quoted text"
-      dhm.strtools.TokenizeError: Unexecpted end of string in quoted text
+      dhm.strtools.TokenizeError: Unexpected end of string in quoted text
 
     @param        str: string to tokenize
     @type         str: string

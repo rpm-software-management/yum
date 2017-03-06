@@ -800,7 +800,7 @@ class YumRepository(Repository, config.RepoConf):
         # mirrorlist to act like metalink. Except we'd really like to know which
         # we have without parsing it ... and want to store it in the right
         # place etc.
-        #  So here is #1 hack: see if the metalin kis unset and the mirrorlist
+        #  So here is #1 hack: see if the metalink is unset and the mirrorlist
         # URL contains the string "metalink", if it does we copy it over.
         if self.metalink:
             return

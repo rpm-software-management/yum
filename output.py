@@ -722,7 +722,7 @@ class YumOutput:
            e.g. an indent
         :param highlight: highlighting options for the name of the
            package
-        :param colums: tuple containing the space allocated for each
+        :param columns: tuple containing the space allocated for each
            column of output.  The columns are the package name, version,
            and repository
         """
@@ -746,7 +746,7 @@ class YumOutput:
            e.g. an indent
         :param highlight: highlighting options for the name of the
            package
-        :param colums: tuple containing the space allocated for each
+        :param columns: tuple containing the space allocated for each
            column of output.  The columns the are the package envra and
            repository
         """
@@ -816,7 +816,7 @@ class YumOutput:
         """Print information about the given package.
 
         :param pkg: the package to print information about 
-        :param hightlight: highlighting options for the name of the
+        :param highlight: highlighting options for the name of the
            package
         """
         (hibeg, hiend) = self._highlight(highlight)

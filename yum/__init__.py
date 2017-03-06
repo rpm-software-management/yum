@@ -902,7 +902,7 @@ class YumBase(depsolve.Depsolve):
             # been added to the group file as well
             if self._repos:
                 #  Used to do listGroupsEnabled(), which seems fine but requires
-                # calling .listEnalbed() ... which doesn't work on __del__ path
+                # calling .listEnabled() ... which doesn't work on __del__ path
                 # if we haven't already called that (due to
                 # "prelistenabledrepos" plugins). So just blank it for
                 # all repos.
@@ -1208,7 +1208,7 @@ class YumBase(depsolve.Depsolve):
 
         (rescode, restring) = self.resolveDeps()
         self._limit_installonly_pkgs()
-        # if enabled clean up requirments when removing the things which brought them in.
+        # if enabled clean up requirements when removing the things which brought them in.
         if self.conf.clean_requirements_on_remove:
             self.verbose_logger.log(logginglevels.INFO_2, _('--> Finding unneeded leftover dependencies'))
             self._remove_old_deps()
@@ -1255,7 +1255,7 @@ class YumBase(depsolve.Depsolve):
         xrestring = []
         for pkgname in vers:
             if len(vers[pkgname]) <= 1:
-                # We have to go govelling through the rpmdb data to get
+                # We have to go grovelling through the rpmdb data to get
                 for pkg in self.rpmdb.searchNames([pkgname]):
                     if self.tsInfo.getMembersWithState(pkg.pkgtup,
                                                        TS_REMOVE_STATES):
@@ -1270,7 +1270,7 @@ class YumBase(depsolve.Depsolve):
                     continue
                 msg = _('Protected multilib versions: %s != %s')
                 if not xrestring:
-                    #  People are confused about protected mutilib ... so give
+                    #  People are confused about protected multilib ... so give
                     # them a nicer message.
                     bigmsg = _("""\
  Multilib version problems found. This often means that the root
@@ -3570,7 +3570,7 @@ much more problems).
         """ Return a dict of
              pkg_name =>
              (installed, available,
-             backlisted-installed, blacklisted-available). """
+             blacklisted-installed, blacklisted-available). """
         ret = {}
         if not group or self.conf.group_command != 'objects':
             return ret
@@ -3608,7 +3608,7 @@ much more problems).
         """ Return a dict of
              grp_name =>
              (installed, available,
-             backlisted-installed, blacklisted-available). """
+             blacklisted-installed, blacklisted-available). """
         ret = {}
         if not evgroup or self.conf.group_command != 'objects':
             return ret
@@ -4454,7 +4454,7 @@ much more problems).
         no = self._bestPackageFromList(noarch, req=req)
 
         if single_name and multi and single and multi.name != single.name:
-            # Sinlge _must_ match multi, if we want a single package name
+            # Single _must_ match multi, if we want a single package name
             single = None
 
         # now, to figure out which arches we actually want
@@ -5296,7 +5296,7 @@ much more problems).
                     if obsoleting_pkg is None:
                         continue
                     obs_pkgs.append(obsoleting_pkg)
-                # NOTE: Broekn wrt. repoid
+                # NOTE: Broken wrt. repoid
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
@@ -6638,7 +6638,7 @@ much more problems).
             retmsgs = [_('ERROR with transaction check vs depsolve:')]
             retmsgs.extend(msgs) 
             # Don't encourage users to file a bug here, as this is probably
-            # pre-existing issue in dependendies of installed packages
+            # pre-existing issue in dependencies of installed packages
             raise Errors.YumRPMCheckError,retmsgs
         
         tsConf = {}

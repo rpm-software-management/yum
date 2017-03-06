@@ -1053,7 +1053,7 @@ msgstr ""
 #. For translators: This is output like:
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
-#. Where "interupt (ctrl-c) again" and "two" are highlighted.
+#. Where "interrupt (ctrl-c) again" and "two" are highlighted.
 #: ../output.py:1775
 #, python-format
 msgid ""
@@ -2026,7 +2026,7 @@ msgstr ""
 msgid "Repo-filename: "
 msgstr ""
 
-#. Work out the first (id) and last (enabled/disalbed/count),
+#. Work out the first (id) and last (enabled/disabled/count),
 #. then chop the middle (name)...
 #: ../yumcommands.py:2261 ../yumcommands.py:2290
 msgid "repo id"
@@ -2644,7 +2644,7 @@ msgstr ""
 msgid "Protected multilib versions: %s != %s"
 msgstr ""
 
-#. People are confused about protected mutilib ... so give
+#. People are confused about protected multilib ... so give
 #. them a nicer message.
 #: ../yum/__init__.py:1174
 #, python-format

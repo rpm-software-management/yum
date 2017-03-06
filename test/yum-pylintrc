@@ -39,7 +39,7 @@ load-plugins=
 # W0612: *Unused variable %r* ( dont care if x,y,z = f() and y,z is not used) 
 # W0212: *Access to a protected member %s of a client class*  (if sucks, but we do that a lot)
 # W0613: *Unused argument %r* 
-# W0602: *Using global for %r but no assigment is done*
+# W0602: *Using global for %r but no assignment is done*
 # W0511:  Used when a warning note as FIXME or XXX is detected
 # W0401: *Wildcard import %s*
 # W0614: *Unused import %s from wildcard import*

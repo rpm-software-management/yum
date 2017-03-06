@@ -310,7 +310,7 @@ class RPMDBPackageSack(PackageSackBase):
         self._cached_rpmdb_mtime = None
 
     def dropCachedDataPostTransaction(self, txmbrs):
-        """ Drop cached data that is assocciated with the given transaction,
+        """ Drop cached data that is associated with the given transaction,
             this tries to keep as much data as possible and even does a
             "preload" on the checksums. This should be called once, when a
             transaction is complete. """
@@ -398,7 +398,7 @@ class RPMDBPackageSack(PackageSackBase):
 
     def setCacheDir(self, cachedir):
         """ Sets the internal cachedir value for the rpmdb, to be the
-            "rpmdb-indexes" directory in the persisent yum storage. """
+            "rpmdb-indexes" directory in the persistent yum storage. """
         if not os.path.normpath(cachedir).startswith(self.root):
             self._cachedir = self.root + '/' + cachedir
         else:

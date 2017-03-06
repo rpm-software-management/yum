@@ -3,7 +3,7 @@
 import sys, re, os
 
 def generateFile(input_directory, file_name, output_directory,
-                 package_heirarchy=None, module_name=None):
+                 package_hierarchy=None, module_name=None):
     """Generate a rst file telling sphinx to just generate documentation
     for the public interface automatically.  Output will be written to
     *file_name*.rst in the current directory.
@@ -15,7 +15,7 @@ def generateFile(input_directory, file_name, output_directory,
     :param output_directory: a string specifying the directory where
        the generated rst file should be placed.  If *output_directory* does
        not already exist, it will be created
-    :param package_heirarchy: a list of strings, where each name is
+    :param package_hierarchy: a list of strings, where each name is
        the name of a package, in the order of the hierarchy
     :param module_name: the name of the module. If not given, the .py is 
        removed from *file_name* to produce the module_name
@@ -44,8 +44,8 @@ def generateFile(input_directory, file_name, output_directory,
 
         #Append the package names, if there are any
         full_module_name = module_name
-        if package_heirarchy:
-            full_module_name = '.'.join(package_heirarchy) + '.' + module_name
+        if package_hierarchy:
+            full_module_name = '.'.join(package_hierarchy) + '.' + module_name
     
         output.append(full_module_name)
         output.append('=' * len(full_module_name))
@@ -171,18 +171,18 @@ def generateAll(source_directory, output_directory):
         # print filenames
         # print
 
-        # Add the curent directory to packages if __init__.py exists
+        # Add the current directory to packages if __init__.py exists
         if '__init__.py' in filenames:
             packages.add(dirpath)
 
         # Find the hierarchy of packages that we are currently in
-        package_heirarchy = []
+        package_hierarchy = []
         #Recurse up to the root
         dirpath_i = dirpath
         while dirpath_i != '/':
             if dirpath_i in packages:
                 dirpath_i, tail = os.path.split(dirpath_i)
-                package_heirarchy.insert(0, tail)
+                package_hierarchy.insert(0, tail)
             else:
                 break
 
@@ -211,7 +211,7 @@ def generateAll(source_directory, output_directory):
                                             module_name))
                 generateFile(dirpath, file_name, 
                              os.path.join(output_directory, relative_output_directory),
-                             package_heirarchy, module_name)
+                             package_hierarchy, module_name)
 
         
     

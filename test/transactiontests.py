@@ -21,7 +21,7 @@ class TransactionDataTests(unittest.TestCase):
         self.foogui2 = FakePackage('foogui', '2', '0', '0', 'noarch')
         
     
-    def testLenght(self):
+    def testLength(self):
         ''' test __len__ method '''
         self.tsInfo.addInstall(self.foo1)
         self.tsInfo.addUpdate(self.foogui2,self.foogui1)

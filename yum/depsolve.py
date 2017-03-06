@@ -224,7 +224,7 @@ class Depsolve(object):
            for
         :param flags: flags related to the search
         :param version: the version to search for
-        :return: a :class:`ListPackagaSack` containing the packages
+        :return: a :class:`ListPackageSack` containing the packages
            that match the arguments, and may be empty
         """
         self.verbose_logger.log(logginglevels.DEBUG_1, _('Searching pkgSack for dep: %s'),
@@ -869,7 +869,7 @@ class Depsolve(object):
 
     def resolveDeps(self, full_check=True, skipping_broken=False):
         """Resolve dependencies for the packages in the current
-        trasaction set.
+        transaction set.
         
         :param full_check: whether to also check removes and installs,
            as well as dependencies

@@ -356,7 +356,7 @@ def formatRequire (name, version, flags):
     '''
     Return a human readable requirement string (ex.  foobar >= 2.0)
     @param name: requirement name (ex. foobar)
-    @param version: requirent version (ex. 2.0)
+    @param version: requirement version (ex. 2.0)
     @param flags: binary flags ( 0010 = equal, 0100 = greater than, 1000 = less than )
     '''
     s = name

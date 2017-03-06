@@ -570,7 +570,7 @@ class RpmBase(object):
 
     def matchingPrcos(self, prcotype, reqtuple):
         (reqn, reqf, (reqe, reqv, reqr)) = reqtuple
-        # find the named entry in pkgobj, do the comparsion
+        # find the named entry in pkgobj, do the comparison
         result = []
         for (n, f, (e, v, r)) in self.returnPrco(prcotype):
             if not i18n.str_eq(reqn, n):
@@ -879,7 +879,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
             self._committer_ret = self.packager
             return self._committer_ret
         val = self.changelog[0][1]
-        # Chagnelog data is in multiple locale's, so we convert to ascii
+        # Changelog data is in multiple locale's, so we convert to ascii
         # ignoring "bad" chars.
         val = misc.to_unicode(val, errors='replace')
         val = val.encode('ascii', 'replace')
@@ -1534,7 +1534,7 @@ class YumHeaderPackage(YumAvailablePackage):
             self.prco[prcotype] = _end_nfv(name, flag, vers)
     
     def tagByName(self, tag):
-        warnings.warn("tagByName() will go away in a furture version of Yum.\n",
+        warnings.warn("tagByName() will go away in a future version of Yum.\n",
                       Errors.YumFutureDeprecationWarning, stacklevel=2)
         try:
             return getattr(self, tag)

@@ -385,7 +385,7 @@ class FakeRpmDb(packageSack.PackageSack):
         """return dict { packages -> list of matching provides }"""
         self._checkIndexes(failure='build')
         result = { }
-        # convert flags & version for unversioned reqirements
+        # convert flags & version for unversioned requirements
         if not version:
             version=(None, None, None)
         if type(version) in (str, type(None), unicode):

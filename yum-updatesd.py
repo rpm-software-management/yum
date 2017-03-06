@@ -459,7 +459,7 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
     def processPkgs(self, dlpkgs):
         """Apply the available updates.
 
-        :param dlpkgs: a list of package objecs to update
+        :param dlpkgs: a list of package objects to update
         """
         for po in dlpkgs:
             result, err = self.updd.sigCheckPkg(po)

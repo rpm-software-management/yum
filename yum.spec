@@ -370,7 +370,7 @@ exit 0
 %systemd_preun yum-cron.service
 %else
 # SYSV init preun cron
-# if this will be a complete removeal of yum-cron rather than an upgrade,
+# if this will be a complete removal of yum-cron rather than an upgrade,
 # remove the service from chkconfig control
 if [ $1 = 0 ]; then
  /sbin/chkconfig --del yum-cron

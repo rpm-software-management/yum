@@ -54,7 +54,7 @@ transifex-push:
 
 transifex:
 	make transifex-pull
-	git commit -a -m 'Transefex pull, *.po update'
+	git commit -a -m 'Transifex pull, *.po update'
 	make transifex-push
 	git commit -a -m 'Transifex push, yum.pot update'
 

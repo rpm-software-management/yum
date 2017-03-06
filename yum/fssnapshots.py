@@ -15,7 +15,7 @@ try:
     # .98 work, but meh.
 
     _ver = lvm.getVersion()
-    # Looks liks: 2.02.84(2) (2011-02-09)
+    # Looks like: 2.02.84(2) (2011-02-09)
     _ver = _ver.split()[0]
     _ver = _ver.split('(')[0]
     _ver = tuple(map(int, _ver.split('.')))

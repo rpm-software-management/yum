@@ -272,7 +272,7 @@ def _get_name2aallpkgtup(base):
 #  You might think we'd just call delPackage
 # and indeed that works for list updates etc.
 #
-# __but__ that doesn't work for dependancies on real updates
+# __but__ that doesn't work for dependencies on real updates
 #
 #  So to fix deps. we need to do it at the preresolve stage and take the
 # "transaction package list" and then remove packages from that.

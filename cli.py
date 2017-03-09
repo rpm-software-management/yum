@@ -1718,6 +1718,23 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if 'all' in userlist:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Cleaning up everything'))
+
+            # Print a "maybe you want rm -rf" hint to compensate for the fact
+            # that yum clean all is often misunderstood.  Don't do that,
+            # however, if cachedir is non-default as we would have to replace
+            # arbitrary yum vars with * and that could produce a harmful
+            # command, e.g. for /mydata/$myvar we would say rm -rf /mydata/*
+            cachedir = self.conf.cachedir
+            if cachedir.startswith(('/var/cache/yum', '/var/tmp/yum-')):
+                # Take just the first 3 path components
+                rmdir = '/'.join(cachedir.split('/')[:4])
+                self.verbose_logger.log(
+                    yum.logginglevels.INFO_2,
+                    _('Maybe you want: rm -rf %s, to also free up space taken '
+                      'by orphaned data from disabled or removed repos'
+                      % rmdir),
+                )
+
             pkgcode, pkgresults = self.cleanPackages()
             hdrcode, hdrresults = self.cleanHeaders()
             xmlcode, xmlresults = self.cleanMetadata()

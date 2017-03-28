@@ -31,7 +31,7 @@ install:
 	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '/usr/share/yum-cli', 1)"
 
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/sbin
-	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum
+	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum-deprecated
 	install -m 755 bin/yum-updatesd.py $(DESTDIR)/usr/sbin/yum-updatesd
 
 	mkdir -p $(DESTDIR)/var/cache/yum

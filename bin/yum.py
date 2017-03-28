@@ -1,5 +1,11 @@
 #!/usr/bin/python
 import sys
+
+sys.stderr.write("""\
+Yum command has been deprecated, use dnf instead.
+See 'man dnf' and 'man yum2dnf' for more information.\n
+""")
+
 try:
     import yum
 except ImportError:

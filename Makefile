@@ -11,10 +11,15 @@ PYTHON=python
 WEBHOST = yum.baseurl.org
 WEB_DOC_PATH = /srv/projects/yum/web/download/docs/yum-api/
 
+BUILDDIR = build
+MOCK_CONF = epel-7-x86_64
+
 all: subdirs
 
 clean:
 	rm -f *.pyc *.pyo *~ *.bak
+	rm -f $(BUILDDIR)/{SOURCES,SRPMS,RPMS}/*
+	mock -r $(MOCK_CONF) --clean
 	for d in $(SUBDIRS); do make -C $$d clean ; done
 	cd test; rm -f *.pyc *.pyo *~ *.bak
 
@@ -58,7 +63,7 @@ transifex:
 	make transifex-push
 	git commit -a -m 'Transifex push, yum.pot update'
 
-.PHONY: docs test
+.PHONY: docs test srpm rpm
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
 	   yummain.py 
@@ -122,3 +127,15 @@ _archive:
 	@rm -rf /tmp/${PKGNAME}-$(VERSION)	
 	@echo "The archive is in ${PKGNAME}-$(VERSION).tar.gz"
 
+### RPM packaging ###
+
+srpm: archive
+	@mkdir -p $(BUILDDIR)/SOURCES
+	@cp $(PKGNAME)-$(VERSION).tar.gz $(BUILDDIR)/SOURCES/
+	@rpmbuild --define '_topdir $(BUILDDIR)' -bs yum.spec
+
+rpm: srpm
+	@mock -r $(MOCK_CONF) --resultdir=$(BUILDDIR)/RPMS \
+	      --no-clean --no-cleanup-after \
+	      $(BUILDDIR)/SRPMS/$(PKGNAME)-$(VERSION)-$(RELEASE).src.rpm
+	@echo "The RPMs are in $(BUILDDIR)/RPMS"

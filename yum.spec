@@ -257,14 +257,13 @@ INIT=sysv
 
 make DESTDIR=$RPM_BUILD_ROOT UNITDIR=%{_unitdir} INIT=$INIT install
 
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/yum/pluginconf.d $RPM_BUILD_ROOT/%{yum_pluginslib}
 mkdir -p $RPM_BUILD_ROOT/%{yum_pluginsshare}
 
 %if %{move_yum_conf_back}
 # for now, move repodir/yum.conf back
 mv $RPM_BUILD_ROOT/%{_sysconfdir}/yum/repos.d $RPM_BUILD_ROOT/%{_sysconfdir}/yum.repos.d
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum.conf
+mv $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum.conf $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
 %endif
 
 %if %{yum_updatesd}

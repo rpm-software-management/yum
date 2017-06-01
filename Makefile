@@ -13,6 +13,16 @@ WEB_DOC_PATH = /srv/projects/yum/web/download/docs/yum-api/
 
 BUILDDIR = build
 MOCK_CONF = epel-7-x86_64
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null \
+                | sed -e "s/[^[:alnum:]]/-/g")
+DOCKER = sudo docker
+DKR_IMAGE := $(USERNAME)/yum:$(GIT_BRANCH)
+DKR_CONTAINER := $(if $(CONTAINER_NAME), \
+                   --name $(CONTAINER_NAME) -h $(CONTAINER_NAME),)
+# This is to ignore whatever HOME_DIR value that might have come from the
+# environment, to prevent us from relabeling an arbitrary dir by accident
+HOME_DIR =
+DKR_HOME_DIR := $(if $(HOME_DIR),-v $(HOME_DIR):/root:z,)
 
 all: subdirs
 
@@ -63,7 +73,7 @@ transifex:
 	make transifex-push
 	git commit -a -m 'Transifex push, yum.pot update'
 
-.PHONY: docs test srpm rpm
+.PHONY: docs test srpm rpm image context shell
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
 	   yummain.py 
@@ -139,3 +149,21 @@ rpm: srpm
 	      --no-clean --no-cleanup-after \
 	      $(BUILDDIR)/SRPMS/$(PKGNAME)-$(VERSION)-$(RELEASE).src.rpm
 	@echo "The RPMs are in $(BUILDDIR)/RPMS"
+
+### Containerized development ###
+
+image:
+	@$(DOCKER) build -t $(DKR_IMAGE) .
+
+# Whitelist the tracked files only (:z would relabel the whole dir including
+# .git which we don't need to access in the container so keep it safe)
+context:
+	@chcon -t container_file_t \
+	       $(CURDIR) $(shell git ls-tree -rt --name-only HEAD)
+
+shell: image context
+	@$(DOCKER) run -it -e TERM $(DKR_CONTAINER) $(RUN_ARGS) \
+	           -v $(CURDIR):/src:ro \
+	           -v /sandbox \
+	           $(DKR_HOME_DIR) \
+	           $(DKR_IMAGE)

@@ -25,6 +25,7 @@ import gzip
 import shutil
 import urllib
 import string
+import platform
 _available_compression = ['gz', 'bz2']
 try:
     import lzma
@@ -974,7 +975,10 @@ def _getloginuid():
     #  We might normally call audit.audit_getloginuid(), except that requires
     # importing all of the audit module. And it doesn't work anyway: BZ 518721
     try:
-        fo = open("/proc/self/loginuid")
+        if (platform.system() == "AIX"):
+            fo = os.popen('/usr/bin/id -l -u')
+        else:
+            fo = open("/proc/self/loginuid")
     except IOError:
         return None
     data = fo.read()

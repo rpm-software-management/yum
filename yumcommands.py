@@ -253,7 +253,8 @@ def checkEnabledRepo(base, possible_local_files=[]):
         return
 
     for lfile in possible_local_files:
-        if lfile.endswith(".rpm") and os.path.exists(lfile):
+        if lfile.endswith(".rpm") and (yum.misc.re_remote_url(lfile) or
+                                       os.path.exists(lfile)):
             return
 
     # runs prereposetup (which "most" plugins currently use to add repos.)

@@ -571,6 +571,10 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
             os.makedirs(rodir, mode=0755)
             for f in glob.glob(gpgdir + '/*'):
                 basename = os.path.basename(f)
+                # Skip the gpg-agent files
+                if (basename.startswith('private-keys-v') or
+                        basename == 'S.gpg-agent'):
+                    continue
                 ro_f = rodir + '/' + basename
                 shutil.copy(f, ro_f)
                 os.chmod(ro_f, 0755)

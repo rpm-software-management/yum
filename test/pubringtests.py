@@ -1,5 +1,5 @@
 import unittest
-import gpgme
+import gpg
 import os
 import shutil
 import tempfile
@@ -22,7 +22,7 @@ class PubringTests(unittest.TestCase):
         hexkeyid = misc.keyIdToRPMVer(info['keyid']).upper()
         self.imported = misc.import_key_to_pubring(info['raw_key'], hexkeyid,
                                                    gpgdir=self.gpgdir)
-        self.ctx = gpgme.Context()
+        self.ctx = gpg.Context()
 
     def tearDown(self):
         shutil.rmtree(self.gpgdir)

@@ -549,6 +549,8 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
         gpgdir = '%s/gpgdir' % cachedir
     
     if not os.path.exists(gpgdir):
+        if os.geteuid() != 0:
+            return False
         os.makedirs(gpgdir)
     
     key_fo = StringIO(rawkey) 

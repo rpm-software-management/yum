@@ -4,7 +4,7 @@ FROM centos:7
 
 # Install some useful tools
 RUN yum install -y epel-release && yum install -y \
-        crudini \
+        createrepo \
         ipython \
         python-pip \
         vim \
@@ -13,10 +13,8 @@ RUN pip install --upgrade pip setuptools && pip install \
         ipdb \
         pudb
 
-# Use a clean installroot by default
-RUN crudini --set /etc/yum.conf main installroot /sandbox \
-    # Permanently set releasever in it
-    && yum --releasever=7 -y install system-release
+# Prepare an optional installroot
+RUN yum --installroot=/sandbox --releasever=7 -y install system-release
 VOLUME ["/sandbox"]
 
 # Remove the shipped installation of yum but keep the config

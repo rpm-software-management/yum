@@ -17,8 +17,12 @@ RUN pip install --upgrade pip setuptools && pip install \
 RUN yum --installroot=/sandbox --releasever=7 -y install system-release
 VOLUME ["/sandbox"]
 
-# Remove the shipped installation of yum but keep the config
-RUN rpm -e --nodeps yum \
+# Remove the shipped installation of yum but keep it in the rpmdb so it's not
+# accidentally reinstalled (e.g. as a dependency), also keep the config file
+RUN yumdownloader --destdir=/tmp yum \
+    && rpm -e --nodeps yum \
+    && rpm -i --justdb /tmp/yum*.rpm \
+    && rm /tmp/yum*.rpm \
     && rm -rf /var/cache/yum \
     && mv /etc/yum.conf{.rpmsave,}
 

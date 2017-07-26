@@ -73,12 +73,12 @@ and install it there.
 
 ### Configuration
 
-By default, any operations you do with Yum in the container happen in a
-separate installroot residing on a Docker data volume mounted at `/sandbox`.
-This allows transactions to run at native I/O speeds and also ensures you start
-with a pristine installroot that's not polluted with container-specific stuff.
-To disable this, just remove the `installroot` line from `/etc/yum.conf` in the
-container.
+If you plan on performing I/O extensive yum operations such as installing a lot
+of packages, consider using the prepared installroot residing on a Docker data
+volume mounted at `/sandbox`.  This allows transactions to run at native I/O
+speeds and has the additional benefit of a pristine installroot that's not
+polluted with container-specific stuff.  To enable this, just add
+`installroot=/sandbox` to `/etc/yum.conf` in the container.
 
 You can specify the container name:
 

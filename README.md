@@ -92,4 +92,8 @@ your own dotfile configuration for the debugging tools):
 Finally, you can specify extra arguments to be passed to the `docker-run(1)`
 command:
 
-    $ make RUN_ARGS="--rm" shell
+    $ make RUN_ARGS="--rm" shell  # remove the container when it exits
+
+The above example is a pretty common use case so it has its own make target:
+
+    $ make sh

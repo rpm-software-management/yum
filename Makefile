@@ -167,3 +167,6 @@ shell: image context
 	           -v /sandbox \
 	           $(DKR_HOME_DIR) \
 	           $(DKR_IMAGE)
+
+sh: RUN_ARGS=--rm
+sh: shell

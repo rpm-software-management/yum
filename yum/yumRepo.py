@@ -1712,9 +1712,6 @@ Insufficient space in download directory %s
 
         if self.repo_gpgcheck and not self._override_sigchecks:
 
-            if misc.gpgme is None:
-                raise URLGrabError(-1, 'pygpgme is not working so repomd.xml can not be verified for %s' % (self))
-
             sigfile = self.cachedir + '/repomd.xml.asc'
             try:
                 result = self._getFile(relative='repodata/repomd.xml.asc',

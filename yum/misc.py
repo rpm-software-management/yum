@@ -18,6 +18,7 @@ import constants
 import pgpmsg
 import tempfile
 import glob
+import gpg
 import pwd
 import fnmatch
 import bz2
@@ -35,11 +36,6 @@ except ImportError:
 
 from rpmUtils.miscutils import stringToVersion, flagToString
 from stat import *
-try:
-    import gpgme
-    import gpgme.editutil
-except ImportError:
-    gpgme = None
 try:
     import hashlib
     _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
@@ -543,27 +539,22 @@ def keyInstalled(ts, keyid, timestamp):
 
 def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_copy=True):
     # FIXME - cachedir can be removed from this method when we break api
-    if gpgme is None:
-        return False
     
     if not gpgdir:
         gpgdir = '%s/gpgdir' % cachedir
     
     if not os.path.exists(gpgdir):
+        if os.geteuid() != 0:
+            return False
         os.makedirs(gpgdir)
     
-    key_fo = StringIO(rawkey) 
     os.environ['GNUPGHOME'] = gpgdir
     # import the key
-    ctx = gpgme.Context()
     fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
     fp.write('')
     fp.close()
-    ctx.import_(key_fo)
-    key_fo.close()
-    # ultimately trust the key or pygpgme is definitionally stupid
-    k = ctx.get_key(keyid)
-    gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
+    with gpg.Context() as ctx:
+        ctx.op_import(rawkey)
     
     if make_ro_copy:
 
@@ -572,6 +563,10 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
             os.makedirs(rodir, mode=0755)
             for f in glob.glob(gpgdir + '/*'):
                 basename = os.path.basename(f)
+                # Skip the gpg-agent files
+                if (basename.startswith('private-keys-v') or
+                        basename == 'S.gpg-agent'):
+                    continue
                 ro_f = rodir + '/' + basename
                 shutil.copy(f, ro_f)
                 os.chmod(ro_f, 0755)
@@ -591,11 +586,11 @@ preserve-permissions
     return True
     
 def return_keyids_from_pubring(gpgdir):
-    if gpgme is None or not os.path.exists(gpgdir):
+    if not os.path.exists(gpgdir):
         return []
 
     os.environ['GNUPGHOME'] = gpgdir
-    ctx = gpgme.Context()
+    ctx = gpg.Context()
     keyids = []
     for k in ctx.keylist():
         for subkey in k.subkeys:
@@ -606,9 +601,6 @@ def return_keyids_from_pubring(gpgdir):
 
 def valid_detached_sig(sig_file, signed_file, gpghome=None):
     """takes signature , file that was signed and an optional gpghomedir"""
-
-    if gpgme is None:
-        return False
 
     if gpghome:
         if not os.path.exists(gpghome):
@@ -624,25 +616,14 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
     else:
         signed_text = open(signed_file, 'r')
     plaintext = None
-    ctx = gpgme.Context()
+    ctx = gpg.Context()
 
     try:
-        sigs = ctx.verify(sig, signed_text, plaintext)
-    except gpgme.GpgmeError, e:
+        ctx.verify(signed_text, sig, plaintext)
+    except (gpg.errors.GPGMEError, gpg.errors.BadSignatures):
         return False
     else:
-        if not sigs:
-            return False
-        # is there ever a case where we care about a sig beyond the first one?
-        thissig = sigs[0]
-        if not thissig:
-            return False
-
-        if thissig.validity in (gpgme.VALIDITY_FULL, gpgme.VALIDITY_MARGINAL,
-                                gpgme.VALIDITY_ULTIMATE):
-            return True
-
-    return False
+        return True
 
 def getCacheDir(tmpdir='/var/tmp', reuse=True, prefix='yum-'):
     """return a path to a valid and safe cachedir - only used when not running

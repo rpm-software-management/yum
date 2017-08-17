@@ -561,11 +561,12 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
         if not os.path.exists(rodir):
             os.makedirs(rodir, mode=0755)
             for f in glob.glob(gpgdir + '/*'):
-                basename = os.path.basename(f)
-                # Skip the gpg-agent files
-                if (basename.startswith('private-keys-v') or
-                        basename == 'S.gpg-agent'):
+                if not os.path.isfile(f):
+                    # This is needed as gpg-agent puts some dirs/sockets in the
+                    # gpgdir (we don't need to copy them anyway), see:
+                    # https://www.gnupg.org/faq/whats-new-in-2.1.html
                     continue
+                basename = os.path.basename(f)
                 ro_f = rodir + '/' + basename
                 shutil.copy(f, ro_f)
                 os.chmod(ro_f, 0755)

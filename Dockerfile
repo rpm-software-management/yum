@@ -13,6 +13,17 @@ RUN pip install --upgrade pip setuptools && pip install \
         ipdb \
         pudb
 
+# Obtain gpgme-1.7 from the dnf-nightly COPR repo as it's not available in EPEL
+# yet
+RUN echo $'[dnf-nightly]\n\
+name=dnf-nightly\n\
+baseurl=https://copr-be.cloud.fedoraproject.org/results/rpmsoftwaremanagement/dnf-nightly/epel-7-$basearch/\n\
+gpgcheck=1\n\
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/rpmsoftwaremanagement/dnf-nightly/pubkey.gpg\n' \
+>> /etc/yum.repos.d/dnf-nightly.repo \
+    && yum install -y python2-gpg \
+    && rm /etc/yum.repos.d/dnf-nightly.repo
+
 # Prepare an optional installroot
 RUN yum --installroot=/sandbox --releasever=7 -y install system-release
 VOLUME ["/sandbox"]

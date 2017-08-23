@@ -7,6 +7,7 @@ RUN yum install -y epel-release && yum install -y \
         createrepo \
         ipython \
         python-pip \
+        python-rpmfluff \
         vim \
         tmux
 RUN pip install --upgrade pip setuptools && pip install \

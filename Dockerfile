@@ -6,10 +6,12 @@ FROM centos:7
 RUN yum install -y epel-release && yum install -y \
         createrepo \
         ipython \
+        less \
         python-pip \
         python-rpmfluff \
         vim \
-        tmux
+        tmux \
+        wget
 RUN pip install --upgrade pip setuptools && pip install \
         ipdb \
         pudb

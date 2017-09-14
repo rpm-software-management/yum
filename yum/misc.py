@@ -55,11 +55,20 @@ except ImportError:
             raise ValueError, "Bad checksum type"
 
 # some checksum types might be disabled
+_fips_noncompliant = set()
 for ctype in list(_available_checksums):
     try:
         hashlib.new(ctype)
-    except:
-        print >> sys.stderr, 'Checksum type %s disabled' % repr(ctype)
+    except Exception as e:
+        # Print an error unless this is due to FIPS mode (in which case it's
+        # not really an error and we don't want to pollute the output
+        # needlessly; if someone actually tries to instantiate a Checksum with
+        # a FIPS non-compliant ctype, we'll raise an explanatory exception
+        # anyway).
+        if isinstance(e, ValueError) and str(e).endswith('disabled for fips'):
+            _fips_noncompliant.add(ctype)
+        else:
+            print >> sys.stderr, 'Checksum type %s disabled' % repr(ctype)
         _available_checksums.remove(ctype)
 for ctype in 'sha256', 'sha1':
     if ctype in _available_checksums:
@@ -68,7 +77,7 @@ for ctype in 'sha256', 'sha1':
 else:
     raise ImportError, 'broken hashlib'
 
-from Errors import MiscError
+from Errors import MiscError, FIPSNonCompliantError
 # These are API things, so we can't remove them even if they aren't used here.
 # pylint: disable-msg=W0611
 from i18n import to_utf8, to_unicode
@@ -268,6 +277,8 @@ class Checksums:
                 sumalgo = hashlib.new(sumtype)
             elif ignore_missing:
                 continue
+            elif sumtype in _fips_noncompliant:
+                raise FIPSNonCompliantError(sumtype)
             else:
                 raise MiscError, 'Error Checksumming, bad checksum type %s' % sumtype
             done.add(sumtype)

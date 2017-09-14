@@ -12,7 +12,7 @@ WEBHOST = yum.baseurl.org
 WEB_DOC_PATH = /srv/projects/yum/web/download/docs/yum-api/
 
 BUILDDIR = build
-MOCK_CONF = epel-7-x86_64
+MOCK_CONF = fedora-26-x86_64
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null \
                 | sed -e "s/[^[:alnum:]]/-/g")
 DOCKER = sudo docker

@@ -230,7 +230,7 @@ msgstr "  * Talvez você queira dizer: "
 #: ../cli.py:769 ../cli.py:777
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
-msgstr "Pacotes %s%s%s disponíveis, mas já instalados."
+msgstr "Pacote(s) %s%s%s disponíveis, mas não instalado(s)."
 
 #: ../cli.py:783 ../cli.py:891 ../cli.py:1158
 #, python-format

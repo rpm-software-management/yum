@@ -500,8 +500,10 @@ class YumRepository(Repository, config.RepoConf):
         except (Errors.MiscError, EnvironmentError), e:
             if checksum_can_fail:
                 return None
-            raise Errors.RepoError('Error opening file for checksum: %s' % e,
-                                   repo=self)
+            msg = 'Error opening file for checksum: %s' % e
+            if isinstance(e, Errors.FIPSNonCompliantError):
+                msg = str(e)
+            raise Errors.RepoError(msg, repo=self)
 
     def dump(self):
         output = '[%s]\n' % self.id
@@ -1805,7 +1807,7 @@ Insufficient space in download directory %s
         except Errors.RepoError, e:
             if check_can_fail:
                 return None
-            raise URLGrabError(-3, 'Error performing checksum')
+            raise URLGrabError(-3, 'Error performing checksum: %s' % e)
 
         if l_csum == r_csum:
             _xattr_set_chksum(file, r_ctype, l_csum)

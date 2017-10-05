@@ -106,6 +106,11 @@ class ConfigError(YumBaseError):
 class MiscError(YumBaseError):
     pass
 
+class FIPSNonCompliantError(MiscError):
+    def __init__(self, sumtype):
+        MiscError.__init__(
+            self, '%s algorithm is not FIPS compliant' % sumtype)
+
 class GroupsError(YumBaseError):
     pass
 

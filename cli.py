@@ -2306,8 +2306,23 @@ class YumOptionParser(OptionParser):
             self.base.updateinfo_filters['cves'] = self._splitArg(opts.cves)
             self.base.updateinfo_filters['sevs'] = self._splitArg(opts.sevs)
 
+            if os.geteuid() != 0 and not self.base.conf.usercache:
+                self.base.conf.cache = 1
+                # Create any repo cachedirs now so that we catch any write
+                # permission issues here and don't traceback later.
+                for repo in self.base.repos.listEnabled():
+                    try:
+                        repo.dirSetup()
+                    except yum.Errors.RepoError as e:
+                        if e.errno != 13:
+                            continue
+                        self.logger.warning(
+                            _('Repo %s not in system cache, skipping.'),
+                            repo.id
+                        )
+                        self.base.repos.disableRepo(repo.id)
             #  Treat users like root as much as possible:
-            if not self.base.setCacheDir():
+            elif not self.base.setCacheDir():
                 self.base.conf.cache = 1
             if opts.cacheonly:
                 self.base.conf.cache = 1

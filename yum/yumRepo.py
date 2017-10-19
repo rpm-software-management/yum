@@ -715,7 +715,9 @@ class YumRepository(Repository, config.RepoConf):
         except OSError, e:
             msg = "%s: %s %s: %s" % ("Error making cache directory",
                                      dpath, "error was", e)
-            raise Errors.RepoError(msg, repo=self)
+            re = Errors.RepoError(msg, repo=self)
+            re.errno = e.errno
+            raise re
 
     def dirSetup(self):
         """make the necessary dirs, if possible, raise on failure"""

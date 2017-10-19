@@ -11,10 +11,25 @@ PYTHON=python
 WEBHOST = yum.baseurl.org
 WEB_DOC_PATH = /srv/projects/yum/web/download/docs/yum-api/
 
+BUILDDIR = build
+MOCK_CONF = fedora-26-x86_64
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null \
+                | sed -e "s/[^[:alnum:]]/-/g")
+DOCKER = sudo docker
+DKR_IMAGE := $(USERNAME)/yum:$(GIT_BRANCH)
+DKR_CONTAINER := $(if $(CONTAINER_NAME), \
+                   --name $(CONTAINER_NAME) -h $(CONTAINER_NAME),)
+# This is to ignore whatever HOME_DIR value that might have come from the
+# environment, to prevent us from relabeling an arbitrary dir by accident
+HOME_DIR =
+DKR_HOME_DIR := $(if $(HOME_DIR),-v $(HOME_DIR):/root:z,)
+
 all: subdirs
 
 clean:
 	rm -f *.pyc *.pyo *~ *.bak
+	rm -f $(BUILDDIR)/{SOURCES,SRPMS,RPMS}/*
+	mock -r $(MOCK_CONF) --clean
 	for d in $(SUBDIRS); do make -C $$d clean ; done
 	cd test; rm -f *.pyc *.pyo *~ *.bak
 
@@ -31,7 +46,7 @@ install:
 	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '/usr/share/yum-cli', 1)"
 
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/sbin
-	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum
+	install -m 755 bin/yum $(DESTDIR)/usr/bin/yum
 	install -m 755 bin/yum-updatesd.py $(DESTDIR)/usr/sbin/yum-updatesd
 
 	mkdir -p $(DESTDIR)/var/cache/yum
@@ -58,7 +73,7 @@ transifex:
 	make transifex-push
 	git commit -a -m 'Transifex push, yum.pot update'
 
-.PHONY: docs test
+.PHONY: docs test srpm rpm image context shell
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
 	   yummain.py 
@@ -122,3 +137,36 @@ _archive:
 	@rm -rf /tmp/${PKGNAME}-$(VERSION)	
 	@echo "The archive is in ${PKGNAME}-$(VERSION).tar.gz"
 
+### RPM packaging ###
+
+srpm: archive
+	@mkdir -p $(BUILDDIR)/SOURCES
+	@cp $(PKGNAME)-$(VERSION).tar.gz $(BUILDDIR)/SOURCES/
+	@rpmbuild --define '_topdir $(BUILDDIR)' -bs yum.spec
+
+rpm: srpm
+	@mock -r $(MOCK_CONF) --resultdir=$(BUILDDIR)/RPMS \
+	      --no-clean --no-cleanup-after \
+	      $(BUILDDIR)/SRPMS/$(PKGNAME)-$(VERSION)-$(RELEASE).src.rpm
+	@echo "The RPMs are in $(BUILDDIR)/RPMS"
+
+### Containerized development ###
+
+image:
+	@$(DOCKER) build -t $(DKR_IMAGE) .
+
+# Whitelist the tracked files only (:z would relabel the whole dir including
+# .git which we don't need to access in the container so keep it safe)
+context:
+	@chcon -t container_file_t \
+	       $(CURDIR) $(shell git ls-tree -rt --name-only HEAD)
+
+shell: image context
+	@$(DOCKER) run -it -e TERM $(DKR_CONTAINER) $(RUN_ARGS) \
+	           -v $(CURDIR):/src:ro \
+	           -v /sandbox \
+	           $(DKR_HOME_DIR) \
+	           $(DKR_IMAGE)
+
+sh: RUN_ARGS=--rm
+sh: shell

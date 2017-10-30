@@ -2306,8 +2306,10 @@ class YumOptionParser(OptionParser):
             self.base.updateinfo_filters['cves'] = self._splitArg(opts.cves)
             self.base.updateinfo_filters['sevs'] = self._splitArg(opts.sevs)
 
+            if not self.base.conf.usercache and os.geteuid() != 0:
+                self.base.conf.cache = 1
             #  Treat users like root as much as possible:
-            if not self.base.setCacheDir():
+            elif not self.base.setCacheDir():
                 self.base.conf.cache = 1
             if opts.cacheonly:
                 self.base.conf.cache = 1

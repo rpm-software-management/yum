@@ -71,7 +71,12 @@ def main(args):
     def exRepoError(e):
         # For RepoErrors ... help out by forcing new repodata next time.
         # XXX: clean only the repo that has failed?
-        base.cleanExpireCache()
+        try:
+            base.cleanExpireCache()
+        except Errors.YumBaseError:
+            # Let's not confuse the user further (they don't even know we tried
+            # the clean).
+            pass
 
         msg = _("""\
  One of the configured repositories failed (%(repo)s),

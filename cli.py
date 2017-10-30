@@ -28,6 +28,7 @@ import logging
 import math
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
 import rpm
+import ctypes
 
 from weakref import proxy as weakref
 
@@ -804,6 +805,38 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 inhibited = True
         if not inhibited:
             msg = _('Running transaction')
+
+        # Whenever we upgrade a shared library (and its dependencies) which the
+        # yum process itself may dlopen() post-transaction (e.g. in a plugin
+        # hook), we may end up in a situation where the upgraded library and
+        # the pre-transaction version of a library it depends on which is ABI
+        # incompatible are loaded in memory at the same time, leading to
+        # unpredictable behavior and possibly a crash.  Let's avoid that by
+        # preloading all such dynamically loaded libraries pre-transaction so
+        # that dlopen(), if called post-transaction, uses those instead of
+        # loading the newly installed versions.
+        preload = {
+            # Loaded by libcurl, see BZ#1458841
+            'nss-sysinit': ['libnsssysinit.so'],
+        }
+        for pkg in preload:
+            # Only preload the libs if the package is actually installed and we
+            # are changing it with the transaction
+            if not self.tsInfo.matchNaevr(name=pkg) or \
+                    not self.rpmdb.searchNevra(name=pkg):
+                continue
+            for lib in preload[pkg]:
+                try:
+                    ctypes.cdll.LoadLibrary(lib)
+                    self.verbose_logger.log(
+                        yum.logginglevels.DEBUG_4,
+                        _('Preloaded shared library %s') % lib
+                    )
+                except Exception as e:
+                    self.verbose_logger.log(
+                        yum.logginglevels.DEBUG_4,
+                        _('Could not preload shared library %s: %s') % (lib, e)
+                    )
 
         self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
         resultobject = self.runTransaction(cb=cb)

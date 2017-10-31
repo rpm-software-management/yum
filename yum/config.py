@@ -42,6 +42,7 @@ import rpmUtils.miscutils
 import Errors
 import types
 from misc import get_uuid_obj, read_in_items_from_dot_dir
+import fnmatch
 
 # Alter/patch these to change the default checking...
 __pkgs_gpgcheck_default__ = False
@@ -284,6 +285,20 @@ class UrlListOption(ListOption):
         for url in super(UrlListOption, self).parse(' '.join(tmp)):
             out.append(self._urloption.parse(url))
         return out
+
+
+class WildListOption(ListOption):
+    """An option containing a list of strings that supports shell-style
+    wildcard matching in membership test operations."""
+
+    def parse(self, s):
+        class WildList(list):
+            def __contains__(self, item):
+                if not isinstance(item, basestring):
+                    return False
+                return any(fnmatch.fnmatch(item, p) for p in self)
+        patterns = super(WildListOption, self).parse(s)
+        return WildList(patterns)
 
 
 class IntOption(Option):
@@ -775,7 +790,7 @@ class YumConf(StartupConf):
                                           names_of_0=["0", "<off>"])
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
-    exactarchlist = ListOption(__exactarchlist_default__)
+    exactarchlist = WildListOption(__exactarchlist_default__)
     tsflags = ListOption()
     override_install_langs = Option()
 

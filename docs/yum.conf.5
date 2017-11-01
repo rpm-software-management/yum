@@ -215,6 +215,19 @@ List of package names that are kernels. This is really only here for the
 updating of kernel packages and should be removed out in the yum 2.1 series.
 
 .IP
+\fBexactarchlist\fR
+List of packages that should never change archs in an update.
+That means, if a package has a newer version available which is for a different
+compatible arch, yum will not consider that version an update if the package
+name is in this list.
+For example, on x86_64, foo-1.x86_64 won't be updated to foo-2.i686 if foo is
+in this list.
+Kernels in particular fall into this category.
+Shell globs using wildcards (eg. * and ?) are allowed.
+Defaults to kernel, kernel-smp, kernel-hugemem, kernel-enterprise,
+kernel-bigmem, kernel-devel, kernel-PAE, kernel-PAE-debug.
+
+.IP
 \fBshowdupesfromrepos\fR
 Either `0' or `1'. Set to `1' if you wish to show any duplicate packages from
 any repository, from package listings like the info or list commands. Set

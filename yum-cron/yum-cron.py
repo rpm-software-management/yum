@@ -15,6 +15,7 @@ from yum.i18n import to_str, to_utf8, to_unicode, utf8_width, utf8_width_fill, u
 from yum import  _, P_
 import yum.updateinfo
 import smtplib
+import datetime
 from random import random
 from time import sleep
 from yum.misc import setup_locale
@@ -279,6 +280,7 @@ class YumCronConfig(BaseConfig):
     lock_sleep = IntOption(60)
     emit_via = ListOption(['email','stdio'])
     email_to = ListOption(["root"])
+    days_of_week = Option("0123456")
     email_from = Option("root")
     email_host = Option("localhost")
     email_port = IntOption(25)
@@ -307,6 +309,10 @@ class YumCronBase(yum.YumBase, YumOutput):
         self.readConfigFile(config_file_name)
         self.term.reinit(color='never')
         self.term.columns = self.opts.output_width
+
+        # Days of week
+        if str(datetime.datetime.today().weekday()) not in self.opts.days_of_week:
+            sys.exit(0)
 
 
         # Create the emitters, and add them to the list

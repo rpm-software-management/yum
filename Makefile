@@ -165,6 +165,7 @@ shell: image context
 	@$(DOCKER) run -it -e TERM $(DKR_CONTAINER) $(RUN_ARGS) \
 	           -v $(CURDIR):/src:ro \
 	           -v /sandbox \
+		   --detach-keys="ctrl-@" \
 	           $(DKR_HOME_DIR) \
 	           $(DKR_IMAGE)
 

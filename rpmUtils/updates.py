@@ -386,7 +386,7 @@ class Updates:
                 # we could only have 1 arch in our rpmdb and 1 arch of pkg 
                 # available - so we shouldn't have to worry about the lists, here
                 # we just need to find the arch of the installed pkg so we can 
-                # check it's (e, v, r)
+                # check its (e, v, r)
                 (rpm_a, rpm_e, rpm_v, rpm_r) = self.installdict[(n, None)][0]
                 if (n, None) in newpkgs:
                     for (a, e, v, r) in newpkgs[(n, None)]:

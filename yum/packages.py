@@ -461,8 +461,8 @@ class YumNotFoundPackage(PackageObject):
         return False
 
 #  This is the virtual base class of actual packages, it basically requires a
-# repo. even though it doesn't set one up in it's __init__. It also doesn't have
-# PackageObject methods ... so is basically unusable on it's own
+# repo. even though it doesn't set one up in its __init__. It also doesn't have
+# PackageObject methods ... so is basically unusable on its own
 # see: YumAvailablePackage.
 class RpmBase(object):
     """return functions and storage for rpm-specific data"""
@@ -790,7 +790,7 @@ class PackageEVR:
     
 
 #  This is the real base class of actual packages, it has a repo. and is
-# usable on it's own, in theory (but in practise see sqlitesack).
+# usable on its own, in theory (but in practise see sqlitesack).
 class YumAvailablePackage(PackageObject, RpmBase):
     """derived class for the  packageobject and RpmBase packageobject yum
        uses this for dealing with packages in a repository"""

@@ -761,7 +761,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         self._pkgobjlist_dirty  = True
 
     def _packageByKey(self, repo, pkgKey, exclude=True):
-        """ Lookup a pkg by it's pkgKey, if we don't have it load it """
+        """ Lookup a pkg by its pkgKey, if we don't have it load it """
         # Speed hack, so we don't load the pkg. if the pkgKey is dead.
         assert exclude
         if exclude and self._pkgKeyExcluded(repo, pkgKey):

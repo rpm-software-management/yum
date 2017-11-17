@@ -741,7 +741,7 @@ class ConditionalTransactionData(TransactionData):
         TransactionData.__init__(self)
 
 class SortableTransactionData(TransactionData):
-    """A transaction data implementing topological sort on it's members"""
+    """A transaction data implementing topological sort on its members"""
     def __init__(self):
         # Cache of sort
         self._sorted = []

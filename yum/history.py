@@ -410,7 +410,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
     #     pkgA-4 => pkgA-5
     @staticmethod
     def _p2sk(pkg, state=None):
-        """ Take a pkg and return the key for it's state lookup. """
+        """ Take a pkg and return the key for its state lookup. """
         if state is None:
             state = pkg.state
         #  Arch is needed so multilib. works, dito. getBaseArch() -- (so .i586

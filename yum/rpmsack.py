@@ -1664,7 +1664,7 @@ class RPMDBPackageSack(PackageSackBase):
         return False
 
     def check_provides(self):
-        """ For each package, check that a provides search for it's name (and
+        """ For each package, check that a provides search for its name (and
             everything it provides) finds it. """
         problems = []
         for pkg in sorted(self.returnPackages()):

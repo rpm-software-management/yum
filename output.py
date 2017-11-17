@@ -582,7 +582,7 @@ class YumOutput:
         # |            f|
         # |our          |
         # ...the later being what we get if we pre-allocate the last column, and
-        # thus. the space, due to "three" overflowing it's column by 2 chars.
+        # thus. the space, due to "three" overflowing its column by 2 chars.
         if columns is None:
             columns = [1] * (cols - 1)
             columns.append(0)
@@ -972,7 +972,7 @@ class YumOutput:
         """Get a yes or no from the user, and default to No, and maybe more.
 
         :param extra: a dict of ui responses to a list of their inputs.
-        :return: the UI response or None for no. At it's simplest this is 'yes' or None
+        :return: the UI response or None for no. At its simplest this is 'yes' or None
         """
 
         # Allow the one letter english versions in all langs.

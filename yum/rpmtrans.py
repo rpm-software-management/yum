@@ -149,7 +149,7 @@ class SimpleCliCallBack(RPMBaseCallback):
         print _("Verify: %u/%u: %s") % (count, len(base.tsInfo), txmbr)
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
-# without the "install" phase if it gets an exception in it's callback. The
+# without the "install" phase if it gets an exception in its callback. The
 # following means that we don't really need to know/care about that in the
 # display callback functions.
 #  Note try/except's in RPMTransaction are for the same reason.

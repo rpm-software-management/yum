@@ -59,7 +59,7 @@ def compareVerOnly(v1, v2):
     return compareEVR(('', v1, ''), ('', v2, ''))
     
 def checkSig(ts, package):
-    """Takes a transaction set and a package, check it's sigs, 
+    """Takes a transaction set and a package, check its sigs, 
     return 0 if they are all fine
     return 1 if the gpg key can't be found
     return 2 if the header is in someway damaged

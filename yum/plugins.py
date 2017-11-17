@@ -159,7 +159,7 @@ class YumPlugins:
 
         self.cmdlines = {}
 
-        # Call close handlers when yum exit's
+        # Call close handlers when yum exits
         if self._pluginfuncs['close']:
             self.verbose_logger.error(
                 _('One or more plugins uses "close" handling but should use atexit directly.'))

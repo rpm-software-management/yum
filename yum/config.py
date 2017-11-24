@@ -941,6 +941,8 @@ class YumConf(StartupConf):
 
     usr_w_check = BoolOption(True)
 
+    shell_exit_status = SelectionOption('0', ('0', '?'))
+
     _reposlist = []
 
     def dump(self):

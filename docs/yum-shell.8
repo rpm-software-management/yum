@@ -31,6 +31,12 @@ information. There are a few additional commands documented below.
      reset: reset (zero-out) the transaction 
      solve: run the dependency solver on the transaction
      run: run the transaction 
+.IP
+.IP "\fBexit\fP"
+     Causes the shell to exit, setting the exit status as specified by the
+     \fBshell_exit_status\fR option in \fIyum.conf(5)\fR.
+     This command is also triggered when EOF is read (usually the C-d keystroke
+     or end of script).
 
 .PP 
 .SH "Examples"

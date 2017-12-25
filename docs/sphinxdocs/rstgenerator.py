@@ -31,8 +31,8 @@ def generateFile(input_directory, file_name, output_directory,
         try:
             os.makedirs(output_directory)
         except OSError as e:
-            print "Error creating the output directory"
-            print e.args
+            print("Error creating the output directory")
+            print(e.args)
 
     try:
         #Open the file
@@ -88,8 +88,8 @@ def generateFile(input_directory, file_name, output_directory,
         f.close()
 
     except IOError as e:
-        print "Error opening the input file : ", os.path.join(input_directory, file_name)
-        print e.args[1]
+        print("Error opening the input file : ", os.path.join(input_directory, file_name))
+        print(e.args[1])
 
     else:
         #Write the output
@@ -100,8 +100,8 @@ def generateFile(input_directory, file_name, output_directory,
             
             
         except IOError as e:
-            print "Error opening the output file : ", output_file_name
-            print e.args[1]
+            print("Error opening the output file : ", output_file_name)
+            print(e.args[1])
 
                 
 def generateIndex(module_list, output_directory):
@@ -146,8 +146,8 @@ Indices and tables
 """)
 
     except IOError as e:
-        print "Error opening the output file."
-        print e.args[1]
+        print("Error opening the output file.")
+        print(e.args[1])
 
 
 def generateAll(source_directory, output_directory):

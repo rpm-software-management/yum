@@ -3,7 +3,7 @@ import sys
 try:
     import yum
 except ImportError:
-    print >> sys.stderr, """\
+    print("""\
 There was a problem importing one of the Python modules
 required to run yum. The error leading to this problem was:
 
@@ -20,13 +20,13 @@ If you cannot solve this problem yourself, please go to
 the yum faq at:
   http://yum.baseurl.org/wiki/Faq
   
-""" % (sys.exc_value, sys.version)
+""" % (sys.exc_info()[1], sys.version), file=sys.stderr)
     sys.exit(1)
 
 sys.path.insert(0, '/usr/share/yum-cli')
 try:
     import yummain
     yummain.user_main(sys.argv[1:], exit_code=True)
-except KeyboardInterrupt, e:
-    print >> sys.stderr, "\n\nExiting on user cancel."
+except KeyboardInterrupt as e:
+    print("\n\nExiting on user cancel.", file=sys.stderr)
     sys.exit(1)

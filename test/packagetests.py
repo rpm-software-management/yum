@@ -164,24 +164,24 @@ class BuildPackageDictRefTests(unittest.TestCase):
 
     def testNoPkg(self):
         pkgs = []
-        self.assertEquals({}, packages.buildPkgRefDict(pkgs))
+        self.assertEqual({}, packages.buildPkgRefDict(pkgs))
 
     def testOnePkg(self):
         pkg = StubPkg("yum", "noarch", 0, "3.1.1", 2)
         pkgs = [pkg]
         pkg_dict = packages.buildPkgRefDict(pkgs)
 
-        self.assertEquals(7, len(pkg_dict))
+        self.assertEqual(7, len(pkg_dict))
 
         unseen_keys = ['yum', 'yum.noarch', 'yum-3.1.1-2.noarch', 'yum-3.1.1',
                 'yum-3.1.1-2', '0:yum-3.1.1-2.noarch', 'yum-0:3.1.1-2.noarch']
-        for key in pkg_dict.keys():
+        for key in list(pkg_dict.keys()):
             self.assertTrue(key in unseen_keys)
             unseen_keys.remove(key)
-            self.assertEquals(1, len(pkg_dict[key]))
-            self.assertEquals(pkg, pkg_dict[key][0])
+            self.assertEqual(1, len(pkg_dict[key]))
+            self.assertEqual(pkg, pkg_dict[key][0])
 
-        self.assertEquals(0, len(unseen_keys))
+        self.assertEqual(0, len(unseen_keys))
 
 def _perms(evr): # Magic comp. sci. stuff ... oooh
     e, v, r = evr
@@ -205,8 +205,8 @@ class RangeCompareTests(unittest.TestCase):
 
     def testRangeCompare(self):
         def tst(requires, provides, result):
-            print requires, provides
-            self.assertEquals(miscutils.rangeCompare(requires, provides),result)
+            print(requires, provides)
+            self.assertEqual(miscutils.rangeCompare(requires, provides),result)
         def tst_lege_prov(requires, provides, result):
             if not result or provides[1] != 'EQ':
                 return

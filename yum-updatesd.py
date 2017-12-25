@@ -53,7 +53,7 @@ import yum.Errors
 import syslog
 from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption
 from yum.parser import ConfigPreProcessor
-from ConfigParser import ConfigParser, ParsingError
+from configparser import ConfigParser, ParsingError
 from yum.constants import *
 from yum.update_md import UpdateMetadata
 
@@ -402,14 +402,12 @@ class UpdateBuildTransactionThread(threading.Thread):
         self.updd.tsInfo.makelists()
         try:
             (result, msgs) = self.updd.buildTransaction()
-        except yum.Errors.RepoError, errmsg: # error downloading hdrs
+        except yum.Errors.RepoError as errmsg: # error downloading hdrs
             msgs = ["Error downloading headers"]
             self.updd.emitUpdateFailed(msgs)
             return
 
-        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
-                                            txmbr.ts_state in ("i", "u"),
-                                            self.updd.tsInfo.getMembers()))
+        dlpkgs = [x.po for x in [txmbr for txmbr in self.updd.tsInfo.getMembers() if txmbr.ts_state in ("i", "u")]]
         self.updd.downloadPkgs(dlpkgs)
         self.processPkgs(dlpkgs)
 
@@ -468,7 +466,7 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
             elif result == 1:
                 try:
                     self.updd.getKeyForPackage(po)
-                except yum.Errors.YumBaseError, errmsg:
+                except yum.Errors.YumBaseError as errmsg:
                     self.failed([str(errmsg)])
 
         del self.updd.ts
@@ -482,7 +480,7 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
         cb.tsInfo = self.updd.tsInfo
         try:
             self.updd.runTransaction(cb=cb)
-        except yum.Errors.YumBaseError, err:
+        except yum.Errors.YumBaseError as err:
             self.failed([str(err)])
 
         self.success()
@@ -529,7 +527,7 @@ class UpdatesDaemon(yum.YumBase):
             self.doRepoSetup()
             self.doSackSetup()
             self.updateCheckSetup()
-        except Exception, e:
+        except Exception as e:
             syslog.syslog(syslog.LOG_WARNING,
                           "error getting update info: %s" %(e,))
             self.emitCheckFailed("%s" %(e,))
@@ -631,7 +629,7 @@ class UpdatesDaemon(yum.YumBase):
         if not self.didSetup:
             try:
                 self.doSetup()
-            except Exception, e:
+            except Exception as e:
                 syslog.syslog(syslog.LOG_WARNING,
                               "error initializing: %s" % e)
 
@@ -670,7 +668,7 @@ class UpdatesDaemon(yum.YumBase):
                 # just notify about things being available
                 self.emitAvailable()
                 self.releaseLocks()
-        except Exception, e:
+        except Exception as e:
             self.emitCheckFailed("%s" %(e,))
             self.doUnlock()
 
@@ -734,27 +732,27 @@ class UpdatesDaemon(yum.YumBase):
 
     def emitAvailable(self):
         """Emit a notice stating whether updates are available."""
-        map(lambda x: x.updatesAvailable(self.updateInfo), self.emitters)
+        list(map(lambda x: x.updatesAvailable(self.updateInfo), self.emitters))
 
     def emitDownloading(self):
         """Emit a notice stating that updates are downloading."""
-        map(lambda x: x.updatesDownloading(self.updateInfo), self.emitters)
+        list(map(lambda x: x.updatesDownloading(self.updateInfo), self.emitters))
 
     def emitUpdateApplied(self):
         """Emit a notice stating that automatic updates have been applied."""
-        map(lambda x: x.updatesApplied(self.updateInfo), self.emitters)
+        list(map(lambda x: x.updatesApplied(self.updateInfo), self.emitters))
 
     def emitUpdateFailed(self, errmsgs):
         """Emit a notice stating that automatic updates failed."""
-        map(lambda x: x.updatesFailed(errmsgs), self.emitters)
+        list(map(lambda x: x.updatesFailed(errmsgs), self.emitters))
 
     def emitCheckFailed(self, error):
         """Emit a notice stating that checking for updates failed."""
-        map(lambda x: x.checkFailed(error), self.emitters)
+        list(map(lambda x: x.checkFailed(error), self.emitters))
 
     def emitSetupFailed(self, error, translation_domain=""):
         """Emit a notice stating that checking for updates failed."""
-        map(lambda x: x.setupFailed(error, translation_domain), self.emitters)
+        list(map(lambda x: x.setupFailed(error, translation_domain), self.emitters))
 
 
 class YumDbusListener(dbus.service.Object):
@@ -857,8 +855,8 @@ def main(options = None):
         confpp_obj = ConfigPreProcessor(config_file)
         try:
             confparser.readfp(confpp_obj)
-        except ParsingError, e:
-            print >> sys.stderr, "Error reading config file: %s" % e
+        except ParsingError as e:
+            print("Error reading config file: %s" % e, file=sys.stderr)
             sys.exit(1)
 
     syslog.openlog("yum-updatesd", 0, syslog.LOG_DAEMON)

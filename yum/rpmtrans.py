@@ -26,7 +26,7 @@ import sys
 from yum.constants import *
 from yum import _
 from yum.transactioninfo import TransactionMember
-import misc
+from . import misc
 import tempfile
 
 class NoOutputCallBack:
@@ -109,7 +109,7 @@ class RPMBaseCallback:
 
     def errorlog(self, msg):
         # FIXME this should probably dump to the filelog, too
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
@@ -136,17 +136,17 @@ class SimpleCliCallBack(RPMBaseCallback):
         msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package, 
                                    te_current, te_total, ts_current, ts_total)
         if msg != self.lastmsg:
-            print msg
+            print(msg)
         self.lastmsg = msg
         self.lastpackage = package
 
     def scriptout(self, package, msgs):
         if msgs:
-            print msgs,
+            print(msgs, end=' ')
 
     def verify_txmbr(self, base, txmbr, count):
         " Callback for post transaction when we are in verifyTransaction(). "
-        print _("Verify: %u/%u: %s") % (count, len(base.tsInfo), txmbr)
+        print(_("Verify: %u/%u: %s") % (count, len(base.tsInfo), txmbr))
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
 # without the "install" phase if it gets an exception in it's callback. The
@@ -165,10 +165,10 @@ class _WrapNoExceptions:
         def newFunc(*args, **kwargs):
             try:
                 func(*args, **kwargs)
-            except Exception, e:
+            except Exception as e:
                 # It's impossible to debug stuff without this:
                 try:
-                    print "Error:", "display callback failed:", e
+                    print("Error:", "display callback failed:", e)
                 except:
                     pass
 
@@ -279,7 +279,7 @@ class RPMTransaction:
             # if this is not one, somebody screwed up
             assert len(txmbrs) == 1
             return (txmbrs[0].name, txmbrs[0])
-        elif isinstance(cbkey, basestring):
+        elif isinstance(cbkey, str):
             ret = None
             #  If we don't have a tuple, it's because this is an erase txmbr and
             # rpm doesn't provide one in that case. So we can "cheat" and look
@@ -325,7 +325,7 @@ class RPMTransaction:
 
         try:
             self._ts_done = open(ts_done_fn, 'w')
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             self.display.errorlog('could not open ts_done file: %s' % e)
             self._ts_done = None
             return False
@@ -340,7 +340,7 @@ class RPMTransaction:
         try:
             self._ts_done.write(msg)
             self._ts_done.flush()
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
             self.display.errorlog('could not write to ts_done file: %s' % e)
@@ -375,7 +375,7 @@ class RPMTransaction:
                 self.display.filelog(package, msg)
                 
         # check the pkg name out to make sure it matches
-        if type(package) in types.StringTypes:
+        if type(package) in (str,):
             name = package
         else:
             name = package.name
@@ -425,7 +425,7 @@ class RPMTransaction:
             if not os.path.exists(os.path.dirname(tsfn)):
                 os.makedirs(os.path.dirname(tsfn)) # make the dir,
             fo = open(tsfn, 'w')
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             self.display.errorlog('could not open ts_all file: %s' % e)
             self._ts_done = None
             return
@@ -436,7 +436,7 @@ class RPMTransaction:
                 fo.write(msg)
             fo.flush()
             fo.close()
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
             self.display.errorlog('could not write to ts_all file: %s' % e)
@@ -502,7 +502,7 @@ class RPMTransaction:
             rpmloc = txmbr.po.localPkg()
             try:
                 self.fd = file(rpmloc)
-            except IOError, e:
+            except IOError as e:
                 self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
             else:
                 if self.trans_running:

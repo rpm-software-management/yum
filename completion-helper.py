@@ -34,19 +34,19 @@ class GroupsCompletionCommand(yumcommands.GroupsCommand):
             patterns=[get_pattern(extcmds)])
         if extcmds[0] in ("installed", "all"):
             for group in installed:
-                print group.ui_name
+                print(group.ui_name)
         if extcmds[0] in ("available", "all"):
             for group in available:
-                print group.ui_name
+                print(group.ui_name)
 
 class ListCompletionCommand(yumcommands.ListCommand):
     def doCommand(self, base, basecmd, extcmds):
         def printPkgs(pkgs):
             for pkg in pkgs:
                 if base.allowedMultipleInstalls(pkg):
-                    print pkg.nvra
+                    print(pkg.nvra)
                 else:
-                    print pkg.na
+                    print(pkg.na)
 
         ypl = base.doPackageLists(pkgnarrow=extcmds[0],
                                   patterns=[get_pattern(extcmds)])
@@ -59,12 +59,12 @@ class RepoListCompletionCommand(yumcommands.RepoListCommand):
     def doCommand(self, base, basecmd, extcmds):
         import fnmatch
         pattern = get_pattern(extcmds)
-        for repo in base.repos.repos.values():
+        for repo in list(base.repos.repos.values()):
             if fnmatch.fnmatch(repo.id, pattern) \
                     and (extcmds[0] == "all" or
                          (extcmds[0] == "enabled" and repo.isEnabled()) or
                          (extcmds[0] == "disabled" and not repo.isEnabled())):
-                print repo.id
+                print(repo.id)
 
 
 def get_pattern(extcmds):
@@ -85,12 +85,12 @@ def main(args):
         for repo in base.repos.listEnabled():
             repo.skip_if_unavailable = True
         base.doCommands()
-    except (GroupsError, ConfigError, RepoError), e:
+    except (GroupsError, ConfigError, RepoError) as e:
     # Any reason to not just catch YumBaseError ?
         base.logger.error(e)
 
 if __name__ == "__main__":
     try:
         main(sys.argv[1:])
-    except KeyboardInterrupt, e:
+    except KeyboardInterrupt as e:
         sys.exit(1)

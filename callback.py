@@ -72,7 +72,7 @@ class RPMInstallCallback:
 
     def _localprint(self, msg):
         if self.output:
-            print msg
+            print(msg)
 
     def _makefmt(self, percent, progress = True):
         l = len(str(self.total_actions))
@@ -174,7 +174,7 @@ class RPMInstallCallback:
                     if total == 0:
                         percent = 0
                     else:
-                        percent = (bytes*100L)/total
+                        percent = (bytes*100)/total
                     if self.output and sys.stdout.isatty():
                         fmt = self._makefmt(percent)
                         msg = fmt % (_('Repackage'), h)
@@ -190,16 +190,16 @@ class RPMInstallCallback:
                     if total == 0:
                         percent = 0
                     else:
-                        percent = (bytes*100L)/total
+                        percent = (bytes*100)/total
                     pkgtup = self._dopkgtup(hdr)
                     
                     txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
                     for txmbr in txmbrs:
                         try:
                             process = self.myprocess[txmbr.output_state]
-                        except KeyError, e:
-                            print _("Error: invalid output state: %s for %s") % \
-                               (txmbr.output_state, hdr['name'])
+                        except KeyError as e:
+                            print(_("Error: invalid output state: %s for %s") % \
+                               (txmbr.output_state, hdr['name']))
                         else:
                             if self.output and (sys.stdout.isatty() or bytes == total):
                                 fmt = self._makefmt(percent)
@@ -209,7 +209,7 @@ class RPMInstallCallback:
                                     sys.stdout.flush()
                                     self.lastmsg = msg
                                 if bytes == total:
-                                    print " "
+                                    print(" ")
 
 
         elif what == rpm.RPMCALLBACK_UNINST_START:

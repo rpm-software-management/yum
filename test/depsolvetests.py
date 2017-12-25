@@ -9,13 +9,13 @@ class DepsolveTests(DepsolveTests):
         po = FakePackage('zsh', '1', '1', None, 'i386')
         self.tsInfo.addInstall(po)
         self.tsInfo.remove(po.pkgtup)
-        self.assertEquals('empty', *self.resolveCode())
+        self.assertEqual('empty', *self.resolveCode())
 
     def testInstallSinglePackageNoRequires(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
         self.tsInfo.addInstall(po)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po,))
 
     def testInstallSinglePackageRequireNotProvided(self):
@@ -23,7 +23,7 @@ class DepsolveTests(DepsolveTests):
         po.addRequires('zip', None, (None, None, None))
         self.tsInfo.addInstall(po)
 
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireInstalled(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -33,7 +33,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1', '1', None, 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
 
     def testInstallSinglePackageRequireInstalledRequireNotProvided(self):
@@ -45,7 +45,7 @@ class DepsolveTests(DepsolveTests):
         po.addRequires('zap', None, (None, None, None))
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireInstalledRequireInstall(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -58,7 +58,7 @@ class DepsolveTests(DepsolveTests):
         po.addRequires('zap', None, (None, None, None))
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po2, ipo))
 
 
@@ -70,7 +70,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.0', '2', None, 'i386')
         self.rpmdb.addPackage(ipo)
         
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireVer1Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -80,7 +80,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '2', None, 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
 
     def testInstallSinglePackageRequireVer2NotProvided(self):
@@ -91,7 +91,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '2', None, 'i386')
         self.rpmdb.addPackage(ipo)
         
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireVer2Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -101,7 +101,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '4', None, 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
 
     def testInstallSinglePackageRequireVer3NotProvided(self):
@@ -112,7 +112,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '4', '0', 'i386')
         self.rpmdb.addPackage(ipo)
         
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireVer3Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -122,7 +122,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '4', '2', 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
 
     def testInstallSinglePackageRequireVer4NotProvided(self):
@@ -133,7 +133,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '4', '2', 'i386')
         self.rpmdb.addPackage(ipo)
         
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireVer4_1Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -143,7 +143,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.0', '4', '2', 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
     def testInstallSinglePackageRequireVer4_2Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -153,7 +153,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '3', '2', 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
     def testInstallSinglePackageRequireVer4_3Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -163,7 +163,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '4', None, 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
     def testInstallSinglePackageRequireVer4_4Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -173,7 +173,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '1.3', '4', '1', 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
     def testInstallSinglePackageRequireVer4_5Installed(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -183,7 +183,7 @@ class DepsolveTests(DepsolveTests):
         ipo = FakePackage('zip', '0.3', '4', '2', 'i386')
         self.rpmdb.addPackage(ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
 
     def testInstallSinglePackageRequireXtraBadVer(self):
@@ -198,7 +198,7 @@ class DepsolveTests(DepsolveTests):
         xpo = FakePackage('zap', '1.3', '4', '0', 'i386')
         self.xsack.addPackage(xpo)
 
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireXtra(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -212,7 +212,7 @@ class DepsolveTests(DepsolveTests):
         xpo = FakePackage('zap', '2.6', '8', '4', 'i386')
         self.xsack.addPackage(xpo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo, xpo))
         
     def testInstallSinglePackageRequireInstalledRequireXtra(self):
@@ -227,7 +227,7 @@ class DepsolveTests(DepsolveTests):
         xpo = FakePackage('zap', '2.6', '8', '4', 'i386')
         self.xsack.addPackage(xpo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
         
     def testInstallSinglePackageRequireUpgradeRequireXtraErr(self):
@@ -246,7 +246,7 @@ class DepsolveTests(DepsolveTests):
         xpo.addRequires('zsh', 'EQ', ('2', '4', '8'))
         self.xsack.addPackage(xpo)
 
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def testInstallSinglePackageRequireUpgradeRequireXtraOk(self):
         po = FakePackage('zsh', '1', '1', None, 'i386')
@@ -263,7 +263,7 @@ class DepsolveTests(DepsolveTests):
         xpo2 = FakePackage('zap', '1.3', '4', '2', 'i386')
         self.xsack.addPackage(xpo2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo, xpo2))
         
     def testInstallSinglePackageRequireMultiXtra(self):
@@ -278,7 +278,7 @@ class DepsolveTests(DepsolveTests):
         xpo2 = FakePackage('zap', '1.3', '4', '2', 'i386')
         self.xsack.addPackage(xpo2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo, xpo2))
         
     def testInstallSinglePackageRequireInstalledMultiLib(self):
@@ -292,7 +292,7 @@ class DepsolveTests(DepsolveTests):
         xpo = FakePackage('zip', '1', '3', None, 'x86_64')
         self.xsack.addPackage(xpo)
         
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, ipo))
 
     def testInstallSinglePackageRequireXtra1MultiLib(self):
@@ -302,7 +302,7 @@ class DepsolveTests(DepsolveTests):
 
         xpo = FakePackage('zip', '1', '3', None, 'i386')
         self.xsack.addPackage(xpo)
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo))
 
     def testInstallSinglePackageRequireXtra2_64MultiLib(self):
@@ -315,7 +315,7 @@ class DepsolveTests(DepsolveTests):
         xpo64 = FakePackage('zip', '1', '3', None, 'x86_64')
         self.xsack.addPackage(xpo64)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo64))
 
     def testInstallSinglePackageRequireXtra2_32MultiLib(self):
@@ -328,7 +328,7 @@ class DepsolveTests(DepsolveTests):
         xpo64 = FakePackage('zip', '1', '3', None, 'x86_64')
         self.xsack.addPackage(xpo64)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo64))
 
     def testUpdateSinglePackage(self):
@@ -338,7 +338,7 @@ class DepsolveTests(DepsolveTests):
         po = FakePackage('zsh', '1', '3', None, 'i386')
         self.tsInfo.addUpdate(po, oldpo=ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po,))
 
     def testUpdateForDependency(self):
@@ -352,7 +352,7 @@ class DepsolveTests(DepsolveTests):
         updatepo = FakePackage('zip', '2', '1', '0', 'i386')
         self.xsack.addPackage(updatepo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, updatepo))
 
     def testUpdateSplitPackage(self):
@@ -371,7 +371,7 @@ class DepsolveTests(DepsolveTests):
         updatepo2.addProvides('libzip', 'EQ', ('0', '2', '1'))
         self.xsack.addPackage(updatepo2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         #self.assertResult((po, updatepo, updatepo2)) # XXX obsolete needed?
         self.assertResult((po, installedpo, updatepo2))
 
@@ -386,7 +386,7 @@ class DepsolveTests(DepsolveTests):
         xpo = FakePackage('zip', '1', '3', None, 'x86_64')
         self.xsack.addPackage(xpo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo))
 
     def testUpdateSinglePackageOldRequires(self):
@@ -401,7 +401,7 @@ class DepsolveTests(DepsolveTests):
         po.addRequires('zip', None, (None, None, None))
         self.tsInfo.addUpdate(po, oldpo=ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo))
 
     def testUpdateSinglePackageOldRequiresGone(self):
@@ -415,7 +415,7 @@ class DepsolveTests(DepsolveTests):
         po = FakePackage('zsh', '1', '3', None, 'i386')
         self.tsInfo.addUpdate(po, oldpo=ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo))
 
     def testUpdateSinglePackageObsoletesOldRequirement(self):
@@ -434,7 +434,7 @@ class DepsolveTests(DepsolveTests):
         self.tsInfo.addObsoleting(po, opo)
         self.tsInfo.addObsoleted(opo, po)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po,))
 
     def testUpdateForConflict(self):
@@ -448,7 +448,7 @@ class DepsolveTests(DepsolveTests):
         updatepo = FakePackage('zip', '2', '1', '0', 'i386')
         self.xsack.addPackage(updatepo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, updatepo))
 
     def testUpdateForConflict2(self):
@@ -462,7 +462,7 @@ class DepsolveTests(DepsolveTests):
         updatepo = FakePackage('zip', '2', '1', '0', 'i386')
         self.xsack.addPackage(updatepo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, updatepo))
 
     def testUpdateForConflictProvide(self):
@@ -477,7 +477,7 @@ class DepsolveTests(DepsolveTests):
         updatepo = FakePackage('zip', '2', '1', '0', 'i386')
         self.xsack.addPackage(updatepo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, updatepo))
 
     def testUpdateForConflictProvide2(self):
@@ -495,7 +495,7 @@ class DepsolveTests(DepsolveTests):
         updatepo.addConflicts('zippy', 'LT', ('0', '2', '1'))
         self.xsack.addPackage(updatepo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, updatepo))
 
     def testEraseSinglePackage(self):
@@ -503,7 +503,7 @@ class DepsolveTests(DepsolveTests):
         self.rpmdb.addPackage(po)
         self.tsInfo.addErase(po)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult(())
 
     def testEraseSinglePackageRequiredByOneInstalled(self):
@@ -515,7 +515,7 @@ class DepsolveTests(DepsolveTests):
         self.rpmdb.addPackage(po)
         self.tsInfo.addErase(po)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult(())
 
     def _setup_FakeMultilibReqs(self):
@@ -550,14 +550,14 @@ class DepsolveTests(DepsolveTests):
     def testFakeMultilibReqsInstall(self):
         (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo2, ipo2))
 
     def testFakeMultilibReqsUpdate1a(self):
         (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
         self.rpmdb.addPackage(xpo1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo2, ipo2))
 
     def testFakeMultilibReqsUpdate1b(self):
@@ -568,14 +568,14 @@ class DepsolveTests(DepsolveTests):
         # wins.
         po.addRequires('libxyz-1.so.0(XYZ_1.1)', None, (None, None, None))
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo2, ipo2))
 
     def testFakeMultilibReqsUpdate2(self):
         (po, xpo1, xpo2, ipo1, ipo2) = self._setup_FakeMultilibReqs()
         self.rpmdb.addPackage(ipo1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo2, ipo2))
 
     def testFakeMultilibReqsUpdate3(self):
@@ -583,7 +583,7 @@ class DepsolveTests(DepsolveTests):
         self.rpmdb.addPackage(xpo1)
         self.rpmdb.addPackage(ipo1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, xpo2, ipo2))
 
     def _setup_CompareProviders(self, name="libbar", arch="x86_64"):
@@ -602,13 +602,13 @@ class DepsolveTests(DepsolveTests):
     def testCompareProvidersSameLen1_64(self):
         (po, po1, po2) = self._setup_CompareProviders()
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
     def testCompareProvidersSameLen1_noarch(self):
         (po, po1, po2) = self._setup_CompareProviders(arch='noarch')
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po,), (po1,po2))
 
     def testCompareProvidersSameLen2_64(self):
@@ -624,7 +624,7 @@ class DepsolveTests(DepsolveTests):
         po1.addProvides('libxyz-1.so.0(64bit)', None,(None,None,None))
         self.xsack.addPackage(po1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
     def testCompareProvidersSameLen2_noarch(self):
@@ -640,7 +640,7 @@ class DepsolveTests(DepsolveTests):
         po1.addProvides('libxyz-1.so.0', None,(None,None,None))
         self.xsack.addPackage(po1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po,), (po1,po2))
 
     def testCompareProvidersSameLen2_noarch_to_64_1(self):
@@ -657,7 +657,7 @@ class DepsolveTests(DepsolveTests):
         po1.addProvides('libxyz-1.so.0', None,(None,None,None))
         self.xsack.addPackage(po1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po1))
         
 
@@ -675,21 +675,21 @@ class DepsolveTests(DepsolveTests):
         po1.addProvides('libxyz-1.so.0', None,(None,None,None))
         self.xsack.addPackage(po1)
         
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po2))
             
 
     def testCompareProvidersDiffLen_64(self):
         (po, po1, po2) = self._setup_CompareProviders(name='libbarf')
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
     def testCompareProvidersDiffLen_noarch(self):
         (po, po1, po2) = self._setup_CompareProviders(name='libbarf',
                                                       arch='noarch')
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
     def testCompareProvidersSrcRpm_64(self):
@@ -697,7 +697,7 @@ class DepsolveTests(DepsolveTests):
         po.sourcerpm  = "abcd.src.rpm"
         po2.sourcerpm = "abcd.src.rpm"
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
     def testCompareProvidersSrcRpm_noarch(self):
@@ -706,20 +706,20 @@ class DepsolveTests(DepsolveTests):
         po.sourcerpm  = "abcd.src.rpm"
         po2.sourcerpm = "abcd.src.rpm"
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
     def testCompareProvidersPrefix_64(self):
         (po, po1, po2) = self._setup_CompareProviders(name='abcd-libbarf')
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
     def testCompareProvidersPrefix_noarch(self):
         (po, po1, po2) = self._setup_CompareProviders(name='abcd-libbarf',
                                                       arch='noarch')
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po2))
 
     def testCompareProvidersArchVSLen(self):
@@ -737,7 +737,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po2)
         self.xsack.addPackage(po3)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po1))
 
     def testSelfObsInstall(self):
@@ -746,7 +746,7 @@ class DepsolveTests(DepsolveTests):
         xpo.addProvides('abcd-Foo', None, (None, None, None))
         self.tsInfo.addInstall(xpo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo,))
 
     def testSelfObsUpgrade(self):
@@ -760,7 +760,7 @@ class DepsolveTests(DepsolveTests):
         xpo.addProvides('abcd-Foo', None, (None, None, None))
         self.tsInfo.addUpdate(xpo, oldpo=ipo)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo,))
 
 
@@ -782,7 +782,7 @@ class DepsolveTests(DepsolveTests):
         po3 = FakePackage('Foo', version='3', arch='noarch')
         self.xsack.addPackage(po3)
     
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo, po3))
 
     def testMultiPkgVersions2(self):
@@ -803,7 +803,7 @@ class DepsolveTests(DepsolveTests):
         po3 = FakePackage('Foo', version='2', arch='i586')
         self.xsack.addPackage(po3)
     
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo, po3))
 
     def testMultiPkgVersions3(self):
@@ -824,7 +824,7 @@ class DepsolveTests(DepsolveTests):
         po3 = FakePackage('Foo', version='2', arch='i586')
         self.xsack.addPackage(po3)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo, po2))
 
     def testMultiPkgVersions4(self):
@@ -845,7 +845,7 @@ class DepsolveTests(DepsolveTests):
         po3 = FakePackage('Foo', version='2', arch='i386')
         self.xsack.addPackage(po3)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo, po2))
 
     def testMultiPkgVersions5(self):
@@ -866,7 +866,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po3)
         self.xsack.addPackage(po2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo, po2))
 
     # Test from "Real Life" because we just can't think like they do
@@ -884,7 +884,7 @@ class DepsolveTests(DepsolveTests):
         po2.addObsoletes('unison', 'LT', ('0', '2.27.57', '3'))
         self.xsack.addPackage(po2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo, po2))
 
     def testRL_unison2(self):
@@ -901,7 +901,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po2)
         self.xsack.addPackage(po1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((xpo, po2))
 
     def test_min_inst_and_dep(self):
@@ -921,7 +921,7 @@ class DepsolveTests(DepsolveTests):
         po4 = FakePackage('bar', version='4')
         self.xsack.addPackage(po4)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo2, po4))
 
     def test_min_up_and_dep1(self):
@@ -944,7 +944,7 @@ class DepsolveTests(DepsolveTests):
         po4 = FakePackage('bar', version='4')
         self.xsack.addPackage(po4)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo2, po4))
 
     def test_min_up_and_dep2(self):
@@ -967,7 +967,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po2)
         self.xsack.addPackage(po1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo2, po4))
 
     def test_min_up_and_dep3(self):
@@ -1006,7 +1006,7 @@ class DepsolveTests(DepsolveTests):
         po7.addRequires('bar', 'EQ', ('0', '4', '1'))
         self.xsack.addPackage(po7)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo3, po4, po7))
 
     def test_multi_inst_dep1(self):
@@ -1024,7 +1024,7 @@ class DepsolveTests(DepsolveTests):
         po2.addProvides('bar-prov2', 'EQ', ('0', '2', '0'))
         self.xsack.addPackage(po2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
 
     def test_multi_inst_dep2(self):
@@ -1042,7 +1042,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po2)
         self.xsack.addPackage(po1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
 
     def test_multi_inst_dep3(self):
@@ -1059,7 +1059,7 @@ class DepsolveTests(DepsolveTests):
         po2.addProvides('libbar-prov1.so.0()', None, (None, None, None))
         self.xsack.addPackage(po2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
 
     def test_multi_inst_dep4(self):
@@ -1076,7 +1076,7 @@ class DepsolveTests(DepsolveTests):
         po2.addProvides('libbar-prov1.so.0()', None, (None, None, None))
         self.xsack.addPackage(po2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
 
     def test_multi_inst_dep5(self):
@@ -1093,7 +1093,7 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po2)
         self.xsack.addPackage(po1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo1, po1))
 
     def test_inst_require_conflict1(self):
@@ -1105,7 +1105,7 @@ class DepsolveTests(DepsolveTests):
         po1 = FakePackage('bar')
         self.xsack.addPackage(po1)
 
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def test_inst_require_conflict_me1(self):
         ipo1 = FakePackage('foo')
@@ -1116,7 +1116,7 @@ class DepsolveTests(DepsolveTests):
         po1.addConflicts('foo', None, (None, None, None))
         self.xsack.addPackage(po1)
 
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
 
     def test_inst_require_obsoletes1(self):
         ipo1 = FakePackage('foo')
@@ -1130,7 +1130,7 @@ class DepsolveTests(DepsolveTests):
         # FIXME: Does it make sense to ignore the obsoletes here? esp. as we
         # don't ignore the conflicts above? ... I'm guessing ignoring it is
         # by accident too? bah.
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())
         # Old behaviour:
         # self.assertEquals('ok', *self.resolveCode())
         # self.assertResult((ipo1, po1))
@@ -1156,7 +1156,7 @@ class DepsolveTests(DepsolveTests):
 
         self.tsInfo.addUpdate(apo2, oldpo=rpo2)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((apo1, apo2))
 
     def testInstalllib_oldbad_prov1(self):
@@ -1176,7 +1176,7 @@ class DepsolveTests(DepsolveTests):
         ipo1.addRequires('libfoo.so.2()', None, (None, None, None))
         self.tsInfo.addInstall(ipo1)
 
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((ipo1, apo3))
 
     def testCompareProvidersNoarchWithHigherVer_to_64(self):
@@ -1195,7 +1195,7 @@ class DepsolveTests(DepsolveTests):
         po1.addProvides('libxyz-1.so.0', None,(None,None,None))
         self.xsack.addPackage(po1)
         
-        self.assertEquals('ok', *self.resolveCode())
+        self.assertEqual('ok', *self.resolveCode())
         self.assertResult((po, po2))
            
     def testRL_dcbd1(self):
@@ -1212,4 +1212,4 @@ class DepsolveTests(DepsolveTests):
         self.xsack.addPackage(po2)
         self.xsack.addPackage(po1)
 
-        self.assertEquals('err', *self.resolveCode())
+        self.assertEqual('err', *self.resolveCode())

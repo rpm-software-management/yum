@@ -18,31 +18,31 @@ import os
 import re
 import time
 import types
-import urlparse
-urlparse.uses_fragment.append("media")
-import urllib
+import urllib.parse
+urllib.parse.uses_fragment.append("media")
+import urllib.request, urllib.parse, urllib.error
 
-import Errors
+from . import Errors
 from urlgrabber.grabber import URLGrabber
 from urlgrabber.grabber import default_grabber
 from urlgrabber.progress import format_number
 import urlgrabber.mirror
 from urlgrabber.grabber import URLGrabError
-import repoMDObject
-import packageSack
-from repos import Repository
-import parser
+from . import repoMDObject
+from . import packageSack
+from .repos import Repository
+from . import parser
 import sqlitecachec
-import sqlitesack
+from . import sqlitesack
 from yum import config
 from yum import misc
 from yum import comps
 from yum import _
-from constants import *
-import metalink
+from .constants import *
+from . import metalink
 
 import logging
-import logginglevels
+from . import logginglevels
 
 import warnings
 
@@ -116,7 +116,7 @@ class YumPackageSack(packageSack.PackageSack):
     def __del__(self):
         try:
             self.close()
-        except Errors.RepoError, e:
+        except Errors.RepoError as e:
             verbose_logger.debug("Exception %s %s in %s ignored" % (repr(e), str(e), self.__del__))
 
     def close(self):
@@ -497,7 +497,7 @@ class YumRepository(Repository, config.RepoConf):
            CHUNK=65536 by default"""
         try:
             return misc.checksum(sumtype, file, CHUNK, datasize)
-        except (Errors.MiscError, EnvironmentError), e:
+        except (Errors.MiscError, EnvironmentError) as e:
             if checksum_can_fail:
                 return None
             msg = 'Error opening file for checksum: %s' % e
@@ -529,7 +529,7 @@ class YumRepository(Repository, config.RepoConf):
             res = getattr(self, attr)
             if not res and type(res) not in (type(False), type(0)):
                 res = ''
-            if type(res) == types.ListType:
+            if type(res) == list:
                 res = ',\n   '.join(res)
             output = output + '%s = %s\n' % (attr, res)
 
@@ -540,22 +540,22 @@ class YumRepository(Repository, config.RepoConf):
         self.enable()
         try:
             config.writeRawRepoFile(self,only=['enabled'])
-        except IOError, e:
+        except IOError as e:
             if e.errno == errno.EACCES:
                 logger.warning(e)
             else:
-                raise IOError, str(e)
+                raise IOError(str(e))
 
     def disablePersistent(self):
         """Persistently disables this repository."""
         self.disable()
         try:
             config.writeRawRepoFile(self,only=['enabled'])
-        except IOError, e:
+        except IOError as e:
             if e.errno == errno.EACCES:
                 logger.warning(e)
             else:
-                raise IOError, str(e)
+                raise IOError(str(e))
 
     def check(self):
         """self-check the repo information  - if we don't have enough to move
@@ -577,9 +577,9 @@ class YumRepository(Repository, config.RepoConf):
             proxy_string = '%s' % self.proxy
             if self.proxy_username not in empty:
 
-                auth = urllib.quote(self.proxy_username)
+                auth = urllib.parse.quote(self.proxy_username)
                 if self.proxy_password not in empty:
-                    auth += ':' + urllib.quote(self.proxy_password)
+                    auth += ':' + urllib.parse.quote(self.proxy_password)
 
                 proto, rest = re.match('(\w+://)(.+)', proxy_string).groups()
                 proxy_string = '%s%s@%s' % (proto, auth, rest)
@@ -623,7 +623,7 @@ class YumRepository(Repository, config.RepoConf):
                                     reget='simple',
                                     **ugopts)
         def add_mc(url):
-            host = urlparse.urlsplit(url).netloc.split('@')[-1]
+            host = urllib.parse.urlsplit(url).netloc.split('@')[-1]
             mc = self.metalink_data._host2mc.get(host)
             if mc:
                 url = {
@@ -637,7 +637,7 @@ class YumRepository(Repository, config.RepoConf):
             return url
         urls = self.urls
         if self.metalink:
-            urls = map(add_mc, urls)
+            urls = list(map(add_mc, urls))
 
         def mirror_failure(obj):
             action = {}
@@ -711,8 +711,8 @@ class YumRepository(Repository, config.RepoConf):
             return
 
         try:
-            os.makedirs(dpath, mode=0755)
-        except OSError, e:
+            os.makedirs(dpath, mode=0o755)
+        except OSError as e:
             msg = "%s: %s %s: %s" % ("Error making cache directory",
                                      dpath, "error was", e)
             raise Errors.RepoError(msg, repo=self)
@@ -745,7 +745,7 @@ class YumRepository(Repository, config.RepoConf):
         for dir in [self.persistdir]:
             try:
                 self._dirSetupMkdir_p(dir)
-            except Errors.RepoError, e:
+            except Errors.RepoError as e:
                 pass
                 
         # if we're using a cachedir that's not the system one, copy over these
@@ -838,10 +838,10 @@ class YumRepository(Repository, config.RepoConf):
                 if not self.cache:
                     try:
                         misc.unlink_f(self.mirrorlist_file)
-                    except (IOError, OSError), e:
-                        print 'Could not delete bad mirrorlist file: %s - %s' % (self.mirrorlist_file, e)
+                    except (IOError, OSError) as e:
+                        print('Could not delete bad mirrorlist file: %s - %s' % (self.mirrorlist_file, e))
                     else:
-                        print 'removing mirrorlist with no valid mirrors: %s' % self.mirrorlist_file
+                        print('removing mirrorlist with no valid mirrors: %s' % self.mirrorlist_file)
         # store them all back in baseurl for compat purposes
         self.baseurl = self._urls
         self.check()
@@ -856,24 +856,24 @@ class YumRepository(Repository, config.RepoConf):
             url = parser.varReplace(url, self.yumvar)
             try:
                 # This started throwing ValueErrors, BZ 666826
-                (s,b,p,q,f,o) = urlparse.urlparse(url)
+                (s,b,p,q,f,o) = urllib.parse.urlparse(url)
                 if p[-1] != '/':
                     p = p + '/'
-            except (ValueError, IndexError, KeyError), e:
+            except (ValueError, IndexError, KeyError) as e:
                 s = 'blah'
 
             if s not in ['http', 'ftp', 'file', 'https']:
                 skipped = url
                 continue
             else:
-                goodurls.append(urlparse.urlunparse((s,b,p,q,f,o)))
+                goodurls.append(urllib.parse.urlunparse((s,b,p,q,f,o)))
 
         if skipped is not None:
             # Caller cleans up for us.
             if goodurls:
-                print 'YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+                print('YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped))
             else: # And raises in this case
-                print 'YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+                print('YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped))
         return goodurls
 
     def _geturls(self):
@@ -896,23 +896,23 @@ class YumRepository(Repository, config.RepoConf):
                     ug = URLGrabber(progress_obj = self.callback, **ugopts)
                     result = ug.urlgrab(url, local, text="%s/metalink" % self.ui_id)
 
-                except URLGrabError, e:
+                except URLGrabError as e:
                     if not os.path.exists(self.metalink_filename):
                         msg = ("Cannot retrieve metalink for repository: %s. "
                                "Please verify its path and try again" % self.ui_id )
                         raise Errors.RepoError(msg, repo=self)
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
-                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))                    
+                    print("Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1])))                    
                     self._metadataCurrent = True
 
             if not self._metadataCurrent:
                 try:
                     self._metalink = metalink.MetaLinkRepoMD(result)
                     shutil.move(result, self.metalink_filename)
-                except metalink.MetaLinkRepoErrorParseFail, e:
+                except metalink.MetaLinkRepoErrorParseFail as e:
                     # Downloaded file failed to parse, revert (dito. above):
-                    print "Could not parse metalink %s error was \n%s"%(url, e)
+                    print("Could not parse metalink %s error was \n%s"%(url, e))
                     self._metadataCurrent = True
                     misc.unlink_f(result)
 
@@ -969,7 +969,7 @@ class YumRepository(Repository, config.RepoConf):
                                        repo=self)
 
         if url:
-            (scheme, netloc, path, query, fragid) = urlparse.urlsplit(url)
+            (scheme, netloc, path, query, fragid) = urllib.parse.urlsplit(url)
 
         if self.mediaid and self.mediafunc:
             discnum = 1
@@ -981,18 +981,18 @@ class YumRepository(Repository, config.RepoConf):
                 # pass to the media grabber function here
                 result = self.mediafunc(local = local, checkfunc = checkfunc, relative = relative, text = text, copy_local = copy_local, url = url, mediaid = self.mediaid, name = self.name, discnum = discnum, range = (start, end))
                 return result
-            except Errors.MediaError, e:
+            except Errors.MediaError as e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
 
         if size and (copy_local or not self._all_urls_are_files(url)):
             dirstat = os.statvfs(os.path.dirname(local))
             avail = dirstat.f_bavail * dirstat.f_bsize
-            if avail < long(size):
+            if avail < int(size):
                 raise Errors.RepoError(_('''\
 Insufficient space in download directory %s
     * free   %s
     * needed %s'''
-                ) % (os.path.dirname(local), format_number(avail), format_number(long(size))), repo=self)
+                ) % (os.path.dirname(local), format_number(avail), format_number(int(size))), repo=self)
 
         if url and scheme != "media":
             ugopts = self._default_grabopts(cache=cache)
@@ -1006,14 +1006,14 @@ Insufficient space in download directory %s
                             retry_no_cache=self._retry_no_cache,
                             **ugopts)
 
-            remote = urlparse.urlunsplit((scheme, netloc, path + '/' + relative, query, fragid))
+            remote = urllib.parse.urlunsplit((scheme, netloc, path + '/' + relative, query, fragid))
 
             try:
                 result = ug.urlgrab(misc.to_utf8(remote), local,
                                     text=misc.to_utf8(text),
                                     range=(start, end),
                                     )
-            except URLGrabError, e:
+            except URLGrabError as e:
                 self._del_dl_file(local, size)
                 errstr = "failed to retrieve %s from %s\nerror was %s" % (relative, self, e)
                 raise Errors.RepoError(errstr, repo=self)
@@ -1032,7 +1032,7 @@ Insufficient space in download directory %s
                                            retry_no_cache=self._retry_no_cache,
                                            **kwargs
                                            )
-            except URLGrabError, e:
+            except URLGrabError as e:
                 self._del_dl_file(local, size)
                 errstr = "failure: %s from %s: %s" % (relative, self, e)
                 errors = getattr(e, 'errors', None)
@@ -1222,7 +1222,7 @@ Insufficient space in download directory %s
             self.gpg_import_func = gpg_import_func
             self.gpgca_import_func = gpgca_import_func
             self.confirm_func = confirm_func
-        except Errors.RepoError, e:
+        except Errors.RepoError as e:
             raise
         if not self.mediafunc and self.mediaid and not self.mirrorlist and not self.baseurl:
             verbose_logger.log(logginglevels.DEBUG_2, "Disabling media repo for non-media-aware frontend")
@@ -1257,7 +1257,7 @@ Insufficient space in download directory %s
                                    cache=self.http_caching == 'all',
                                    size=102400) # setting max size as 100K
 
-        except URLGrabError, e:
+        except URLGrabError as e:
             misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
@@ -1286,7 +1286,7 @@ Insufficient space in download directory %s
         """ Parse the repomd.xml file. """
         try:
             return repoMDObject.RepoMD(self.id, local)
-        except Errors.RepoMDError, e:
+        except Errors.RepoMDError as e:
             if parse_can_fail is None:
                 parse_can_fail = 'old_repo_XML' in self._oldRepoMDData
             if parse_can_fail:
@@ -1487,7 +1487,7 @@ Insufficient space in download directory %s
                     if (self.skip_if_unavailable and hasattr(self, '_metadata_cache_req')
                         and self._metadata_cache_req in ('write', 'read-only:future')):
                         # Since skip_if_unavailable=True, we can just disable this repo
-                        raise Errors.RepoError, "Can't download repomd.xml for %s" % self.ui_id
+                        raise Errors.RepoError("Can't download repomd.xml for %s" % self.ui_id)
 
                     # Ignore this as we have a copy
                     self._revertOldRepoXML()
@@ -1585,7 +1585,7 @@ Insufficient space in download directory %s
                 return False
             return True
 
-        all_mdtypes = self.retrieved.keys()
+        all_mdtypes = list(self.retrieved.keys())
         # Add in any extra stuff we don't know about.
         for mdtype in self.repoXML.fileTypes():
             if mdtype in all_mdtypes:
@@ -1672,7 +1672,7 @@ Insufficient space in download directory %s
                      'group:main'    : ["primary", "updateinfo", "group", "pkgtags",
                                         "filelists", "prestodelta"]}
         mdtypes = set()
-        if type(self.mdpolicy) in types.StringTypes:
+        if type(self.mdpolicy) in (str,):
             mdtypes.update(md_groups.get(self.mdpolicy, [self.mdpolicy]))
         else:
             for mdpolicy in self.mdpolicy:
@@ -1724,13 +1724,13 @@ Insufficient space in download directory %s
                                        checkfunc=None,
                                        cache=self.http_caching == 'all',
                                        size=102400)
-            except URLGrabError, e:
+            except URLGrabError as e:
                 raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
             valid = misc.valid_detached_sig(result, filepath, self.gpgdir)
             if not valid and self.gpg_import_func:
                 try:
                     self.gpg_import_func(self, self.confirm_func)
-                except Errors.YumBaseError, e:
+                except Errors.YumBaseError as e:
                     raise URLGrabError(-1, 'Gpg Keys not imported, cannot verify repomd.xml for repo %s' % (self))
                 valid = misc.valid_detached_sig(result, filepath, self.gpgdir)
 
@@ -1739,7 +1739,7 @@ Insufficient space in download directory %s
 
         try:
             repoXML = repoMDObject.RepoMD(self.id, filepath)
-        except Errors.RepoMDError, e:
+        except Errors.RepoMDError as e:
             raise URLGrabError(-1, 'Error importing repomd.xml for %s: %s' % (self, e))
 
         self._hack_mirrorlist_for_anaconda()
@@ -1804,7 +1804,7 @@ Insufficient space in download directory %s
 
         try: # get the local checksum
             l_csum = self._checksum(r_ctype, file, datasize=size)
-        except Errors.RepoError, e:
+        except Errors.RepoError as e:
             if check_can_fail:
                 return None
             raise URLGrabError(-3, 'Error performing checksum: %s' % e)
@@ -1907,7 +1907,7 @@ Insufficient space in download directory %s
             if retrieve_can_fail:
                 return None
             raise
-        except URLGrabError, e:
+        except URLGrabError as e:
             if retrieve_can_fail:
                 return None
             raise Errors.RepoError("Could not retrieve %s matching remote checksum from %s" % (local, self.ui_id),
@@ -1940,7 +1940,7 @@ Insufficient space in download directory %s
             if fn:
                 try:
                     fn = misc.repo_gen_decompress(fn, 'comps.xml', cached=self.cache)
-                except IOError, e:
+                except IOError as e:
                     logger.warning(e)
                     fn = None
             return fn
@@ -1971,10 +1971,10 @@ Insufficient space in download directory %s
         if fo is not None:
             try:
                 content = fo.readlines()
-            except Exception, e:
+            except Exception as e:
                 if url is None: # Shouldn't happen
                     url = "<unknown>"
-                print "Could not read mirrorlist %s, error was \n%s" %(url, e)
+                print("Could not read mirrorlist %s, error was \n%s" %(url, e))
                 content = []
             for line in content:
                 if not re.match('\w+://\S+\s*$', line):
@@ -2004,14 +2004,14 @@ Insufficient space in download directory %s
             url = 'file://' + self.mirrorlist_file # just to keep self._readMirrorList(fo,url) happy
         else:
             url = self.mirrorlist
-            scheme = urlparse.urlparse(url)[0]
+            scheme = urllib.parse.urlparse(url)[0]
             if scheme == '':
                 url = 'file://' + url
             ugopts = self._default_grabopts()
             try:
                 fo = urlgrabber.grabber.urlopen(url, **ugopts)
-            except URLGrabError, e:
-                print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
+            except URLGrabError as e:
+                print("Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1])))
                 fo = None
 
         (returnlist, content) = self._readMirrorList(fo, url)
@@ -2113,19 +2113,19 @@ Insufficient space in download directory %s
 
     def _verify_md(self):
         problems = []
-        print 'verifying md'
+        print('verifying md')
         try:
             md_types = self.repoXML.fileTypes()
-        except Errors.RepoError, e:
+        except Errors.RepoError as e:
             prb = RepoVerifyProblem(1, "failed to load repomd.xml", str(e))
             problems.append(prb)
             return problems
 
         for md_type in md_types:
-            print 'verifying %s' % md_type
+            print('verifying %s' % md_type)
             try:
                 self.retrieveMD(md_type)
-            except Errors.RepoError, e:
+            except Errors.RepoError as e:
                 msg = "%s metadata missing or does not match checksum" % md_type
                 prb = RepoVerifyProblem(2, msg, str(e))
                 problems.append(prb)
@@ -2133,7 +2133,7 @@ Insufficient space in download directory %s
         return problems
 
     def _verify_comps(self):
-        print 'verifying comps'
+        print('verifying comps')
         problems = []
         # grab the comps for this repo
         # run the xmllint on it
@@ -2148,7 +2148,7 @@ Insufficient space in download directory %s
         try:
             c = comps.Comps()
             c.add(grpfile)
-        except (Errors.GroupsError, Errors.CompsException), e:
+        except (Errors.GroupsError, Errors.CompsException) as e:
             msg = "comps file failed to add"
             prb = RepoVerifyProblem(REPO_PROBLEM_COMPS, msg, str(e))
             problems.add(prb)
@@ -2191,10 +2191,10 @@ def getMirrorList(mirrorlist, pdict = None):
     if hasattr(urlgrabber.grabber, 'urlopen'):
         urlresolver = urlgrabber.grabber
     else:
-        import urllib
+        import urllib.request, urllib.parse, urllib.error
         urlresolver = urllib
 
-    scheme = urlparse.urlparse(mirrorlist)[0]
+    scheme = urllib.parse.urlparse(mirrorlist)[0]
     if scheme == '':
         url = 'file://' + mirrorlist
     else:
@@ -2202,8 +2202,8 @@ def getMirrorList(mirrorlist, pdict = None):
 
     try:
         fo = urlresolver.urlopen(url, proxies=pdict)
-    except URLGrabError, e:
-        print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
+    except URLGrabError as e:
+        print("Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1])))
         fo = None
 
     if fo is not None:

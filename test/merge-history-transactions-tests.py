@@ -76,12 +76,12 @@ class MergeHistTransTests(unittest.TestCase):
 
     def assertMergedBeg(self, merged, beg):
         self.assertTrue(beg.tid in merged.tid)
-        self.assertEquals(beg.beg_timestamp, merged.beg_timestamp)
-        self.assertEquals(beg.beg_rpmdbversion, merged.beg_rpmdbversion)
+        self.assertEqual(beg.beg_timestamp, merged.beg_timestamp)
+        self.assertEqual(beg.beg_rpmdbversion, merged.beg_rpmdbversion)
     def assertMergedEnd(self, merged, end):
         self.assertTrue(end.tid in merged.tid)
-        self.assertEquals(end.end_timestamp, merged.end_timestamp)
-        self.assertEquals(end.end_rpmdbversion, merged.end_rpmdbversion)
+        self.assertEqual(end.end_timestamp, merged.end_timestamp)
+        self.assertEqual(end.end_rpmdbversion, merged.end_rpmdbversion)
     def assertMergedCodes(self, merged, trans):
         ret = set()
         uid = set()
@@ -89,12 +89,12 @@ class MergeHistTransTests(unittest.TestCase):
             ret.add(trans.loginuid)
             uid.add(trans.return_code)
         if len(ret) == 1:
-            self.assertEquals(list(ret)[0], merged.return_code)
+            self.assertEqual(list(ret)[0], merged.return_code)
         else:
             for ret in ret:
                 self.assertTrue(ret in merged.return_code)
         if len(uid) == 1:
-            self.assertEquals(list(uid)[0], merged.loginuid)
+            self.assertEqual(list(uid)[0], merged.loginuid)
         else:
             for uid in uid:
                 self.assertTrue(uid in merged.loginuid)
@@ -113,11 +113,11 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 2)
-        self.assertEquals(pkgs[0], pkg1)
-        self.assertEquals(pkgs[0].state, xstate)
-        self.assertEquals(pkgs[1], pkg2)
-        self.assertEquals(pkgs[1].state, pkg2.state)
+        self.assertEqual(len(pkgs), 2)
+        self.assertEqual(pkgs[0], pkg1)
+        self.assertEqual(pkgs[0].state, xstate)
+        self.assertEqual(pkgs[1], pkg2)
+        self.assertEqual(pkgs[1].state, pkg2.state)
 
     def testSimpleInMerge2(self, xstate='Install'):
         pkg1 = self._pkg_new('foo', state=xstate)
@@ -130,15 +130,15 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], pkg2)
-        self.assertEquals(pkgs[0].state, pkg2.state)
-        self.assertEquals(pkgs[1], pkg1)
-        self.assertEquals(pkgs[1].state, xstate)
-        self.assertEquals(pkgs[2], pkg3)
-        self.assertEquals(pkgs[2].state, pkg3.state)
-        self.assertEquals(pkgs[3], pkg4)
-        self.assertEquals(pkgs[3].state, pkg4.state)
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], pkg2)
+        self.assertEqual(pkgs[0].state, pkg2.state)
+        self.assertEqual(pkgs[1], pkg1)
+        self.assertEqual(pkgs[1].state, xstate)
+        self.assertEqual(pkgs[2], pkg3)
+        self.assertEqual(pkgs[2].state, pkg3.state)
+        self.assertEqual(pkgs[3], pkg4)
+        self.assertEqual(pkgs[3].state, pkg4.state)
 
     def testSimpleUpMerge1(self, xstate='Update'):
         opkg1 = self._pkg_new('foo',              state='Updated')
@@ -152,15 +152,15 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[0].state, opkg2.state)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[1].state, npkg2.state)
-        self.assertEquals(pkgs[2], opkg1)
-        self.assertEquals(pkgs[2].state, opkg1.state)
-        self.assertEquals(pkgs[3], npkg1)
-        self.assertEquals(pkgs[3].state, xstate)
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[0].state, opkg2.state)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[1].state, npkg2.state)
+        self.assertEqual(pkgs[2], opkg1)
+        self.assertEqual(pkgs[2].state, opkg1.state)
+        self.assertEqual(pkgs[3], npkg1)
+        self.assertEqual(pkgs[3].state, xstate)
 
     def testSimpleUpMerge2(self, xstate='Update'):
         opkg1 = self._pkg_new('foo',              state='Updated')
@@ -176,15 +176,15 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[0].state, opkg2.state)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[1].state, npkg2.state)
-        self.assertEquals(pkgs[2], opkg1)
-        self.assertEquals(pkgs[2].state, opkg1.state)
-        self.assertEquals(pkgs[3], npkg3)
-        self.assertEquals(pkgs[3].state, xstate)
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[0].state, opkg2.state)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[1].state, npkg2.state)
+        self.assertEqual(pkgs[2], opkg1)
+        self.assertEqual(pkgs[2].state, opkg1.state)
+        self.assertEqual(pkgs[3], npkg3)
+        self.assertEqual(pkgs[3].state, xstate)
 
     def testSimpleUpMerge3(self, xstate='Install'):
         opkg1 = self._pkg_new('foo', state=xstate)
@@ -199,13 +199,13 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[0].state, opkg2.state)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[1].state, npkg2.state)
-        self.assertEquals(pkgs[2], npkg3)
-        self.assertEquals(pkgs[2].state, xstate)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[0].state, opkg2.state)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[1].state, npkg2.state)
+        self.assertEqual(pkgs[2], npkg3)
+        self.assertEqual(pkgs[2].state, xstate)
 
     def testSimpleUpMultiMerge1(self, xstate='Install'):
         opkg1 = self._pkg_new('foo', arch='i586',              state=xstate)
@@ -220,13 +220,13 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[0].state, opkg2.state)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[1].state, npkg2.state)
-        self.assertEquals(pkgs[2], npkg3)
-        self.assertEquals(pkgs[2].state, xstate)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[0].state, opkg2.state)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[1].state, npkg2.state)
+        self.assertEqual(pkgs[2], npkg3)
+        self.assertEqual(pkgs[2].state, xstate)
 
     def testUpDownMerge1(self, xstate='Update'):
         opkg1 = self._pkg_new('foo', version='0', state='Updated')
@@ -245,16 +245,16 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[2], opkg1)
-        self.assertNotEquals(pkgs[3], opkg3)
-        self.assertNotEquals(pkgs[3], npkg3)
-        self.assertNotEquals(pkgs[3], opkg4)
-        self.assertNotEquals(pkgs[3].state, npkg4.state)
-        self.assertEquals(pkgs[3].pkgtup, npkg4.pkgtup)
-        self.assertEquals(pkgs[3].state, xstate)
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[2], opkg1)
+        self.assertNotEqual(pkgs[3], opkg3)
+        self.assertNotEqual(pkgs[3], npkg3)
+        self.assertNotEqual(pkgs[3], opkg4)
+        self.assertNotEqual(pkgs[3].state, npkg4.state)
+        self.assertEqual(pkgs[3].pkgtup, npkg4.pkgtup)
+        self.assertEqual(pkgs[3].state, xstate)
 
     def testUpDownMerge2(self, xstate='Install'):
         opkg1 = self._pkg_new('foo')
@@ -272,16 +272,16 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertNotEquals(pkgs[2], opkg1)
-        self.assertNotEquals(pkgs[2], opkg3)
-        self.assertNotEquals(pkgs[2], npkg3)
-        self.assertNotEquals(pkgs[2], opkg4)
-        self.assertNotEquals(pkgs[2].state, npkg4.state)
-        self.assertEquals(pkgs[2].pkgtup, npkg4.pkgtup)
-        self.assertEquals(pkgs[2].state, xstate)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertNotEqual(pkgs[2], opkg1)
+        self.assertNotEqual(pkgs[2], opkg3)
+        self.assertNotEqual(pkgs[2], npkg3)
+        self.assertNotEqual(pkgs[2], opkg4)
+        self.assertNotEqual(pkgs[2].state, npkg4.state)
+        self.assertEqual(pkgs[2].pkgtup, npkg4.pkgtup)
+        self.assertEqual(pkgs[2].state, xstate)
 
     def testUpDownMerge3(self):
         opkg1 = self._pkg_new('foo')
@@ -299,18 +299,18 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[2], opkg1)
-        self.assertEquals(pkgs[2].state, opkg1.state)
-        self.assertNotEquals(pkgs[3], opkg1)
-        self.assertNotEquals(pkgs[3].state, opkg3.state)
-        self.assertNotEquals(pkgs[3], npkg3)
-        self.assertNotEquals(pkgs[3], opkg4)
-        self.assertNotEquals(pkgs[3].state, npkg4.state)
-        self.assertEquals(pkgs[3].pkgtup, npkg4.pkgtup)
-        self.assertEquals(pkgs[3].state, 'Reinstall')
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[2], opkg1)
+        self.assertEqual(pkgs[2].state, opkg1.state)
+        self.assertNotEqual(pkgs[3], opkg1)
+        self.assertNotEqual(pkgs[3].state, opkg3.state)
+        self.assertNotEqual(pkgs[3], npkg3)
+        self.assertNotEqual(pkgs[3], opkg4)
+        self.assertNotEqual(pkgs[3].state, npkg4.state)
+        self.assertEqual(pkgs[3].pkgtup, npkg4.pkgtup)
+        self.assertEqual(pkgs[3].state, 'Reinstall')
 
     def testUpDownMerge4(self, xstate='Update'):
         opkg2 = self._pkg_new('bar', version='4', state='Updated')
@@ -327,18 +327,18 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertNotEquals(pkgs[2].state, opkg3.state)
-        self.assertNotEquals(pkgs[2], npkg3)
-        self.assertNotEquals(pkgs[2], opkg4)
-        self.assertNotEquals(pkgs[2].state, npkg4.state)
-        self.assertEquals(pkgs[2].pkgtup, opkg3.pkgtup)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertNotEqual(pkgs[2].state, opkg3.state)
+        self.assertNotEqual(pkgs[2], npkg3)
+        self.assertNotEqual(pkgs[2], opkg4)
+        self.assertNotEqual(pkgs[2].state, npkg4.state)
+        self.assertEqual(pkgs[2].pkgtup, opkg3.pkgtup)
         if xstate == 'Obsoleting':
-            self.assertEquals(pkgs[2].state, 'Obsoleting')
+            self.assertEqual(pkgs[2].state, 'Obsoleting')
         else:
-            self.assertEquals(pkgs[2].state, 'Reinstall')
+            self.assertEqual(pkgs[2].state, 'Reinstall')
 
     def testUpDownMerge5(self, xstate='Update'):
         opkg2 = self._pkg_new('bar', version='4', state='Updated')
@@ -358,15 +358,15 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[0].state, opkg2.state)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[1].state, npkg2.state)
-        self.assertEquals(pkgs[2], opkg3)
-        self.assertEquals(pkgs[2].state, opkg3.state)
-        self.assertEquals(pkgs[3], npkg5)
-        self.assertEquals(pkgs[3].state, xstate)
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[0].state, opkg2.state)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[1].state, npkg2.state)
+        self.assertEqual(pkgs[2], opkg3)
+        self.assertEqual(pkgs[2].state, opkg3.state)
+        self.assertEqual(pkgs[3], npkg5)
+        self.assertEqual(pkgs[3].state, xstate)
 
     def testDownUpMerge1(self, xstate='Downgrade'):
         opkg1 = self._pkg_new('foo', version='10', state='Downgraded')
@@ -385,17 +385,17 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertNotEquals(pkgs[2], opkg3)
-        self.assertNotEquals(pkgs[2].state, npkg3.state)
-        self.assertNotEquals(pkgs[2], opkg4)
-        self.assertNotEquals(pkgs[2], npkg4)
-        self.assertEquals(pkgs[2].pkgtup, npkg3.pkgtup)
-        self.assertEquals(pkgs[2].state, xstate)
-        self.assertEquals(pkgs[3], opkg1)
-        self.assertEquals(pkgs[3].state, opkg1.state)
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertNotEqual(pkgs[2], opkg3)
+        self.assertNotEqual(pkgs[2].state, npkg3.state)
+        self.assertNotEqual(pkgs[2], opkg4)
+        self.assertNotEqual(pkgs[2], npkg4)
+        self.assertEqual(pkgs[2].pkgtup, npkg3.pkgtup)
+        self.assertEqual(pkgs[2].state, xstate)
+        self.assertEqual(pkgs[3], opkg1)
+        self.assertEqual(pkgs[3].state, opkg1.state)
 
     def testDownUpMerge2(self, xstate='Install'):
         opkg1 = self._pkg_new('foo', version='7', state=xstate)
@@ -413,16 +413,16 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertNotEquals(pkgs[2], opkg1)
-        self.assertNotEquals(pkgs[2], opkg3)
-        self.assertNotEquals(pkgs[2], opkg4)
-        self.assertNotEquals(pkgs[2], npkg4)
-        self.assertNotEquals(pkgs[2].state, npkg3.state)
-        self.assertEquals(pkgs[2].pkgtup, npkg3.pkgtup)
-        self.assertEquals(pkgs[2].state, xstate)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertNotEqual(pkgs[2], opkg1)
+        self.assertNotEqual(pkgs[2], opkg3)
+        self.assertNotEqual(pkgs[2], opkg4)
+        self.assertNotEqual(pkgs[2], npkg4)
+        self.assertNotEqual(pkgs[2].state, npkg3.state)
+        self.assertEqual(pkgs[2].pkgtup, npkg3.pkgtup)
+        self.assertEqual(pkgs[2].state, xstate)
 
     def testDownUpMerge3(self):
         opkg1 = self._pkg_new('foo')
@@ -440,18 +440,18 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[2], opkg1)
-        self.assertEquals(pkgs[2].state, opkg1.state)
-        self.assertNotEquals(pkgs[3], opkg1)
-        self.assertNotEquals(pkgs[3], opkg3)
-        self.assertNotEquals(pkgs[3].state, npkg3.state)
-        self.assertNotEquals(pkgs[3].state, opkg4.state)
-        self.assertNotEquals(pkgs[3], npkg4)
-        self.assertEquals(pkgs[3].pkgtup, npkg3.pkgtup)
-        self.assertEquals(pkgs[3].state, 'Reinstall')
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[2], opkg1)
+        self.assertEqual(pkgs[2].state, opkg1.state)
+        self.assertNotEqual(pkgs[3], opkg1)
+        self.assertNotEqual(pkgs[3], opkg3)
+        self.assertNotEqual(pkgs[3].state, npkg3.state)
+        self.assertNotEqual(pkgs[3].state, opkg4.state)
+        self.assertNotEqual(pkgs[3], npkg4)
+        self.assertEqual(pkgs[3].pkgtup, npkg3.pkgtup)
+        self.assertEqual(pkgs[3].state, 'Reinstall')
 
     def testDownUpMerge4(self, xstate='Update'):
         opkg2 = self._pkg_new('bar', version='4', state='Updated')
@@ -468,18 +468,18 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertNotEquals(pkgs[2], opkg3)
-        self.assertNotEquals(pkgs[2].state, 'Update')
-        self.assertNotEquals(pkgs[2].state, opkg4.state)
-        self.assertNotEquals(pkgs[2], npkg4)
-        self.assertEquals(pkgs[2].pkgtup, npkg3.pkgtup)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertNotEqual(pkgs[2], opkg3)
+        self.assertNotEqual(pkgs[2].state, 'Update')
+        self.assertNotEqual(pkgs[2].state, opkg4.state)
+        self.assertNotEqual(pkgs[2], npkg4)
+        self.assertEqual(pkgs[2].pkgtup, npkg3.pkgtup)
         if xstate == 'Obsoleting':
-            self.assertEquals(pkgs[2].state, 'Obsoleting')
+            self.assertEqual(pkgs[2].state, 'Obsoleting')
         else:
-            self.assertEquals(pkgs[2].state, 'Reinstall')
+            self.assertEqual(pkgs[2].state, 'Reinstall')
 
     def testDownUpMerge5(self, xstate='Downgrade'):
         opkg2 = self._pkg_new('bar', version='4', state='Updated')
@@ -499,15 +499,15 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 4)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[0].state, opkg2.state)
-        self.assertEquals(pkgs[1], npkg2)
-        self.assertEquals(pkgs[1].state, npkg2.state)
-        self.assertEquals(pkgs[2], npkg5)
-        self.assertEquals(pkgs[2].state, xstate)
-        self.assertEquals(pkgs[3], opkg3)
-        self.assertEquals(pkgs[3].state, opkg3.state)
+        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[0].state, opkg2.state)
+        self.assertEqual(pkgs[1], npkg2)
+        self.assertEqual(pkgs[1].state, npkg2.state)
+        self.assertEqual(pkgs[2], npkg5)
+        self.assertEqual(pkgs[2].state, xstate)
+        self.assertEqual(pkgs[3], opkg3)
+        self.assertEqual(pkgs[3].state, opkg3.state)
 
     def testInRmMerge1(self, xstate='Install', estate='Erase'):
         npkg1 = self._pkg_new('foo', state=xstate)
@@ -521,9 +521,9 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 1)
-        self.assertEquals(pkgs[0], npkg3)
-        self.assertEquals(pkgs[0].state, npkg3.state)
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0], npkg3)
+        self.assertEqual(pkgs[0].state, npkg3.state)
 
     def testInRmMerge2(self, xstate='Install'):
         self.testInRmMerge1(xstate, 'Obsoleted')
@@ -548,9 +548,9 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 1)
-        self.assertEquals(pkgs[0], npkg9)
-        self.assertEquals(pkgs[0].state, npkg9.state)
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0], npkg9)
+        self.assertEqual(pkgs[0].state, npkg9.state)
 
     def testInRmInonlyMerge2(self, xstate='True-Install'):
         self.testInRmInonlyMerge1(xstate, 'Obsoleted')
@@ -568,11 +568,11 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 2)
-        self.assertEquals(pkgs[0], opkg2)
-        self.assertEquals(pkgs[0].state, npkg3.state)
-        self.assertEquals(pkgs[1], npkg1)
-        self.assertEquals(pkgs[1].state, npkg1.state)
+        self.assertEqual(len(pkgs), 2)
+        self.assertEqual(pkgs[0], opkg2)
+        self.assertEqual(pkgs[0].state, npkg3.state)
+        self.assertEqual(pkgs[1], npkg1)
+        self.assertEqual(pkgs[1].state, npkg1.state)
 
     def testUpRmMerge2(self, xstate='True-Install'):
         npkg1 = self._pkg_new('foo')
@@ -588,9 +588,9 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 1)
-        self.assertEquals(pkgs[0], npkg1)
-        self.assertEquals(pkgs[0].state, npkg1.state)
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0], npkg1)
+        self.assertEqual(pkgs[0].state, npkg1.state)
 
     def testUpRmMerge3(self, xstate='Update'):
         npkg1 = self._pkg_new('foo')
@@ -606,9 +606,9 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 1)
-        self.assertEquals(pkgs[0], npkg1)
-        self.assertEquals(pkgs[0].state, npkg1.state)
+        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(pkgs[0], npkg1)
+        self.assertEqual(pkgs[0].state, npkg1.state)
 
     def testRmInMerge1(self, xstate='Install', estate='Erase'):
         npkg1 = self._pkg_new('foo', state=xstate)
@@ -622,14 +622,14 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 2)
-        self.assertEquals(pkgs[0], npkg3)
-        self.assertEquals(pkgs[0].state, npkg3.state)
-        self.assertEquals(pkgs[1], npkg1)
+        self.assertEqual(len(pkgs), 2)
+        self.assertEqual(pkgs[0], npkg3)
+        self.assertEqual(pkgs[0].state, npkg3.state)
+        self.assertEqual(pkgs[1], npkg1)
         if xstate == 'Obsoleting':
-            self.assertEquals(pkgs[1].state, 'Obsoleting')
+            self.assertEqual(pkgs[1].state, 'Obsoleting')
         else:
-            self.assertEquals(pkgs[1].state, 'Reinstall')
+            self.assertEqual(pkgs[1].state, 'Reinstall')
 
     def testRmInMerge2(self, xstate='Install'):
         self.testRmInMerge1(xstate, 'Obsoleted')
@@ -650,16 +650,16 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], npkg1)
-        self.assertEquals(pkgs[0].state, npkg1.state)
-        self.assertEquals(pkgs[1].pkgtup, npkg4.pkgtup)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], npkg1)
+        self.assertEqual(pkgs[0].state, npkg1.state)
+        self.assertEqual(pkgs[1].pkgtup, npkg4.pkgtup)
         if ystate == 'Obsoleting':
-            self.assertEquals(pkgs[1].state, "Obsoleting")
+            self.assertEqual(pkgs[1].state, "Obsoleting")
         else:
-            self.assertEquals(pkgs[1].state, "Downgrade")
-        self.assertEquals(pkgs[2].pkgtup, opkg2.pkgtup)
-        self.assertEquals(pkgs[2].state, "Downgraded")
+            self.assertEqual(pkgs[1].state, "Downgrade")
+        self.assertEqual(pkgs[2].pkgtup, opkg2.pkgtup)
+        self.assertEqual(pkgs[2].state, "Downgraded")
 
     def testUpRmInlMerge2(self, xstate='Update', ystate='Install'):
         self.testUpRmInlMerge1(xstate, ystate, 'Obsoleted')
@@ -680,16 +680,16 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], npkg1)
-        self.assertEquals(pkgs[0].state, npkg1.state)
-        self.assertEquals(pkgs[1].pkgtup, opkg2.pkgtup)
-        self.assertEquals(pkgs[1].state,  "Updated")
-        self.assertEquals(pkgs[2].pkgtup, npkg4.pkgtup)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], npkg1)
+        self.assertEqual(pkgs[0].state, npkg1.state)
+        self.assertEqual(pkgs[1].pkgtup, opkg2.pkgtup)
+        self.assertEqual(pkgs[1].state,  "Updated")
+        self.assertEqual(pkgs[2].pkgtup, npkg4.pkgtup)
         if ystate == 'Obsoleting':
-            self.assertEquals(pkgs[2].state, "Obsoleting")
+            self.assertEqual(pkgs[2].state, "Obsoleting")
         else:
-            self.assertEquals(pkgs[2].state, "Update")
+            self.assertEqual(pkgs[2].state, "Update")
 
     def testUpRmInuMerge2(self, xstate='Update', ystate='Install'):
         self.testUpRmInuMerge1(xstate, ystate, 'Obsoleted')
@@ -717,13 +717,13 @@ class MergeHistTransTests(unittest.TestCase):
         merged = self._merge_new(trans)
         self.assertMergedMain(merged, trans)
         pkgs = merged.trans_data
-        self.assertEquals(len(pkgs), 3)
-        self.assertEquals(pkgs[0], opkg1)
-        self.assertEquals(pkgs[0].state, 'Updated')
-        self.assertEquals(pkgs[1], opkg2)
-        self.assertEquals(pkgs[1].state, 'Updated')
-        self.assertEquals(pkgs[2], opkg3)
-        self.assertEquals(pkgs[2].state, estate)
+        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(pkgs[0], opkg1)
+        self.assertEqual(pkgs[0].state, 'Updated')
+        self.assertEqual(pkgs[1], opkg2)
+        self.assertEqual(pkgs[1].state, 'Updated')
+        self.assertEqual(pkgs[2], opkg3)
+        self.assertEqual(pkgs[2].state, estate)
 
     #  Obsoleting is the _painful_ one because it really should be a state, but
     # an attribute. So "Obsoleting" can be any of:

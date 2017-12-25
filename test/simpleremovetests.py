@@ -22,43 +22,43 @@ class SimpleRemoveTests(OperationsTests):
     def testRemoveSingle(self):
         p = self.pkgs
         res, msg = self.runOperation(['remove', 'foo'], [p.leaf], [])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( () )
 
     def testRemoveRequired(self):
         p = self.pkgs
         res, msg = self.runOperation(['remove', 'foo'], [p.leaf, p.requires_leaf], [])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( () )
 
     def testRemoveRequiredMissing(self):
         p = self.pkgs
         res, msg = self.runOperation(['remove', 'bar'], [p.requires_leaf], [])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( () )
 
     def testRemoveRequiredProvided(self):
         p = self.pkgs
         res, msg = self.runOperation(['remove', 'foo'], [p.leaf, p.requires_leaf, p.provides_leaf], [])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( (p.requires_leaf, p.provides_leaf) )
 
     def testRemoveRequiredAvailable(self):
         p = self.pkgs
         res, msg = self.runOperation(['remove', 'foo'], [p.leaf, p.requires_leaf], [p.provides_leaf])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( () )
 
     def testRemoveRequiredChain(self):
         p = self.pkgs
         res, msg = self.runOperation(['remove', 'foo'], [p.leaf, p.requires_leaf, p.rr_leaf], [])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( () )
 
     def testRemoveRequiredFile(self):
         p = self.pkgs
         res, msg = self.runOperation(['remove', 'foo'], [p.leaf, p.requires_file], [])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( () )
 
     def testShellUpRm1(self):
@@ -72,7 +72,7 @@ class SimpleRemoveTests(OperationsTests):
                                       ),
                                      [pi1],
                                      [pa1], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult(())
 
     def testShellUpRm2(self):
@@ -88,7 +88,7 @@ class SimpleRemoveTests(OperationsTests):
                                       ),
                                      [pi1, pi2],
                                      [pa1, pa2], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pi1, ))
 
     def testShellUpRm3(self):
@@ -104,7 +104,7 @@ class SimpleRemoveTests(OperationsTests):
                                       ),
                                      [pi1, pi2],
                                      [pa1, pa2], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pi2, ))
 
     def testShellUpRm4(self):
@@ -120,6 +120,6 @@ class SimpleRemoveTests(OperationsTests):
                                       ),
                                      [pi1, pi2],
                                      [pa1, pa2], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pi1,))
 

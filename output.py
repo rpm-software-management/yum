@@ -264,19 +264,19 @@ class YumTerm:
         # Colors
         set_fg = self._tigetstr('setf')
         if set_fg:
-            for (color, val) in self.__colors.items():
+            for (color, val) in list(self.__colors.items()):
                 self.FG_COLOR[color] = curses.tparm(set_fg, val) or ''
         set_fg_ansi = self._tigetstr('setaf')
         if set_fg_ansi:
-            for (color, val) in self.__ansi_colors.items():
+            for (color, val) in list(self.__ansi_colors.items()):
                 self.FG_COLOR[color] = curses.tparm(set_fg_ansi, val) or ''
         set_bg = self._tigetstr('setb')
         if set_bg:
-            for (color, val) in self.__colors.items():
+            for (color, val) in list(self.__colors.items()):
                 self.BG_COLOR[color] = curses.tparm(set_bg, val) or ''
         set_bg_ansi = self._tigetstr('setab')
         if set_bg_ansi:
-            for (color, val) in self.__ansi_colors.items():
+            for (color, val) in list(self.__ansi_colors.items()):
                 self.BG_COLOR[color] = curses.tparm(set_bg_ansi, val) or ''
 
     def __init__(self, term_stream=None, color='auto'):
@@ -498,7 +498,7 @@ class YumOutput:
         hiend = ''
         if not highlight:
             pass
-        elif not isinstance(highlight, basestring) or highlight == 'bold':
+        elif not isinstance(highlight, str) or highlight == 'bold':
             hibeg = self.term.MODE['bold']
         elif highlight == 'normal':
             pass # Minor opt.
@@ -594,7 +594,7 @@ class YumOutput:
             # Find which field all the spaces left will help best
             helps = 0
             val   = 0
-            for d in xrange(0, cols):
+            for d in range(0, cols):
                 thelps = self._calc_columns_spaces_helps(columns[d], data[d],
                                                          total_width)
                 if not thelps:
@@ -622,7 +622,7 @@ class YumOutput:
                 continue
 
             overflowed_columns = 0
-            for d in xrange(0, cols):
+            for d in range(0, cols):
                 if not data[d]:
                     continue
                 overflowed_columns += 1
@@ -630,7 +630,7 @@ class YumOutput:
                 #  Split the remaining spaces among each overflowed column
                 # equally
                 norm = total_width / overflowed_columns
-                for d in xrange(0, cols):
+                for d in range(0, cols):
                     if not data[d]:
                         continue
                     columns[d] += norm
@@ -640,7 +640,7 @@ class YumOutput:
             # last one. And put the rest into the remainder column
             cols -= 1
             norm = total_width / cols
-            for d in xrange(0, cols):
+            for d in range(0, cols):
                 columns[d] += norm
             columns[remainder_column] += total_width - (cols * norm)
             total_width = 0
@@ -650,8 +650,8 @@ class YumOutput:
     @staticmethod
     def _fmt_column_align_width(width):
         if width < 0:
-            return (u"-", -width)
-        return (u"", width)
+            return ("-", -width)
+        return ("", width)
 
     def _col_data(self, col_data):
         assert len(col_data) == 2 or len(col_data) == 3
@@ -663,7 +663,7 @@ class YumOutput:
             (hibeg, hiend) = self._highlight(highlight)
         return (val, width, hibeg, hiend)
 
-    def fmtColumns(self, columns, msg=u'', end=u'', text_width=utf8_width):
+    def fmtColumns(self, columns, msg='', end='', text_width=utf8_width):
         """Return a row of data formatted into a string for output.
         Items can overflow their columns. 
 
@@ -684,7 +684,7 @@ class YumOutput:
             (val, width, hibeg, hiend) = self._col_data(col_data)
 
             if not width: # Don't count this column, invisible text
-                msg += u"%s"
+                msg += "%s"
                 data.append(val)
                 continue
 
@@ -694,21 +694,21 @@ class YumOutput:
                 #  Don't use utf8_width_fill() because it sucks performance
                 # wise for 1,000s of rows. Also allows us to use len(), when
                 # we can.
-                msg += u"%s%s%s%s "
-                if (align == u'-'):
+                msg += "%s%s%s%s "
+                if (align == '-'):
                     data.extend([hibeg, val, hiend, " " * (width - val_width)])
                 else:
                     data.extend([" " * (width - val_width), hibeg, val, hiend])
             else:
-                msg += u"%s%s%s\n" + " " * (total_width + width + 1)
+                msg += "%s%s%s\n" + " " * (total_width + width + 1)
                 data.extend([hibeg, val, hiend])
             total_width += width
             total_width += 1
         (val, width, hibeg, hiend) = self._col_data(columns[-1])
         (align, width) = self._fmt_column_align_width(width)
-        val = utf8_width_fill(val, width, left=(align == u'-'),
+        val = utf8_width_fill(val, width, left=(align == '-'),
                               prefix=hibeg, suffix=hiend)
-        msg += u"%%s%s" % end
+        msg += "%%s%s" % end
         data.append(val)
         return msg % tuple(data)
 
@@ -732,8 +732,8 @@ class YumOutput:
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
-        columns = zip((na, ver, rid), columns, hi_cols)
-        print self.fmtColumns(columns, text_width=len)
+        columns = list(zip((na, ver, rid), columns, hi_cols))
+        print(self.fmtColumns(columns, text_width=len))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
                         indent='', highlight=False, columns=None):
@@ -755,8 +755,8 @@ class YumOutput:
         envra = '%s%s' % (indent, str(pkg))
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
-        columns = zip((envra, rid), columns, hi_cols)
-        print self.fmtColumns(columns, text_width=len)
+        columns = list(zip((envra, rid), columns, hi_cols))
+        print(self.fmtColumns(columns, text_width=len))
 
     def fmtKeyValFill(self, key, val):
         """Return a key value pair in the common two column output
@@ -820,22 +820,22 @@ class YumOutput:
            package
         """
         (hibeg, hiend) = self._highlight(highlight)
-        print _("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend)
-        print _("Arch        : %s") % to_unicode(pkg.arch)
+        print(_("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend))
+        print(_("Arch        : %s") % to_unicode(pkg.arch))
         if pkg.epoch != "0":
-            print _("Epoch       : %s") % to_unicode(pkg.epoch)
-        print _("Version     : %s") % to_unicode(pkg.version)
-        print _("Release     : %s") % to_unicode(pkg.release)
-        print _("Size        : %s") % self.format_number(float(pkg.size))
-        print _("Repo        : %s") % to_unicode(pkg.repo.ui_id)
+            print(_("Epoch       : %s") % to_unicode(pkg.epoch))
+        print(_("Version     : %s") % to_unicode(pkg.version))
+        print(_("Release     : %s") % to_unicode(pkg.release))
+        print(_("Size        : %s") % self.format_number(float(pkg.size)))
+        print(_("Repo        : %s") % to_unicode(pkg.repo.ui_id))
         if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
-            print _("From repo   : %s") % to_unicode(pkg.yumdb_info.from_repo)
+            print(_("From repo   : %s") % to_unicode(pkg.yumdb_info.from_repo))
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-            print _("Committer   : %s") % to_unicode(pkg.committer)
-            print _("Committime  : %s") % time.ctime(pkg.committime)
-            print _("Buildtime   : %s") % time.ctime(pkg.buildtime)
+            print(_("Committer   : %s") % to_unicode(pkg.committer))
+            print(_("Committime  : %s") % time.ctime(pkg.committime))
+            print(_("Buildtime   : %s") % time.ctime(pkg.buildtime))
             if hasattr(pkg, 'installtime'):
-                print _("Install time: %s") % time.ctime(pkg.installtime)
+                print(_("Install time: %s") % time.ctime(pkg.installtime))
             if pkg.repoid == 'installed':
                 uid = None
                 if 'installed_by' in pkg.yumdb_info:
@@ -843,20 +843,20 @@ class YumOutput:
                         uid = int(pkg.yumdb_info.installed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print _("Installed by: %s") % self._pwd_ui_username(uid)
+                print(_("Installed by: %s") % self._pwd_ui_username(uid))
                 uid = None
                 if 'changed_by' in pkg.yumdb_info:
                     try:
                         uid = int(pkg.yumdb_info.changed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print _("Changed by  : %s") % self._pwd_ui_username(uid)
-        print self.fmtKeyValFill(_("Summary     : "), self._enc(pkg.summary))
+                print(_("Changed by  : %s") % self._pwd_ui_username(uid))
+        print(self.fmtKeyValFill(_("Summary     : "), self._enc(pkg.summary)))
         if pkg.url:
-            print _("URL         : %s") % to_unicode(pkg.url)
-        print self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license))
-        print self.fmtKeyValFill(_("Description : "),self._enc(pkg.description))
-        print ""
+            print(_("URL         : %s") % to_unicode(pkg.url))
+        print(self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license)))
+        print(self.fmtKeyValFill(_("Description : "),self._enc(pkg.description)))
+        print("")
     
     def updatesObsoletesList(self, uotup, changetype, columns=None, repoid=None):
         """Print a simple string that explains the relationship
@@ -894,7 +894,7 @@ class YumOutput:
         c_compact = changePkg.compactPrint()
         i_compact = '%s.%s' % (instPkg.name, instPkg.arch)
         c_repo = changePkg.repoid
-        print '%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact)
+        print('%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact))
 
     def listPkgs(self, lst, description, outputType, highlight_na={},
                  columns=None, highlight_modes={}):
@@ -941,7 +941,7 @@ class YumOutput:
             thingslisted = 0
             if len(lst) > 0:
                 thingslisted = 1
-                print '%s' % description
+                print('%s' % description)
                 for pkg in sorted(lst):
                     key = (pkg.name, pkg.arch)
                     highlight = False
@@ -976,15 +976,15 @@ class YumOutput:
         """
 
         # Allow the one letter english versions in all langs.
-        yui = (u'y', to_unicode(_('y')), to_unicode(_('yes')))
-        nui = (u'n', to_unicode(_('n')), to_unicode(_('no')))
+        yui = ('y', to_unicode(_('y')), to_unicode(_('yes')))
+        nui = ('n', to_unicode(_('n')), to_unicode(_('no')))
         aui = set(yui + nui)
         for xui in extra:
             aui.update(extra[xui])
 
         while True:
             try:
-                choice = raw_input(prompt)
+                choice = input(prompt)
             except UnicodeEncodeError:
                 raise
             except UnicodeDecodeError:
@@ -1033,7 +1033,7 @@ class YumOutput:
 
         # Convert (pkg.name, pkg.arch) to pkg.name dict
         ret = {}
-        for (apkg, ipkg) in pkgs.itervalues():
+        for (apkg, ipkg) in pkgs.values():
             pkg = apkg or ipkg
             ret.setdefault(pkg.name, []).append((apkg, ipkg))
         return ret
@@ -1082,7 +1082,7 @@ class YumOutput:
                 if pindent is None:
                     continue
 
-                print '%s%s' % (pindent, item)
+                print('%s%s' % (pindent, item))
         else:
             for item in sorted(pkg_names):
                 pindent = _get_igrp_data(item, indent)
@@ -1090,7 +1090,7 @@ class YumOutput:
                     continue
 
                 if item not in pkg_names2pkgs:
-                    print '%s%s' % (pindent, item)
+                    print('%s%s' % (pindent, item))
                     continue
                 for (apkg, ipkg) in sorted(pkg_names2pkgs[item],
                                            key=lambda x: x[1] or x[0]):
@@ -1109,11 +1109,11 @@ class YumOutput:
         
         :param group: a Group object to output information about
         """
-        print _('\nGroup: %s') % group.ui_name
+        print(_('\nGroup: %s') % group.ui_name)
 
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if True:
-            print _(' Group-Id: %s') % to_unicode(group.compsid)
+            print(_(' Group-Id: %s') % to_unicode(group.compsid))
 
         igroup_data = self._groupInstalledData(group)
         igrp_only   = set()
@@ -1134,9 +1134,9 @@ class YumOutput:
                 pkg_names2pkgs[ipkg.name].append(ipkg)
 
         if group.ui_description:
-            print _(' Description: %s') % to_unicode(group.ui_description)
+            print(_(' Description: %s') % to_unicode(group.ui_description))
         if group.langonly:
-            print _(' Language: %s') % group.langonly
+            print(_(' Language: %s') % group.langonly)
 
         sections = (('mandatory', _(' Mandatory Packages:'),
                      group.mandatory_packages),
@@ -1167,12 +1167,12 @@ class YumOutput:
                 tigroup_data = None
 
             if len(pkg_names) > 0:
-                print section_name
+                print(section_name)
                 self._displayPkgsFromNames(pkg_names, verb, pkg_names2pkgs,
                                            columns=columns,
                                            igroup_data=tigroup_data)
         if igrp_only:
-            print _(' Installed Packages:')
+            print(_(' Installed Packages:'))
             self._displayPkgsFromNames(igrp_only, verb, pkg_names2pkgs,
                                        columns=columns,
                                        igroup_data=igroup_data)
@@ -1182,8 +1182,8 @@ class YumOutput:
 
         :param group: an Environment object to output information about
         """
-        print _('\nEnvironment Group: %s') % evgroup.ui_name
-        print _(' Environment-Id: %s') % to_unicode(evgroup.compsid)
+        print(_('\nEnvironment Group: %s') % evgroup.ui_name)
+        print(_(' Environment-Id: %s') % to_unicode(evgroup.compsid))
 
         igroup_data = self._groupInstalledEnvData(evgroup)
         igrp_only   = set()
@@ -1194,7 +1194,7 @@ class YumOutput:
         all_grps = evgroup.allgroups + list(igrp_only)
 
         if evgroup.ui_description:
-            print _(' Description: %s') % to_unicode(evgroup.ui_description)
+            print(_(' Description: %s') % to_unicode(evgroup.ui_description))
 
         def _get_igrp_data(item, indent):
             if not igroup_data:
@@ -1221,18 +1221,18 @@ class YumOutput:
 
         for (section_name, grp_names) in sections:
             if len(grp_names) > 0:
-                print section_name
+                print(section_name)
                 for grp_name in sorted(grp_names):
                     pindent = _get_igrp_data(grp_name, "   ")
                     if pindent is None:
                         continue
 
-                    print "%s%s" % (pindent, grp_name)
+                    print("%s%s" % (pindent, grp_name))
 
         if igrp_only:
-            print _(' Installed Groups:')
+            print(_(' Installed Groups:'))
             for grp_name in sorted(igrp_only):
-                print "%s%s", "  ", grp_name
+                print("%s%s", "  ", grp_name)
 
     def depListOutput(self, results):
         """Format and output a list of findDeps results
@@ -1242,16 +1242,16 @@ class YumOutput:
         """
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         for pkg in sorted(results):
-            print _("package: %s") % pkg.compactPrint()
+            print(_("package: %s") % pkg.compactPrint())
             if len(results[pkg]) == 0:
-                print _("  No dependencies for this package")
+                print(_("  No dependencies for this package"))
                 continue
 
             for req in sorted(results[pkg]):
                 reqlist = results[pkg][req] 
-                print _("  dependency: %s") % prco_tuple_to_string(req)
+                print(_("  dependency: %s") % prco_tuple_to_string(req))
                 if not reqlist:
-                    print _("   Unsatisfied dependency")
+                    print(_("   Unsatisfied dependency"))
                     continue
                 
                 seen = {}
@@ -1260,7 +1260,7 @@ class YumOutput:
                     if not verb and key in seen:
                         continue
                     seen[key] = po
-                    print "   provider: %s" % po.compactPrint()
+                    print("   provider: %s" % po.compactPrint())
 
     def format_number(self, number, SI=0, space=' '):
         """Return a human-readable metric-like string representation
@@ -1299,7 +1299,7 @@ class YumOutput:
             depth  = depth + 1
             number = number / step
     
-        if type(number) == type(1) or type(number) == type(1L):
+        if type(number) == type(1) or type(number) == type(1):
             format = '%i%s%s'
         elif number < 9.95:
             # must use 9.95 for proper sizing.  For example, 9.99 will be
@@ -1354,14 +1354,14 @@ class YumOutput:
                 highlight = self.conf.color_search_match
             msg = self._sub_highlight(msg, highlight, matchfor,ignore_case=True)
         
-        print msg
+        print(msg)
 
         if verbose is None:
             verbose = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if not verbose:
             return
 
-        print _("Repo        : %s") % po.ui_from_repo
+        print(_("Repo        : %s") % po.ui_from_repo)
         done = False
         for item in yum.misc.unique(values):
             item = to_utf8(item)
@@ -1369,7 +1369,7 @@ class YumOutput:
                 continue # Skip double name/summary printing
 
             if not done:
-                print _('Matched from:')
+                print(_('Matched from:'))
                 done = True
             can_overflow = True
             if False: pass
@@ -1401,10 +1401,10 @@ class YumOutput:
                 item = self._sub_highlight(item, highlight, matchfor,
                                            ignore_case=True)
             if can_overflow:
-                print self.fmtKeyValFill(key, to_unicode(item))
+                print(self.fmtKeyValFill(key, to_unicode(item)))
             else:
-                print key % item
-        print '\n\n'
+                print(key % item)
+        print('\n\n')
 
     def matchcallback_verbose(self, po, values, matchfor=None):
         """Output search/provides type callback matches.  This will
@@ -1582,8 +1582,8 @@ class YumOutput:
 
         for (action, pkglist) in [(_('Skipped (dependency problems)'),
                                    self.skipped_packages),
-                                  (_('Not installed'), self._not_found_i.values()),
-                                  (_('Not available'), self._not_found_a.values())]:
+                                  (_('Not installed'), list(self._not_found_i.values())),
+                                  (_('Not available'), list(self._not_found_a.values()))]:
             lines = []
             for po in pkglist:
                 a_wid = _add_line(lines, data, a_wid, po)
@@ -1591,7 +1591,7 @@ class YumOutput:
             pkglist_lines.append((action, lines))
 
         if not data['n']:
-            return u''
+            return ''
         else:
             data    = [data['n'],    {}, data['v'], data['r'], {}]
             columns = [1,         a_wid,         1,         1,  5]
@@ -1600,23 +1600,23 @@ class YumOutput:
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
             assert s_wid == 5
 
-            out = [u"""
+            out = ["""
 %s
 %s
 %s
 """ % ('=' * self.term.columns,
        self.fmtColumns(((_('Package'), -n_wid), (_('Arch'), -a_wid),
                         (_('Version'), -v_wid), (_('Repository'), -r_wid),
-                        (_('Size'), s_wid)), u" "),
+                        (_('Size'), s_wid)), " "),
        '=' * self.term.columns)]
 
         for (action, lines) in pkglist_lines:
             if lines:
-                totalmsg = u"%s:\n" % action
+                totalmsg = "%s:\n" % action
             for (n, a, evr, repoid, size, obsoletes, hi) in lines:
                 columns = ((n,   -n_wid, hi), (a,      -a_wid),
                            (evr, -v_wid), (repoid, -r_wid), (size, s_wid))
-                msg = self.fmtColumns(columns, u" ", u"\n")
+                msg = self.fmtColumns(columns, " ", "\n")
                 hibeg, hiend = self._highlight(self.conf.color_update_installed)
                 for obspo in sorted(obsoletes):
                     appended = _('     replacing  %s%s%s.%s %s\n')
@@ -1642,8 +1642,8 @@ Transaction Summary
             (_('Reinstall'), len(self.tsInfo.reinstalled), 0),
             (_('Downgrade'), len(self.tsInfo.downgraded), 0),
             (_('Skipped (dependency problems)'), len(self.skipped_packages), 0),
-            (_('Not installed'), len(self._not_found_i.values()), 0),
-            (_('Not available'), len(self._not_found_a.values()), 0),
+            (_('Not installed'), len(list(self._not_found_i.values())), 0),
+            (_('Not available'), len(list(self._not_found_a.values())), 0),
         )
         max_msg_action   = 0
         max_msg_count    = 0
@@ -1756,7 +1756,7 @@ Transaction Summary
                 while msgs:
                     current_msgs = msgs[:len(cols)]
                     out += '  '
-                    out += self.fmtColumns(zip(current_msgs, cols), end=u'\n')
+                    out += self.fmtColumns(list(zip(current_msgs, cols)), end='\n')
                     msgs = msgs[len(cols):]
 
         return out
@@ -2075,12 +2075,12 @@ to exit.
             name = _("Command line")
         else:
             name = _("Login user")
-        print fmt % (utf8_width_fill(_("ID"), 6, 6),
+        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
                      utf8_width_fill(name, 24, 24),
                      utf8_width_fill(_("Date and time"), 16, 16),
                      utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Altered"), 7, 7))
-        print "-" * 79
+                     utf8_width_fill(_("Altered"), 7, 7)))
+        print("-" * 79)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
         for old in old_tids:
@@ -2113,7 +2113,7 @@ to exit.
                 rmark = '<'
             if old.altered_gt_rpmdb:
                 lmark = '>'
-            print fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark)
+            print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark))
         lastdbv = self.history.last()
         if lastdbv is None:
             self._rpmdb_warn_checks(warn=False)
@@ -2245,7 +2245,7 @@ to exit.
                     mobj.merge(tid)
             elif mobj is not None:
                 if done:
-                    print "-" * 79
+                    print("-" * 79)
                 done = True
 
                 self._historyInfoCmd(mobj)
@@ -2257,14 +2257,14 @@ to exit.
 
             if tid.tid in utids:
                 if done:
-                    print "-" * 79
+                    print("-" * 79)
                 done = True
 
                 self._historyInfoCmd(tid, pats)
 
         if mobj is not None:
             if done:
-                print "-" * 79
+                print("-" * 79)
 
             self._historyInfoCmd(mobj)
 
@@ -2290,8 +2290,8 @@ to exit.
                                  'o' : _('Updated'), 'n' : _('Downgraded')}
         _pkg_states_available = {'i' : _('Installed'), 'e' : _('Not installed'),
                                  'o' : _('Older'), 'n' : _('Newer')}
-        maxlen = max([len(x) for x in (_pkg_states_installed.values() +
-                                       _pkg_states_available.values())])
+        maxlen = max([len(x) for x in (list(_pkg_states_installed.values()) +
+                                       list(_pkg_states_available.values()))])
         _pkg_states_installed['maxlen'] = maxlen
         _pkg_states_available['maxlen'] = maxlen
         def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False,
@@ -2322,20 +2322,20 @@ to exit.
             ui_repo = ''
             if show_repo:
                 ui_repo = self._hpkg2from_repo(hpkg)
-            print "%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
-                                        pkg_max_len, hpkg, ui_repo)
+            print("%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
+                                        pkg_max_len, hpkg, ui_repo))
 
         if type(old.tid) == type([]):
-            print _("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1])
+            print(_("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1]))
         else:
-            print _("Transaction ID :"), old.tid
+            print(_("Transaction ID :"), old.tid)
         begtm = time.ctime(old.beg_timestamp)
-        print _("Begin time     :"), begtm
+        print(_("Begin time     :"), begtm)
         if old.beg_rpmdbversion is not None:
             if old.altered_lt_rpmdb:
-                print _("Begin rpmdb    :"), old.beg_rpmdbversion, "**"
+                print(_("Begin rpmdb    :"), old.beg_rpmdbversion, "**")
             else:
-                print _("Begin rpmdb    :"), old.beg_rpmdbversion
+                print(_("Begin rpmdb    :"), old.beg_rpmdbversion)
         if old.end_timestamp is not None:
             endtm = time.ctime(old.end_timestamp)
             endtms = endtm.split()
@@ -2358,37 +2358,37 @@ to exit.
                 diff = _("(%u hours)") % (diff / (60 * 60))
             else:
                 diff = _("(%u days)") % (diff / (60 * 60 * 24))
-            print _("End time       :"), endtm, diff
+            print(_("End time       :"), endtm, diff)
         if old.end_rpmdbversion is not None:
             if old.altered_gt_rpmdb:
-                print _("End rpmdb      :"), old.end_rpmdbversion, "**"
+                print(_("End rpmdb      :"), old.end_rpmdbversion, "**")
             else:
-                print _("End rpmdb      :"), old.end_rpmdbversion
+                print(_("End rpmdb      :"), old.end_rpmdbversion)
         if type(name) == type([]):
             for name in name:
-                print _("User           :"), name
+                print(_("User           :"), name)
         else:
-            print _("User           :"), name
+            print(_("User           :"), name)
         if type(old.return_code) == type([]):
             codes = old.return_code
             if codes[0] is None:
-                print _("Return-Code    :"), "**", _("Aborted"), "**"
+                print(_("Return-Code    :"), "**", _("Aborted"), "**")
                 codes = codes[1:]
             if codes:
-                print _("Return-Code    :"), _("Failures:"), ", ".join(codes)
+                print(_("Return-Code    :"), _("Failures:"), ", ".join(codes))
         elif old.return_code is None:
-            print _("Return-Code    :"), "**", _("Aborted"), "**"
+            print(_("Return-Code    :"), "**", _("Aborted"), "**")
         elif old.return_code:
-            print _("Return-Code    :"), _("Failure:"), old.return_code
+            print(_("Return-Code    :"), _("Failure:"), old.return_code)
         else:
-            print _("Return-Code    :"), _("Success")
+            print(_("Return-Code    :"), _("Success"))
             
         if old.cmdline is not None:
             if type(old.cmdline) == type([]):
                 for cmdline in old.cmdline:
-                    print _("Command Line   :"), cmdline
+                    print(_("Command Line   :"), cmdline)
             else:
-                print _("Command Line   :"), old.cmdline
+                print(_("Command Line   :"), old.cmdline)
 
         if type(old.tid) != type([]):
             addon_info = self.history.return_addon_data(old.tid)
@@ -2397,20 +2397,20 @@ to exit.
             default_addons = set(['config-main', 'config-repos', 'saved_tx'])
             non_default = set(addon_info).difference(default_addons)
             if len(non_default) > 0:
-                print _("Additional non-default information stored: %d" 
-                            % len(non_default))
+                print(_("Additional non-default information stored: %d" 
+                            % len(non_default)))
 
         if old.trans_with:
             # This is _possible_, but not common
-            print _("Transaction performed with:")
+            print(_("Transaction performed with:"))
             pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_with))
         for hpkg in old.trans_with:
             _simple_pkg(hpkg, 4, was_installed=True, pkg_max_len=pkg_max_len)
-        print _("Packages Altered:")
+        print(_("Packages Altered:"))
         self.historyInfoCmdPkgsAltered(old, pats)
 
         if old.trans_skip:
-            print _("Packages Skipped:")
+            print(_("Packages Skipped:"))
             pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_skip))
         for hpkg in old.trans_skip:
             #  Don't show the repo. here because we can't store it as they were,
@@ -2418,10 +2418,10 @@ to exit.
             _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len, show_repo=False)
 
         if old.rpmdb_problems:
-            print _("Rpmdb Problems:")
+            print(_("Rpmdb Problems:"))
         for prob in old.rpmdb_problems:
             key = "%s%s: " % (" " * 4, prob.problem)
-            print self.fmtKeyValFill(key, prob.text)
+            print(self.fmtKeyValFill(key, prob.text))
             if prob.packages:
                 pkg_max_len = max((len(str(hpkg)) for hpkg in prob.packages))
             for hpkg in prob.packages:
@@ -2429,17 +2429,17 @@ to exit.
                             pkg_max_len=pkg_max_len)
 
         if old.output:
-            print _("Scriptlet output:")
+            print(_("Scriptlet output:"))
             num = 0
             for line in old.output:
                 num += 1
-                print "%4d" % num, line
+                print("%4d" % num, line)
         if old.errors:
-            print _("Errors:")
+            print(_("Errors:"))
             num = 0
             for line in old.errors:
                 num += 1
-                print "%4d" % num, line
+                print("%4d" % num, line)
 
     _history_state2uistate = {'True-Install' : _('Install'),
                               'Install'      : _('Install'),
@@ -2509,9 +2509,9 @@ to exit.
                 last = None
                 if hpkg.state in ('Updated', 'Downgrade'):
                     last = hpkg
-            print "%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
+            print("%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
                                         pkg_max_len, cn,
-                                        self._hpkg2from_repo(hpkg))
+                                        self._hpkg2from_repo(hpkg)))
 
     def historySummaryCmd(self, extcmds):
         """Print a summary of transactions in history.
@@ -2523,11 +2523,11 @@ to exit.
             return 1, ['Failed history info']
 
         fmt = "%s | %s | %s | %s"
-        print fmt % (utf8_width_fill(_("Login user"), 26, 26),
+        print(fmt % (utf8_width_fill(_("Login user"), 26, 26),
                      utf8_width_fill(_("Time"), 19, 19),
                      utf8_width_fill(_("Action(s)"), 16, 16),
-                     utf8_width_fill(_("Altered"), 8, 8))
-        print "-" * 79
+                     utf8_width_fill(_("Altered"), 8, 8)))
+        print("-" * 79)
         fmt = "%s | %s | %s | %8u"
         data = {'day' : {}, 'week' : {},
                 'fortnight' : {}, 'quarter' : {}, 'half' : {}, 
@@ -2573,9 +2573,9 @@ to exit.
                 count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
                 # Should probably use columns here, esp. for uiacts?
-                print fmt % (utf8_width_fill(name, 26, 26),
+                print(fmt % (utf8_width_fill(name, 26, 26),
                              utf8_width_fill(uperiod, 19, 19),
-                             utf8_width_fill(uiacts, 16, 16), count)
+                             utf8_width_fill(uiacts, 16, 16), count))
 
     def historyAddonInfoCmd(self, extcmds):
         """Print addon information about transaction in history.
@@ -2609,21 +2609,21 @@ to exit.
         hist_data = old[0]
         addon_info = self.history.return_addon_data(hist_data.tid)
         if len(extcmds) <= 2:
-            print _("Transaction ID:"), hist_data.tid
-            print _('Available additional history information:')
+            print(_("Transaction ID:"), hist_data.tid)
+            print(_('Available additional history information:'))
             for itemname in self.history.return_addon_data(hist_data.tid):
-                print '  %s' % itemname
-            print ''
+                print('  %s' % itemname)
+            print('')
             
             return 0, ['history addon-info']
         
         for item in extcmds[2:]:
             if item in addon_info:
                 self.verbose_logger.log(logginglevels.INFO_2, '%s:', item)
-                print self.history.return_addon_data(hist_data.tid, item),
+                print(self.history.return_addon_data(hist_data.tid, item), end=' ')
                 self.verbose_logger.log(logginglevels.INFO_2, '')
             else:
-                print _('%s: No additional data found by this name') % item
+                print(_('%s: No additional data found by this name') % item)
             self.verbose_logger.log(logginglevels.INFO_2, '')
 
     def historyPackageListCmd(self, extcmds):
@@ -2644,10 +2644,10 @@ to exit.
 
         fmt = "%s | %s | %s"
         # REALLY Needs to use columns!
-        print fmt % (utf8_width_fill(_("ID"), 6, 6),
+        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
                      utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Package"), 53, 53))
-        print "-" * 79
+                     utf8_width_fill(_("Package"), 53, 53)))
+        print("-" * 79)
         fmt = "%6u | %s | %-50s"
         num = 0
         for old in self.history.old(tids, limit=limit):
@@ -2704,7 +2704,7 @@ to exit.
                         last = hpkg
 
                 num += 1
-                print fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark)
+                print(fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark))
 
         # And, again, copy and paste...
         lastdbv = self.history.last()
@@ -2745,49 +2745,49 @@ to exit.
 
                 uistate = all_uistates.get(hpkg.state, hpkg.state)
                 if num:
-                    print ""
-                print _("Transaction ID :"), old.tid
+                    print("")
+                print(_("Transaction ID :"), old.tid)
                 tm = time.ctime(old.beg_timestamp)
-                print _("Begin time     :"), tm
-                print _("Package        :"), hpkg.ui_nevra
-                print _("State          :"), uistate
+                print(_("Begin time     :"), tm)
+                print(_("Package        :"), hpkg.ui_nevra)
+                print(_("State          :"), uistate)
                 if hpkg.size is not None:
                     num = int(hpkg.size)
-                    print _("Size           :"), locale.format("%d", num, True)
+                    print(_("Size           :"), locale.format("%d", num, True))
                 if hpkg.buildhost is not None:
-                    print _("Build host     :"), hpkg.buildhost
+                    print(_("Build host     :"), hpkg.buildhost)
                 if hpkg.buildtime is not None:
                     tm = time.ctime(int(hpkg.buildtime))
-                    print _("Build time     :"), tm
+                    print(_("Build time     :"), tm)
                 if hpkg.packager is not None:
-                    print _("Packager       :"), hpkg.packager
+                    print(_("Packager       :"), hpkg.packager)
                 if hpkg.vendor is not None:
-                    print _("Vendor         :"), hpkg.vendor
+                    print(_("Vendor         :"), hpkg.vendor)
                 if hpkg.license is not None:
-                    print _("License        :"), hpkg.license
+                    print(_("License        :"), hpkg.license)
                 if hpkg.url is not None:
-                    print _("URL            :"), hpkg.url
+                    print(_("URL            :"), hpkg.url)
                 if hpkg.sourcerpm is not None:
-                    print _("Source RPM     :"), hpkg.sourcerpm
+                    print(_("Source RPM     :"), hpkg.sourcerpm)
                 if hpkg.committime is not None:
                     tm = time.ctime(int(hpkg.committime))
-                    print _("Commit Time    :"), tm
+                    print(_("Commit Time    :"), tm)
                 if hpkg.committer is not None:
-                    print _("Committer      :"), hpkg.committer
+                    print(_("Committer      :"), hpkg.committer)
                 if hpkg.yumdb_info.reason is not None:
-                    print _("Reason         :"), hpkg.yumdb_info.reason
+                    print(_("Reason         :"), hpkg.yumdb_info.reason)
                 if hpkg.yumdb_info.command_line is not None:
-                    print _("Command Line   :"), hpkg.yumdb_info.command_line
+                    print(_("Command Line   :"), hpkg.yumdb_info.command_line)
                 if hpkg.yumdb_info.from_repo is not None:
-                    print _("From repo      :"), hpkg.yumdb_info.from_repo
+                    print(_("From repo      :"), hpkg.yumdb_info.from_repo)
                 if hpkg.yumdb_info.installed_by is not None:
                     uid = int(hpkg.yumdb_info.installed_by)
                     name = self._pwd_ui_username(uid)
-                    print _("Installed by   :"), name
+                    print(_("Installed by   :"), name)
                 if hpkg.yumdb_info.changed_by is not None:
                     uid = int(hpkg.yumdb_info.changed_by)
                     name = self._pwd_ui_username(uid)
-                    print _("Changed by     :"), name
+                    print(_("Changed by     :"), name)
 
                 num += 1
 
@@ -3228,7 +3228,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
         wid1 = self._max_action_width()
         
-        if type(package) not in types.StringTypes:
+        if type(package) not in (str,):
             pkgname = str(package)
         else:
             pkgname = self.pkgname_ui(package)
@@ -3237,14 +3237,14 @@ class YumCliRPMCallBack(RPMBaseCallback):
         if te_total == 0:
             percent = 0
         else:
-            percent = (te_current*100L)/te_total
+            percent = (te_current*100)/te_total
         self._out_event(te_current, te_total, ts_current, ts_total,
                         percent, process, pkgname, wid1)
 
     def _max_action_width(self):
         if not hasattr(self, '_max_action_wid_cache'):
             wid1 = 0
-            for val in self.action.values():
+            for val in list(self.action.values()):
                 wid_val = utf8_width(val)
                 if wid1 < wid_val:
                     wid1 = wid_val
@@ -3265,7 +3265,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
                 sys.stdout.flush()
                 self.lastmsg = msg
             if te_current == te_total:
-                print " "
+                print(" ")
 
     def scriptout(self, package, msgs):
         """Print messages originating from a package script.
@@ -3403,34 +3403,34 @@ def progressbar(current, total, name=None):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "format_number":
-        print ""
-        print " Doing format_number tests, right column should align"
-        print ""
+        print("")
+        print(" Doing format_number tests, right column should align")
+        print("")
 
         x = YumOutput()
         for i in (0, 0.0, 0.1, 1, 1.0, 1.1, 10, 11, 11.1, 100, 111.1,
                   1000, 1111, 1024 * 2, 10000, 11111, 99999, 999999,
                   10**19, 10**20, 10**35):
             out = x.format_number(i)
-            print "%36s <%s> %s <%5s>" % (i, out, ' ' * (14 - len(out)), out)
+            print("%36s <%s> %s <%5s>" % (i, out, ' ' * (14 - len(out)), out))
 
     if len(sys.argv) > 1 and sys.argv[1] == "progress":
-        print ""
-        print " Doing progress, small name"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing progress, small name")
+        print("")
+        for i in range(0, 101):
             progressbar(i, 100, "abcd")
             time.sleep(0.1)
-        print ""
-        print " Doing progress, big name"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing progress, big name")
+        print("")
+        for i in range(0, 101):
             progressbar(i, 100, "_%s_" % ("123456789 " * 5))
             time.sleep(0.1)
-        print ""
-        print " Doing progress, no name"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing progress, no name")
+        print("")
+        for i in range(0, 101):
             progressbar(i, 100)
             time.sleep(0.1)
 
@@ -3439,16 +3439,16 @@ if __name__ == "__main__":
         cb.output = True
         cb.action["foo"] = "abcd"
         cb.action["bar"] = "_12345678_.end"
-        print ""
-        print " Doing CB, small proc / small pkg"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing CB, small proc / small pkg")
+        print("")
+        for i in range(0, 101):
             cb.event("spkg", "foo", i, 100, i, 100)
             time.sleep(0.1)        
-        print ""
-        print " Doing CB, big proc / big pkg"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing CB, big proc / big pkg")
+        print("")
+        for i in range(0, 101):
             cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
             time.sleep(0.1)
 
@@ -3457,21 +3457,21 @@ if __name__ == "__main__":
                                              'i18n-rpm-progress'):
         yum.misc.setup_locale()
     if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress"):
-        print ""
-        print " Doing progress, i18n: small name"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing progress, i18n: small name")
+        print("")
+        for i in range(0, 101):
             progressbar(i, 100, to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85'))
             time.sleep(0.1)
-        print ""
+        print("")
 
-        print ""
-        print " Doing progress, i18n: big name"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing progress, i18n: big name")
+        print("")
+        for i in range(0, 101):
             progressbar(i, 100, to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85' * 5 + ".end"))
             time.sleep(0.1)
-        print ""
+        print("")
 
 
     if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress",
@@ -3481,17 +3481,17 @@ if __name__ == "__main__":
         cb.output = True
         cb.action["foo"] = to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85')
         cb.action["bar"] = cb.action["foo"] * 5 + ".end"
-        print ""
-        print " Doing CB, i18n: small proc / small pkg"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing CB, i18n: small proc / small pkg")
+        print("")
+        for i in range(0, 101):
             cb.event("spkg", "foo", i, 100, i, 100)
             time.sleep(0.1)        
-        print ""
-        print " Doing CB, i18n: big proc / big pkg"
-        print ""
-        for i in xrange(0, 101):
+        print("")
+        print(" Doing CB, i18n: big proc / big pkg")
+        print("")
+        for i in range(0, 101):
             cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
             time.sleep(0.1)
-        print ""
+        print("")
         

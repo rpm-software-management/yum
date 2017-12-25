@@ -25,16 +25,16 @@ import logging
 import rpmUtils.transaction
 import rpmUtils.miscutils
 from rpmUtils.arch import archDifference, canCoinstall
-import misc
-from misc import unique, version_tuple_to_string
-from transactioninfo import TransactionMember
+from . import misc
+from .misc import unique, version_tuple_to_string
+from .transactioninfo import TransactionMember
 import rpm
 
-from packageSack import ListPackageSack
-from packages import PackageEVR
-from constants import *
-import logginglevels
-import Errors
+from .packageSack import ListPackageSack
+from .packages import PackageEVR
+from .constants import *
+from . import logginglevels
+from . import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
@@ -141,7 +141,7 @@ class Depsolve(object):
             return
             
         if not self.conf.installroot:
-            raise Errors.YumBaseError, _('Setting up TransactionSets before config class is up')
+            raise Errors.YumBaseError(_('Setting up TransactionSets before config class is up'))
         
         self._getTsInfo(remove_only)
         self.initActionTs()
@@ -356,7 +356,7 @@ class Depsolve(object):
                 self.po_with_problems.add((po,self._working_po,errormsgs[-1]))
             
     
-        except Errors.DepError,e:
+        except Errors.DepError as e:
             # FIXME: This is a hack, it don't solve the problem
             # of tries to update to a package the have been removed from the
             # pkgSack because of dep problems.
@@ -447,8 +447,7 @@ class Depsolve(object):
             # if this package is being obsoleted, it's just like if it's
             # being upgraded as far as checking for other providers
             if thismode is None:
-                if filter(lambda x: x.obsoleted_by,
-                          self.tsInfo.matchNaevr(i_n, i_a, i_e, i_v, i_r)):
+                if [x for x in self.tsInfo.matchNaevr(i_n, i_a, i_e, i_v, i_r) if x.obsoleted_by]:
                     thismode = 'u'
 
             if thismode is not None:
@@ -547,7 +546,7 @@ class Depsolve(object):
                     # If the requirement is still there, try and solve it again
                     # so we don't lose it
                     for pkg in txmbrs[0].updated_by:
-                        if requirement in map(self._prco_req2req, pkg.returnPrco('requires')):
+                        if requirement in list(map(self._prco_req2req, pkg.returnPrco('requires'))):
                             return True, missingdep + self._requiringFromTransaction(pkg, requirement, errorlist)[1]
                 checkdeps = True
                 return checkdeps, missingdep
@@ -574,9 +573,9 @@ class Depsolve(object):
 
         if flags == 0:
             flags = None
-        if type(version) in (types.StringType, types.NoneType, types.UnicodeType):
+        if type(version) in (bytes, type(None), str):
             (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
-        elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
+        elif type(version) in (tuple, list): # would this ever be a ListType?
             (r_e, r_v, r_r) = version
         
         # Quick lookup, lots of reqs for one pkg:
@@ -758,7 +757,7 @@ class Depsolve(object):
                 # before, they're not going to be installed anymore, so we
                 # should mark them to be re-checked
                 if txmbr.pkgtup in upgraded:
-                    map(self.tsInfo.remove, upgraded[txmbr.pkgtup])
+                    list(map(self.tsInfo.remove, upgraded[txmbr.pkgtup]))
             if not txmbrs:
                 missingdep = 1
                 checkdeps = 0
@@ -840,7 +839,7 @@ class Depsolve(object):
         prof = hotshot.Profile(fn)
         rc = prof.runcall(self.resolveDeps)
         prof.close()
-        print "done running depcheck"
+        print("done running depcheck")
         stats = hotshot.stats.load(fn)
         stats.strip_dirs()
         stats.sort_stats('time', 'calls')
@@ -859,7 +858,7 @@ class Depsolve(object):
         prof = cProfile.Profile()
         rc = prof.runcall(self.resolveDeps)
         prof.dump_stats("yumprof")
-        print "done running depcheck"
+        print("done running depcheck")
 
         p = pstats.Stats('yumprof')
         p.strip_dirs()
@@ -1168,7 +1167,7 @@ class Depsolve(object):
                 continue
             # FIXME: This is probably the best place to fix the postfix rename
             # problem long term (post .21) ... see compare_providers.
-            for pkg, hits in self.tsInfo.getRequires(*prov).iteritems():
+            for pkg, hits in self.tsInfo.getRequires(*prov).items():
                 # See the docs, this is to make remove* "more useful".
                 if (self.conf.repopkgsremove_leaf_only and txmbr.repopkg and
                     txmbr.output_state == TS_ERASE):
@@ -1238,7 +1237,7 @@ class Depsolve(object):
 
         # get file requirements from packages not deleted
         todel = []
-        for pkgtup, files in self.installedFileRequires.iteritems():
+        for pkgtup, files in self.installedFileRequires.items():
             if self._tsInfo.getMembersWithState(pkgtup, output_states=TS_REMOVE_STATES):
                 todel.append(pkgtup)
             else:
@@ -1555,7 +1554,7 @@ class Depsolve(object):
                 unique_nevra_pkgs[pkg.pkgtup].repo <= pkg.repo):
                 continue
             unique_nevra_pkgs[pkg.pkgtup] = pkg
-        pkgs = unique_nevra_pkgs.values()
+        pkgs = list(unique_nevra_pkgs.values())
             
         pkgresults = {}
 
@@ -1566,7 +1565,7 @@ class Depsolve(object):
         self.plugins.run("compare_providers", providers_dict=pkgresults, 
                                       reqpo=reqpo)
         
-        for pkg in pkgresults.keys():
+        for pkg in list(pkgresults.keys()):
             rpmdbpkgs = self.rpmdb.searchNevra(name=pkg.name)
             if rpmdbpkgs:
                 #  We only want to count things as "installed" if they are
@@ -1594,7 +1593,7 @@ class Depsolve(object):
                 # be ignored entirely. Just not preferred
                 pass
 
-        pkgs = pkgresults.keys()
+        pkgs = list(pkgresults.keys())
             
         # go through each pkg and compare to others
         # if it is same skip it
@@ -1755,7 +1754,7 @@ class Depsolve(object):
             pkgresults[po] += 1000
             pkgresults[po] += (len(po.name)*-1)
 
-        bestorder = sorted(pkgresults.items(),
+        bestorder = sorted(list(pkgresults.items()),
                            key=lambda x: (x[1], x[0]), reverse=True)
         self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Best Order: %s' % str(bestorder)))

@@ -10,7 +10,7 @@ from urlgrabber.grabber import URLGrabError
 from zlib import error as zlibError
 
 def log(num, msg):
-    print >>sys.stderr, msg
+    print(msg, file=sys.stderr)
 errorlog = log
 
 def _(msg):
@@ -41,7 +41,7 @@ def checkRpmMD5(package, urlgraberror=0):
     fdno = os.open(package, os.O_RDONLY)
     try:
         ts.hdrFromFdno(fdno)
-    except rpm.error, e:
+    except rpm.error as e:
         good = 0
     else:
         good = 1
@@ -64,7 +64,7 @@ def checkSig(package):
     fdno = os.open(package, os.O_RDONLY)
     try:
         hdr = ts.hdrFromFdno(fdno)
-    except rpm.error, e:
+    except rpm.error as e:
         if str(e) == "public key not availaiable":
             return 1
         if str(e) == "public key not available":
@@ -105,18 +105,20 @@ def getProvides(header):
     provides = header[rpm.RPMTAG_PROVIDENAME]
     if provides is None:
         pass
-    elif type(provides) is types.ListType:
+    elif type(provides) is list:
         provnames.extend(provides)
     else:
         provnames.append(provides)
     return provnames
     
-def compareEVR((e1, v1, r1), (e2, v2, r2)):
+def compareEVR(xxx_todo_changeme, xxx_todo_changeme1):
     # return 1: a is newer than b 
     # 0: a and b are the same version 
     # -1: b is newer than a 
+    (e1, v1, r1) = xxx_todo_changeme
+    (e2, v2, r2) = xxx_todo_changeme1
     def rpmOutToStr(arg):
-        if type(arg) != types.StringType and arg != None:
+        if type(arg) != bytes and arg != None:
             arg = str(arg)
         return arg
     e1 = rpmOutToStr(e1)
@@ -147,7 +149,7 @@ def formatRequire (name, version, flags):
 def openrpmdb():
     try:
         db = rpm.TransactionSet(conf.installroot)
-    except rpm.error, e:
+    except rpm.error as e:
         errorlog(0, _("Could not open RPM database for reading. Perhaps it is already in use?"))
     return db
 
@@ -164,7 +166,7 @@ class GzipFile(gzip.GzipFile):
         if fname:
             flags = FNAME
         self.fileobj.write(chr(flags))
-        write32u(self.fileobj, long(0))
+        write32u(self.fileobj, int(0))
         self.fileobj.write('\002')
         self.fileobj.write('\377')
         if fname:
@@ -244,25 +246,25 @@ class Header_Work(RPM_Base_Work):
        if the first arg is a string then it's a filename
        otherwise it's an rpm hdr"""
     def __init__(self, header):
-        if type(header) is types.StringType:
+        if type(header) is bytes:
             try:
                 fd = gzip.open(header, 'r')
                 try: 
                     h = rpm.headerLoad(fd.read())
-                except rpm.error, e:
+                except rpm.error as e:
                     errorlog(0,_('Damaged Header %s') % header)
                     h = None
-            except IOError,e:
+            except IOError as e:
                 fd = open(header, 'r')
                 try:
                     h = rpm.headerLoad(fd.read())
-                except rpm.error, e:
+                except rpm.error as e:
                     errorlog(0,_('Damaged Header %s') % header)
                     h = None
-            except ValueError, e:
+            except ValueError as e:
                 errorlog(0,_('Damaged Header %s') % header)
                 h = None
-            except zlibError, e:
+            except zlibError as e:
                 errorlog(0,_('Damaged Header %s') % header)
                 h = None
             fd.close()
@@ -277,7 +279,7 @@ class RPM_Work(RPM_Base_Work):
         fd = os.open(rpmfn, os.O_RDONLY)
         try:
             self.hdr = ts.hdrFromFdno(fd)
-        except rpm.error, e:
+        except rpm.error as e:
             errorlog(0, _('Error opening rpm %s - error %s') % (rpmfn, e))
             self.hdr = None
         os.close(fd)
@@ -291,7 +293,7 @@ class Rpm_Ts_Work:
             if conf.installroot:
                 if conf.installroot != '/':
                     dbPath = conf.installroot
-        except NameError, e:
+        except NameError as e:
             pass
 
         self.ts = rpm.TransactionSet(dbPath)
@@ -303,7 +305,7 @@ class Rpm_Ts_Work:
         if attribute in self.methods:
             return getattr(self.ts, attribute)
         else:
-            raise AttributeError, attribute
+            raise AttributeError(attribute)
             
     def match(self, tag = None, search = None, mire = None):
         """hands back a list of Header_Work objects"""
@@ -348,4 +350,4 @@ class Rpm_Ts_Work:
             # set it back to the default
             self.ts.setVSFlags(rpm.RPMVSF_DEFAULT)
         else:
-            raise AttributeError, sig
+            raise AttributeError(sig)

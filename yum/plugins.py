@@ -21,12 +21,12 @@ import warnings
 import atexit
 import gettext
 import logging
-import logginglevels
-from constants import *
-import config 
-from config import ParsingError, ConfigParser
-import Errors
-from parser import ConfigPreProcessor
+from . import logginglevels
+from .constants import *
+from . import config 
+from .config import ParsingError, ConfigParser
+from . import Errors
+from .parser import ConfigPreProcessor
 
 from textwrap import fill
 import fnmatch
@@ -358,7 +358,7 @@ class YumPlugins:
         confpp_obj = ConfigPreProcessor(conffilename)
         try:
             parser.readfp(confpp_obj)
-        except ParsingError, e:
+        except ParsingError as e:
             raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
         return parser

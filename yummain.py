@@ -129,14 +129,14 @@ def main(args):
         try:
             base.closeRpmDB()
             base.doUnlock()
-        except Errors.LockError, e:
+        except Errors.LockError as e:
             return 200
         return 0
 
     def rpmdb_warn_checks():
         try:
             probs = base._rpmdb_warn_checks(out=verbose_logger.info, warn=False)
-        except Errors.YumBaseError, e:
+        except Errors.YumBaseError as e:
             # This is mainly for PackageSackError from rpmdb.
             verbose_logger.info(_(" Yum checks failed: %s"), exception2msg(e))
             probs = []
@@ -150,7 +150,7 @@ def main(args):
     # read and execute access. If not, chdir to /
     try:
         f = open(".")
-    except IOError, e:
+    except IOError as e:
         if e.errno == errno.EACCES:
             logger.critical(_('No read/execute access in current directory, moving to /'))
             os.chdir("/")
@@ -158,7 +158,7 @@ def main(args):
         f.close()
     try:
         os.getcwd()
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.ENOENT:
             logger.critical(_('No getcwd() access in current directory, moving to /'))
             os.chdir("/")
@@ -170,30 +170,30 @@ def main(args):
     # also sanity check the things being passed on the cli
     try:
         base.getOptionsConfig(args)
-    except plugins.PluginYumExit, e:
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
-    except Errors.YumBaseError, e:
+    except Errors.YumBaseError as e:
         return exFatal(e)
-    except (OSError, IOError), e:
+    except (OSError, IOError) as e:
         return exIOError(e)
 
     try:
         base.waitForLock()
-    except Errors.YumBaseError, e:
+    except Errors.YumBaseError as e:
         return exFatal(e)
 
     try:
         result, resultmsgs = base.doCommands()
-    except plugins.PluginYumExit, e:
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
-    except Errors.RepoError, e:
+    except Errors.RepoError as e:
         return exRepoError(e)
-    except Errors.YumBaseError, e:
+    except Errors.YumBaseError as e:
         result = 1
         resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
         return exUserCancel()
-    except IOError, e:
+    except IOError as e:
         return exIOError(e)
 
     # Act on the command/shell result
@@ -239,16 +239,16 @@ def main(args):
 
     try:
         (result, resultmsgs) = base.buildTransaction() 
-    except plugins.PluginYumExit, e:
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
-    except Errors.RepoError, e:
+    except Errors.RepoError as e:
         return exRepoError(e)
-    except Errors.YumBaseError, e:
+    except Errors.YumBaseError as e:
         result = 1
         resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
         return exUserCancel()
-    except IOError, e:
+    except IOError as e:
         return exIOError(e)
    
     # Act on the depsolve result
@@ -285,15 +285,15 @@ def main(args):
                    'why'  : 'Running transaction', # i18n?
                    'mode' : 'block'}
         return_code = base.doTransaction(inhibit=inhibit)
-    except plugins.PluginYumExit, e:
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
-    except Errors.RepoError, e:
+    except Errors.RepoError as e:
         return exRepoError(e)
-    except Errors.YumBaseError, e:
+    except Errors.YumBaseError as e:
         return exFatal(e)
     except KeyboardInterrupt:
         return exUserCancel()
-    except IOError, e:
+    except IOError as e:
         return exIOError(e)
 
     # rpm ts.check() failed.
@@ -388,6 +388,6 @@ suppress_keyboard_interrupt_message()
 if __name__ == "__main__":
     try:
         user_main(sys.argv[1:], exit_code=True)
-    except KeyboardInterrupt, e:
-        print >> sys.stderr, _("\n\nExiting on user cancel.")
+    except KeyboardInterrupt as e:
+        print(_("\n\nExiting on user cancel."), file=sys.stderr)
         sys.exit(1)

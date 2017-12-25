@@ -59,12 +59,12 @@ class RevdepUpdateTests(OperationsTests):
     def testUpdate(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_1, p.installed_2, p.installed_3, p.installed_4], [p.update_3])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( (p.installed_1, p.installed_2, p.update_3, p.installed_4) )
     
     def testUpdate2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_1, p.installed_2, p.installed_3, p.installed_4], [p.update_4])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult( (p.installed_1, p.update_4) )
 

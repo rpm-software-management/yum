@@ -40,58 +40,58 @@ class SimpleUpdateTests(OperationsTests):
     def testUpdatenoarchTonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_noarch,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch,))
     def testUpdatenoarchTonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_noarch, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch, p.requires_update))
     def testUpdatenoarchTonoarchForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_noarch],
                                      [p.required_updated, p.update_noarch,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_noarch,))
 
     def testUpdatenoarchToi386(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_i386,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386,))
     def testUpdatenoarchToi386ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386, p.requires_update))
     def testUpdatenoarchToi386ForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_noarch],
                                      [p.required_updated, p.update_i386])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_i386))
 
     def testUpdatenoarchTox86_64(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_x86_64,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64,))
     def testUpdatenoarchTox86_64ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64, p.requires_update))
     def testUpdatenoarchTox86_64ForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_noarch],
                                      [p.required_updated, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_x86_64))
 
     def testUpdatenoarchToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_noarch], [p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if True or new_behavior: # We update from .noarch to just the .x86_64
             self.assertResult((p.update_x86_64,), (p.update_i386,)) # ?
         else: # Updates to both...
@@ -99,18 +99,18 @@ class SimpleUpdateTests(OperationsTests):
     def testUpdatenoarchToMultilibForDependencyRev(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_x86_64, p.update_i386, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64, p.requires_update))
     def testUpdatenoarchToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_noarch], [p.update_i386, p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64, p.requires_update))
     def testUpdatenoarchToMultilibForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_noarch],
                                      [p.required_updated, p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_x86_64), (p.update_i386,))
 
     # i386 to X
@@ -118,69 +118,69 @@ class SimpleUpdateTests(OperationsTests):
     def testUpdatei386Tonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386], [p.update_noarch])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch,))
     def testUpdatei386TonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_noarch, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch, p.requires_update))
     def testUpdatei386TonoarchForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386],
                                      [p.required_updated, p.update_noarch,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_noarch,))
 
     def testUpdatei386Toi386(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386], [p.update_i386])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386,))
     def testUpdatei386Toi386ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_i386, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386, p.requires_update))
     def testUpdatei386Toi386ForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386],
                                      [p.required_updated, p.update_i386])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_i386))
 
     def testUpdatei386Tox86_64(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386], [p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64,))
     def testUpdatei386Tox86_64ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64, p.requires_update))
     def testUpdatei386Tox86_64ForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386],
                                      [p.required_updated, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_x86_64))
 
     def testUpdatei386ToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386], [p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386,))
     def testUpdatei386ToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386], [p.update_i386, p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386, p.requires_update))
     def testUpdatei386ToMultilibForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386],
                                      [p.required_updated, p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_i386))
 
     # x86_64 to X
@@ -188,73 +188,73 @@ class SimpleUpdateTests(OperationsTests):
     def testUpdatex86_64Tonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.update_noarch,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch,))
     def testUpdatex86_64TonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_x86_64],
                                      [p.update_noarch, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch, p.requires_update))
     def testUpdatex86_64TonoarchForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_x86_64],
                                      [p.required_updated, p.update_noarch])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_noarch))
 
     def testUpdatex86_64Toi386(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.update_i386,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386,))
     def testUpdatex86_64Toi386ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_x86_64],
                                      [p.update_i386, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386, p.requires_update))
     def testUpdatex86_64Toi386ForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_x86_64],
                                      [p.required_updated, p.update_i386])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_i386))
 
     def testUpdatex86_64Tox86_64(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.update_x86_64,])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64,))
     def testUpdatex86_64Tox86_64ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_x86_64],
                                      [p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64, p.requires_update))
     def testUpdatex86_64Tox86_64ForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_x86_64],
                                      [p.required_updated, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_x86_64))
 
     def testUpdatex86_64ToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_x86_64], [p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64,))
     def testUpdatex86_64ToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_x86_64],
                                      [p.update_i386, p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_x86_64, p.requires_update))
     def testUpdatex86_64ToMultilibForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_x86_64],
                                      [p.required_updated, p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_x86_64))
 
     # multilib to X
@@ -262,24 +262,24 @@ class SimpleUpdateTests(OperationsTests):
     def testUpdateMultilibTonoarch(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_noarch])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch,))
     def testUpdateMultilibTonoarchForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_noarch, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_noarch, p.requires_update))
     def testUpdateMultilibTonoarchForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386, p.installed_x86_64],
                                      [p.required_updated, p.update_noarch])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_noarch))
 
     def testUpdateMultilibToi386(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_i386])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.update_i386, p.installed_x86_64))
             # self.assertResult((p.update_i386,)) # XXX is this right?
@@ -288,7 +288,7 @@ class SimpleUpdateTests(OperationsTests):
     def testUpdateMultilibToi386ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.update_i386, p.installed_x86_64, p.requires_update))
             # self.assertResult((p.update_i386, p.requires_update)) # XXX is this right?
@@ -298,13 +298,13 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386, p.installed_x86_64],
                                      [p.required_updated, p.update_i386])
-        self.assert_(res=='err', msg)
+        self.assertTrue(res=='err', msg)
         self.assertResult((p.required_updated, p.update_i386, p.installed_x86_64))
 
     def testUpdateMultilibTox86_64(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.update_x86_64, p.installed_i386))
             # self.assertResult((p.update_x86_64,)) # XXX is this right?
@@ -313,7 +313,7 @@ class SimpleUpdateTests(OperationsTests):
     def testUpdateMultilibTox86_64ForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.update_x86_64, p.installed_i386, p.requires_update))
             # self.assertResult((p.update_x86_64, p.requires_update)) # XXX is this right?
@@ -323,24 +323,24 @@ class SimpleUpdateTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386, p.installed_x86_64],
                                      [p.required_updated, p.update_x86_64])
-        self.assert_(res=='err', msg)
+        self.assertTrue(res=='err', msg)
         self.assertResult((p.required_updated, p.update_x86_64, p.installed_i386))
 
     def testUpdateMultilibToMultilib(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386, p.update_x86_64))
     def testUpdateMultilibToMultilibForDependency(self):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'zsh-utils'], [p.installed_i386, p.installed_x86_64], [p.update_i386, p.update_x86_64, p.requires_update])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.update_i386, p.update_x86_64,  p.requires_update))
     def testUpdateMultilibToMultilibForDependency2(self):
         p = self.pkgs
         res, msg = self.runOperation(['update', 'bar'], [p.required, p.installed_i386, p.installed_x86_64],
                                      [p.required_updated, p.update_i386, p.update_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.required_updated, p.update_i386, p.update_x86_64))
 
     def testUpdateNotLatestDep(self):
@@ -352,7 +352,7 @@ class SimpleUpdateTests(OperationsTests):
         bar12 = FakePackage('bar', '1', '2', '0', 'i386')
         bar21 = FakePackage('bar', '2', '1', '0', 'i386')
         res, msg = self.runOperation(['install', 'foo'], [foo11, bar11], [foo12, bar12, bar21])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
     def testUpdateBadMultiInstall1(self):
@@ -365,7 +365,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'foo'],
                                      [foo11, foo12, foo13],
                                      [foo20])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo20,))
 
     def testUpdateBadMultiInstall2(self):
@@ -378,7 +378,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'foo'],
                                      [foo11, foo12, foo13],
                                      [foo20])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo20,))
 
     def testUpdateBadMultiInstall3(self):
@@ -391,7 +391,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'],
                                      [foo11, foo12, foo13],
                                      [foo20])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo20,))
 
     def testUpdateBadMultiInstall4(self):
@@ -407,7 +407,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'bar'],
                                      [foo11, foo12, foo13, bar11],
                                      [foo20, bar12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo20,bar12))
 
     def testUpdateBadMultiInstall5(self):
@@ -423,7 +423,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'],
                                      [foo11, foo12, foo13, bar11],
                                      [foo20, bar12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo20,bar12))
 
     def testUpdateBadMultiInstall6(self):
@@ -439,7 +439,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update'],
                                      [foo11, foo12, foo13, bar11],
                                      [foo20, bar12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((bar12,))
 
     def testUpdateBadMultiInstall7(self):
@@ -455,7 +455,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', '*'],
                                      [foo11, foo12, foo13, bar11],
                                      [foo20, bar12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo20,bar12))
 
     def testUpdateBadMultiInstall8(self):
@@ -471,7 +471,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', '*'],
                                      [foo11, foo12, foo13, bar11],
                                      [foo20, bar12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((bar12,))
 
     def testUpdateMultiRequiresVersions1(self):
@@ -492,7 +492,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'perl'],
                                      [pi11, pvi11],
                                      [p12, pv12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p12,pv12))
 
     def testUpdateMultiRequiresVersions2(self):
@@ -513,7 +513,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'perl'],
                                      [pi11, pvi11],
                                      [pr11,p12, pvr11,pv12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p12,pv12))
 
     def testUpdateMultiRequiresVersions3(self):
@@ -534,7 +534,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'perl-version'],
                                      [pi11, pvi11],
                                      [pr11,p12, pvr11,pv12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p12,pv12))
 
     def testUpdateMultiRequiresVersions4(self):
@@ -565,7 +565,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'perl-version'],
                                      [pi11, pbi11, pvi11],
                                      [pr11,p12, pbr11,pb12, pvr11,pv12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p12,pb12,pv12))
 
     def testUpdateMultiRequiresVersions5(self):
@@ -596,7 +596,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'perl-blah'],
                                      [pi11, pbi11, pvi11],
                                      [pr11,p12, pbr11,pb12, pvr11,pv12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p12,pb12,pv12))
 
     def testUpdateMultiRequiresVersions8(self):
@@ -621,7 +621,7 @@ class SimpleUpdateTests(OperationsTests):
                                      [pi11, pvi11],
                                      [pr11,p12, pvr11,pv12,pv13])
         # FIXME: This fails ... it tries to install pv13 instead
-        self.assert_(res=='err', msg)
+        self.assertTrue(res=='err', msg)
         # self.assert_(res=='ok', msg)
         # self.assertResult((p12,pv12))
 
@@ -638,7 +638,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', '/path/to/phooy'],
                                      [pi11],
                                      [pr11,p12, py12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         # FIXME: We'd really like it to be:
         # self.assertResult((p12,py12))
         # ...but there is no info. you can work this out with.
@@ -658,7 +658,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', '/path/to/phooy'],
                                      [pi11],
                                      [pr11,p12, py12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p12,py12))
 
     def testInstallFilenamePkgSplit3(self):
@@ -675,7 +675,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', '/path/to/phooy'],
                                      [pi12],
                                      [p11, pr12, py12])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pi12,py12))
 
     def testUpdateMultiArchConflict(self):
@@ -692,7 +692,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'B'],
                                      [pi1, pi2, pi3],
                                      [pa1, pa2, pa3])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa2, pa3))
 
     #  What I was trying to model here is a problem where the Fedora builders
@@ -719,7 +719,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'A'],
                                      [],
                                      [pa1, pa2, pa3, pa4])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa3))
 
     def testUpdateMultiAvailPkgs2(self):
@@ -735,7 +735,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'A'],
                                      [],
                                      [pa1, pa2, pa4, pa3])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa3))
 
     def testUpdateMultiAvailPkgs3(self):
@@ -748,7 +748,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'A'],
                                      [],
                                      [pa1, pa2, pa3, pa4])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa3))
 
 
@@ -762,7 +762,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'A'],
                                      [],
                                      [pa1, pa2, pa4, pa3])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa3))
 
     def testUpdateRLEvince1(self):
@@ -784,7 +784,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'evince'],
                                      [pi1, pi2, pi3],
                                      [pa1, pa2x, pa2i, pa3])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa2x, pa3))
 
     def testUpdateRLEvince2(self):
@@ -807,7 +807,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'evince'],
                                      [pi1, pi2, pi3],
                                      [pa1, pa2i, pa2x, pa3])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa2x, pa3))
 
     def testShellRmUp1(self):
@@ -821,7 +821,7 @@ class SimpleUpdateTests(OperationsTests):
                                       ),
                                      [pi1],
                                      [pa1], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1,))
 
     def testShellRmUp2(self):
@@ -837,7 +837,7 @@ class SimpleUpdateTests(OperationsTests):
                                       ),
                                      [pi1, pi2],
                                      [pa1, pa2], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa2))
 
     def testShellRmUp3(self):
@@ -853,7 +853,7 @@ class SimpleUpdateTests(OperationsTests):
                                       ),
                                      [pi1, pi2],
                                      [pa1, pa2], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa2))
 
     def testShellRmUp4(self):
@@ -869,7 +869,7 @@ class SimpleUpdateTests(OperationsTests):
                                       ),
                                      [pi1, pi2],
                                      [pa1, pa2], multi_cmds=True)
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pa1, pa2))
 
     # Test how update-to != update.
@@ -890,7 +890,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'foo'],
                                      [pkgs['foo11']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo20'],))
 
     def testUpdateTo1_2(self):
@@ -898,7 +898,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update-to', 'foo'],
                                      [pkgs['foo11']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo20'],))
 
     def testUpdateTo2_1(self):
@@ -906,7 +906,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'foo-1-2'],
                                      [pkgs['foo11']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo12'],))
 
     def testUpdateTo2_2(self):
@@ -914,7 +914,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update-to', 'foo-1-2'],
                                      [pkgs['foo11']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo12'],))
 
     def testUpdateTo3_1(self):
@@ -922,7 +922,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'foo-1-2'],
                                      [pkgs['foo12']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo20'],))
 
     def testUpdateTo3_2(self):
@@ -931,7 +931,7 @@ class SimpleUpdateTests(OperationsTests):
                                      [pkgs['foo12']],
                                      pkgs['all'])
         # Nothing to do...
-        self.assert_(res==0, msg)
+        self.assertTrue(res==0, msg)
 
 
     def testUpdateToProv1_1(self):
@@ -939,7 +939,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'foobar'],
                                      [pkgs['foo11']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo20'],))
 
     def testUpdateToProv1_2(self):
@@ -947,7 +947,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update-to', 'foobar'],
                                      [pkgs['foo11']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo20'],))
 
     def testUpdateToProv2_1(self):
@@ -964,14 +964,14 @@ class SimpleUpdateTests(OperationsTests):
                                      pkgs['all'])
         # self.assert_(res=='ok', msg)
         # self.assertResult((pkgs['foo12'],))
-        self.assert_(res==0, msg)
+        self.assertTrue(res==0, msg)
 
     def testUpdateToProv2_2(self):
         pkgs = self._setupUpdateTo()
         res, msg = self.runOperation(['update-to', 'foobar = 1-2'],
                                      [pkgs['foo11']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo12'],))
 
     def testUpdateToProv3_1(self):
@@ -979,7 +979,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'foobar = 1-2'],
                                      [pkgs['foo12']],
                                      pkgs['all'])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pkgs['foo20'],))
 
     def testUpdateToProv3_2(self):
@@ -988,7 +988,7 @@ class SimpleUpdateTests(OperationsTests):
                                      [pkgs['foo12']],
                                      pkgs['all'])
         # Nothing to do...
-        self.assert_(res==0, msg)
+        self.assertTrue(res==0, msg)
 
     def testUpdateReqFail_1(self):
         foo11 = FakePackage('foo', '1', '1', '0', 'i386')
@@ -1003,7 +1003,7 @@ class SimpleUpdateTests(OperationsTests):
                                      [foo11, bar11],
                                      [foo11, foo12, bar11, bar12])
         # Should fail...
-        self.assert_(res=='err', msg)
+        self.assertTrue(res=='err', msg)
 
     def testUpdateReqFail_2(self):
         foo11 = FakePackage('foo', '1', '1', '0', 'i386')
@@ -1018,7 +1018,7 @@ class SimpleUpdateTests(OperationsTests):
                                      [foo11, bar11],
                                      [foo11, foo12, bar11, bar12])
         # Should fail...
-        self.assert_(res=='err', msg)
+        self.assertTrue(res=='err', msg)
 
     def testUpdateReqFail_3(self):
         foo11 = FakePackage('foo', '1', '1', '0', 'i386')
@@ -1035,7 +1035,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'bar'],
                                      [foo11, bar11],
                                      [foo11, foo12, bar11, bar12, cbar11])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         # Ideal:
         # self.assertResult((foo11, bar12, cbar11))
         self.assertResult((foo12, bar12, cbar11))
@@ -1055,7 +1055,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['update', 'bar'],
                                      [foo11, bar11],
                                      [foo11, foo12, bar11, bar12, cbar11])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         # Ideal:
         # self.assertResult((foo11, bar12, cbar11))
         self.assertResult((foo12, bar12, cbar11))
@@ -1077,7 +1077,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['install', 'bar'],
                                      [pax1],
                                      [pax1, pai1, pax2, pai2, pa2])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((pax2, pai2, pa2))
 
     def testUpdateForDeps0(self):
@@ -1093,11 +1093,11 @@ class SimpleUpdateTests(OperationsTests):
 
         res, msg = self.runOperation(['install', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
         self.tsInfo.makelists()
-        self.assertEquals([], self.tsInfo.depupdated)
+        self.assertEqual([], self.tsInfo.depupdated)
 
     def _pkg2txmbr(self, pkg):
         for txmbr in self.tsInfo.getMembers(pkg.pkgtup):
@@ -1124,24 +1124,24 @@ class SimpleUpdateTests(OperationsTests):
 
         res, msg = self.runOperation(['install', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
         self.tsInfo.makelists()
-        self.assertEquals([], self.tsInfo.depupdated)
+        self.assertEqual([], self.tsInfo.depupdated)
 
     def testUpdateForDeps_upgrade_all2(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
 
         res, msg = self.runOperation(['upgrade', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
-        self.assert_(self._pkg2txmbr(bar12).reason == 'user')
+        self.assertTrue(self._pkg2txmbr(bar12).reason == 'user')
 
         self.tsInfo.makelists()
-        self.assertEquals([], self.tsInfo.depupdated)
+        self.assertEqual([], self.tsInfo.depupdated)
 
     def testUpdateForDeps_upgrade_all3(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
@@ -1149,13 +1149,13 @@ class SimpleUpdateTests(OperationsTests):
 
         res, msg = self.runOperation(['upgrade', 'foo', 'bar'], [foo11, bar11], [foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
-        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+        self.assertTrue(self._pkg2txmbr(bar12).reason == 'dep')
 
         self.tsInfo.makelists()
-        self.assertEquals([], self.tsInfo.depupdated)
+        self.assertEqual([], self.tsInfo.depupdated)
 
     def testUpdateForDeps_upgrade_foo4(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
@@ -1164,15 +1164,15 @@ class SimpleUpdateTests(OperationsTests):
 
         res, msg = self.runOperation(['upgrade', 'foo'], [foo11, bar11], [foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
-        print foo12.yumdb_info.reason
-        self.assert_(self._pkg2txmbr(foo12).reason == 'user')
-        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+        print(foo12.yumdb_info.reason)
+        self.assertTrue(self._pkg2txmbr(foo12).reason == 'user')
+        self.assertTrue(self._pkg2txmbr(bar12).reason == 'dep')
 
         self.tsInfo.makelists()
-        self.assertEquals([bar12], self.tsInfo.depupdated)
+        self.assertEqual([bar12], self.tsInfo.depupdated)
 
     def testUpdateForDeps_upgrade_bar5(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
@@ -1181,42 +1181,42 @@ class SimpleUpdateTests(OperationsTests):
 
         res, msg = self.runOperation(['upgrade', 'bar'], [foo11, bar11], [foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
-        self.assert_(self._pkg2txmbr(foo12).reason == 'user')
-        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+        self.assertTrue(self._pkg2txmbr(foo12).reason == 'user')
+        self.assertTrue(self._pkg2txmbr(bar12).reason == 'dep')
 
         self.tsInfo.makelists()
-        self.assertEquals([foo12], self.tsInfo.depupdated)
+        self.assertEqual([foo12], self.tsInfo.depupdated)
 
     def testUpdateForDeps_install_foo6(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
 
         res, msg = self.runOperation(['install', 'foo'], [], [foo11, bar11, foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
-        self.assert_(self._pkg2txmbr(foo12).reason == 'user')
-        self.assert_(self._pkg2txmbr(bar12).reason == 'dep')
+        self.assertTrue(self._pkg2txmbr(foo12).reason == 'user')
+        self.assertTrue(self._pkg2txmbr(bar12).reason == 'dep')
 
         self.tsInfo.makelists()
-        self.assertEquals([bar12], self.tsInfo.depinstalled)
+        self.assertEqual([bar12], self.tsInfo.depinstalled)
 
     def testUpdateForDeps_install_bar7(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
 
         res, msg = self.runOperation(['install', 'bar'], [], [foo11, bar11, foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo12, bar12))
 
-        self.assert_(self._pkg2txmbr(foo12).reason == 'dep')
-        self.assert_(self._pkg2txmbr(bar12).reason == 'user')
+        self.assertTrue(self._pkg2txmbr(foo12).reason == 'dep')
+        self.assertTrue(self._pkg2txmbr(bar12).reason == 'user')
 
         self.tsInfo.makelists()
-        self.assertEquals([foo12], self.tsInfo.depinstalled)
+        self.assertEqual([foo12], self.tsInfo.depinstalled)
 
     def testUpdateForDeps_downgrade_all8(self):
         foo11, foo12, bar11, bar12 = self._testUpdateForDeps_setup()
@@ -1225,11 +1225,11 @@ class SimpleUpdateTests(OperationsTests):
 
         res, msg = self.runOperation(['downgrade', 'foo', 'bar'], [foo12, bar12], [foo11, bar11, foo12, bar12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((foo11, bar11))
 
-        self.assert_(self._pkg2txmbr(foo11).reason == 'user')
-        self.assert_(self._pkg2txmbr(bar11).reason == 'blahg')
+        self.assertTrue(self._pkg2txmbr(foo11).reason == 'user')
+        self.assertTrue(self._pkg2txmbr(bar11).reason == 'blahg')
 
     def testUpdate_installed_obs(self):
         #  Not sure how this happens (foo11 shouldn't be installed with bar11),
@@ -1247,7 +1247,7 @@ class SimpleUpdateTests(OperationsTests):
         res, msg = self.runOperation(['upgrade'], [foo11, bar11, baz11],
                                      [foo11, bar11, baz11, foo12, baz12])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((bar11,baz12))
 
     def testInstall_kernel_intermediate(self):
@@ -1262,5 +1262,5 @@ class SimpleUpdateTests(OperationsTests):
                                      [k11, k13, k14],
                                      [k11, k12, k13, k14, k15])
 
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((k11, k12, k13, k14))

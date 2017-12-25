@@ -56,47 +56,47 @@ _wrap_yum_i18n_P_ = yum.i18n.P_
 def P_(*args, **kwargs):
     return _wrap_yum_i18n_P_(*args, **kwargs)
 
-import config
-from config import ParsingError, ConfigParser
-import Errors
-import rpmsack
+from . import config
+from .config import ParsingError, ConfigParser
+from . import Errors
+from . import rpmsack
 import rpmUtils.updates
 from rpmUtils.arch import archDifference, canCoinstall, ArchStorage, isMultiLibArch
 from rpmUtils.miscutils import compareEVR
 import rpmUtils.transaction
-import comps
-import pkgtag_db
-from repos import RepoStorage
-import misc
-from parser import ConfigPreProcessor, varReplace
-import transactioninfo
+from . import comps
+from . import pkgtag_db
+from .repos import RepoStorage
+from . import misc
+from .parser import ConfigPreProcessor, varReplace
+from . import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
-from packageSack import packagesNewestByName, packagesNewestByNameArch, ListPackageSack
-import depsolve
-import plugins
-import logginglevels
-import yumRepo
-import callbacks
+from .packageSack import packagesNewestByName, packagesNewestByNameArch, ListPackageSack
+from . import depsolve
+from . import plugins
+from . import logginglevels
+from . import yumRepo
+from . import callbacks
 import yum.history
 import yum.fssnapshots
 from yum.fssnapshots import LibLVMError, lvmerr2str
 import yum.igroups
-import update_md
+from . import update_md
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
-from packages import parsePackages, comparePoEVR
-from packages import YumAvailablePackage, YumLocalPackage, YumInstalledPackage
-from packages import YumUrlPackage, YumNotFoundPackage
-from constants import *
+from .packages import parsePackages, comparePoEVR
+from .packages import YumAvailablePackage, YumLocalPackage, YumInstalledPackage
+from .packages import YumUrlPackage, YumNotFoundPackage
+from .constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str, exception2msg
 from yum.drpm import DeltaInfo, DeltaPackage
 
-import StringIO
+import io
 
 from weakref import proxy as weakref
 
@@ -240,7 +240,7 @@ class YumBase(depsolve.Depsolve):
             self.doUnlock()
             # call cleanup callbacks
             for cb in self._cleanup: cb()
-        except Errors.RepoError, e:
+        except Errors.RepoError as e:
             self.verbose_logger.debug("Exception %s %s in %s ignored" % (repr(e), str(e), self.__del__))
 
     def close(self):
@@ -470,7 +470,7 @@ class YumBase(depsolve.Depsolve):
         parser = ConfigParser()
         try:
             parser.readfp(confpp_obj)
-        except ParsingError, e:
+        except ParsingError as e:
             raise Errors.ConfigError(exception2msg(e))
 
         # Check sections in the .repo file that was just slurped up
@@ -489,7 +489,7 @@ class YumBase(depsolve.Depsolve):
 
             try:
                 thisrepo = self.readRepoConfig(parser, section)
-            except (Errors.RepoError, Errors.ConfigError), e:
+            except (Errors.RepoError, Errors.ConfigError) as e:
                 self.logger.warning(e)
                 continue
             else:
@@ -537,7 +537,7 @@ class YumBase(depsolve.Depsolve):
             # collection
             try:
                 self._repos.add(thisrepo)
-            except Errors.RepoError, e:
+            except Errors.RepoError as e:
                 self.logger.warning(e)
         
     def _checkOption(self, opt, thisrepo):
@@ -588,9 +588,9 @@ class YumBase(depsolve.Depsolve):
         repo = yumRepo.YumRepository(section)
         try:
             repo.populate(parser, section, self.conf)
-        except ValueError, e:
+        except ValueError as e:
             msg = _('Repository %r: Error parsing config: %s' % (section,e))
-            raise Errors.ConfigError, msg
+            raise Errors.ConfigError(msg)
 
         # Ensure that the repo name is set
         if not repo.name:
@@ -821,7 +821,7 @@ class YumBase(depsolve.Depsolve):
         
         self._pkgSack = None
            
-        for repo in self.repos.repos.values():
+        for repo in list(self.repos.repos.values()):
             if hasattr(repo, '_resetSack'):
                 repo._resetSack()
             else:
@@ -935,7 +935,7 @@ class YumBase(depsolve.Depsolve):
                                        repo=repo)
             try:
                 groupremote = repo.getGroupLocation()
-            except Errors.RepoMDError, e:
+            except Errors.RepoMDError as e:
                 pass
             else:
                 reposWithGroups.append(repo)
@@ -972,14 +972,14 @@ class YumBase(depsolve.Depsolve):
                 continue
             try:
                 self._comps.add(groupfile)
-            except (Errors.GroupsError,Errors.CompsException), e:
+            except (Errors.GroupsError,Errors.CompsException) as e:
                 msg = _('Failed to add groups file for repository: %s - %s') % (repo, exception2msg(e))
                 self.logger.critical(msg)
             else:
                 repo.groups_added = True
 
         if self._comps.compscount == 0:
-            raise Errors.GroupsError, _('No Groups Available in any repository')
+            raise Errors.GroupsError(_('No Groups Available in any repository'))
 
         #  Note that this means that grp.installed is not usable, when using
         # groups as objects ... but that's GOOD.
@@ -1014,7 +1014,7 @@ class YumBase(depsolve.Depsolve):
                                                            cached=repo.cache)
                     # feed it into _tags.add()
                     self._tags.add(repo.id, tag_sqlite)
-                except (Errors.RepoError, Errors.PkgTagsError), e:
+                except (Errors.RepoError, Errors.PkgTagsError) as e:
                     msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, exception2msg(e))
                     self.logger.critical(msg)
                     
@@ -1046,7 +1046,7 @@ class YumBase(depsolve.Depsolve):
 
                 try:
                     self._upinfo.add(repo)
-                except Errors.RepoMDError, e:
+                except Errors.RepoMDError as e:
                     msg = _('Failed to add Update Info for repository: %s - %s') % (repo, exception2msg(e))
                     self.logger.critical(msg)
 
@@ -1330,7 +1330,7 @@ much more problems).
             if txmbr.name not in bad_togo:
                 bad_togo[txmbr.name] = []
             bad_togo[txmbr.name].append(txmbr.pkgtup)
-        for ipkg in self.rpmdb.searchNames(bad_togo.keys()):
+        for ipkg in self.rpmdb.searchNames(list(bad_togo.keys())):
             if (kern_pkgtup is not None and ipkg.name == kern_pkgtup[0] and
                 kern_pkgtup in bad_togo[kern_pkgtup[0]]):
                 continue # If "running kernel" matches, it's always bad.
@@ -1339,7 +1339,7 @@ much more problems).
             # If there is at least one version not being removed, allow it
             if ipkg.pkgtup not in bad_togo[ipkg.name]:
                 del bad_togo[ipkg.name]
-        for pkgname in bad_togo.keys():
+        for pkgname in list(bad_togo.keys()):
             if (kern_pkgtup is not None and pkgname == kern_pkgtup[0] and
                 kern_pkgtup in bad_togo[kern_pkgtup[0]]):
                 continue # If "running kernel" matches, it's always bad.
@@ -1609,10 +1609,10 @@ much more problems).
         return depTree
 
     def _printDepTree(self, tree):
-        for pkg, l in tree.iteritems():
-            print pkg
+        for pkg, l in tree.items():
+            print(pkg)
             for p in l:
-                print "\t", p
+                print("\t", p)
 
     def _printTransaction(self):
         #transaction set states
@@ -1882,7 +1882,7 @@ much more problems).
 
             try:
                 os.unlink(self._ts_save_file)
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 pass
         self._ts_save_file = None
         
@@ -1937,7 +1937,7 @@ much more problems).
                 fn = getattr(cb, i)
                 try:
                     misc.unlink_f(fn)
-                except (IOError, OSError), e:
+                except (IOError, OSError) as e:
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
         
@@ -2231,7 +2231,7 @@ much more problems).
         
         mypid=str(os.getpid())    
         while True:
-            ret = self._lock(lockfile, mypid, 0644)
+            ret = self._lock(lockfile, mypid, 0o644)
             if ret:
                 break
 
@@ -2288,7 +2288,7 @@ much more problems).
         self._lockfile = None
         
     @staticmethod
-    def _lock(filename, contents='', mode=0777):
+    def _lock(filename, contents='', mode=0o777):
         lockdir = os.path.dirname(filename)
         try:
             if not os.path.exists(lockdir):
@@ -2302,7 +2302,7 @@ much more problems).
             os.write(fd, contents)
             os.close(fd)
             return 1
-        except OSError, msg:
+        except OSError as msg:
             if not msg.errno == errno.EEXIST: 
                 # Whoa. What the heck happened?
                 errmsg = _('Could not create lock at %s: %s ') % (filename, exception2msg(msg))
@@ -2316,7 +2316,7 @@ much more problems).
     @staticmethod
     def _get_locker(lockfile):
         try: fd = open(lockfile, 'r')
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             msg = _("Could not open lock %s: %s") % (lockfile, e)
             raise Errors.LockError(errno.EPERM, msg)
         try: oldpid = int(fd.readline())
@@ -2330,7 +2330,7 @@ much more problems).
         except IOError:
             # process dead or /proc not mounted
             try: os.kill(oldpid, 0)
-            except OSError, e:
+            except OSError as e:
                 if e[0] == errno.ESRCH:
                     return None # The pid doesn't exist
                 # Whoa. What the heck happened?
@@ -2375,7 +2375,7 @@ much more problems).
             # if the file is wrong AND it is >= what we expected then it
             # can't be redeemed. If we can, kill it and start over fresh
             cursize = os.stat(fo)[6]
-            totsize = long(po.size)
+            totsize = int(po.size)
             if cursize >= totsize and not po.repo.cache:
                 # if the path to the file is NOT inside the pkgdir then don't
                 # unlink it b/c it is probably a file:// url and possibly not
@@ -2406,7 +2406,7 @@ much more problems).
         """
         try:
             filesum = misc.checksum(checksumType, fo)
-        except Errors.MiscError, e:
+        except Errors.MiscError as e:
             raise URLGrabError(-3, _('Could not perform checksum'))
             
         if filesum != csum:
@@ -2600,7 +2600,7 @@ much more problems).
                                        cache=po.repo.http_caching != 'none',
                                        **kwargs
                                        )
-                except Errors.RepoError, e:
+                except Errors.RepoError as e:
                     adderror(po, exception2msg(e))
             if async:
                 try:
@@ -2709,7 +2709,7 @@ much more problems).
         if os.path.exists(local):
             try:
                 result = self.verifyHeader(local, po, raiseError=1)
-            except URLGrabError, e:
+            except URLGrabError as e:
                 # might add a check for length of file - if it is < 
                 # required doing a reget
                 misc.unlink_f(local)
@@ -2730,14 +2730,14 @@ much more problems).
             hdrpath = repo.getHeader(po, checkfunc=checkfunc,
                     cache=repo.http_caching != 'none',
                     )
-        except Errors.RepoError, e:
+        except Errors.RepoError as e:
             saved_repo_error = e
             try:
                 misc.unlink_f(local)
-            except OSError, e:
-                raise Errors.RepoError, saved_repo_error
+            except OSError as e:
+                raise Errors.RepoError(saved_repo_error)
             else:
-                raise Errors.RepoError, saved_repo_error
+                raise Errors.RepoError(saved_repo_error)
         else:
             po.hdrpath = hdrpath
             return
@@ -2838,7 +2838,7 @@ much more problems).
                 continue
             try:
                 misc.unlink_f(fn)
-            except OSError, e:
+            except OSError as e:
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
             else:
@@ -2903,7 +2903,7 @@ much more problems).
         for item in filelist:
             try:
                 misc.unlink_f(item)
-            except OSError, e:
+            except OSError as e:
                 self.logger.critical(_('Cannot remove %s file %s'), filetype, item)
                 continue
             else:
@@ -2968,7 +2968,7 @@ much more problems).
                 key = (po.name, po.arch)
                 if key not in ndinst or po.verGT(ndinst[key]):
                     ndinst[key] = po
-            installed = dinst.values()
+            installed = list(dinst.values())
                         
             if showdups:
                 avail = self.pkgSack.returnPackages(repoid=repoid,
@@ -3247,7 +3247,7 @@ much more problems).
             critweights.setdefault(s, critweight)
             critweight -= 1
 
-        for sack in self.pkgSack.sacks.values():
+        for sack in list(self.pkgSack.sacks.values()):
             tmpres.extend(sack.searchPrimaryFieldsMultipleStrings(sql_fields, real_crit))
 
         def results2sorted_lists(tmpres, sorted_lists):
@@ -3298,9 +3298,9 @@ much more problems).
 
             del tmpres
 
-        if sorted_lists.values():
+        if list(sorted_lists.values()):
             # do the ones we already have
-            for item in sorted_lists.values():
+            for item in list(sorted_lists.values()):
                 for pkg, k, v in item:
                     if pkg not in results_by_pkg:
                         results_by_pkg[pkg] = []
@@ -3399,7 +3399,7 @@ much more problems).
         for c in criteria:
             c = c.lower()
             res = self.pkgtags.search_tags(c)
-            for (name, taglist) in res.items():
+            for (name, taglist) in list(res.items()):
                 pkgs = self.pkgSack.searchNevra(name=name)
                 if not pkgs:
                     continue
@@ -3549,7 +3549,7 @@ much more problems).
                         tagdata = getattr(po, tag)
                         if tagdata is None:
                             continue
-                        if type(tagdata) is types.ListType:
+                        if type(tagdata) is list:
                             searchlist.extend(tagdata)
                         else:
                             searchlist.append(tagdata)
@@ -3645,10 +3645,10 @@ much more problems).
         if patterns is None:
             grps = self.comps.groups
             if self.conf.group_command == 'objects':
-                igrps = self.igroups.groups.values()
+                igrps = list(self.igroups.groups.values())
             evgrps = self.comps.environments
             if self.conf.group_command == 'objects':
-                ievgrps = self.igroups.environments.values()
+                ievgrps = list(self.igroups.environments.values())
             return igrps, grps, ievgrps, evgrps
 
         gpats = []
@@ -3700,7 +3700,7 @@ much more problems).
         eavailable = []
 
         if self.comps.compscount == 0:
-            raise Errors.GroupsError, _('No group data available for configured repositories')
+            raise Errors.GroupsError(_('No group data available for configured repositories'))
         
         igrps, grps, ievgrps, evgrps = self._groupReturnGroups(patterns,
                                                                ignore_case)
@@ -3762,7 +3762,7 @@ much more problems).
         assert not igrps
         assert not ievgrps
 
-        for igrp in igrps.values():
+        for igrp in list(igrps.values()):
             #  These are installed groups that aren't in comps anymore. so we
             # create fake comps groups for them.
             grp = comps.Group()
@@ -3773,7 +3773,7 @@ much more problems).
                 grp.mandatory_packages[pkg_name] = 1
             installed.append(grp)
 
-        for ievgrp in ievgrps.values():
+        for ievgrp in list(ievgrps.values()):
             #  These are installed evgroups that aren't in comps anymore. so we
             # create fake comps evgroups for them.
             evgrp = comps.Environment()
@@ -3800,7 +3800,7 @@ much more problems).
 
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise Errors.GroupsError(_("No Group named %s exists") % to_unicode(grpid))
 
         for thisgroup in thesegroups:
             igroup_data = self._groupInstalledData(thisgroup)
@@ -3830,7 +3830,7 @@ much more problems).
         """
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise Errors.GroupsError(_("No Group named %s exists") % to_unicode(grpid))
 
         for thisgroup in thesegroups:
             thisgroup.toremove = False
@@ -3863,7 +3863,7 @@ much more problems).
 
         thesegroups = self.comps.return_environments(evgrpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Environment named %s exists") % to_unicode(evgrpid)
+            raise Errors.GroupsError(_("No Environment named %s exists") % to_unicode(evgrpid))
 
         for thisgroup in thesegroups:
             igroup_data = self._groupInstalledEnvData(thisgroup)
@@ -3902,7 +3902,7 @@ much more problems).
         thesegroups = self.comps.return_groups(grpid)
      
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise Errors.GroupsError(_("No Group named %s exists") % to_unicode(grpid))
 
         package_types = self.conf.group_package_types
         if group_package_types:
@@ -3978,7 +3978,7 @@ much more problems).
                                 txmbr._ugroup_member = thisgroup
                             else:
                                 txmbr._igroup_member = thisgroup
-                except Errors.InstallError, e:
+                except Errors.InstallError as e:
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)
                 else:
@@ -3994,7 +3994,7 @@ much more problems).
             # FIXME: What do we do about group conditionals when group==objects
             #        or group upgrade for group_command=simple?
             if not lupgrade and group_conditionals:
-                for condreq, cond in thisgroup.conditional_packages.iteritems():
+                for condreq, cond in thisgroup.conditional_packages.items():
                     if self.isPackageInstalled(cond):
                         try:
                             txmbrs = self.install(name = condreq)
@@ -4049,11 +4049,11 @@ much more problems).
         """
         
         if not self.comps.has_group(grpid):
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise Errors.GroupsError(_("No Group named %s exists") % to_unicode(grpid))
             
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise Errors.GroupsError(_("No Group named %s exists") % to_unicode(grpid))
 
         # FIXME: Do something with groups as objects, and env. groups.
         for thisgroup in thesegroups:
@@ -4096,7 +4096,7 @@ much more problems).
         """
         evgrps = self.comps.return_environments(evgrpid)
         if not evgrps:
-            raise Errors.GroupsError, _("No Environment named %s exists") % to_unicode(evgrpid)
+            raise Errors.GroupsError(_("No Environment named %s exists") % to_unicode(evgrpid))
 
         ret = []
         for evgrp in evgrps:
@@ -4166,7 +4166,7 @@ much more problems).
         """
         evgrps = self.comps.return_environments(evgrpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Environment named %s exists") % to_unicode(evgrpid)
+            raise Errors.GroupsError(_("No Environment named %s exists") % to_unicode(evgrpid))
 
         for evgrp in evgrps:
             grps = ",".join(sorted(evgrp.groups))
@@ -4200,7 +4200,7 @@ much more problems).
             self._add_not_found_a(pkgs, pkgtup=pkgtup)
             if allow_missing: #  This can happen due to excludes after .up has
                 return None   # happened.
-            raise Errors.DepError, _('Package tuple %s could not be found in packagesack') % str(pkgtup)
+            raise Errors.DepError(_('Package tuple %s could not be found in packagesack') % str(pkgtup))
             
         if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
             result = pkgs[0]
@@ -4228,7 +4228,7 @@ much more problems).
         pkgs = self.rpmdb.searchPkgTuple(pkgtup)
         if len(pkgs) == 0:
             self._add_not_found_i(pkgs, pkgtup=pkgtup)
-            raise Errors.RpmDBError, _('Package tuple %s could not be found in rpmdb') % str(pkgtup)
+            raise Errors.RpmDBError(_('Package tuple %s could not be found in rpmdb') % str(pkgtup))
 
         # Dito. FIXME from getPackageObject() for len() > 1 ... :)
         po = pkgs[0] # take the first one
@@ -4278,7 +4278,7 @@ much more problems).
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
         #  or packagename
-        if type(depstring) == types.TupleType:
+        if type(depstring) == tuple:
             (depname, depflags, depver) = depstring
         else:
             depname = depstring
@@ -4291,14 +4291,14 @@ much more problems).
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
+                        raise Errors.YumBaseError(_('Invalid version flag from: %s') % str(depstring))
                     depflags = SYMBOLFLAGS[flagsymbol]
 
         if depflags is None: # This does wildcards...
             return self.pkgSack.searchProvides(depstring)
 
         # This does flags+versions, but no wildcards...
-        return self.pkgSack.getProvides(depname, depflags, depver).keys()
+        return list(self.pkgSack.getProvides(depname, depflags, depver).keys())
 
     def returnPackageByDep(self, depstring):
         """Return the best, or first, package object that provides the
@@ -4313,19 +4313,19 @@ much more problems).
         """
         # we get all sorts of randomness here
         errstring = depstring
-        if type(depstring) not in types.StringTypes:
+        if type(depstring) not in (str,):
             errstring = str(depstring)
         
         try:
             pkglist = self.returnPackagesByDep(depstring)
         except Errors.YumBaseError:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+            raise Errors.YumBaseError(_('No Package found for %s') % errstring)
         
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch(),
                                            req=errstring)
         if result is None:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+            raise Errors.YumBaseError(_('No Package found for %s') % errstring)
         
         return result
 
@@ -4345,7 +4345,7 @@ much more problems).
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
         #  or packagename
-        if type(depstring) == types.TupleType:
+        if type(depstring) == tuple:
             (depname, depflags, depver) = depstring
         else:
             depname = depstring
@@ -4358,14 +4358,14 @@ much more problems).
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
+                        raise Errors.YumBaseError(_('Invalid version flag from: %s') % str(depstring))
                     depflags = SYMBOLFLAGS[flagsymbol]
 
         if depflags is None: # This does wildcards...
             return self.rpmdb.searchProvides(depstring)
 
         # This does flags+versions, but no wildcards...
-        return self.rpmdb.getProvides(depname, depflags, depver).keys()
+        return list(self.rpmdb.getProvides(depname, depflags, depver).keys())
 
     def returnInstalledPackageByDep(self, depstring):
         """Return the best, or first, installed package object that provides the
@@ -4380,19 +4380,19 @@ much more problems).
         """
         # we get all sorts of randomness here
         errstring = depstring
-        if type(depstring) not in types.StringTypes:
+        if type(depstring) not in (str,):
             errstring = str(depstring)
         
         try:
             pkglist = self.returnInstalledPackagesByDep(depstring)
         except Errors.YumBaseError:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+            raise Errors.YumBaseError(_('No Package found for %s') % errstring)
         
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch(),
                                            req=errstring)
         if result is None:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+            raise Errors.YumBaseError(_('No Package found for %s') % errstring)
         
         return result
 
@@ -4593,7 +4593,7 @@ much more problems).
         tx_return = []
 
         try: comps = self.comps
-        except yum.Errors.GroupsError, e:
+        except yum.Errors.GroupsError as e:
             # No Groups Available in any repository?
             # This also means no installed groups, when using objects.
             self.logger.warning(e)
@@ -4614,14 +4614,14 @@ much more problems).
                 txmbrs = self.selectGroup(group.groupid, upgrade=upgrade)
                 tx_return.extend(txmbrs)
         if not found:
-            raise Errors.GroupInstallError, _('Group %s does not exist.') % self._try_bold(group_string)
+            raise Errors.GroupInstallError(_('Group %s does not exist.') % self._try_bold(group_string))
         return tx_return
 
     def _at_groupupgrade(self, pattern):
         " Do group upgrade via. leading @ on the cmd line, for update."
         try:
             return self._at_groupinstall(pattern, upgrade=True)
-        except Errors.GroupInstallError, e:
+        except Errors.GroupInstallError as e:
             self.logger.warning(_('Warning: %s'), e)
             if self.conf.skip_missing_names_on_update:
                 return []
@@ -4664,7 +4664,7 @@ much more problems).
 
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise Errors.GroupsError(_("No Group named %s exists") % to_unicode(grpid))
         pkgnames = set()
         for thisgroup in thesegroups:
             pkgnames.update(thisgroup.packages)
@@ -4814,11 +4814,11 @@ much more problems).
             if isinstance(po, YumAvailablePackage) or isinstance(po, YumLocalPackage):
                 pkgs.append(po)
             else:
-                raise Errors.InstallError, _('Package Object was not a package object instance')
+                raise Errors.InstallError(_('Package Object was not a package object instance'))
             
         else:
             if not kwargs:
-                raise Errors.InstallError, _('Nothing specified to install')
+                raise Errors.InstallError(_('Nothing specified to install'))
 
             if 'pattern' in kwargs:
                 if kwargs['pattern'] and kwargs['pattern'][0] == '-':
@@ -4901,7 +4901,7 @@ much more problems).
                         pkgbyname[pkg.name].append(pkg)
 
                 lst = []
-                for pkgs in pkgbyname.values():
+                for pkgs in list(pkgbyname.values()):
                     lst.extend(self.bestPackagesFromList(pkgs))
                 pkgs = lst
 
@@ -4930,7 +4930,7 @@ much more problems).
                     self.verbose_logger.warning(_('Package %s installed and not available'), pkg)
             if pkgs:
                 return []
-            raise Errors.InstallError, _('No package(s) available to install')
+            raise Errors.InstallError(_('No package(s) available to install'))
         
         # FIXME - lots more checking here
         #  - install instead of erase
@@ -5212,7 +5212,7 @@ much more problems).
                         depmatches = self.returnPackagesByDep(arg)
                     else:
                         depmatches = self.returnInstalledPackagesByDep(arg)
-                except yum.Errors.YumBaseError, e:
+                except yum.Errors.YumBaseError as e:
                     self.logger.critical(_('%s') % e)
 
                 depmatches = misc.filter_pkgs_repoid(depmatches,
@@ -5242,7 +5242,7 @@ much more problems).
             if not availpkgs and not instpkgs:
                 self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
                 if not self.conf.skip_missing_names_on_update:
-                    raise Errors.UpdateMissingNameError, _('Not tolerating missing names on update, stopping.')
+                    raise Errors.UpdateMissingNameError(_('Not tolerating missing names on update, stopping.'))
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
@@ -5258,7 +5258,7 @@ much more problems).
                 self._add_not_found_a(availpkgs, nevra_dict)
                 if len(availpkgs) > 1:
                     availpkgs = self._compare_providers(availpkgs, requiringPo)
-                    availpkgs = map(lambda x: x[0], availpkgs)
+                    availpkgs = [x[0] for x in availpkgs]
                 elif not availpkgs:
                     pkg_warn(_("No package matched to upgrade: %s"), self._ui_nevra_dict(nevra_dict))
        
@@ -5434,7 +5434,7 @@ much more problems).
            to mark for removal
         """
         if not po and not kwargs:
-            raise Errors.RemoveError, 'Nothing specified to remove'
+            raise Errors.RemoveError('Nothing specified to remove')
         
         tx_return = []
         pkgs = []
@@ -5462,7 +5462,7 @@ much more problems).
                     arg = u[0]
                     try:
                         depmatches = self.returnInstalledPackagesByDep(arg)
-                    except yum.Errors.YumBaseError, e:
+                    except yum.Errors.YumBaseError as e:
                         self.logger.critical(_('%s') % e)
                     
                     if 'repoid' in kwargs:
@@ -5696,7 +5696,7 @@ much more problems).
         else:
             tx_mbrs.extend(self.remove(**kwargs))
         if not tx_mbrs:
-            raise Errors.ReinstallRemoveError, _("Problem in reinstall: no package matched to remove")
+            raise Errors.ReinstallRemoveError(_("Problem in reinstall: no package matched to remove"))
         templen = len(tx_mbrs)
         # this is a reinstall, so if we can't reinstall exactly what we uninstalled
         # then we really shouldn't go on
@@ -5791,7 +5791,7 @@ much more problems).
            specified or available for downgrade
         """
         if not po and not kwargs:
-            raise Errors.DowngradeError, 'Nothing specified to downgrade'
+            raise Errors.DowngradeError('Nothing specified to downgrade')
 
         doing_group_pkgs = False
         if po:
@@ -5813,7 +5813,7 @@ much more problems).
 
                     try:
                         apkgs = self.returnPackagesByDep(arg)
-                    except yum.Errors.YumBaseError, e:
+                    except yum.Errors.YumBaseError as e:
                         self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
 
         else:
@@ -5836,7 +5836,7 @@ much more problems).
                 pkgs = self.rpmdb.searchNevra(name=kwargs['name'])
             if pkgs:
                 return []
-            raise Errors.DowngradeError, _('No package(s) available to downgrade')
+            raise Errors.DowngradeError(_('No package(s) available to downgrade'))
 
         warned_nas = set()
         # Skip kernel etc.
@@ -6140,7 +6140,7 @@ much more problems).
                 text = repo.id + '/gpgkey'
             rawkey = urlgrabber.urlread(url, **opts)
 
-        except urlgrabber.grabber.URLGrabError, e:
+        except urlgrabber.grabber.URLGrabError as e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
                                       exception2msg(e))
                                       
@@ -6156,12 +6156,12 @@ much more problems).
                 text = repo.id + '/gpgkeysig'
                 sigfile = urlgrabber.urlopen(url, **opts)
 
-            except urlgrabber.grabber.URLGrabError, e:
+            except urlgrabber.grabber.URLGrabError as e:
                 sigfile = None
 
             if sigfile:
                 if not misc.valid_detached_sig(sigfile, 
-                                    StringIO.StringIO(rawkey), repo.gpgcadir):
+                                    io.StringIO(rawkey), repo.gpgcadir):
                     #if we decide we want to check, even though the sig failed
                     # here is where we would do that
                     raise Errors.YumBaseError(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
@@ -6173,7 +6173,7 @@ much more problems).
         # Parse the key
         try:
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
-        except ValueError, e:
+        except ValueError as e:
             raise Errors.YumBaseError(_('Invalid GPG Key from %s: %s') % 
                                       (url, exception2msg(e)))
         keys = []
@@ -6182,8 +6182,7 @@ much more problems).
             for info in ('keyid', 'timestamp', 'userid', 
                          'fingerprint', 'raw_key'):
                 if info not in keyinfo:
-                    raise Errors.YumBaseError, \
-                      _('GPG key parsing failed: key does not have value %s') + info
+                    raise Errors.YumBaseError(_('GPG key parsing failed: key does not have value %s') + info)
                 thiskey[info] = keyinfo[info]
             thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
             thiskey['valid_sig'] = valid_sig
@@ -6290,12 +6289,12 @@ much more problems).
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
-                    raise Errors.YumBaseError, _prov_key_data(msg)
+                    raise Errors.YumBaseError(_prov_key_data(msg))
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
         if not key_installed and user_cb_fail:
-            raise Errors.YumBaseError, _("Didn't install any keys")
+            raise Errors.YumBaseError(_("Didn't install any keys"))
 
         if not key_installed:
             msg = _('The GPG keys listed for the "%s" repository are ' \
@@ -6303,7 +6302,7 @@ much more problems).
                   'package.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % repo.name
-            raise Errors.YumBaseError, _prov_key_data(msg)
+            raise Errors.YumBaseError(_prov_key_data(msg))
 
         # Check if the newly installed keys helped
         result, errmsg = self.sigCheckPkg(po)
@@ -6311,7 +6310,7 @@ much more problems).
             msg = _("Import of key(s) didn't help, wrong key(s)?")
             self.logger.info(msg)
             errmsg = to_unicode(errmsg)
-            raise Errors.YumBaseError, _prov_key_data(errmsg)
+            raise Errors.YumBaseError(_prov_key_data(errmsg))
     
     def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
         """
@@ -6391,7 +6390,7 @@ much more problems).
                 result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
                 if not result:
                     msg = _('Key %s import failed') % info['hexkeyid']
-                    raise Errors.YumBaseError, _prov_key_data(msg)
+                    raise Errors.YumBaseError(_prov_key_data(msg))
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
                 # write out the key id to imported_cakeys in the repos basedir
@@ -6408,7 +6407,7 @@ much more problems).
 
         if not key_installed and user_cb_fail:
             msg = _("Didn't install any keys for repo %s") % repo
-            raise Errors.YumBaseError, _prov_key_data(msg)
+            raise Errors.YumBaseError(_prov_key_data(msg))
 
         if not key_installed:
             msg = \
@@ -6416,7 +6415,7 @@ much more problems).
                   'already installed but they are not correct.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % (repo.name)
-            raise Errors.YumBaseError, _prov_key_data(msg)
+            raise Errors.YumBaseError(_prov_key_data(msg))
 
     def getKeyForRepo(self, repo, callback=None):
         """Retrieve a key for a repository.  If needed, use the given
@@ -6568,9 +6567,7 @@ much more problems).
     def _downloadPackages(self,callback):
         ''' Download the need packages in the Transaction '''
         # This can be overloaded by a subclass.    
-        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
-                                            txmbr.ts_state in ("i", "u"),
-                                            self.tsInfo.getMembers()))
+        dlpkgs = [x.po for x in [txmbr for txmbr in self.tsInfo.getMembers() if txmbr.ts_state in ("i", "u")]]
         # Check if there is something to do
         if len(dlpkgs) == 0:
             return None
@@ -6580,7 +6577,7 @@ much more problems).
             probs = self.downloadPkgs(dlpkgs)
 
         except IndexError:
-            raise Errors.YumBaseError, [_("Unable to find a suitable mirror.")]
+            raise Errors.YumBaseError([_("Unable to find a suitable mirror.")])
         if len(probs) > 0:
             errstr = [_("Errors were encountered while downloading packages.")]
             for key in probs:
@@ -6588,7 +6585,7 @@ much more problems).
                 for error in errors:
                     errstr.append("%s: %s" % (key, error))
 
-            raise Errors.YumDownloadError, errstr
+            raise Errors.YumDownloadError(errstr)
         return dlpkgs
 
     def _checkSignatures(self,pkgs,callback):
@@ -6602,7 +6599,7 @@ much more problems).
             elif result == 1:
                 self.getKeyForPackage(po, self._askForGPGKeyImport)
             else:
-                raise Errors.YumGPGCheckError, errmsg
+                raise Errors.YumGPGCheckError(errmsg)
 
         return 0
         
@@ -6634,12 +6631,12 @@ much more problems).
             if rpmlib_only:
                 retmsgs = [_("ERROR You need to update rpm to handle:")]
                 retmsgs.extend(msgs)
-                raise Errors.YumRPMCheckError, retmsgs
+                raise Errors.YumRPMCheckError(retmsgs)
             retmsgs = [_('ERROR with transaction check vs depsolve:')]
             retmsgs.extend(msgs) 
             # Don't encourage users to file a bug here, as this is probably
             # pre-existing issue in dependendies of installed packages
-            raise Errors.YumRPMCheckError,retmsgs
+            raise Errors.YumRPMCheckError(retmsgs)
         
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
@@ -6657,7 +6654,7 @@ much more problems).
             errstring =  _('Test Transaction Errors: ')
             for descr in tserrors:
                 errstring += '  %s\n' % descr 
-            raise Errors.YumTestTransactionError, errstring
+            raise Errors.YumTestTransactionError(errstring)
 
         del self.ts
         # put back our depcheck callback
@@ -6736,7 +6733,7 @@ much more problems).
         newrepo.basecachedir = self.conf.cachedir
         newrepo.base_persistdir = self.conf._repos_persistdir
 
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if not hasattr(newrepo, key): continue # skip the ones which aren't vars
             setattr(newrepo, key, kwargs[key])
         
@@ -6765,7 +6762,7 @@ much more problems).
             tmpdir = '/var/tmp'
         try:
             cachedir = misc.getCacheDir(tmpdir, reuse)
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             self.logger.critical(_('Could not set cachedir: %s') % exception2msg(e))
             cachedir = None
             
@@ -6861,7 +6858,7 @@ much more problems).
         try:
             f.write(msg)
             f.close()
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             self._ts_save_file = None
             if auto:
                 self.logger.critical(_("Could not save transaction file %s: %s") % (filename, exception2msg(e)))
@@ -6872,7 +6869,7 @@ much more problems).
         """ Load the file into a simple data format. """
         try:
             data = open(filename, 'r').readlines()
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             return (exception2msg(e), None)
 
         if not data:
@@ -6954,7 +6951,7 @@ much more problems).
         #         so someone can add --nogpgcheck or --nodocs or --nodiskspace or some nonsense and have it work
         try:
             tsflags = int(data[1].strip())
-        except (ValueError, IndexError), e:
+        except (ValueError, IndexError) as e:
             msg = _("cannot find tsflags or tsflags not integer.")
             raise Errors.YumBaseError(msg)
 
@@ -7006,7 +7003,7 @@ much more problems).
                     else:
                         msg = _("Found txmbr in unknown current state: %s" % current_state)
                         raise Errors.YumBaseError(msg)
-                except Errors.YumBaseError, e:
+                except Errors.YumBaseError as e:
                     missingany = True
                     msg = _("Could not find txmbr: %s in state %s" % (str(pkgtup), current_state))
                     if not ignoremissing:
@@ -7044,7 +7041,7 @@ much more problems).
                             po = self.getInstalledPackageObject(tuple(pkgtup.split(',')))
                         else:
                             po = self.getPackageObject(tuple(pkgtup.split(',')))
-                    except Errors.YumBaseError, e:
+                    except Errors.YumBaseError as e:
                         msg = _("Could not find txmbr: %s from origin: %s" % (str(pkgtup), origin))
                         self.logger.critical(msg)
                         missingany = True
@@ -7061,7 +7058,7 @@ much more problems).
                             po = self.getInstalledPackageObject(tuple(pkgtup.split(',')))
                         else:
                             po = self.getPackageObject(tuple(pkgtup.split(',')))
-                    except Errors.YumBaseError, e:
+                    except Errors.YumBaseError as e:
                         msg = _("Could not find txmbr: %s from origin: %s" % (str(pkgtup), origin))
                         self.logger.critical(msg)
                         missingany = True
@@ -7140,7 +7137,7 @@ much more problems).
                     #            break
                 
                 if not still_needed:
-                    print '---> Marking %s to be removed - no longer needed by %s' % (required.name, pkg.name)
+                    print('---> Marking %s to be removed - no longer needed by %s' % (required.name, pkg.name))
                     txmbrs = self.remove(po=required)
 
                     for txmbr in txmbrs:
@@ -7190,13 +7187,13 @@ much more problems).
                 #  Go through the stuff in the ts to be installed - make sure
                 # none of that needs the required pkg, either.
                 for (provn,provf,provevr) in curpkg.provides:
-                    if self.tsInfo.getNewRequires(provn, provf, provevr).keys():
+                    if list(self.tsInfo.getNewRequires(provn, provf, provevr).keys()):
                         ok_to_remove[pkg] = False
                         ok_to_remove[curpkg] = False
                         self.verbose_logger.log(logginglevels.DEBUG_2, _("%s is needed by a package to be installed."), curpkg)
                         return True
                 for fn in curpkg.filelist + curpkg.dirlist:
-                    if self.tsInfo.getNewRequires(fn, None,(None,None,None)).keys():
+                    if list(self.tsInfo.getNewRequires(fn, None,(None,None,None)).keys()):
                         ok_to_remove[pkg] = False
                         ok_to_remove[curpkg] = False
                         self.verbose_logger.log(logginglevels.DEBUG_2, _("%s is needed by a package to be installed."), curpkg)

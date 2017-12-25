@@ -22,10 +22,10 @@ except ImportError:
     import cElementTree
 iterparse = cElementTree.iterparse
 
-from cStringIO import StringIO
+from io import StringIO
 import warnings
 
-import Errors
+from . import Errors
 
 #TODO: document everything here
 
@@ -50,7 +50,7 @@ class MDParser:
         else: fh = open(filename, 'r')
         parser = iterparse(fh, events=('start', 'end'))
         self.reader = parser.__iter__()
-        event, elem = self.reader.next()
+        event, elem = next(self.reader)
         self._handlercls = handlers.get(elem.tag, None)
         if not self._handlercls:
             raise ValueError('Unknown repodata type "%s" in %s' % (
@@ -61,7 +61,7 @@ class MDParser:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         for event, elem in self.reader:
             if event == 'end' and elem.tag[-7:] == 'package':
                 self.count += 1
@@ -77,10 +77,10 @@ class BaseEntry:
         return self._p[k]
 
     def keys(self):
-        return self._p.keys()
+        return list(self._p.keys())
 
     def values(self):
-        return self._p.values()
+        return list(self._p.values())
 
     def has_key(self, k):
         warnings.warn('has_key() will go away in a future version of Yum.\n',
@@ -92,10 +92,10 @@ class BaseEntry:
 
     def __str__(self):
         out = StringIO()
-        keys = self.keys()
+        keys = list(self.keys())
         keys.sort()
         for k in keys:
-            line = u'%s=%s\n' % (k, self[k])
+            line = '%s=%s\n' % (k, self[k])
             out.write(line.encode('utf8'))
         return out.getvalue()
 
@@ -208,10 +208,10 @@ def test():
     parser = MDParser(sys.argv[1])
 
     for pkg in parser:
-        print '-' * 40
-        print pkg
+        print('-' * 40)
+        print(pkg)
 
-    print 'read: %s packages (%s suggested)' % (parser.count, parser.total)
+    print('read: %s packages (%s suggested)' % (parser.count, parser.total))
 
 if __name__ == '__main__':
     test()

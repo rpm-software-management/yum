@@ -6,7 +6,7 @@ import settestpath
 import logging
 import yum.logginglevels as logginglevels
 
-new_behavior = "NEW_BEHAVIOR" in os.environ.keys()
+new_behavior = "NEW_BEHAVIOR" in list(os.environ.keys())
 
 from yum import YumBase
 from yum import transactioninfo
@@ -139,9 +139,9 @@ class FakePackage(packages.YumAvailablePackage):
     def __init__(self, name, version='1.0', release='1', epoch='0', arch='noarch', repo=None):
         if repo is None:
             repo = FakeRepo()
-            print "creating empty repo for %s-%s:%s-%s.%s " % (name, epoch,
+            print("creating empty repo for %s-%s:%s-%s.%s " % (name, epoch,
                                                                version, release,
-                                                               arch)
+                                                               arch))
         packages.YumAvailablePackage.__init__(self, repo)
 
         self.name = name
@@ -351,7 +351,7 @@ class FakeRpmDb(packageSack.PackageSack):
                         installedUnresolvedFileRequires.add(name)
 
         fileRequires = set()
-        for fnames in installedFileRequires.itervalues():
+        for fnames in installedFileRequires.values():
             fileRequires.update(fnames)
         installedFileProviders = {}
         for fname in fileRequires:
@@ -388,7 +388,7 @@ class FakeRpmDb(packageSack.PackageSack):
         # convert flags & version for unversioned reqirements
         if not version:
             version=(None, None, None)
-        if type(version) in (str, type(None), unicode):
+        if type(version) in (str, type(None), str):
             version = rpmUtils.miscutils.stringToVersion(version)
         if flags == '0':
             flags=None

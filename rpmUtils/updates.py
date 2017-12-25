@@ -70,7 +70,7 @@ class Updates:
         for key in keys:
             if key not in dict_:
                 continue
-            dict_[key] = filter(value.__ne__, dict_[key])
+            dict_[key] = list(filter(value.__ne__, dict_[key]))
             if not dict_[key]:
                 del dict_[key]
 
@@ -78,7 +78,7 @@ class Updates:
         (n, a, e, v, r) = pkgtup
         for aa in (a, None):
             if (n, aa) in dict_:
-                dict_[(n, aa)] = filter((e,v,r).__ne__, dict_[(n, aa)])
+                dict_[(n, aa)] = list(filter((e,v,r).__ne__, dict_[(n, aa)]))
                 if not dict_[(n, aa)]:
                     del dict_[(n, aa)]
 
@@ -103,7 +103,7 @@ class Updates:
 
     def debugprint(self, msg):
         if self.debug:
-            print msg
+            print(msg)
 
     def makeNADict(self, pkglist, Nonelists, filter=None):
         """return lists of (e,v,r) tuples as value of a dict keyed on (n, a)
@@ -133,7 +133,7 @@ class Updates:
     def returnNewest(self, evrlist):
         """takes a list of (e, v, r) tuples and returns the newest one"""
         if len(evrlist)==0:
-            raise rpmUtils.RpmUtilsError, "Zero Length List in returnNewest call"
+            raise rpmUtils.RpmUtilsError("Zero Length List in returnNewest call")
             
         if len(evrlist)==1:
             return evrlist[0]
@@ -184,7 +184,7 @@ class Updates:
            return an obsoleted_dict in the format of makeObsoletedDict"""
         if self._obsoletes_by_name is None:
             self._obsoletes_by_name = {}
-            for pkgtup, obsoletes in self.rawobsoletes.iteritems():
+            for pkgtup, obsoletes in self.rawobsoletes.items():
                 for name, flag, version in obsoletes:
                     self._obsoletes_by_name.setdefault(name, []).append(
                         (flag, version, pkgtup) )
@@ -201,7 +201,7 @@ class Updates:
         if not obsdict:
             return {}
 
-        obslist = obsdict.keys()
+        obslist = list(obsdict.keys())
         if newest:
             obslist = self._reduceListNewestByNameArch(obslist)
 
@@ -271,7 +271,7 @@ class Updates:
                     self.obsoleted_dict[old] = []
                 self.obsoleted_dict[old].append(new)
         self.obsoleting_dict = {}
-        for obsoleted, obsoletings in self.obsoleted_dict.iteritems():
+        for obsoleted, obsoletings in self.obsoleted_dict.items():
             for obsoleting in obsoletings:
                 self.obsoleting_dict.setdefault(obsoleting, []).append(obsoleted)
     
@@ -302,7 +302,7 @@ class Updates:
         newpkgs = self.availdict
         
         archlist = self._archlist 
-        for (n, a) in newpkgs.keys():
+        for (n, a) in list(newpkgs.keys()):
             if a not in archlist:
                 # high log here
                 del newpkgs[(n, a)]
@@ -333,12 +333,12 @@ class Updates:
                                 pass
 
         # Now we add the (n, None) entries back...
-        for na in newpkgs.keys():
-            all_arches = map(lambda x: (na[1], x[0], x[1], x[2]), newpkgs[na])
+        for na in list(newpkgs.keys()):
+            all_arches = [(na[1], x[0], x[1], x[2]) for x in newpkgs[na]]
             newpkgs.setdefault((na[0], None), []).extend(all_arches)
 
         # get rid of all the empty dict entries:
-        for nakey in newpkgs.keys():
+        for nakey in list(newpkgs.keys()):
             if len(newpkgs[nakey]) == 0:
                 del newpkgs[nakey]
 
@@ -575,7 +575,7 @@ class Updates:
            sorted, that obsolete something"""
            
         tmplist = []
-        obslist = self.obsoletes.keys()
+        obslist = list(self.obsoletes.keys())
         if newest:
             obslist = self._reduceListNewestByNameArch(obslist)
             
@@ -610,7 +610,7 @@ class Updates:
            sorted, that obsolete something"""
            
         tmplist = []
-        obslist = self.obsoletes.keys()
+        obslist = list(self.obsoletes.keys())
         if newest:
             obslist = self._reduceListNewestByNameArch(obslist)
 
@@ -644,7 +644,7 @@ class Updates:
            You can also specify newest=1 to get the set of newest pkgs (name, arch)
            sorted, that obsolete something"""
            
-        tmplist = self.obsoletes.keys()
+        tmplist = list(self.obsoletes.keys())
         if newest:
             tmplist = self._reduceListNewestByNameArch(tmplist)
 
@@ -711,7 +711,7 @@ class Updates:
         if not done:
             return tuplelist
 
-        return highdict.values()
+        return list(highdict.values())
 
             
 #    def getProblems(self):

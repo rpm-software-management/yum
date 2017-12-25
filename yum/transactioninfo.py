@@ -26,13 +26,13 @@ Classes and functions for manipulating a transaction to be passed
 to rpm.
 """
 
-from constants import *
-from packageSack import PackageSack, PackageSackVersion
-from packages import YumInstalledPackage
-from sqlitesack import YumAvailablePackageSqlite
-import Errors
+from .constants import *
+from .packageSack import PackageSack, PackageSackVersion
+from .packages import YumInstalledPackage
+from .sqlitesack import YumAvailablePackageSqlite
+from . import Errors
 import warnings
-import misc
+from . import misc
 
 import time
 
@@ -144,11 +144,10 @@ class TransactionData:
 
     def debugprint(self, msg):
         if self.debug:
-            print msg
+            print(msg)
 
     def getMembersWithState(self, pkgtup=None, output_states=None):
-        return filter(lambda p: p.output_state in output_states,
-                      self.getMembers(pkgtup))
+        return [p for p in self.getMembers(pkgtup) if p.output_state in output_states]
 
     def getMembers(self, pkgtup=None):
         """takes an optional package tuple and returns all transaction members 
@@ -157,7 +156,7 @@ class TransactionData:
         returnlist = []
 
         if pkgtup is None:
-            for members in self.pkgdict.itervalues():
+            for members in self.pkgdict.values():
                 returnlist.extend(members)            
         elif pkgtup in self.pkgdict:
             returnlist.extend(self.pkgdict[pkgtup])
@@ -249,7 +248,7 @@ class TransactionData:
                 txmbrs.extend(self.getMembers(pkg.pkgtup))
                 #  Now we need to do conditional group packages, so they don't
                 # get added later on. This is hacky :(
-                for req, cpkgs in self.conditionals.iteritems():
+                for req, cpkgs in self.conditionals.items():
                     if pkg in cpkgs:
                         cpkgs.remove(pkg)
                         self.conditionals[req] = cpkgs
@@ -277,7 +276,7 @@ class TransactionData:
             return True
         
         provides = po.provides_names
-        if filter (lambda prov: prov in self.installonlypkgs, provides):
+        if [prov for prov in provides if prov in self.installonlypkgs]:
             return True
         
         return False
@@ -613,11 +612,11 @@ class TransactionData:
         if not self.pkgSackPackages:
             pass
         elif self._inSack is None:
-            for pkg, hits in self.pkgSack.getProvides(name, flag, version).iteritems():
+            for pkg, hits in self.pkgSack.getProvides(name, flag, version).items():
                 if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
                     result[pkg] = hits
         else:
-            for pkg, hits in self._inSack.getProvides(name, flag, version).iteritems():
+            for pkg, hits in self._inSack.getProvides(name, flag, version).items():
                 result[pkg] = hits
         result.update(self.localSack.getProvides(name, flag, version))
         return result
@@ -626,7 +625,7 @@ class TransactionData:
         """return dict { packages -> list of matching provides }
         searches in packages already installed and not going to be removed"""
         result = { }
-        for pkg, hits in self.rpmdb.getProvides(name, flag, version).iteritems():
+        for pkg, hits in self.rpmdb.getProvides(name, flag, version).items():
             if not self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
                 result[pkg] = hits
         return result
@@ -644,11 +643,11 @@ class TransactionData:
         if not self.pkgSackPackages:
             pass
         elif self._inSack is None:
-            for pkg, hits in self.pkgSack.getRequires(name, flag, version).iteritems():
+            for pkg, hits in self.pkgSack.getRequires(name, flag, version).items():
                 if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
                     result[pkg] = hits
         else:
-            for pkg, hits in self._inSack.getRequires(name, flag, version).iteritems():
+            for pkg, hits in self._inSack.getRequires(name, flag, version).items():
                 result[pkg] = hits
 
         result.update(self.localSack.getRequires(name, flag, version))
@@ -659,7 +658,7 @@ class TransactionData:
         """return dict { packages -> list of matching provides }
         searches in packages already installed and not going to be removed"""
         result = { }
-        for pkg, hits in self.rpmdb.getRequires(name, flag, version).iteritems():
+        for pkg, hits in self.rpmdb.getRequires(name, flag, version).items():
             if not self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
                 result[pkg] = hits
         return result

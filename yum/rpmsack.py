@@ -23,24 +23,24 @@ import os.path
 from rpmUtils import miscutils
 from rpmUtils import arch
 from rpmUtils.transaction import initReadOnlyTransaction
-import misc
-import Errors
-from packages import YumInstalledPackage, parsePackages
-from packageSack import PackageSackBase, PackageSackVersion
+from . import misc
+from . import Errors
+from .packages import YumInstalledPackage, parsePackages
+from .packageSack import PackageSackBase, PackageSackVersion
 
 # For returnPackages(patterns=)
 import fnmatch
 import re
 
 from yum.i18n import to_unicode, _
-import constants
+from . import constants
 
 import yum.depsolve
 
 def _open_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
         up for user readable stuff. """
-    oumask = os.umask(022)
+    oumask = os.umask(0o22)
     try:
         ret = open(*args)
     finally:
@@ -51,7 +51,7 @@ def _open_no_umask(*args):
 def _makedirs_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
         up for user readable stuff. """
-    oumask = os.umask(022)
+    oumask = os.umask(0o22)
     try:
         ret = os.makedirs(*args)
     finally:
@@ -63,7 +63,7 @@ def _iopen(*args):
     """ IOError wrapper BS for open, stupid exceptions. """
     try:
         ret = open(*args)
-    except IOError, e:
+    except IOError as e:
         return None, e
     return ret, None
 
@@ -88,15 +88,15 @@ class RPMInstalledPackage(YumInstalledPackage):
         ts = self.rpmdb.readOnlyTS()
         mi = ts.dbMatch(0, self.idx)
         try:
-            return mi.next()
+            return next(mi)
         except StopIteration:
-            raise Errors.PackageSackError, 'Rpmdb changed underneath us'
+            raise Errors.PackageSackError('Rpmdb changed underneath us')
 
     def __getattr__(self, varname):
         # If these existed, then we wouldn't get here...
         # Prevent access of __foo__, _cached_foo etc from loading the header 
         if varname.startswith('_'):
-            raise AttributeError, "%s has no attribute %s" % (self, varname)
+            raise AttributeError("%s has no attribute %s" % (self, varname))
 
         if varname != 'hdr': # Don't cache the hdr, unless explicitly requested
             #  Note that we don't even cache the .blah value, but looking up the
@@ -268,7 +268,7 @@ class RPMDBPackageSack(PackageSackBase):
         if not self._simple_pkgtup_list:
             csumpkgtups = self.preloadPackageChecksums(load_packages=False)
             if csumpkgtups is not None:
-                self._simple_pkgtup_list = csumpkgtups.keys()
+                self._simple_pkgtup_list = list(csumpkgtups.keys())
 
         if not self._simple_pkgtup_list:
             for (hdr, mi) in self._get_packages():
@@ -441,7 +441,7 @@ class RPMDBPackageSack(PackageSackBase):
         for pkg in fileresults:
             result.setdefault(pkg.pkgid, pkg)
         
-        return result.values()
+        return list(result.values())
 
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
@@ -457,7 +457,7 @@ class RPMDBPackageSack(PackageSackBase):
             pkg = self._makePackageObject(hdr, idx)
             result.setdefault(pkg.pkgid, pkg)
 
-        return result.values()
+        return list(result.values())
         
     def searchPrco(self, name, prcotype):
 
@@ -486,7 +486,7 @@ class RPMDBPackageSack(PackageSackBase):
             for pkg in fileresults:
                 result[pkg.pkgid] = pkg
         
-        result = result.values()
+        result = list(result.values())
         self._cache[prcotype][name] = result
 
         return result
@@ -524,7 +524,7 @@ class RPMDBPackageSack(PackageSackBase):
         allpkg = self._search(name=name, arch=arch)
 
         if not allpkg:
-            raise Errors.PackageSackError, 'No Package Matching %s' % name
+            raise Errors.PackageSackError('No Package Matching %s' % name)
 
         return [ po.pkgtup for po in misc.newestInList(allpkg) ]
 
@@ -535,7 +535,7 @@ class RPMDBPackageSack(PackageSackBase):
         allpkgs = self._search(name=name)
 
         if not allpkgs:
-            raise Errors.PackageSackError, 'No Package Matching %s' % name
+            raise Errors.PackageSackError('No Package Matching %s' % name)
 
         return misc.newestInList(allpkgs)
 
@@ -652,7 +652,7 @@ class RPMDBPackageSack(PackageSackBase):
                     self._makePackageObject(hdr, idx)
             self._completely_loaded = rpats is None
 
-        pkgobjlist = self._idx2pkg.values()
+        pkgobjlist = list(self._idx2pkg.values())
         # Remove gpg-pubkeys, as no sane callers expects/likes them...
         if self._loaded_gpg_keys:
             pkgobjlist = [pkg for pkg in pkgobjlist if pkg.name != 'gpg-pubkey']
@@ -692,7 +692,7 @@ class RPMDBPackageSack(PackageSackBase):
                 po.conflicts
                 po._has_hdr = False
                 del po.hdr
-            self._cached_conflicts_data = result.values()
+            self._cached_conflicts_data = list(result.values())
 
         return self._cached_conflicts_data
 
@@ -736,7 +736,7 @@ class RPMDBPackageSack(PackageSackBase):
                 po.obsoletes
                 po._has_hdr = False
                 del po.hdr
-            self._cached_obsoletes_data = result.values()
+            self._cached_obsoletes_data = list(result.values())
 
         return self._cached_obsoletes_data
 
@@ -778,7 +778,7 @@ class RPMDBPackageSack(PackageSackBase):
         # . Always throw - but at least it shouldn't happen again.
         #
         if __debug__:
-            raise Errors.PackageSackError, 'Rpmdb checksum is invalid: %s' % caller
+            raise Errors.PackageSackError('Rpmdb checksum is invalid: %s' % caller)
 
     def _read_pkglist(self, fname):
         if not self.__cache_rpmdb__:
@@ -981,7 +981,7 @@ class RPMDBPackageSack(PackageSackBase):
                         installedUnresolvedFileRequires.add(name)
 
         fileRequires = set()
-        for fnames in installedFileRequires.itervalues():
+        for fnames in installedFileRequires.values():
             fileRequires.update(fnames)
         installedFileProviders = {}
         for fname in fileRequires:
@@ -1194,7 +1194,7 @@ class RPMDBPackageSack(PackageSackBase):
 
             try:
                 _makedirs_no_umask(self._cachedir)
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 return
 
         fo = _open_no_umask(rpmdbvfname + ".tmp", "w")
@@ -1272,7 +1272,7 @@ class RPMDBPackageSack(PackageSackBase):
     def searchPrimaryFieldsMultipleStrings(self, fields, searchstrings,
                                            lowered=False):
         if not lowered:
-            searchstrings = map(lambda x: x.lower(), searchstrings)
+            searchstrings = [x.lower() for x in searchstrings]
         ret = []
         for hdr, idx in self._get_packages():
             n = self._find_search_fields(fields, searchstrings, hdr)
@@ -1469,10 +1469,10 @@ class RPMDBPackageSack(PackageSackBase):
         if flags == 0:
             flags = None
 
-        if type(version) is types.StringType:
+        if type(version) is bytes:
             (r_e, r_v, r_r) = miscutils.stringToVersion(version)
         # would this ever be a ListType?
-        elif type(version) in (types.TupleType, types.ListType):
+        elif type(version) in (tuple, list):
             (r_e, r_v, r_r) = version
         else:
             # FIXME: This isn't always  type(version) is types.NoneType:
@@ -1697,7 +1697,7 @@ class RPMDBAdditionalData(object):
             try:
                 _makedirs_no_umask(self.conf.db_path)
                 self.conf.writable = True
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 # some sort of useful thing here? A warning?
                 pass
         else:
@@ -1732,7 +1732,7 @@ class RPMDBAdditionalData(object):
         elif pkgtup and pkgid:
             thisdir = self._get_dir_name(pkgtup, pkgid)
         else:
-            raise ValueError,"Pass something to RPMDBAdditionalData.get_package"
+            raise ValueError("Pass something to RPMDBAdditionalData.get_package")
         
         return RPMDBAdditionalDataPackage(self.conf, thisdir,
                                           yumdb_cache=self.yumdb_cache)
@@ -1829,7 +1829,7 @@ class RPMDBAdditionalDataPackage(object):
 
         assert self._yumdb_cache['attr'][value][2]
         try:
-            lfn = iter(self._yumdb_cache['attr'][value][2]).next()
+            lfn = next(iter(self._yumdb_cache['attr'][value][2]))
             misc.unlink_f(fn + '.tmp')
             os.link(lfn, fn + '.tmp')
             os.rename(fn + '.tmp', fn)
@@ -1858,7 +1858,7 @@ class RPMDBAdditionalDataPackage(object):
         fn = self._attr2fn(attr)
 
         if attr.endswith('.tmp'):
-            raise AttributeError, "Cannot set attribute %s on %s" % (attr, self)
+            raise AttributeError("Cannot set attribute %s on %s" % (attr, self))
 
         #  These two are special, as they have an index and are used as our
         # cache-breaker.
@@ -1875,8 +1875,8 @@ class RPMDBAdditionalDataPackage(object):
         fo = _open_no_umask(fn + '.tmp', 'w')
         try:
             fo.write(value)
-        except (OSError, IOError), e:
-            raise AttributeError, "Cannot set attribute %s on %s" % (attr, self)
+        except (OSError, IOError) as e:
+            raise AttributeError("Cannot set attribute %s on %s" % (attr, self))
 
         fo.flush()
         fo.close()
@@ -1893,11 +1893,11 @@ class RPMDBAdditionalDataPackage(object):
         fn = self._attr2fn(attr)
 
         if attr.endswith('.tmp'):
-            raise AttributeError, "%s has no attribute %s" % (self, attr)
+            raise AttributeError("%s has no attribute %s" % (self, attr))
 
         info = misc.stat_f(fn, ignore_EACCES=True)
         if info is None:
-            raise AttributeError, "%s has no attribute %s" % (self, attr)
+            raise AttributeError("%s has no attribute %s" % (self, attr))
 
         if info.st_nlink > 1 and self._yumdb_cache is not None:
             key = (info.st_dev, info.st_ino)
@@ -1918,8 +1918,7 @@ class RPMDBAdditionalDataPackage(object):
         if attr in self._validators:
             valid = self._validators[attr]
             if not valid(value):
-                raise AttributeError, \
-                    "Invalid value of attribute %s on %s" % (attr, self)
+                raise AttributeError("Invalid value of attribute %s on %s" % (attr, self))
 
         if info.st_nlink > 1 and self._yumdb_cache is not None:
             self._yumdb_cache[key] = value
@@ -1939,7 +1938,7 @@ class RPMDBAdditionalDataPackage(object):
             try:
                 os.unlink(fn)
             except (IOError, OSError):
-                raise AttributeError, "Cannot delete attribute %s on %s " % (attr, self)
+                raise AttributeError("Cannot delete attribute %s on %s " % (attr, self))
     
     def __getattr__(self, attr):
         return self._read(attr)
@@ -1998,7 +1997,7 @@ class RPMDBAdditionalDataPackage(object):
 def main():
     sack = RPMDBPackageSack('/')
     for p in sack.simplePkgList():
-        print p
+        print(p)
 
 if __name__ == '__main__':
     main()

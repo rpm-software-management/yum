@@ -90,7 +90,7 @@ def get_process_info(pid):
 
     try:
         pid = int(pid)
-    except ValueError, e:
+    except ValueError as e:
         return
         
     ps = {}
@@ -152,7 +152,7 @@ def show_lock_owner(pid, logger):
     """
     try:
         ps = get_process_info(pid)
-    except IOError, e:
+    except IOError as e:
         logger.critical("%s", exception2msg(e))
         ps = None
     if not ps:
@@ -251,7 +251,7 @@ class YumUtilBase(YumBaseCli):
         try:
             self.closeRpmDB()
             self.doUnlock()
-        except Errors.LockError, e:
+        except Errors.LockError as e:
             return 200
         return 0
         
@@ -272,7 +272,7 @@ class YumUtilBase(YumBaseCli):
         return self._option_group    
     
     def _printUtilVersion(self):
-        print "%s - %s (yum - %s)" % (self._utilName,self._utilVer,yum.__version__)
+        print("%s - %s (yum - %s)" % (self._utilName,self._utilVer,yum.__version__))
         
     def doUtilConfigSetup(self,args = sys.argv[1:],pluginsTypes=(plugins.TYPE_CORE,)):
         """Parse command line options, and perform configuration.
@@ -326,16 +326,16 @@ class YumUtilBase(YumBaseCli):
                 for opt in self.main_setopts.items:
                     setattr(self.conf, opt, getattr(self.main_setopts, opt))
 
-        except Errors.ConfigError, e:
+        except Errors.ConfigError as e:
             self.logger.critical(_('Config Error: %s'), exception2msg(e))
             sys.exit(1)
-        except ValueError, e:
+        except ValueError as e:
             self.logger.critical(_('Options Error: %s'), exception2msg(e))
             sys.exit(1)
-        except plugins.PluginYumExit, e:
+        except plugins.PluginYumExit as e:
             self.logger.critical(_('PluginExit Error: %s'), exception2msg(e))
             sys.exit(1)
-        except Errors.YumBaseError, e:
+        except Errors.YumBaseError as e:
             self.logger.critical(_('Yum Error: %s'), exception2msg(e))
             sys.exit(1)
             
@@ -364,7 +364,7 @@ class YumUtilBase(YumBaseCli):
             self._getRpmDB()
             self._getRepos(doSetup = True)
             self._getSacks()
-        except Errors.YumBaseError, msg:
+        except Errors.YumBaseError as msg:
             self.logger.critical(exception2msg(msg))
             sys.exit(1)
 
@@ -376,14 +376,14 @@ class YumUtilBase(YumBaseCli):
         """
         try:
             (result, resultmsgs) = self.buildTransaction(unfinished_transactions_check = unfinished_transactions_check)
-        except plugins.PluginYumExit, e:
+        except plugins.PluginYumExit as e:
             return self.exPluginExit(e)
-        except Errors.YumBaseError, e:
+        except Errors.YumBaseError as e:
             result = 1
             resultmsgs = [exception2msg(e)]
         except KeyboardInterrupt:
             return self.exUserCancel()
-        except IOError, e:
+        except IOError as e:
             return self.exIOError(e)
        
         # Act on the depsolve result
@@ -418,13 +418,13 @@ class YumUtilBase(YumBaseCli):
 
         try:
             return_code = self.doTransaction()
-        except plugins.PluginYumExit, e:
+        except plugins.PluginYumExit as e:
             return self.exPluginExit(e)
-        except Errors.YumBaseError, e:
+        except Errors.YumBaseError as e:
             return self.exFatal(e)
         except KeyboardInterrupt:
             return self.exUserCancel()
-        except IOError, e:
+        except IOError as e:
             return self.exIOError(e,)
 
         self.verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
@@ -444,9 +444,9 @@ def main():
     opts = util.doUtilConfigSetup()
     util.logger.info("Setup Yum")
     util.doUtilYumSetup()
-    print "Command line args: %s" % " ".join(util.cmds)
-    print "Command line options :"
-    print opts
+    print("Command line args: %s" % " ".join(util.cmds))
+    print("Command line options :")
+    print(opts)
     
     util.logger.info("%s Completed" % name)
 if __name__ == '__main__':

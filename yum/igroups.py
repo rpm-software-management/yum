@@ -24,7 +24,7 @@ import re
 def _open_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
         up for user readable stuff. """
-    oumask = os.umask(022)
+    oumask = os.umask(0o22)
     try:
         ret = open(*args)
     finally:
@@ -35,7 +35,7 @@ def _open_no_umask(*args):
 def _makedirs_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
         up for user readable stuff. """
-    oumask = os.umask(022)
+    oumask = os.umask(0o22)
     try:
         ret = os.makedirs(*args)
     finally:
@@ -176,7 +176,7 @@ class InstalledGroups(object):
         if not os.path.exists(db_path):
             try:
                 _makedirs_no_umask(db_path)
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 # some sort of useful thing here? A warning?
                 return False
 
@@ -260,13 +260,13 @@ class InstalledGroups(object):
                 match = re.compile(fnmatch.translate(item), flags=re.I).match
 
             done = False
-            for group in self.groups.values():
+            for group in list(self.groups.values()):
                 if match(group.gid):
                     done = True
                     returns[group.gid] = group
                     break
 
-        return returns.values()
+        return list(returns.values())
 
     def add_environment(self, evgroupid, grp_names):
         self.changed = True
@@ -304,10 +304,10 @@ class InstalledGroups(object):
                 match = re.compile(fnmatch.translate(item), flags=re.I).match
 
             done = False
-            for group in self.environments.values():
+            for group in list(self.environments.values()):
                 if match(group.evgid):
                     done = True
                     returns[group.evgid] = group
                     break
 
-        return returns.values()
+        return list(returns.values())

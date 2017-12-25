@@ -16,7 +16,7 @@ class ComplicatedTests(OperationsTests):
         p = self.pkgs
         res, msg = self.runOperation(['install', 'super-zippy'], [p.installed_i386], [p.obsoletes_i386, p.obsoletes_x86_64, p.conflicts])
         if new_behavior:
-            self.assert_(res=='ok', msg)
+            self.assertTrue(res=='ok', msg)
             self.assertResult((p.obsoletes_i386, p.conflicts))
 
 class CombinedUpdateObsoletesTest(OperationsTests):
@@ -41,14 +41,14 @@ class CombinedUpdateObsoletesTest(OperationsTests):
     def testSelfObsolete(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.klibs_1_x86_64], [p.klibs_2_i386, p.klibs_2_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.klibs_2_x86_64,))
 
     def testPackageSplitWithObsoleteAndRequiresForUpdate(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.k_1, p.kdevel_1, p.klibs_1_x86_64],
                                      [p.k_2, p.kdevel_2, p.klibs_2_x86_64])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.k_2, p.kdevel_2, p.klibs_2_x86_64,))
 
 
@@ -68,7 +68,7 @@ class ComplicatedObsoletesTests(OperationsTests):
     def testObsoleteChain(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.installed], [p.obsoletes, p.obsoletes2])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if True or new_behavior:
             self.assertResult((p.obsoletes2,))
         else:
@@ -76,13 +76,13 @@ class ComplicatedObsoletesTests(OperationsTests):
     def testObsoleteChainNext(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.obsoletes], [p.obsoletes2])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         self.assertResult((p.obsoletes2,))
 
     def testObsoleteCircle(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.obsoletecircle], [p.obsoletes, p.obsoletes2])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.obsoletecircle,))
         else:
@@ -90,7 +90,7 @@ class ComplicatedObsoletesTests(OperationsTests):
     def testObsoleteCircleNext(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.obsoletes], [p.obsoletecircle, p.obsoletes, p.obsoletes2])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.obsoletes,))
         else:
@@ -98,7 +98,7 @@ class ComplicatedObsoletesTests(OperationsTests):
     def testObsoleteCircleNextNext(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.obsoletes2], [p.obsoletecircle, p.obsoletes, p.obsoletes2])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.obsoletes2,))
         else:
@@ -106,7 +106,7 @@ class ComplicatedObsoletesTests(OperationsTests):
     def testObsoleteCircleNextNextNext(self):
         p = self.pkgs
         res, msg = self.runOperation(['update'], [p.obsoletecircle], [p.obsoletes, p.obsoletes2])
-        self.assert_(res=='ok', msg)
+        self.assertTrue(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.obsoletecircle,))
         else:
@@ -152,7 +152,7 @@ class KernelTests(OperationsTests):
 
         res, msg = self.runOperation(['install', 'foo'], p.inst, navail)
         self.assertResult(p.inst + navail)
-        self.assertEquals(self.tsInfo.probFilterFlags, [rpm.RPMPROB_FILTER_OLDPACKAGE])
+        self.assertEqual(self.tsInfo.probFilterFlags, [rpm.RPMPROB_FILTER_OLDPACKAGE])
 
 class MultiLibTests(OperationsTests):
 

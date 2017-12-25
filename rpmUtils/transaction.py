@@ -12,7 +12,7 @@
 #
 
 import rpm
-import miscutils
+from . import miscutils
 
 read_ts = None
 ts = None
@@ -64,7 +64,7 @@ class TransactionWrapper:
         if attr in self._methods:
             return self.getMethod(attr)
         else:
-            raise AttributeError, attr
+            raise AttributeError(attr)
 
     def __iter__(self):
         return self.ts

@@ -64,7 +64,7 @@ class SkipBrokenTests(DepsolveTests):
         xpo = self.repoPackage('bar', '1')
         xpo.addRequires('foobar', None, (None,None,None))
         
-        self.assertEquals('err', *self.resolveCode(skip=False))
+        self.assertEqual('err', *self.resolveCode(skip=False))
         self.assertResult((po,xpo))
 
     def testMissingReqSkip(self):
@@ -77,7 +77,7 @@ class SkipBrokenTests(DepsolveTests):
         xpo = self.repoPackage('bar', '1')
         xpo.addRequires('foobar', None, (None,None,None))
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([])
 
     def testDepWithMissingReqSkip(self):
@@ -95,7 +95,7 @@ class SkipBrokenTests(DepsolveTests):
         xpo1 = self.repoPackage('foobar', '1')
         xpo1.addRequires('barfoo', None, (None,None,None))
 
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult([po2])
 
     def testUpdateOldRequired(self):
@@ -113,7 +113,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo, po1])
 
     def testUpdateRequireOld(self):
@@ -131,7 +131,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(po2, oldpo=po1)
 
         
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo, po1])
 
     def testUpdateRequireBoth(self):
@@ -152,7 +152,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(po2, oldpo=po1)
         self.tsInfo.addInstall(por)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo, po1])
 
     def testEraseDep(self):
@@ -165,7 +165,7 @@ class SkipBrokenTests(DepsolveTests):
         ipo2.addRequires('foo', 'EQ', ('0', '1', '0'))
 
         self.tsInfo.addErase(ipo)
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult([])
 
     def testEraseReqByUpdateNoSkip(self):
@@ -182,7 +182,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addErase(ipo)
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
         
-        self.assertEquals('err', *self.resolveCode(skip=False))
+        self.assertEqual('err', *self.resolveCode(skip=False))
 
     def testEraseReqByUpdateSkip(self):
         ''' update is skipped, because a req is erased.
@@ -199,7 +199,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(upo2, oldpo=ipo2)
         self.tsInfo.addErase(ipo)
         
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult([])
 
     def testConflictWithInstalled(self):
@@ -215,7 +215,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo, po1])
 
     def testConflictWithInstalledButUpdateExist(self):
@@ -236,7 +236,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([po1,ipo])
 
     def testConflictWithInstalledButUpdateExist2(self):
@@ -258,7 +258,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addUpdate(po2, oldpo=po1)
         
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([po1,ipo])
 
     def testAlternativePackageAvailable(self):
@@ -272,7 +272,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addInstall(ipo)
 
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult([ipo, provides2])
 
     def testOnlyOneRequirementAvailable(self):
@@ -284,7 +284,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addInstall(ipo)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([])
 
     def test2PkgReqSameDep(self):
@@ -299,7 +299,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addInstall(po1)
         self.tsInfo.addInstall(po3)
 
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult([po3,po4])
 
     def testProvidesAndDepsGetRemoved(self):
@@ -310,7 +310,7 @@ class SkipBrokenTests(DepsolveTests):
         po2.addRequires('nice')
         po2.addRequires('features')
         self.tsInfo.addInstall(po2)
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
 
     def testSecondStepRequiresUpdate(self):
         po1 = self.repoPackage('foo')
@@ -324,7 +324,7 @@ class SkipBrokenTests(DepsolveTests):
         ipo = self.instPackage('baz')
         upo = self.repoPackage('baz', '2', '1')
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo])
 
 
@@ -342,7 +342,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addInstall(po1)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
 
     def testDepCycle2(self):
         po0 = self.repoPackage('leaf')
@@ -358,7 +358,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addInstall(po1)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
 
     def testDepCycle3(self):
         po0 = self.repoPackage('leaf')
@@ -374,7 +374,7 @@ class SkipBrokenTests(DepsolveTests):
 
         self.tsInfo.addInstall(po1)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
 
     def testMultiLibUpdate(self):
         '''
@@ -389,7 +389,7 @@ class SkipBrokenTests(DepsolveTests):
         po2.addRequires('notfound', 'EQ', ('0', '1', '0'))
         self.tsInfo.addUpdate(po1, oldpo=ipo1)
         self.tsInfo.addUpdate(po2, oldpo=ipo2)
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([ipo1,ipo2])
 
     def testInstReqOldVer1(self):
@@ -414,7 +414,7 @@ class SkipBrokenTests(DepsolveTests):
         #FIXME: Find out why this line is needed, it should be auto updated by the solver.
         self.tsInfo.addUpdate(po1, oldpo=ipo1) # why is this needed, it should work without ?
         self.tsInfo.addUpdate(po3, oldpo=ipo3)
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult([po1,po2,po3])               
 
 
@@ -459,7 +459,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(d2, oldpo=d1)
         self.tsInfo.addUpdate(e2, oldpo=e1)
         self.tsInfo.addUpdate(f2, oldpo=f1)
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult([a1,b1,c1,d1,e2,f2])
 
     def testBumpedSoName2(self):
@@ -509,7 +509,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(ur3, oldpo=r3)
         self.tsInfo.addUpdate(ur4, oldpo=r4)
         
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([c1,d1,r1,r2,r3,r4])
 
     def testBumpedSoName3(self):
@@ -558,7 +558,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(ur3, oldpo=r3)
         self.tsInfo.addUpdate(ur4, oldpo=r4)
         
-        self.assertEquals('err', *self.resolveCode(skip=False))
+        self.assertEqual('err', *self.resolveCode(skip=False))
         
     def testBumpedSoNameMultiArch(self):
         """ 
@@ -612,7 +612,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(ur3, oldpo=r3)
         self.tsInfo.addUpdate(ur4, oldpo=r4)
 
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([c1,d1,r1,r2,r3,r4])
         
     def testDualPackageUpdate(self):    
@@ -629,7 +629,7 @@ class SkipBrokenTests(DepsolveTests):
         u1.addRequires("notfound")
         self.tsInfo.addUpdate(u1, oldpo=i1)
         self.tsInfo.addUpdate(u1, oldpo=i2)
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([i1,i2])
  
     def testDowngrade1(self):
@@ -646,7 +646,7 @@ class SkipBrokenTests(DepsolveTests):
         d1 = self.repoPackage('foo', '1.1')
         d1.addProvides('foolib', 'EQ', ('0', '1', '0'))
         self.tsInfo.addDowngrade(d1, oldpo=i1)
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([i1, i2])
        
 
@@ -669,7 +669,7 @@ class SkipBrokenTests(DepsolveTests):
         u1 = self.repoPackage('iptables','1.4.6', arch='x86_64')
         u1.addFile("/usr/lib64/libxtables.so.4")
         self.tsInfo.addUpdate(u1, oldpo=i1)
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult([i1,i2])
 
     def testTransactionOutput(self):
@@ -700,7 +700,7 @@ class SkipBrokenTests(DepsolveTests):
         u7.addProvides('foo6', 'EQ', ('0', '2', '0'))
         self.tsInfo.addInstall(i1)
         self.tsInfo.addUpdate(u7, oldpo=i7)
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         # uncomment this line and the test will fail and you can see the output
         # self.assertResult([i1])
         
@@ -731,7 +731,7 @@ class SkipBrokenTests(DepsolveTests):
         u4 = self.repoString('1:kdepim-runtime-4.4.10-2.fc15.x86_64')
         self.tsInfo.addUpdate(u4, oldpo=i4)
         members.append(u4)
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult(members)
 
     def test_skipbroken_001(self):
@@ -750,7 +750,7 @@ class SkipBrokenTests(DepsolveTests):
         ux1.addFile("/usr/lib/.libssl.so.1.0.0b.hmac")
         self.tsInfo.addUpdate(ux1, oldpo=ix1)
         members.append(ix1)
-        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertEqual('empty', *self.resolveCode(skip=True))
         self.assertResult(members)
 
 
@@ -775,7 +775,7 @@ class SkipBrokenTests(DepsolveTests):
         u1 = self.repoString('afoobar-0.4.14-1.fc14.noarch')
         self.tsInfo.addUpdate(u1, oldpo=i1)
         members.append(u1)
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult(members)
 
     def test_skipbroken_003(self):
@@ -807,7 +807,7 @@ class SkipBrokenTests(DepsolveTests):
         u1 = self.repoString('zfoobar-0.4.14-1.fc14.noarch')
         self.tsInfo.addUpdate(u1, oldpo=i1)
         members.append(u1)
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult(members)
 
     def test_skipbroken_004_deps_1(self):
@@ -830,7 +830,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addInstall(ux1)
         self.tsInfo.addInstall(ux2)
 
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult(members)
     
     def test_skipbroken_004_deps_2(self):
@@ -856,7 +856,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addInstall(ux1)
         self.tsInfo.addInstall(ux2)
 
-        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertEqual('ok', *self.resolveCode(skip=True))
         self.assertResult(members)
     
     def resolveCode(self,skip = False):

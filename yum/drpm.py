@@ -96,7 +96,7 @@ def _num_cpus_online(unknown=1):
     if not hasattr(os, "sysconf"):
         return unknown
 
-    if not os.sysconf_names.has_key("SC_NPROCESSORS_ONLN"):
+    if "SC_NPROCESSORS_ONLN" not in os.sysconf_names:
         return unknown
 
     ncpus = os.sysconf("SC_NPROCESSORS_ONLN")
@@ -187,12 +187,12 @@ class DeltaInfo:
                 kwargs['failfunc'] = failfunc
                 kwargs['async'] = True
             try: mdpath[repo] = repo._retrieveMD(name, **kwargs)
-            except RepoError, e: failfunc(e)
+            except RepoError as e: failfunc(e)
         if async:
             grabber.parallel_wait()
 
         # parse metadata, create DeltaPackage instances
-        for repo, cpath in mdpath.items():
+        for repo, cpath in list(mdpath.items()):
             pinfo_repo = pinfo[repo]
             path = repo_gen_decompress(cpath, 'prestodelta.xml',
                                        cached=repo.cache)
@@ -292,7 +292,7 @@ class DeltaInfo:
         """ De-Queue all delta rebuilds and spawn the rebuild processes. """
 
         count = total = 0
-        for po in self.jobs.values() + self._future_jobs:
+        for po in list(self.jobs.values()) + self._future_jobs:
             count += 1
             total += po.rpm.size
         if total:
@@ -345,7 +345,7 @@ class DeltaInfo:
 
         try:
             pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
-        except OSError, e:
-            raise MiscError, _('Couldn\'t spawn %s: %s') % (APPLYDELTA, exception2msg(e))
+        except OSError as e:
+            raise MiscError(_('Couldn\'t spawn %s: %s') % (APPLYDELTA, exception2msg(e)))
         self.jobs[pid] = po
         return True

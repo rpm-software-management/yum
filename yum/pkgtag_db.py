@@ -17,26 +17,26 @@
 
 # parse sqlite tag database
 # return pkgnames and tag that was matched
-from sqlutils import sqlite, executeSQL, sql_esc
-from Errors import PkgTagsError
-import sqlutils
+from .sqlutils import sqlite, executeSQL, sql_esc
+from .Errors import PkgTagsError
+from . import sqlutils
 import sys
-import misc
+from . import misc
 
 def catchSqliteException(func):
     """This decorator converts sqlite exceptions into PkgTagsError"""
     def newFunc(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except sqlutils.sqlite.Error, e:
+        except sqlutils.sqlite.Error as e:
             # 2.4.x requires this, but 2.6.x complains about even hasattr()
             # of e.message ... *sigh*
             if sys.hexversion < 0x02050000:
                 if hasattr(e,'message'):
-                    raise PkgTagsError, str(e.message)
+                    raise PkgTagsError(str(e.message))
                 else:
-                    raise PkgTagsError, str(e)
-            raise PkgTagsError, str(e)
+                    raise PkgTagsError(str(e))
+            raise PkgTagsError(str(e))
 
     newFunc.__name__ = func.__name__
     newFunc.__doc__ = func.__doc__
@@ -106,7 +106,7 @@ class PackageTags(object):
         
     def add(self, repoid, sqlite_file):
         if repoid in self.db_objs:
-            raise PkgTagsError, "Already added tags from %s" % repoid
+            raise PkgTagsError("Already added tags from %s" % repoid)
             
         dbobj = PackageTagDB(repoid, sqlite_file)
         self.db_objs[repoid] = dbobj
@@ -115,30 +115,30 @@ class PackageTags(object):
         if repoid in self.db_objs:
             del self.db_objs[repoid]
         else:
-            raise PkgTagsError, "No tag db for %s" % repoid
+            raise PkgTagsError("No tag db for %s" % repoid)
     
     def search_names(self, name):
         res = {}
-        for ptd in self.db_objs.values():
-            for (name, taglist) in ptd.search_names(name).items():
+        for ptd in list(self.db_objs.values()):
+            for (name, taglist) in list(ptd.search_names(name).items()):
                 if not name in res:
                     res[name] = []
                 res[name].extend(taglist)
         
         out = {}
-        for (name, taglist) in res.items():
+        for (name, taglist) in list(res.items()):
             out[name] = misc.unique(taglist)
         return out
 
     def search_tags(self, tagname):
         res = {}
-        for ptd in self.db_objs.values():
-            for (name, taglist) in ptd.search_tags(tagname).items():
+        for ptd in list(self.db_objs.values()):
+            for (name, taglist) in list(ptd.search_tags(tagname).items()):
                 if not name in res:
                     res[name] = []
                 res[name].extend(taglist)
         out = {}
-        for (name, taglist) in res.items():
+        for (name, taglist) in list(res.items()):
             out[name] = misc.unique(taglist)
         return out
         

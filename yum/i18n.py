@@ -175,15 +175,15 @@ def __utf8_iter_ucs(msg):
         if byte0 < 0x80:             # 0xxxxxxx
             yield (byte0, 1)
         elif (byte0 & 0xe0) == 0xc0: # 110XXXXx 10xxxxxx
-            byte1 = uiter.next()
+            byte1 = next(uiter)
             if (((byte1 & 0xc0) != 0x80) or
                 ((byte0 & 0xfe) == 0xc0)):                          # overlong?
                 yield (None, 2)
                 return
             yield ((((byte0 & 0x1f) << 6) | (byte1 & 0x3f)), 2)
         elif (byte0 & 0xf0) == 0xe0: # 1110XXXX 10Xxxxxx 10xxxxxx
-            byte1 = uiter.next()
-            byte2 = uiter.next()
+            byte1 = next(uiter)
+            byte2 = next(uiter)
             if (((byte1 & 0xc0) != 0x80) or ((byte2 & 0xc0) != 0x80) or
                 ((byte0 == 0xe0) and ((byte1 & 0xe0) == 0x80)) or   # overlong?
                 ((byte0 == 0xed) and ((byte1 & 0xe0) == 0xa0)) or   # surrogate?
@@ -194,9 +194,9 @@ def __utf8_iter_ucs(msg):
             yield ((((byte0 & 0x0f) << 12) | ((byte1 & 0x3f) << 6) |
                    (byte2 & 0x3f)), 3)
         elif (byte0 & 0xf8) == 0xf0: # 11110XXX 10XXxxxx 10xxxxxx 10xxxxxx
-            byte1 = uiter.next()
-            byte2 = uiter.next()
-            byte3 = uiter.next()
+            byte1 = next(uiter)
+            byte2 = next(uiter)
+            byte3 = next(uiter)
             if (((byte1 & 0xc0) != 0x80) or
                 ((byte2 & 0xc0) != 0x80) or
                 ((byte3 & 0xc0) != 0x80) or
@@ -232,7 +232,7 @@ def utf8_width_chop(msg, chop=None):
         return utf8_width(msg), msg
 
     ret = 0
-    passed_unicode = isinstance(msg, unicode)
+    passed_unicode = isinstance(msg, str)
     msg_bytes = 0
     msg = to_utf8(msg)
     for (ucs, bytes) in __utf8_iter_ucs(msg):
@@ -284,7 +284,7 @@ def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
         else:
             msg = ''.join([extra, prefix, msg, suffix])
 
-    if isinstance(passed_msg, unicode):
+    if isinstance(passed_msg, str):
         return to_unicode(msg)
 
     return msg
@@ -337,7 +337,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
     #   alsa-plugins-jack, setools*, dblatex, uisp, "perl-Getopt-GUI-Long",
     #   suitesparse, "synce-serial", writer2latex, xenwatch, ltsp-utils
 
-    passed_unicode = isinstance(text, unicode)
+    passed_unicode = isinstance(text, str)
 
     def _indent_at_beg(line):
         count = 0
@@ -414,7 +414,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         ret.append(indent.rstrip(' '))
 
     if passed_unicode:
-        return map(to_unicode, ret)
+        return list(map(to_unicode, ret))
     return ret
 
 def utf8_text_fill(text, *args, **kwargs):
@@ -425,14 +425,14 @@ def utf8_text_fill(text, *args, **kwargs):
 
 def to_unicode(obj, encoding='utf-8', errors='replace'):
     ''' convert a 'str' to 'unicode' '''
-    if isinstance(obj, basestring):
-        if not isinstance(obj, unicode):
-            obj = unicode(obj, encoding, errors)
+    if isinstance(obj, str):
+        if not isinstance(obj, str):
+            obj = str(obj, encoding, errors)
     return obj
 
 def to_utf8(obj, errors='replace'):
     '''convert 'unicode' to an encoded utf-8 byte string '''
-    if isinstance(obj, unicode):
+    if isinstance(obj, str):
         obj = obj.encode('utf-8', errors)
     return obj
 
@@ -448,13 +448,13 @@ def to_str(obj):
     """ Convert something to a string, if it isn't one. """
     # NOTE: unicode counts as a string just fine. We just want objects to call
     # their __str__ methods.
-    if not isinstance(obj, basestring):
+    if not isinstance(obj, str):
         obj = str(obj)
     return obj
 
 def str_eq(a, b):
     """ convert between unicode and not and compare them, w/o warning or being annoying"""
-    if isinstance(a, unicode) == isinstance(b, unicode):
+    if isinstance(a, str) == isinstance(b, str):
         if a == b: # stupid python...
             return True
     elif to_utf8(a) == to_utf8(b):
@@ -479,7 +479,7 @@ def exception2msg(e):
         pass
 
     try:
-        return unicode(e)
+        return str(e)
     except:
         pass
 
@@ -520,29 +520,29 @@ if __name__ == "__main__":
 
     def out(arg):
         arg = to_utf8(arg)
-        print "UTF8 :", arg
-        print "len  :", len(arg)
+        print("UTF8 :", arg)
+        print("len  :", len(arg))
         arg = to_unicode(arg)
-        print "USC  :", arg
-        print "len  :", len(arg)
-        print "valid:", utf8_valid(arg)
-        print "width:", utf8_width(arg)
-        print "4.8  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  8), '>')
-        print "4.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  3), '>')
-        print "4.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  2), '>')
-        print "4.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  1), '>')
-        print "3.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  3), '>')
-        print "3.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  2), '>')
-        print "3.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  1), '>')
-        print "40.79:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 79), '>')
-        print "40.20:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 20), '>')
-        print ''
+        print("USC  :", arg)
+        print("len  :", len(arg))
+        print("valid:", utf8_valid(arg))
+        print("width:", utf8_width(arg))
+        print("4.8  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  8), '>'))
+        print("4.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  3), '>'))
+        print("4.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  2), '>'))
+        print("4.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  1), '>'))
+        print("3.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  3), '>'))
+        print("3.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  2), '>'))
+        print("3.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  1), '>'))
+        print("40.79:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 79), '>'))
+        print("40.20:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 20), '>'))
+        print('')
 
-    print " ---- Arguments/str ---- "
+    print(" ---- Arguments/str ---- ")
     for arg in sys.argv[1:]:
         out(arg)
 
-    print " ---- Arguments/gettext ---- "
+    print(" ---- Arguments/gettext ---- ")
     for arg in sys.argv[1:]:
         try:
             arg = _(arg)
@@ -551,12 +551,12 @@ if __name__ == "__main__":
         out(arg)
 
     if len(sys.argv) > 2:
-        print " ---- Arguments/str/all ---- "
+        print(" ---- Arguments/str/all ---- ")
         out(sys.argv[1] % sys.argv[2:])
 
-        print " ---- Arguments/gettext/all ---- "
+        print(" ---- Arguments/gettext/all ---- ")
         try:
-            arg = _(sys.argv[1]) % map(_, sys.argv[2:])
+            arg = _(sys.argv[1]) % list(map(_, sys.argv[2:]))
         except UnicodeDecodeError:
             sys.exit(0)
         out(arg)

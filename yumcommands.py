@@ -727,7 +727,7 @@ class InfoCommand(YumCommand):
             if len(ypl.obsoletes) > 0 and basecmd == 'list': 
             # if we've looked up obsolete lists and it's a list request
                 rop = [0, '']
-                print _('Obsoleting Packages')
+                print(_('Obsoleting Packages'))
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
@@ -939,7 +939,7 @@ class GroupsCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['groups', 'group'] + self.direct_commands.keys()
+        return ['groups', 'group'] + list(self.direct_commands.keys())
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -963,7 +963,7 @@ class GroupsCommand(YumCommand):
             base.doGroupSetup()
         except yum.Errors.GroupsError:
             return 1, [_('No Groups on which to run command')]
-        except yum.Errors.YumBaseError, e:
+        except yum.Errors.YumBaseError as e:
             raise
 
     def _grp_cmd(self, basecmd, extcmds):
@@ -1239,7 +1239,7 @@ class GroupsCommand(YumCommand):
                         base.igroups.add_group(grp.groupid, grp.packages)
 
                 # Blank everything.
-                for gid in base.igroups.groups.keys():
+                for gid in list(base.igroups.groups.keys()):
                     base.igroups.del_group(gid)
                 for pkg in base.rpmdb:
                     if 'group_member' in pkg.yumdb_info:
@@ -1670,7 +1670,7 @@ class CheckUpdateCommand(YumCommand):
                               highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
             if len(ypl.obsoletes) > 0: # This only happens in verbose mode
-                print _('Obsoleting Packages')
+                print(_('Obsoleting Packages'))
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
@@ -2164,7 +2164,7 @@ class RepoListCommand(YumCommand):
             extcmds = extcmds[1:]
         else:
             arg = 'enabled'
-        extcmds = map(lambda x: x.lower(), extcmds)
+        extcmds = [x.lower() for x in extcmds]
 
         if basecmd == 'repoinfo':
             verbose = True
@@ -2186,7 +2186,7 @@ class RepoListCommand(YumCommand):
                     except yum.Errors.RepoError:
                         pass
 
-        repos = base.repos.repos.values()
+        repos = list(base.repos.repos.values())
         repos.sort()
         enabled_repos = base.repos.listEnabled()
         on_ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
@@ -2771,9 +2771,9 @@ class VersionCommand(YumCommand):
                 groups[group].update(base.run_with_package_names)
 
         if vcmd == 'grouplist':
-            print _(" Yum version groups:")
+            print(_(" Yum version groups:"))
             for group in sorted(groups):
-                print "   ", group
+                print("   ", group)
 
             return 0, ['version grouplist']
 
@@ -2781,11 +2781,11 @@ class VersionCommand(YumCommand):
             for group in groups:
                 if group not in extcmds:
                     continue
-                print _(" Group   :"), group
-                print _(" Packages:")
+                print(_(" Group   :"), group)
+                print(_(" Packages:"))
                 if not verbose:
                     for pkgname in sorted(groups[group]):
-                        print "   ", pkgname
+                        print("   ", pkgname)
                 else:
                     data = {'envra' : {}, 'rid' : {}}
                     pkg_names = groups[group]
@@ -2875,7 +2875,7 @@ class VersionCommand(YumCommand):
         columns = (-columns[0], columns[1])
 
         for line in cols:
-            print base.fmtColumns(zip(line, columns))
+            print(base.fmtColumns(list(zip(line, columns))))
 
         return 0, ['version']
 
@@ -2961,7 +2961,7 @@ class HistoryCommand(YumCommand):
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
-        print "Repeating transaction %u, from %s" % (old.tid, tm)
+        print("Repeating transaction %u, from %s" % (old.tid, tm))
         base.historyInfoCmdPkgsAltered(old)
         if base.history_redo(old, **kwargs):
             return 2, ["Repeating transaction %u" % (old.tid,)]
@@ -2971,7 +2971,7 @@ class HistoryCommand(YumCommand):
         if old is None:
             return 1, ['Failed history undo']
         tm = time.ctime(old.beg_timestamp)
-        print "Undoing transaction %u, from %s" % (old.tid, tm)
+        print("Undoing transaction %u, from %s" % (old.tid, tm))
         base.historyInfoCmdPkgsAltered(old)
         if base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
@@ -2993,14 +2993,14 @@ class HistoryCommand(YumCommand):
             return 0, ['Rollback to current, nothing to do']
 
         mobj = None
-        for tid in base.history.old(range(old.tid + 1, last.tid + 1)):
+        for tid in base.history.old(list(range(old.tid + 1, last.tid + 1))):
             if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
                 if tid.altered_lt_rpmdb:
                     msg = "Transaction history is incomplete, before %u."
                 else:
                     msg = "Transaction history is incomplete, after %u."
-                print msg % tid.tid
-                print " You can use 'history rollback force', to try anyway."
+                print(msg % tid.tid)
+                print(" You can use 'history rollback force', to try anyway.")
                 return 1, ['Failed history rollback, incomplete']
 
             if mobj is None:
@@ -3009,9 +3009,9 @@ class HistoryCommand(YumCommand):
                 mobj.merge(tid)
 
         tm = time.ctime(old.beg_timestamp)
-        print "Rollback to transaction %u, from %s" % (old.tid, tm)
-        print base.fmtKeyValFill("  Undoing the following transactions: ",
-                                 ", ".join((str(x) for x in mobj.tid)))
+        print("Rollback to transaction %u, from %s" % (old.tid, tm))
+        print(base.fmtKeyValFill("  Undoing the following transactions: ",
+                                 ", ".join((str(x) for x in mobj.tid))))
         base.historyInfoCmdPkgsAltered(mobj)
         if base.history_undo(mobj):
             return 2, ["Rollback to transaction %u" % (old.tid,)]
@@ -3020,28 +3020,28 @@ class HistoryCommand(YumCommand):
         base.history._create_db_file()
 
     def _hcmd_stats(self, base, extcmds):
-        print "File        :", base.history._db_file
+        print("File        :", base.history._db_file)
         num = os.stat(base.history._db_file).st_size
-        print "Size        :", locale.format("%d", num, True)
+        print("Size        :", locale.format("%d", num, True))
         trans_N = base.history.last()
         if trans_N is None:
-            print _("Transactions:"), 0
+            print(_("Transactions:"), 0)
             return
         counts = base.history._pkg_stats()
         if not counts:
             msg = _("could not open history file: %s") % base.history._db_file
-            raise yum.Errors.MiscError, msg
+            raise yum.Errors.MiscError(msg)
         trans_1 = base.history.old("1")[0]
-        print _("Transactions:"), trans_N.tid
-        print _("Begin time  :"), time.ctime(trans_1.beg_timestamp)
-        print _("End time    :"), time.ctime(trans_N.end_timestamp)
-        print _("Counts      :")
-        print _("  NEVRAC :"), locale.format("%6d", counts['nevrac'], True)
-        print _("  NEVRA  :"), locale.format("%6d", counts['nevra'],  True)
-        print _("  NA     :"), locale.format("%6d", counts['na'],     True)
-        print _("  NEVR   :"), locale.format("%6d", counts['nevr'],   True)
-        print _("  rpm DB :"), locale.format("%6d", counts['rpmdb'],  True)
-        print _("  yum DB :"), locale.format("%6d", counts['yumdb'],  True)
+        print(_("Transactions:"), trans_N.tid)
+        print(_("Begin time  :"), time.ctime(trans_1.beg_timestamp))
+        print(_("End time    :"), time.ctime(trans_N.end_timestamp))
+        print(_("Counts      :"))
+        print(_("  NEVRAC :"), locale.format("%6d", counts['nevrac'], True))
+        print(_("  NEVRA  :"), locale.format("%6d", counts['nevra'],  True))
+        print(_("  NA     :"), locale.format("%6d", counts['na'],     True))
+        print(_("  NEVR   :"), locale.format("%6d", counts['nevr'],   True))
+        print(_("  rpm DB :"), locale.format("%6d", counts['rpmdb'],  True))
+        print(_("  yum DB :"), locale.format("%6d", counts['yumdb'],  True))
 
     def _hcmd_sync(self, base, extcmds):
         extcmds = extcmds[1:]
@@ -3051,11 +3051,11 @@ class HistoryCommand(YumCommand):
             if base.history.pkg2pid(ipkg, create=False) is None:
                 continue
 
-            print "Syncing rpm/yum DB data for:", ipkg, "...",
+            print("Syncing rpm/yum DB data for:", ipkg, "...", end=' ')
             if base.history.sync_alldb(ipkg):
-                print "Done."
+                print("Done.")
             else:
-                print "FAILED."
+                print("FAILED.")
 
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -3209,7 +3209,7 @@ class CheckRpmdbCommand(YumCommand):
             chkcmd = extcmds
 
         def _out(x):
-            print to_unicode(x.__str__())
+            print(to_unicode(x.__str__()))
 
         rc = 0
         if base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,
@@ -3370,7 +3370,7 @@ class LoadTransactionCommand(YumCommand):
                     if pkgelen < 6:
                         pkgelen = 6
                     pkgetitle = utf8_width_fill(pkgetitle, pkgelen)
-                    print "?? |", pkgititle, "|", pkgetitle, "|", _("Filename")
+                    print("?? |", pkgititle, "|", pkgetitle, "|", _("Filename"))
                     
                     done = True
 
@@ -3378,8 +3378,8 @@ class LoadTransactionCommand(YumCommand):
                 numipkgs = "%*s" % (pkgilen, numipkgs)
                 numepkgs = locale.format("%d", counts['remove'], True)
                 numepkgs = "%*s" % (pkgelen, numepkgs)
-                print "%s | %s | %s | %s" % (current, numipkgs, numepkgs,
-                                             os.path.basename(yumtx))
+                print("%s | %s | %s | %s" % (current, numipkgs, numepkgs,
+                                             os.path.basename(yumtx)))
             return 0, [_('Saved transactions from %s; looked at %u files') %
                        (load_file, len(yumtxs))]
 
@@ -3882,8 +3882,8 @@ class UpdateinfoCommand(YumCommand):
                     msg("%s %-*s %-*s %s" % (mark, r_maxsize, str(ref['id']),
                                              t_maxsize, tn, pkg))
             elif hasattr(pkg, 'name'):
-                print base.fmtKeyValFill("%s: " % pkg.name,
-                                         base._enc(pkg.summary))
+                print(base.fmtKeyValFill("%s: " % pkg.name,
+                                         base._enc(pkg.summary)))
             else:
                 msg("%s%-*s %-*s %s" % (mark, n_maxsize, notice['update_id'],
                                         t_maxsize, tn, pkg))
@@ -3948,16 +3948,16 @@ class UpdateinfoCommand(YumCommand):
                 'security' : 'Security',
                 'bugfix' : 'Bugfix',
                 'enhancement' : 'Enhancement'}
-        print "Updates Information Summary:", list_type
+        print("Updates Information Summary:", list_type)
         for T in ('newpackage', 'security', 'bugfix', 'enhancement'):
             if T not in counts:
                 continue
             n = outT[T]
             if T == 'security' and len(sev_counts) == 1:
-                sn = sev_counts.keys()[0]
+                sn = list(sev_counts.keys())[0]
                 if sn != '':
                     n = sn + " " + n
-            print "    %*u %s notice(s)" % (maxsize, counts[T], n)
+            print("    %*u %s notice(s)" % (maxsize, counts[T], n))
             if T == 'security' and len(sev_counts) != 1:
                 def _sev_sort_key(key):
                     # We want these in order, from "highest" to "lowest".
@@ -3970,7 +3970,7 @@ class UpdateinfoCommand(YumCommand):
 
                 for sn in sorted(sev_counts, key=_sev_sort_key):
                     args = (maxsize, sev_counts[sn],sn or '?', outT['security'])
-                    print "        %*u %s %s notice(s)" % args
+                    print("        %*u %s %s notice(s)" % args)
         if base.conf.autocheck_running_kernel:
             _upi._check_running_kernel(base, md_info, _msg)
         self.show_pkg_info_done = {}
@@ -4104,7 +4104,7 @@ class UpdateinfoCommand(YumCommand):
         def msg(x):
             #  Don't use: logger.log(logginglevels.INFO_2, x)
             # or -q deletes everything.
-            print x
+            print(x)
 
         extcmds, show_type, filt_type = self._parse_extcmds(extcmds)
 
@@ -4254,18 +4254,18 @@ class FSSnapshotCommand(YumCommand):
         done = False
         for data in snaps:
             if not done:
-                print ("%s %s %s %s %s %s" %
+                print(("%s %s %s %s %s %s" %
                        (utf8_width_fill(_('Snapshot'), max_dev),
                         utf8_width_fill(_('Size'), 6, left=False),
                         utf8_width_fill(_('Used'), 6, left=False),
                         utf8_width_fill(_('Free'), 6, left=False),
-                        utf8_width_fill(_('Origin'), max_ori), _('Tags')))
+                        utf8_width_fill(_('Origin'), max_ori), _('Tags'))))
                 done = True
-            print ("%*s %6s %5.1f%% %6s %*s %s" %
+            print(("%*s %6s %5.1f%% %6s %*s %s" %
                    (max_dev, data['dev'], base.format_number(data['size']),
                     data['used'],
                     base.format_number(data['free']),
-                    max_ori, data['origin'], ",".join(data['tags'])))
+                    max_ori, data['origin'], ",".join(data['tags']))))
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -4294,7 +4294,7 @@ class FSSnapshotCommand(YumCommand):
                 msg += " " + _("No lvm2 package installed.")
             if not base.rpmdb.searchNames(['lvm2-python-libs']):
                 msg += " " + _("No lvm2-python-libs package installed.")
-            print msg
+            print(msg)
             return 1, [basecmd + ' ' + subcommand + ' done']
 
         if subcommand == 'list':
@@ -4302,7 +4302,7 @@ class FSSnapshotCommand(YumCommand):
                 snaps = base.fssnap.old_snapshots()
             except LibLVMError as e:
                 return 1, [_("Failed to list snapshots: ") + lvmerr2str(e)]
-            print _("List of %u snapshosts:") % len(snaps)
+            print(_("List of %u snapshosts:") % len(snaps))
             self._li_snaps(base, snaps)
 
         if subcommand == 'delete':
@@ -4325,7 +4325,7 @@ class FSSnapshotCommand(YumCommand):
                 snaps = base.fssnap.del_snapshots(devices=snaps)
             except LibLVMError as e:
                 return 1, [msg + lvmerr2str(e)]
-            print _("Deleted %u snapshosts:") % len(snaps)
+            print(_("Deleted %u snapshosts:") % len(snaps))
             self._li_snaps(base, snaps)
 
         if subcommand in ('have-space', 'has-space'):
@@ -4335,9 +4335,9 @@ class FSSnapshotCommand(YumCommand):
             except LibLVMError as e:
                 return 1, [_("Could not determine free space on logical volumes: ") + lvmerr2str(e)]
             if has_space:
-                print _("Space available to take a snapshot.")
+                print(_("Space available to take a snapshot."))
             else:
-                print _("Not enough space available on logical volumes to take a snapshot.")
+                print(_("Not enough space available on logical volumes to take a snapshot."))
 
         if subcommand == 'create':
             tags = {'*': ['reason=manual']}
@@ -4349,9 +4349,9 @@ class FSSnapshotCommand(YumCommand):
                 msg += ": " + lvmerr2str(e)
                 snaps = []
             if not snaps:
-                print msg
+                print(msg)
             for (odev, ndev) in snaps:
-                print _("Created snapshot from %s, results is: %s") %(odev,ndev)
+                print(_("Created snapshot from %s, results is: %s") %(odev,ndev))
 
         if subcommand == 'summary':
             try:
@@ -4359,7 +4359,7 @@ class FSSnapshotCommand(YumCommand):
             except LibLVMError as e:
                 return 1, [_("Failed to list snapshots: ") + lvmerr2str(e)]
             if not snaps:
-                print _("No snapshots, LVM version:"), base.fssnap.version
+                print(_("No snapshots, LVM version:"), base.fssnap.version)
                 return 0, [basecmd + ' ' + subcommand + ' done']
 
             used = 0
@@ -4369,7 +4369,7 @@ class FSSnapshotCommand(YumCommand):
                 dev_oris.add(snap['origin_dev'])
 
             msg = _("Have %u snapshots, using %s space, from %u origins.")
-            print msg % (len(snaps), base.format_number(used), len(dev_oris))
+            print(msg % (len(snaps), base.format_number(used), len(dev_oris)))
 
         return 0, [basecmd + ' ' + subcommand + ' done']
 
@@ -4580,7 +4580,7 @@ class FSCommand(YumCommand):
                 deal_with_file(fpath, need_prefix=verbose)
 
         # output
-        print "Files            :", loc_num(num)
+        print("Files            :", loc_num(num))
         tot = 0
         tot += data['pkgs_count']
         tot += data['pkgs_ghost_count']
@@ -4588,7 +4588,7 @@ class FSCommand(YumCommand):
         tot += data['pkgs_miss_count']
         tot += data['pkgs_mod_count']
         tot += data['data_count']
-        print "Total size       :", base.format_number(tot)
+        print("Total size       :", base.format_number(tot))
         if not tot:
             return
 
@@ -4597,8 +4597,8 @@ class FSCommand(YumCommand):
             num += data['pkgs_ghost_count']
             num += data['pkgs_miss_count']
             num += data['pkgs_mod_count']
-        print "       Pkgs size :", "%-5s" % base.format_number(num),
-        print "(%3.0f%%)" % ((num * 100.0) / tot)
+        print("       Pkgs size :", "%-5s" % base.format_number(num), end=' ')
+        print("(%3.0f%%)" % ((num * 100.0) / tot))
         if verbose:
             for (title, num) in ((_(" Ghost pkgs size :"),
                                   data['pkgs_ghost_count']),
@@ -4610,31 +4610,31 @@ class FSCommand(YumCommand):
                                   data['pkgs_mod_count'])):
                 if not num:
                     continue
-                print title, "%-5s" % base.format_number(num),
-                print "(%3.0f%%)" % ((num * 100.0) / tot)
+                print(title, "%-5s" % base.format_number(num), end=' ')
+                print("(%3.0f%%)" % ((num * 100.0) / tot))
         num = data['data_count']
         if not verbose:
             num += data['pkgs_not_count']
-        print _("       Data size :"), "%-5s" % base.format_number(num),
-        print "(%3.0f%%)" % ((num * 100.0) / tot)
+        print(_("       Data size :"), "%-5s" % base.format_number(num), end=' ')
+        print("(%3.0f%%)" % ((num * 100.0) / tot))
         if verbose:
-            print ''
-            print _("Pkgs       :"), loc_num(len(data['pkgs_size']))
-            print _("Ghost Pkgs :"), loc_num(len(data['pkgs_ghost_size']))
-            print _("Not Pkgs   :"), loc_num(len(data['pkgs_not_size']))
-            print _("Miss. Pkgs :"), loc_num(len(data['pkgs_miss_size']))
-            print _("Mod. Pkgs  :"), loc_num(len(data['pkgs_mod_size']))
+            print('')
+            print(_("Pkgs       :"), loc_num(len(data['pkgs_size'])))
+            print(_("Ghost Pkgs :"), loc_num(len(data['pkgs_ghost_size'])))
+            print(_("Not Pkgs   :"), loc_num(len(data['pkgs_not_size'])))
+            print(_("Miss. Pkgs :"), loc_num(len(data['pkgs_miss_size'])))
+            print(_("Mod. Pkgs  :"), loc_num(len(data['pkgs_mod_size'])))
 
         def _pkgs(p_size, msg):
             tot = min(max_show_len, len(p_size))
             if tot:
-                print ''
-                print msg % tot
+                print('')
+                print(msg % tot)
             num = 0
             for pkg in sorted(p_size, key=lambda x: p_size[x], reverse=True):
                 num += 1
-                print _("%*d. %60s %-5s") % (len(str(tot)), num, pkg,
-                                             base.format_number(p_size[pkg]))
+                print(_("%*d. %60s %-5s") % (len(str(tot)), num, pkg,
+                                             base.format_number(p_size[pkg])))
                 if num >= tot:
                     break
 
@@ -4656,7 +4656,7 @@ class FSCommand(YumCommand):
                 _add_size(tmp, d, data['pkgs_mod_size'][d])
             _pkgs(tmp, _('Top %d packages:'))
 
-        print ''
+        print('')
         if verbose:
             data_size = data['data_size']
         else:
@@ -4666,15 +4666,15 @@ class FSCommand(YumCommand):
 
         tot = min(max_show_len, len(data_size))
         if tot:
-            print _('Top %d non-package files:') % tot
+            print(_('Top %d non-package files:') % tot)
         num = 0
         for fname in sorted(data_size,
                             key=lambda x: data_size[x],
                             reverse=True):
             num += 1
             dsznum = data_size[fname]
-            print _("%*d. %60s %-5s") % (len(str(tot)), num, fname,
-                                         base.format_number(dsznum))
+            print(_("%*d. %60s %-5s") % (len(str(tot)), num, fname,
+                                         base.format_number(dsznum)))
             if num >= tot:
                 break
 
@@ -4704,24 +4704,24 @@ class FSCommand(YumCommand):
             oil = base.conf.override_install_langs
             if not oil:
                 oil = "rpm: " + rpm.expandMacro("%_install_langs")
-            print _("File system filters:")
-            print _("  Nodocs:"), 'nodocs' in base.conf.tsflags
-            print _("  Languages:"), oil
+            print(_("File system filters:"))
+            print(_("  Nodocs:"), 'nodocs' in base.conf.tsflags)
+            print(_("  Languages:"), oil)
         elif extcmds[0] in ('docs', 'nodocs',
                             'documentation', 'nodocumentation'):
             c_f = 'nodocs' in base.conf.tsflags
             n_f = not extcmds[0].startswith('no')
             if n_f == c_f:
                 if n_f:
-                    print _("Already enabled documentation filter.")
+                    print(_("Already enabled documentation filter."))
                 else:
-                    print _("Already disabled documentation filter.")
+                    print(_("Already disabled documentation filter."))
                 return
 
             if n_f:
-                print _("Enabling documentation filter.")
+                print(_("Enabling documentation filter."))
             else:
-                print _("Disabling documentation filter.")
+                print(_("Disabling documentation filter."))
 
             nts = base.conf.tsflags
             if n_f:
@@ -4742,15 +4742,15 @@ class FSCommand(YumCommand):
 
             if val == base.conf.override_install_langs:
                 if val:
-                    print _("Already filtering languages to: %s") % val
+                    print(_("Already filtering languages to: %s") % val)
                 else:
-                    print _("Already disabled language filter.")
+                    print(_("Already disabled language filter."))
                 return
 
             if val:
-                print _("Setting language filter to: %s") % val
+                print(_("Setting language filter to: %s") % val)
             else:
-                print _("Disabling language filter.")
+                print(_("Disabling language filter."))
 
             base.conf.override_install_langs = val
 
@@ -4800,10 +4800,10 @@ class FSCommand(YumCommand):
         base.closeRpmDB() # C-c ftw.
 
         for fname in sorted(pfr['not']):
-            print _('Removing:'), fname
+            print(_('Removing:'), fname)
             try: # Ignore everything, unlink_f() doesn't.
                 os.unlink(fname)
-            except OSError, e:
+            except OSError as e:
                 if e.errno == errno.EISDIR:
                     try:
                         os.rmdir(fname)
@@ -4827,7 +4827,7 @@ class FSCommand(YumCommand):
                 pass
             elif fpath in pfr['not']:
                 if base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-                    print >>sys.stderr, _('Not installed:'), fpath
+                    print(_('Not installed:'), fpath, file=sys.stderr)
             elif fpath in pfr['miss']:
                 pass
             elif fpath in pfr['mod']:
@@ -4839,19 +4839,19 @@ class FSCommand(YumCommand):
                 extract_cmd =  extract_cmd % (rtmpdir, pkg.localPkg(), fpath)
                 os.system(extract_cmd)
                 diff_cmd = "diff -ru %s %s" % (rtmpdir + fpath, fpath)
-                print diff_cmd
+                print(diff_cmd)
                 sys.stdout.flush()
                 os.system(diff_cmd)
             elif base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-                print >>sys.stderr, _('Not packaged?:'), fpath
+                print(_('Not packaged?:'), fpath, file=sys.stderr)
 
         if not distutils.spawn.find_executable("diff"):
-            raise yum.Errors.YumBaseError, _("Can't find diff command")
+            raise yum.Errors.YumBaseError(_("Can't find diff command"))
         # These just shouldn't happen...
         if not distutils.spawn.find_executable("cpio"):
-            raise yum.Errors.YumBaseError, _("Can't find cpio command")
+            raise yum.Errors.YumBaseError(_("Can't find cpio command"))
         if not distutils.spawn.find_executable("rpm2cpio"):
-            raise yum.Errors.YumBaseError, _("Can't find rpm2cpio command")
+            raise yum.Errors.YumBaseError(_("Can't find rpm2cpio command"))
 
         prefix = "."
         if extcmds:
@@ -4878,7 +4878,7 @@ class FSCommand(YumCommand):
 
             if ('checksum_type' not in iyi or
                 'checksum_data' not in iyi):
-                raise yum.Errors.YumBaseError, _("No YumDB for (yumdb sync?): %s") %ipkg
+                raise yum.Errors.YumBaseError(_("No YumDB for (yumdb sync?): %s") %ipkg)
             for apkg in base.pkgSack.searchPkgTuple(ipkg.pkgtup):
                 if (iyi.checksum_type == apkg.checksum_type and
                     iyi.checksum_data == apkg.pkgId):
@@ -4907,7 +4907,7 @@ class FSCommand(YumCommand):
                         apkg = YumLocalPackage(base.ts, filename)
                         apkgs[ipkg.pkgtup] = apkg
             if ipkg.pkgtup not in apkgs:
-                raise yum.Errors.YumBaseError, _("Can't find package: %s") %ipkg
+                raise yum.Errors.YumBaseError(_("Can't find package: %s") %ipkg)
 
         if downloadpkgs:
             tmpdir = get_tmpdir(tmpdir)
@@ -4919,7 +4919,7 @@ class FSCommand(YumCommand):
                     errors = yum.misc.unique(problems[key])
                     for error in errors:
                         errstring += '  %s: %s\n' % (key, error)
-                raise yum.Errors.YumBaseError, errstring
+                raise yum.Errors.YumBaseError(errstring)
 
         for root, dirs, files in os.walk(prefix):
             for fname in files:
@@ -4942,13 +4942,13 @@ class FSCommand(YumCommand):
             elif fpath in pfr['ghost']:
                 pass
             elif fpath in pfr['not']:
-                print _('Not installed:'), fpath
+                print(_('Not installed:'), fpath)
             elif fpath in pfr['miss']:
                 pass
             elif fpath in pfr['mod']:
-                print _('Modified:'), fpath
+                print(_('Modified:'), fpath)
             else:
-                print _('Not packaged?:'), fpath
+                print(_('Not packaged?:'), fpath)
 
         prefix = "."
         if extcmds:

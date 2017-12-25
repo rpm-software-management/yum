@@ -110,7 +110,7 @@ def legitMultiArchesInSameLib(arch=None):
     results = [arch]
    
     if arch in ('x86_64', 'ppc64') or arch.startswith('sparcv9'):
-        for (k, v) in arches.items():
+        for (k, v) in list(arches.items()):
             if v == arch:
                 results.append(k)
     return results        

@@ -8,7 +8,7 @@ import yum
 import yum.Errors
 from yum.config import BaseConfig, Option, IntOption, ListOption, BoolOption
 from yum.parser import ConfigPreProcessor
-from ConfigParser import ConfigParser, ParsingError
+from configparser import ConfigParser, ParsingError
 from yum.constants import *
 from email.mime.text import MIMEText
 from yum.i18n import to_str, to_utf8, to_unicode, utf8_width, utf8_width_fill, utf8_text_fill
@@ -248,7 +248,7 @@ class EmailEmitter(UpdateEmitter):
             s.connect(self.opts.email_host)
             s.sendmail(self.opts.email_from, self.opts.email_to, msg.as_string())
             s.close()
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Failed to send an email to %s: %s" % (self.opts.email_host, e))
 
 
@@ -265,7 +265,7 @@ class StdIOEmitter(UpdateEmitter):
         # Don't print blank lines
         if not self.output:
             return
-        print "".join(self.output)
+        print("".join(self.output))
 
 
 class YumCronConfig(BaseConfig):
@@ -338,7 +338,7 @@ class YumCronBase(yum.YumBase, YumOutput):
         # list of the files that were read successfully, so check that it
         # contains config_file
         if config_file_name not in confparser.read(config_file_name):
-            print >> sys.stderr, "Error reading config file:", config_file_name
+            print("Error reading config file:", config_file_name, file=sys.stderr)
             sys.exit(1)
 
         # Populate the values into  the opts object
@@ -392,7 +392,7 @@ class YumCronBase(yum.YumBase, YumOutput):
             self.conf.populate(self._confparser, 'base')
             del self._confparser
 
-        except Exception, e:
+        except Exception as e:
             # If there are any exceptions, send a message about them,
             # and return False
             self.emitSetupFailed('%s' % e)
@@ -404,7 +404,7 @@ class YumCronBase(yum.YumBase, YumOutput):
         i = 0
         while True:
             try: self.doLock(); break
-            except yum.Errors.LockError, e:
+            except yum.Errors.LockError as e:
                 i += 1
                 if i < self.opts.lock_retries:
                     sleep(self.opts.lock_sleep)
@@ -460,7 +460,7 @@ class YumCronBase(yum.YumBase, YumOutput):
                 self.updateinfo_filters['bugfix'] = True
                 yum.updateinfo.remove_txmbrs(self)
 
-        except Exception, e:
+        except Exception as e:
             self.emitCheckFailed("%s" %(e,))
             sys.exit(1)
 
@@ -501,7 +501,7 @@ class YumCronBase(yum.YumBase, YumOutput):
                     self.emitGroupError('Warning: Group %s does not exist.' % group_string)
                     continue
 
-        except Exception, e:
+        except Exception as e:
             self.emitGroupFailed("%s" % e)
             return False
 
@@ -513,7 +513,7 @@ class YumCronBase(yum.YumBase, YumOutput):
 
         try:
             (res, resmsg) = self.buildTransaction()
-        except yum.Errors.RepoError, e:
+        except yum.Errors.RepoError as e:
             self.emitCheckFailed("%s" %(e,))
             sys.exit(1)
         if res == 0:
@@ -535,17 +535,15 @@ class YumCronBase(yum.YumBase, YumOutput):
         # Emit a message that that updates will be downloaded
         if emit :
             self.emitDownloading()
-        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
-                                            txmbr.ts_state in ("i", "u"),
-                                            self.tsInfo.getMembers()))
+        dlpkgs = [x.po for x in [txmbr for txmbr in self.tsInfo.getMembers() if txmbr.ts_state in ("i", "u")]]
         try:
             # Download the updates
             self.conf.downloadonly = not self.opts.apply_updates
             self.downloadPkgs(dlpkgs)
-        except Exception, e:
+        except Exception as e:
             self.emitDownloadFailed("%s" % e)
             sys.exit(1)
-        except SystemExit, e:
+        except SystemExit as e:
             if e.code == 0:
                 # Emit a message that the packages have been downloaded
                 self.emitDownloaded()
@@ -562,9 +560,7 @@ class YumCronBase(yum.YumBase, YumOutput):
         if emit :
             self.emitInstalling()
 
-        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
-                                            txmbr.ts_state in ("i", "u"),
-                                            self.tsInfo.getMembers()))
+        dlpkgs = [x.po for x in [txmbr for txmbr in self.tsInfo.getMembers() if txmbr.ts_state in ("i", "u")]]
 
         for po in dlpkgs:
             result, err = self.sigCheckPkg(po)
@@ -573,7 +569,7 @@ class YumCronBase(yum.YumBase, YumOutput):
             elif result == 1:
                 try:
                     self.getKeyForPackage(po)
-                except yum.Errors.YumBaseError, errmsg:
+                except yum.Errors.YumBaseError as errmsg:
                     self.emitUpdateFailed(errmsg)
                     return False
             else:
@@ -591,7 +587,7 @@ class YumCronBase(yum.YumBase, YumOutput):
         cb.tsInfo = self.tsInfo
         try:
             self.runTransaction(cb=cb)
-        except yum.Errors.YumBaseError, err:
+        except yum.Errors.YumBaseError as err:
             self.emitUpdateFailed(err)
             sys.exit(1)
 
@@ -661,57 +657,57 @@ class YumCronBase(yum.YumBase, YumOutput):
     def emitAvailable(self):
         """Emit a notice stating whether updates are available."""
         summary = self.listTransaction()
-        map(lambda x: x.updatesAvailable(summary), self.emitters)
+        list(map(lambda x: x.updatesAvailable(summary), self.emitters))
 
     def emitDownloading(self):
         """Emit a notice stating that updates are downloading."""
         summary = self.listTransaction()
-        map(lambda x: x.updatesDownloading(summary), self.emitters)
+        list(map(lambda x: x.updatesDownloading(summary), self.emitters))
 
     def emitDownloaded(self):
         """Emit a notice stating that updates have downloaded."""
-        map(lambda x: x.updatesDownloaded(), self.emitters)
+        list(map(lambda x: x.updatesDownloaded(), self.emitters))
 
     def emitInstalling(self):
         """Emit a notice stating that automatic updates are about to
         be applied.
         """
         summary = self.listTransaction()
-        map(lambda x: x.updatesInstalling(summary), self.emitters)
+        list(map(lambda x: x.updatesInstalling(summary), self.emitters))
 
     def emitInstalled(self):
         """Emit a notice stating that automatic updates have been applied."""
-        map(lambda x: x.updatesInstalled(), self.emitters)
+        list(map(lambda x: x.updatesInstalled(), self.emitters))
 
     def emitSetupFailed(self, error):
         """Emit a notice stating that checking for updates failed."""
-        map(lambda x: x.setupFailed(error), self.emitters)
+        list(map(lambda x: x.setupFailed(error), self.emitters))
 
     def emitCheckFailed(self, error):
         """Emit a notice stating that checking for updates failed."""
-        map(lambda x: x.checkFailed(error), self.emitters)
+        list(map(lambda x: x.checkFailed(error), self.emitters))
 
     def emitGroupError(self, error):
         """Emit a notice stating that there was an error checking for
         group updates.
         """
-        map(lambda x: x.groupError(error), self.emitters)
+        list(map(lambda x: x.groupError(error), self.emitters))
 
     def emitGroupFailed(self, error):
         """Emit a notice stating that checking for group updates failed."""
-        map(lambda x: x.groupFailed(error), self.emitters)
+        list(map(lambda x: x.groupFailed(error), self.emitters))
 
     def emitDownloadFailed(self, error):
         """Emit a notice stating that downloading the updates failed."""
-        map(lambda x: x.downloadFailed(error), self.emitters)
+        list(map(lambda x: x.downloadFailed(error), self.emitters))
 
     def emitUpdateFailed(self, errmsg):
         """Emit a notice stating that automatic updates failed."""
-        map(lambda x: x.updatesFailed(errmsg), self.emitters)
+        list(map(lambda x: x.updatesFailed(errmsg), self.emitters))
 
     def emitMessages(self):
         """Emit the messages from the emitters."""
-        map(lambda x: x.sendMessages(), self.emitters)
+        list(map(lambda x: x.sendMessages(), self.emitters))
 
 
 def main():

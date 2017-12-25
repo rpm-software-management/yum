@@ -38,24 +38,24 @@ up.exactarch=1
 #up.myarch = 'sparc64'
 up._is_multilib = rpmUtils.arch.isMultiLibArch(up.myarch)
 up._archlist = rpmUtils.arch.getArchList(up.myarch)
-print up._archlist
+print(up._archlist)
 up._multilib_compat_arches = rpmUtils.arch.getMultiArchInfo(up.myarch)
 up.doUpdates()
 up.condenseUpdates()
 
-for tup in up.updatesdict.keys():
+for tup in list(up.updatesdict.keys()):
     (old_n, old_a, old_e, old_v, old_r) = tup
     for (n, a, e, v, r) in up.updatesdict[tup]:
-        print '%s.%s %s:%s-%s updated by %s.%s %s:%s-%s' % (old_n, 
-                                old_a, old_e, old_v, old_r, n, a, e, v, r)
+        print('%s.%s %s:%s-%s updated by %s.%s %s:%s-%s' % (old_n, 
+                                old_a, old_e, old_v, old_r, n, a, e, v, r))
 
 up.rawobsoletes = obslist
 up.doObsoletes()
-for tup in up.obsoletes.keys():
+for tup in list(up.obsoletes.keys()):
     (old_n, old_a, old_e, old_v, old_r) = tup
     for (n, a, e, v, r) in up.obsoletes[tup]:
-        print '%s.%s %s:%s-%s obsoletes %s.%s %s:%s-%s' % (old_n, 
-                                old_a, old_e, old_v, old_r, n, a, e, v, r)
+        print('%s.%s %s:%s-%s obsoletes %s.%s %s:%s-%s' % (old_n, 
+                                old_a, old_e, old_v, old_r, n, a, e, v, r))
 
     
 

@@ -162,4 +162,4 @@ class TransactionDataTests(unittest.TestCase):
             
     def dumpTsInfo(self):
         for txmbr in self.tsInfo:
-            print txmbr
+            print(txmbr)

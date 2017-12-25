@@ -10,7 +10,7 @@ from yum.logginglevels import INFO_1
 
 import rpmUtils.miscutils
 
-import misc
+from . import misc
 
 import fnmatch
 
@@ -201,7 +201,7 @@ def _ysp_gen_opts(filters, sec_cmds=None):
     # are dealing with such an old updateinfo.xml.
     for attr in ['sec_cmds', 'advisory']:
         oldlist = getattr(opts, attr)
-        stripped = map(strip_respin, oldlist)
+        stripped = list(map(strip_respin, oldlist))
         newlist = list(set(oldlist) | set(stripped))
         setattr(opts, attr, newlist)
 
@@ -252,7 +252,7 @@ def _get_name2pkgtup(base, pkgtups):
     return name2tup
 def _get_name2oldpkgtup(base):
     """ Get the pkgtups for all installed pkgs. which have an update. """
-    oupdates = map(lambda x: x[1], base.up.getUpdatesTuples())
+    oupdates = [x[1] for x in base.up.getUpdatesTuples()]
     return _get_name2pkgtup(base, oupdates)
 def _get_name2instpkgtup(base):
     """ Get the pkgtups for all installed pkgs. """
@@ -532,7 +532,7 @@ def update_minimal(base, extcmds=[]):
     #   pass
 
     # Tuples == (n, a, e, v, r)
-    oupdates  = map(lambda x: x[1], base.up.getUpdatesTuples())
+    oupdates  = [x[1] for x in base.up.getUpdatesTuples()]
     for oldpkgtup in sorted(oupdates):
         data = base.upinfo.get_applicable_notices(oldpkgtup)
         if ndata: # No options means pick the oldest update

@@ -61,7 +61,7 @@ def sigquit(signum, frame):
     :param signum: unused
     :param frame: unused
     """
-    print >> sys.stderr, "Quit signal sent - exiting immediately"
+    print("Quit signal sent - exiting immediately", file=sys.stderr)
     sys.exit(1)
 
 class CliError(yum.Errors.YumBaseError):
@@ -175,7 +175,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         names and summary usages.
         """
         usage = 'yum [options] COMMAND\n\nList of Commands:\n\n'
-        commands = yum.misc.unique([x for x in self.yum_cli_commands.values()
+        commands = yum.misc.unique([x for x in list(self.yum_cli_commands.values())
                                     if not (hasattr(x, 'hidden') and x.hidden)])
         commands.sort(key=lambda x: x.getNames()[0])
         for command in commands:
@@ -239,7 +239,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # Just print out the version if that's what the user wanted
         if opts.version:
-            print yum.__version__
+            print(yum.__version__)
             opts.quiet = True
             opts.verbose = False
 
@@ -288,14 +288,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                         self.logger.warning(msg % opt)
                     setattr(self.conf, opt, getattr(self.main_setopts, opt))
 
-        except yum.Errors.ConfigError, e:
+        except yum.Errors.ConfigError as e:
             self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
-        except IOError, e:
+        except IOError as e:
             e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
             self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
-        except ValueError, e:
+        except ValueError as e:
             self.logger.critical(_('Options error: %s'), e)
             sys.exit(1)
 
@@ -334,7 +334,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 return time.strftime("%Y-%m-%d", time.gmtime(x))
             for pkg in sorted(self.rpmdb.returnPackages(patterns=yum_progs)):
                 # We should only have 1 version of each...
-                if done: print ""
+                if done: print("")
                 done = True
                 if pkg.epoch == '0':
                     ver = '%s-%s.%s' % (pkg.version, pkg.release, pkg.arch)
@@ -343,12 +343,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                            pkg.version, pkg.release, pkg.arch)
                 name = "%s%s%s" % (self.term.MODE['bold'], pkg.name,
                                    self.term.MODE['normal'])
-                print _("  Installed: %s-%s at %s") %(name, ver,
-                                                   sm_ui_time(pkg.installtime))
-                print _("  Built    : %s at %s") % (to_unicode(pkg.packager),
-                                                    sm_ui_time(pkg.buildtime))
-                print _("  Committed: %s at %s") % (to_unicode(pkg.committer),
-                                                    sm_ui_date(pkg.committime))
+                print(_("  Installed: %s-%s at %s") %(name, ver,
+                                                   sm_ui_time(pkg.installtime)))
+                print(_("  Built    : %s at %s") % (to_unicode(pkg.packager),
+                                                    sm_ui_time(pkg.buildtime)))
+                print(_("  Committed: %s at %s") % (to_unicode(pkg.committer),
+                                                    sm_ui_date(pkg.committime)))
             sys.exit(0)
 
         if opts.sleeptime is not None:
@@ -543,19 +543,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         while True:
             try:
                 self.doLock()
-            except yum.Errors.LockError, e:
+            except yum.Errors.LockError as e:
                 if exception2msg(e) != lockerr:
                     lockerr = exception2msg(e)
                     self.logger.critical(lockerr)
                 if e.errno:
-                    raise yum.Errors.YumBaseError, _("Can't create lock file; exiting")
+                    raise yum.Errors.YumBaseError(_("Can't create lock file; exiting"))
                 if not self.conf.exit_on_lock:
                     self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")
                     import utils
                     utils.show_lock_owner(e.pid, self.logger)
                     time.sleep(2)
                 else:
-                    raise yum.Errors.YumBaseError, _("Another app is currently holding the yum lock; exiting as configured by exit_on_lock")
+                    raise yum.Errors.YumBaseError(_("Another app is currently holding the yum lock; exiting as configured by exit_on_lock"))
             else:
                 break
 
@@ -587,7 +587,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if needTs or needTsRemove:
             try:
                 self._getTs(needTsRemove)
-            except yum.Errors.YumBaseError, e:
+            except yum.Errors.YumBaseError as e:
                 return 1, [exception2msg(e)]
 
         #  This should already have been done at doCheck() time, but just in
@@ -612,7 +612,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # yum accepts will be different which is bad. So always accept it,
             # but change the prompt.
             dl_only = {'downloadonly' :
-                             (u'd', _('d'), _('download'),
+                             ('d', _('d'), _('download'),
                               _('downloadonly'))}
             if not stuff_to_download:
                 ret = self.userconfirm(extra=dl_only)
@@ -704,7 +704,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 errors = yum.misc.unique(problems[key])
                 for error in errors:
                     errstring += '  %s: %s\n' % (key, error)
-            raise yum.Errors.YumBaseError, errstring
+            raise yum.Errors.YumBaseError(errstring)
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
@@ -728,13 +728,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     continue
                 rpmlib_only = False
             if rpmlib_only:
-                print _("ERROR You need to update rpm to handle:")
+                print(_("ERROR You need to update rpm to handle:"))
             else:
-                print _('ERROR with transaction check vs depsolve:')
+                print(_('ERROR with transaction check vs depsolve:'))
                 depsolve = True
 
             for msg in msgs:
-                print to_utf8(msg)
+                print(to_utf8(msg))
 
             if rpmlib_only:
                 return 1, [_('RPM needs to be updated')]
@@ -761,8 +761,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             for descr in tserrors:
                 errstring += '  %s\n' % to_unicode(descr)
             
-            raise yum.Errors.YumBaseError, errstring + '\n' + \
-                 self.errorSummary(errstring)
+            raise yum.Errors.YumBaseError(errstring + '\n' + \
+                 self.errorSummary(errstring))
         self.verbose_logger.log(yum.logginglevels.INFO_2,
              _('Transaction test succeeded'))
         
@@ -875,9 +875,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             elif result == 1:
                 ay = self.conf.assumeyes and not self.conf.assumeno
                 if not sys.stdin.isatty() and not ay:
-                    raise yum.Errors.YumBaseError, \
-                            _('Refusing to automatically import keys when running ' \
-                            'unattended.\nUse "-y" to override.')
+                    raise yum.Errors.YumBaseError(_('Refusing to automatically import keys when running ' \
+                            'unattended.\nUse "-y" to override.'))
 
                 # the callback here expects to be able to take options which
                 # userconfirm really doesn't... so fake it
@@ -885,7 +884,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
             else:
                 # Fatal error
-                raise yum.Errors.YumBaseError, errmsg
+                raise yum.Errors.YumBaseError(errmsg)
 
         return 0
 
@@ -893,7 +892,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """ If install argument doesn't match with case, tell the user. """
         matches = self.doPackageLists(patterns=[arg], ignore_case=True)
         matches = matches.installed + matches.available
-        matches = set(map(lambda x: x.name, matches))
+        matches = set([x.name for x in matches])
         if matches:
             msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
                                      ", ".join(matches))
@@ -932,7 +931,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 _('Package(s) %s%s%s available, but not installed.'),
                                     hibeg, arg, hiend)
             return
-        matches = set(map(lambda x: x.name, matches.installed))
+        matches = set([x.name for x in matches.installed])
         if always_output or matches:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                                     _('No package %s%s%s available.'),
@@ -1045,7 +1044,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 else:
                     assert basecmd == 'install', basecmd
                     txmbrs = self.install(pattern=arg)
-            except yum.Errors.GroupInstallError, e:
+            except yum.Errors.GroupInstallError as e:
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
                 if not self.conf.skip_missing_names_on_install:
                     return 1, [_('Not tolerating missing names on install, stopping.')]
@@ -1179,7 +1178,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         pkgs = []
         if ipkgs:
             try:
-                pkgs = self.pkgSack.returnNewestByName(patterns=ipkgs.keys())
+                pkgs = self.pkgSack.returnNewestByName(patterns=list(ipkgs.keys()))
             except yum.Errors.PackageSackError:
                 pkgs = []
 
@@ -1373,7 +1372,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 txmbrs = self.reinstall(pattern=arg)
             except yum.Errors.ReinstallRemoveError:
                 self._checkMaybeYouMeant(arg, always_output=False)
-            except yum.Errors.ReinstallInstallError, e:
+            except yum.Errors.ReinstallInstallError as e:
                 for ipkg in e.failed_pkgs:
                     xmsg = ''
                     if 'from_repo' in ipkg.yumdb_info:
@@ -1383,7 +1382,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     self.verbose_logger.log(yum.logginglevels.INFO_2, msg,
                                             self.term.MODE['bold'], ipkg,
                                             self.term.MODE['normal'], xmsg)
-            except yum.Errors.ReinstallError, e:
+            except yum.Errors.ReinstallError as e:
                 assert False, "Shouldn't happen, but just in case"
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
             else:
@@ -1511,7 +1510,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         searchlist = ['name', 'summary', 'description', 'url']
         dups = self.conf.showdupesfromrepos
-        args = map(to_unicode, args)
+        args = list(map(to_unicode, args))
 
         okeys = set()
         akeys = set() # All keys, used to see if nothing matched
@@ -1521,7 +1520,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         def _print_match_section(text):
             # Print them in the order they were passed
             used_keys = [arg for arg in args if arg in keys]
-            print self.fmtSection(text % ", ".join(used_keys))
+            print(self.fmtSection(text % ", ".join(used_keys)))
 
         #  First try just the name/summary fields, and if we get any hits
         # don't do the other stuff. Unless the user overrides via. "all".
@@ -1535,7 +1534,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     if akeys:
                         if len(mkeys) == len(args):
                             break
-                        print ""
+                        print("")
                     else:
                         mkeys = set(keys)
                     _print_match_section(_('N/S matched: %s'))
@@ -1553,12 +1552,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # with _more_ search terms. Thus. if we hit all our search terms. do
         # nothing.
         if len(mkeys) == len(args):
-            print ""
+            print("")
             if len(args) == 1:
                 msg = _('  Name and summary matches %sonly%s, use "search all" for everything.')
             else:
                 msg = _('  Full name and summary matches %sonly%s, use "search all" for everything.')
-            print msg % (self.term.MODE['bold'], self.term.MODE['normal'])
+            print(msg % (self.term.MODE['bold'], self.term.MODE['normal']))
             matching = []
 
         for (po, keys, matched_value) in matching:
@@ -1574,15 +1573,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
             if keys != okeys:
                 if akeys:
-                    print ""
+                    print("")
                 _print_match_section(_('Matched: %s'))
                 okeys = keys
                 akeys.update(keys)
             self.matchcallback(po, matched_value, args)
 
         if mkeys and len(mkeys) != len(args):
-            print ""
-            print _('  Name and summary matches %smostly%s, use "search all" for everything.') % (self.term.MODE['bold'], self.term.MODE['normal'])
+            print("")
+            print(_('  Name and summary matches %smostly%s, use "search all" for everything.') % (self.term.MODE['bold'], self.term.MODE['normal']))
 
         for arg in args:
             if arg not in akeys:
@@ -2282,10 +2281,10 @@ class YumOptionParser(OptionParser):
                          '--disableplugin', '--enableplugin', '--releasever',
                          '--setopt'),
                         args)
-        except ValueError, arg:
+        except ValueError as arg:
             self.base.usage()
-            print >> sys.stderr, (_("\n\n%s: %s option requires an argument") %
-                                  ('Command line error', arg))
+            print((_("\n\n%s: %s option requires an argument") %
+                                  ('Command line error', arg)), file=sys.stderr)
             sys.exit(1)
         return self.parse_args(args=args)[0]
 
@@ -2362,7 +2361,7 @@ class YumOptionParser(OptionParser):
 
             if opts.color not in (None, 'auto', 'always', 'never',
                                   'tty', 'if-tty', 'yes', 'no', 'on', 'off'):
-                raise ValueError, _("--color takes one of: auto, always, never")
+                raise ValueError(_("--color takes one of: auto, always, never"))
             elif opts.color is None:
                 if self.base.conf.color != 'auto':
                     self.base.term.reinit(color=self.base.conf.color)
@@ -2385,7 +2384,7 @@ class YumOptionParser(OptionParser):
                     excludelist = self.base.conf.exclude
                     excludelist.append(exclude)
                     self.base.conf.exclude = excludelist
-                except yum.Errors.ConfigError, e:
+                except yum.Errors.ConfigError as e:
                     self.logger.critical(e)
                     self.base.usage()
                     sys.exit(1)
@@ -2405,7 +2404,7 @@ class YumOptionParser(OptionParser):
                         self.base.repos.enableRepo(repoexp)
                     elif opt == '--disablerepo':
                         self.base.repos.disableRepo(repoexp)
-                except yum.Errors.ConfigError, e:
+                except yum.Errors.ConfigError as e:
                     self.logger.critical(e)
                     self.base.usage()
                     sys.exit(1)
@@ -2418,7 +2417,7 @@ class YumOptionParser(OptionParser):
                 for repo in self.base.repos.listEnabled():
                     repo._override_sigchecks = True
                             
-        except ValueError, e:
+        except ValueError as e:
             self.logger.critical(_('Options error: %s'), e)
             self.base.usage()
             sys.exit(1)
@@ -2619,10 +2618,10 @@ def _filtercmdline(novalopts, valopts, args):
 
         elif a in valopts:
             if len(args) < 1:
-                raise ValueError, a
+                raise ValueError(a)
             next = args.pop(0)
             if next[0] == '-':
-                raise ValueError, a
+                raise ValueError(a)
 
             out.extend([a, next])
        

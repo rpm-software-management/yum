@@ -197,11 +197,11 @@ def setFileLog(uid, logfile, cleanup=None):
             # For installroot etc.
             logdir = os.path.dirname(logfile)
             if not os.path.exists(logdir):
-                os.makedirs(logdir, mode=0755)
+                os.makedirs(logdir, mode=0o755)
             
             if not os.path.exists(logfile):
                 f = open(logfile, 'w')
-                os.chmod(logfile, 0600) # making sure umask doesn't catch us up
+                os.chmod(logfile, 0o600) # making sure umask doesn't catch us up
                 f.close()
                 
             filelogger = logging.getLogger("yum.filelogging")

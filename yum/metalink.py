@@ -24,7 +24,7 @@ import os
 import time
 from urlgrabber.progress import format_number
 
-import Errors
+from . import Errors
 
 from yum.misc import cElementTree_xmlparse as xmlparse
 
@@ -68,11 +68,11 @@ class MetaLinkFile:
                         self.chksums[helem.get("type").lower()] = helem.text
 
         if not hasattr(self, 'timestamp'):
-            raise MetaLinkRepoErrorParseFail, "No timestamp for file"
+            raise MetaLinkRepoErrorParseFail("No timestamp for file")
         if not hasattr(self, 'size'):
-            raise MetaLinkRepoErrorParseFail, "No size for file"
+            raise MetaLinkRepoErrorParseFail("No size for file")
         if not hasattr(self, 'chksums'):
-            raise MetaLinkRepoErrorParseFail, "No verifications for file"
+            raise MetaLinkRepoErrorParseFail("No verifications for file")
 
     def __str__(self):
         return """\
@@ -182,11 +182,11 @@ class MetaLinkRepoMD:
         self.mirrors = []
         self._host2mc = {}
         if not os.path.exists(filename):
-            raise MetaLinkRepoErrorParseFail, "File %s does not exist" %filename
+            raise MetaLinkRepoErrorParseFail("File %s does not exist" %filename)
         try:
             root = xmlparse(filename)
         except SyntaxError:
-            raise MetaLinkRepoErrorParseFail, "File %s is not XML" % filename
+            raise MetaLinkRepoErrorParseFail("File %s is not XML" % filename)
 
         for elem in root.findall(__ML_FILE_ELEMENT__):
             name = elem.get('name')
@@ -194,13 +194,13 @@ class MetaLinkRepoMD:
                 continue
 
             if self.name is not None and self.name != name:
-                raise MetaLinkRepoErrorParseFail, "Different paths for repomd file"
+                raise MetaLinkRepoErrorParseFail("Different paths for repomd file")
             self.name = name
 
             repomd = MetaLinkFile(elem)
 
             if self.repomd is not None and self.repomd != repomd:
-                raise MetaLinkRepoErrorParseFail, "Different data for repomd file"
+                raise MetaLinkRepoErrorParseFail("Different data for repomd file")
             self.repomd = repomd
 
             for celem in elem.findall(__ML_OLD_FILE_ELEMENTS__):
@@ -216,9 +216,9 @@ class MetaLinkRepoMD:
         self.mirrors.sort()
 
         if self.repomd is None:
-            raise MetaLinkRepoErrorParseFail, "No repomd file"
+            raise MetaLinkRepoErrorParseFail("No repomd file")
         if len(self.mirrors) < 1:
-            raise MetaLinkRepoErrorParseFail, "No mirror"
+            raise MetaLinkRepoErrorParseFail("No mirror")
 
     def urls(self):
         """ Iterate plain urls for the mirrors, like the old mirrorlist. """
@@ -270,7 +270,7 @@ def main():
     """ MetaLinkRepoMD test function. """
 
     def usage():
-        print >> sys.stderr, "Usage: %s <metalink> ..." % sys.argv[0]
+        print("Usage: %s <metalink> ..." % sys.argv[0], file=sys.stderr)
         sys.exit(1)
 
     if len(sys.argv) < 2:
@@ -278,12 +278,12 @@ def main():
 
     for filename in sys.argv[1:]:
         if not os.path.exists(filename):
-            print "No such file:", filename
+            print("No such file:", filename)
             continue
 
-        print "File:", filename
-        print MetaLinkRepoMD(filename)
-        print ''
+        print("File:", filename)
+        print(MetaLinkRepoMD(filename))
+        print('')
 
 if __name__ == '__main__':
     main()

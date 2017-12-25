@@ -25,9 +25,9 @@ import sys
 import warnings
 import rpm
 import copy
-import urlparse
+import urllib.parse
 import shlex
-from parser import ConfigPreProcessor, varReplace
+from .parser import ConfigPreProcessor, varReplace
 try:
     from iniparse import INIConfig
     from iniparse.compat import NoSectionError, NoOptionError, ParsingError
@@ -35,13 +35,13 @@ try:
 except ImportError:
     _use_iniparse = False
 if not _use_iniparse:
-    from ConfigParser import NoSectionError, NoOptionError, ParsingError
-    from ConfigParser import ConfigParser
+    from configparser import NoSectionError, NoOptionError, ParsingError
+    from configparser import ConfigParser
 import rpmUtils.transaction
 import rpmUtils.miscutils
-import Errors
+from . import Errors
 import types
-from misc import get_uuid_obj, read_in_items_from_dot_dir
+from .misc import get_uuid_obj, read_in_items_from_dot_dir
 import fnmatch
 
 # Alter/patch these to change the default checking...
@@ -98,10 +98,10 @@ class Option(object):
         :param value: The value to set the option to.
         """
         # Only try to parse if it's a string
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             try:
                 value = self.parse(value)
-            except ValueError, e:
+            except ValueError as e:
                 # Add the field name onto the error
                 raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
                                                                  value, str(e)))
@@ -227,7 +227,7 @@ class UrlOption(Option):
                 raise ValueError('"_none_" is not a valid value')
 
         # Check that scheme is valid
-        (s,b,p,q,f,o) = urlparse.urlparse(url)
+        (s,b,p,q,f,o) = urllib.parse.urlparse(url)
         if s not in self.schemes:
             raise ValueError('URL must be %s not "%s"' % (self._schemelist(), s))
 
@@ -294,7 +294,7 @@ class WildListOption(ListOption):
     def parse(self, s):
         class WildList(list):
             def __contains__(self, item):
-                if not isinstance(item, basestring):
+                if not isinstance(item, str):
                     return False
                 return any(fnmatch.fnmatch(item, p) for p in self)
         patterns = super(WildListOption, self).parse(s)
@@ -319,7 +319,7 @@ class IntOption(Option):
         """
         try:
             val = int(s)
-        except (ValueError, TypeError), e:
+        except (ValueError, TypeError) as e:
             raise ValueError('invalid integer value')
         if self._range_max is not None and val > self._range_max:
             raise ValueError('out of range integer value')
@@ -395,7 +395,7 @@ class SecondsOption(Option):
 
         try:
             n = float(n)
-        except (ValueError, TypeError), e:
+        except (ValueError, TypeError) as e:
             raise ValueError('invalid value')
 
         if n < 0:
@@ -579,14 +579,14 @@ class BaseConfig(object):
     def __init__(self):
         self._section = None
 
-        for name in self.iterkeys():
+        for name in self.keys():
             option = self.optionobj(name)
             option.setup(self, name)
 
     def __str__(self):
         out = []
         out.append('[%s]' % self._section)
-        for name, value in self.iteritems():
+        for name, value in self.items():
             out.append('%s: %r' % (name, value))
         return '\n'.join(out)
 
@@ -606,7 +606,7 @@ class BaseConfig(object):
             opts = set(parser.options(section))
         else:
             opts = set()
-        for name in self.iterkeys():
+        for name in self.keys():
             option = self.optionobj(name)
             value = None
             if name in opts:
@@ -665,7 +665,7 @@ class BaseConfig(object):
         value.
         """
         # Use dir() so that we see inherited options too
-        for name in self.iterkeys():
+        for name in self.keys():
             yield (name, getattr(self, name))
 
     def write(self, fileobj, section=None, always=()):
@@ -686,7 +686,7 @@ class BaseConfig(object):
 
         # Updated the ConfigParser with the changed values    
         cfgOptions = self.cfg.options(section)
-        for name,value in self.iteritems():
+        for name,value in self.items():
             option = self.optionobj(name)
             if always is None or name in always or option.default != value or name in cfgOptions :
                 self.cfg.set(section,name, option.tostring(value))
@@ -722,7 +722,7 @@ class BaseConfig(object):
         if hasattr(self, option):
             setattr(self, option, value)
         else:
-            raise Errors.ConfigError, 'No such option %s' % option
+            raise Errors.ConfigError('No such option %s' % option)
 
 class StartupConf(BaseConfig):
     """Configuration option definitions for yum.conf's [main] section
@@ -965,7 +965,7 @@ class YumConf(StartupConf):
             res = getattr(self, attr)
             if not res and type(res) not in (type(False), type(0)):
                 res = ''
-            if type(res) == types.ListType:
+            if type(res) == list:
                 res = ',\n   '.join(res)
             output = output + '%s = %s\n' % (attr, res)
 
@@ -1103,7 +1103,7 @@ def readStartupConfig(configfile, root, releasever=None):
 
     try:
         parser.readfp(confpp_obj)
-    except ParsingError, e:
+    except ParsingError as e:
         raise Errors.ConfigError("Parsing file failed: %s" % e)
     startupconf.populate(parser, 'main')
 
@@ -1195,7 +1195,7 @@ def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
     confpp_obj = ConfigPreProcessor(configfile)
     try:
         parser.readfp(confpp_obj)
-    except ParsingError, e:
+    except ParsingError as e:
         raise Errors.ConfigError("Parsing file failed: %s" % e)
     ret = {}
     for section in parser.sections():
@@ -1248,7 +1248,7 @@ def _getsysver(installroot, distroverpkg):
             idx = ts.dbMatch('provides', distroverpkg_prov)
             if idx.count():
                 break
-    except TypeError, e:
+    except TypeError as e:
         # This is code for "cannot open rpmdb"
         # this is for pep 352 compliance on python 2.6 and above :(
         if sys.hexversion < 0x02050000:
@@ -1257,7 +1257,7 @@ def _getsysver(installroot, distroverpkg):
             else:
                 raise Errors.YumBaseError("Error: " + str(e))
         raise Errors.YumBaseError("Error: " + str(e))
-    except rpm.error, e:
+    except rpm.error as e:
         # This is the "new" code for "cannot open rpmdb", 4.8.0 ish
         raise Errors.YumBaseError("Error: " + str(e))
     # we're going to take the first one - if there is more than one of these
@@ -1266,7 +1266,7 @@ def _getsysver(installroot, distroverpkg):
         releasever = '$releasever'
     else:
         try:
-            hdr = idx.next()
+            hdr = next(idx)
         except StopIteration:
             raise Errors.YumBaseError("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
         releasever = hdr['version']
@@ -1307,7 +1307,7 @@ def _readRawRepoFile(repo):
     # out which one is which
     section_id = repo.id
     if repo.id not in ini._sections:
-        for sect in ini._sections.keys():
+        for sect in list(ini._sections.keys()):
             if varReplace(sect, repo.yumvar) == repo.id:
                 section_id = sect
                 break
@@ -1329,7 +1329,7 @@ def writeRawRepoFile(repo,only=None):
     
     # Updated the ConfigParser with the changed values    
     cfgOptions = repo.cfg.options(repo.id)
-    for name,value in repo.iteritems():
+    for name,value in repo.items():
         if value is None: # Proxy
             continue
 
@@ -1365,7 +1365,7 @@ def _writeRawConfigFile(filename, section_id, yumvar,
     # b/c repoids can have $values in them we need to map both ways to figure
     # out which one is which
     if section_id not in ini._sections:
-        for sect in ini._sections.keys():
+        for sect in list(ini._sections.keys()):
             if varReplace(sect, yumvar) == section_id:
                 section_id = sect
 

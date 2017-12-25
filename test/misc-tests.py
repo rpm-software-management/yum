@@ -63,7 +63,7 @@ class MiscTests(DepsolveTests):
         D = self.repoPackage('D', '1',arch='i386')
         D.addProvides('LibD')        
         self.tsInfo.addInstall(A)
-        self.assertEquals('ok', *self.resolveCode(skip=False))
+        self.assertEqual('ok', *self.resolveCode(skip=False))
         # This one is disabled because, we no it fails, but we dont want it to bail out in the each testcase run
         # Just enable it to do the test
         # self.assertResult([A,BCD])
@@ -88,7 +88,7 @@ class MiscTests(DepsolveTests):
         D = self.repoPackage('LibD', '1',arch='i386')
         D.addProvides('LibD')        
         self.tsInfo.addInstall(A)
-        self.assertEquals('ok', *self.resolveCode(skip=False))
+        self.assertEqual('ok', *self.resolveCode(skip=False))
         self.assertResult([A,BCD])
     
     def resolveCode(self,skip = False):
@@ -120,7 +120,7 @@ class MiscTests(DepsolveTests):
 
 # valid utf8 and unicode
 ('\xc4\x9b\xc5\xa1\xc4\x8d', '\xc4\x9b\xc5\xa1\xc4\x8d'),
-(u'\u011b\u0161\u010d',      '\xc4\x9b\xc5\xa1\xc4\x8d'),
+('\u011b\u0161\u010d',      '\xc4\x9b\xc5\xa1\xc4\x8d'),
 
 # invalid utf8
 ('\xc3\x28', '\xc3\x83\x28'),
@@ -160,7 +160,7 @@ class MiscTests(DepsolveTests):
         gettext.dgettext = dgettext
         # run "yum --help"
         from optparse import OptionParser
-        parser = OptionParser(usage=u'\u011b\u0161\u010d')
+        parser = OptionParser(usage='\u011b\u0161\u010d')
         self.assertRaises(SystemExit, parser.parse_args, args=['--help'])
 
 def setup_logging():

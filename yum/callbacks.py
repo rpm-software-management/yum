@@ -49,7 +49,7 @@ class ProcessTransBaseCallback:
         :param state: a number indicating the type of callback
         :param data: data associated with the callback
         """
-        if state in PT_MESSAGES.keys():
+        if state in list(PT_MESSAGES.keys()):
             self.logger.info(PT_MESSAGES[state])
 
 class ProcessTransNoOutputCallback:

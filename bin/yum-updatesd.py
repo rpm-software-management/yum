@@ -20,6 +20,6 @@ sys.path.insert(0, '/usr/share/yum-cli')
 try:
     import yumupd
     yumupd.main(options)
-except KeyboardInterrupt, e:
-    print >> sys.stderr, "\n\nExiting on user cancel."
+except KeyboardInterrupt as e:
+    print("\n\nExiting on user cancel.", file=sys.stderr)
     sys.exit(1)

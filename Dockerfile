@@ -17,17 +17,18 @@ RUN rpm -e --nodeps dnf-yum \
 
 # Install some useful tools
 RUN dnf install -y \
+        createrepo \
         ipython \
+        less \
         python-ipdb \
-        python-pudb \
+        python-pip \
         python-rpmfluff \
         # This is not required by yum in fedora yet
         python-gpg \
-        createrepo \
-        less \
-        vim \
         tmux \
+        vim \
         wget
+RUN pip install --upgrade pip && pip install pudb
 
 # Prepare an optional installroot
 RUN dnf --installroot=/sandbox --releasever=27 -y install system-release

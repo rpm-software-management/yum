@@ -34,7 +34,13 @@ class PubringTests(unittest.TestCase):
         agent_socket = os.path.join(self.gpgdir, "S.gpg-agent")
         self.ctx.protocol = gpg.constants.protocol.ASSUAN
         self.ctx.set_engine_info(self.ctx.protocol, file_name=agent_socket)
-        self.ctx.assuan_transact(["KILLAGENT"])
+        try:
+            self.ctx.assuan_transact(["KILLAGENT"])
+        except gpg.errors.GPGMEError as e:
+            if e.getcode() == gpg.errors.ASS_CONNECT_FAILED:
+                pass # the agent was not running
+            else:
+                raise
         # Block until it is really gone.
         while os.path.exists(agent_socket):
             time.sleep(.01)

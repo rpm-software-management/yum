@@ -1113,10 +1113,13 @@ Can be disabled using --disableexcludes.
 
 .IP
 \fBincludepkgs\fR
-Inverse of exclude, yum will exclude any package in the repo. that doesn't
-match this list. This works in conjunction with exclude and doesn't override it,
-so if you exclude=*.i386 and includepkgs=python* then only packages starting
-with python that do not have an i386 arch. will be seen by yum in this repo.
+This is the inverse of exclude. Yum will exclude any package in the repo that
+doesn't match this list. This works in conjunction with exclude and doesn't
+override it.
+
+For example, if you exclude=*.i386 and includepkgs=python* for a repo, then
+only packages starting with python that do not have an i386 arch. will be
+seen by yum in this repo.
 
 Substitution variables, described below, are honored here.
 

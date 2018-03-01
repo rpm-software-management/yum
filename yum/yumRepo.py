@@ -839,9 +839,9 @@ class YumRepository(Repository, config.RepoConf):
                     try:
                         misc.unlink_f(self.mirrorlist_file)
                     except (IOError, OSError), e:
-                        print 'Could not delete bad mirrorlist file: %s - %s' % (self.mirrorlist_file, e)
+                        logger.error('Could not delete bad mirrorlist file: %s - %s' % (self.mirrorlist_file, e))
                     else:
-                        print 'removing mirrorlist with no valid mirrors: %s' % self.mirrorlist_file
+                        logger.warning('removing mirrorlist with no valid mirrors: %s' % self.mirrorlist_file)
         # store them all back in baseurl for compat purposes
         self.baseurl = self._urls
         self.check()
@@ -871,9 +871,9 @@ class YumRepository(Repository, config.RepoConf):
         if skipped is not None:
             # Caller cleans up for us.
             if goodurls:
-                print 'YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+                logger.warning('YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped))
             else: # And raises in this case
-                print 'YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+                logger.error('YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped))
         return goodurls
 
     def _geturls(self):
@@ -903,7 +903,7 @@ class YumRepository(Repository, config.RepoConf):
                         raise Errors.RepoError(msg, repo=self)
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
-                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))                    
+                    logger.error("Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1])))
                     self._metadataCurrent = True
 
             if not self._metadataCurrent:
@@ -912,7 +912,7 @@ class YumRepository(Repository, config.RepoConf):
                     shutil.move(result, self.metalink_filename)
                 except metalink.MetaLinkRepoErrorParseFail, e:
                     # Downloaded file failed to parse, revert (dito. above):
-                    print "Could not parse metalink %s error was \n%s"%(url, e)
+                    logger.error("Could not parse metalink %s error was \n%s" % (url, e))
                     self._metadataCurrent = True
                     misc.unlink_f(result)
 
@@ -1974,7 +1974,7 @@ Insufficient space in download directory %s
             except Exception, e:
                 if url is None: # Shouldn't happen
                     url = "<unknown>"
-                print "Could not read mirrorlist %s, error was \n%s" %(url, e)
+                logger.error("Could not read mirrorlist %s, error was \n%s" % (url, e))
                 content = []
             for line in content:
                 if not re.match('\w+://\S+\s*$', line):
@@ -2011,7 +2011,7 @@ Insufficient space in download directory %s
             try:
                 fo = urlgrabber.grabber.urlopen(url, **ugopts)
             except URLGrabError, e:
-                print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
+                logger.error("Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1])))
                 fo = None
 
         (returnlist, content) = self._readMirrorList(fo, url)

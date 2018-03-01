@@ -1000,6 +1000,15 @@ If set to False, 'yum update' will fail if it can't find any of the provided
 names (package, group, rpm file). It will also fail if the provided name is a package
 which is available, but not installed. Boolean (1, 0, True, False, yes, no). Defaults to True.
 
+.IP
+\fBshell_exit_status\fR
+Determines the exit status that should be returned by `yum shell' when it
+terminates after reading the `exit' command or EOF.
+Possible values are: 0, ?.
+If ? is set, the exit status is that of the last command executed before `exit'
+(bash-like behavior).
+Defaults to 0.
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:

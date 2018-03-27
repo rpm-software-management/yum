@@ -1605,7 +1605,7 @@ class YumOutput:
 %s
 %s
 """ % ('=' * self.term.columns,
-       self.fmtColumns(((_('Package'), -n_wid), (_('Arch'), -a_wid),
+       self.fmtColumns(((P_('Package', None, 1), -n_wid), (_('Arch'), -a_wid),
                         (_('Version'), -v_wid), (_('Repository'), -r_wid),
                         (_('Size'), s_wid)), u" "),
        '=' * self.term.columns)]
@@ -2646,7 +2646,7 @@ to exit.
         # REALLY Needs to use columns!
         print fmt % (utf8_width_fill(_("ID"), 6, 6),
                      utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Package"), 53, 53))
+                     utf8_width_fill(P_("Package", None, 1), 53, 53))
         print "-" * 79
         fmt = "%6u | %s | %-50s"
         num = 0

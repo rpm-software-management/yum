@@ -180,21 +180,19 @@ msgstr ""
 
 #: ../cli.py:615
 msgid "d"
-msgstr ""
+msgstr "h"
 
 #: ../cli.py:615
-#, fuzzy
 msgid "download"
-msgstr "ein Downgrade"
+msgstr "herunterladen"
 
 #: ../cli.py:616
 msgid "downloadonly"
 msgstr ""
 
 #: ../cli.py:622
-#, fuzzy
 msgid "Is this ok [y/d/N]: "
-msgstr "Ist dies in Ordnung? [j/N] :"
+msgstr "Ist dies in Ordnung? [j/h/N]: "
 
 #: ../cli.py:627
 msgid "Trying to run the transaction but nothing to do. Exiting."
@@ -935,7 +933,7 @@ msgstr "Beschreibung: "
 
 #: ../output.py:971
 msgid "Is this ok [y/N]: "
-msgstr "Ist dies in Ordnung? [j/N] :"
+msgstr "Ist dies in Ordnung? [j/N]: "
 
 #. Allow the one letter english versions in all langs.
 #: ../output.py:979 ../yumcommands.py:3331
@@ -1137,7 +1135,7 @@ msgstr[1] "Pakete"
 
 #: ../output.py:1608
 msgid "Arch"
-msgstr "Arch"
+msgstr "Architektur"
 
 #: ../output.py:1609
 msgid "Version"
@@ -3302,9 +3300,9 @@ msgid "Importing additional filelist information"
 msgstr "Zusätzliche Dateilisten-Informationen werden importiert"
 
 #: ../yum/__init__.py:1176
-#, fuzzy, python-format
+#, python-format
 msgid "The program %s is found in the yum-utils package."
-msgstr "Das Programm %s%s%s wurde im yum-utils-Paket gefunden."
+msgstr "Das Programm %s wurde im yum-utils-Paket gefunden."
 
 #: ../yum/__init__.py:1192
 msgid ""
@@ -3735,14 +3733,14 @@ msgid "No Package found for %s"
 msgstr "Kein Paket gefunden für %s"
 
 #: ../yum/__init__.py:4617
-#, fuzzy, python-format
+#, python-format
 msgid "Group %s does not exist."
-msgstr "Warnung: Gruppe %s existiert nicht."
+msgstr "Gruppe %s existiert nicht."
 
 #: ../yum/__init__.py:4625
-#, fuzzy, python-format
+#, python-format
 msgid "Warning: %s"
-msgstr "%s wird untersucht: %s"
+msgstr "Warnung: %s"
 
 #: ../yum/__init__.py:4643
 #, python-format
@@ -4362,14 +4360,13 @@ msgid "Duplicate of %s differs in some fields:\n"
 msgstr ""
 
 #: ../yum/update_md.py:571
-#, fuzzy, python-format
+#, python-format
 msgid "(from %s)"
-msgstr " (von %s)"
+msgstr "(von %s)"
 
 #: ../yum/update_md.py:571
-#, fuzzy
 msgid "<unknown>"
-msgstr "Unbekannt"
+msgstr "<unbekannt>"
 
 #: ../yum/update_md.py:603
 #, python-format

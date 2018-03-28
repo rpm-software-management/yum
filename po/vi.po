@@ -1,25 +1,23 @@
-# Vietnamese translations for yum package
-# Bản dịch tiếng Việt cho gói yum.
-# This file is distributed under the same license as the yum package.
-# Trần Ngọc Quân <vnwildman@gmail.com>, 2013-2014.
-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: yum GIT MASTER\n"
+"Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-11 15:12+0700\n"
-"PO-Revision-Date: 2014-05-16 15:12+0700\n"
-"Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
-"Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
-"Language: vi\n"
+"POT-Creation-Date: 2013-03-06 16:02-0500\n"
+"PO-Revision-Date: 2018-03-27 09:18+0000\n"
+"Last-Translator: Michal Domonkos <mdomonko@redhat.com>\n"
+"Language-Team: Vietnamese (http://www.transifex.com/skvidal/yum/language/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: vi\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.5.5\n"
 
-#: ../callback.py:45 ../output.py:1556 ../yum/rpmtrans.py:73
+#: ../callback.py:45 ../output.py:1502 ../yum/rpmtrans.py:73
 msgid "Updating"
 msgstr "Đang cập nhật..."
 
@@ -27,26 +25,26 @@ msgstr "Đang cập nhật..."
 msgid "Erasing"
 msgstr "Đang tẩy"
 
-#: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1555
-#: ../output.py:2988 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
+#: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1501
+#: ../output.py:2922 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
 #: ../yum/rpmtrans.py:78
 msgid "Installing"
 msgstr "Đang cài đặt"
 
-#: ../callback.py:49 ../callback.py:55 ../output.py:2433 ../yum/rpmtrans.py:77
+#: ../callback.py:49 ../callback.py:55 ../output.py:2379 ../yum/rpmtrans.py:77
 msgid "Obsoleted"
 msgstr "Đã lỗi thời"
 
-#: ../callback.py:51 ../output.py:1724 ../output.py:2276 ../output.py:2440
+#: ../callback.py:51 ../output.py:1670 ../output.py:2222 ../output.py:2386
 msgid "Updated"
 msgstr "Đã cập nhật"
 
-#: ../callback.py:52 ../output.py:2275
+#: ../callback.py:52 ../output.py:2221
 msgid "Erased"
 msgstr "Đã tẩy"
 
-#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1722
-#: ../output.py:2275 ../output.py:2277 ../output.py:2960
+#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1668
+#: ../output.py:2221 ../output.py:2223 ../output.py:2894
 msgid "Installed"
 msgstr "Đã cài"
 
@@ -68,7 +66,7 @@ msgstr "Lỗi: trạng thái kết xuất không hợp lệ: %s cho %s"
 msgid "Erased: %s"
 msgstr "Đã tẩy: %s"
 
-#: ../callback.py:229 ../output.py:1557 ../output.py:2963
+#: ../callback.py:229 ../output.py:1503 ../output.py:2897
 msgid "Removing"
 msgstr "Đang gỡ bỏ..."
 
@@ -76,74 +74,58 @@ msgstr "Đang gỡ bỏ..."
 msgid "Cleanup"
 msgstr "Làm sạch"
 
-#: ../cli.py:127
+#: ../cli.py:122
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Lệnh \"%s\" đã được định nghĩa rồi"
 
-#: ../cli.py:142
+#: ../cli.py:137
 msgid "Setting up repositories"
 msgstr "Đang cài đặt kho chứa"
 
-#: ../cli.py:153
+#: ../cli.py:148
 msgid "Reading repository metadata in from local files"
 msgstr "Đang đọc siêu dữ liệu kho từ các tập tin nội bộ"
 
-#: ../cli.py:278 ../cli.py:282
+#: ../cli.py:273 ../cli.py:277
 #, python-format
 msgid "Config error: %s"
 msgstr "Lỗi cấu hình: %s"
 
-#: ../cli.py:285 ../cli.py:2310
+#: ../cli.py:280 ../cli.py:2211
 #, python-format
 msgid "Options error: %s"
 msgstr "Lỗi tùy-chọn: %s"
 
-#: ../cli.py:307
-msgid "Ignored option -q, -v, -d or -e (probably due to merging: -yq != -y -q)"
-msgstr ""
-"Lờ đi tùy chọn -q, -v, -d hay -e (gần như chắc chắn là vì hòa trộn: -yq != -"
-"y -q)"
-
-#: ../cli.py:311
-msgid "Ignored option -c (probably due to merging -yc != -y -c)"
-msgstr "Lờ đi tùy chọn -c (gần như chắc chắn là vì hòa trộn: -yc != -y -c)"
-
-#: ../cli.py:332
+#: ../cli.py:327
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Đã cài đặt    : %s-%s lúc %s"
 
-#: ../cli.py:334
+#: ../cli.py:329
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Dịch          : %s lúc %s"
 
-#: ../cli.py:336
+#: ../cli.py:331
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Đã chuyển giao: %s lúc %s"
 
-#: ../cli.py:377
+#: ../cli.py:372
 msgid "You need to give some command"
 msgstr "Bạn cần đưa ra vài lệnh"
 
-#: ../cli.py:391
+#: ../cli.py:386
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Không có lệnh nào như thế: %s. Hãy xem “%s --help”"
 
-#: ../cli.py:441
-msgid ""
-"Repodata is over 2 weeks old. Install yum-cron? Or run: yum makecache fast"
-msgstr ""
-"Dữ liệu kho đã cũ hơn hai tuần. Cài yum-cron? Hoặc chạy: yum makecache fast"
-
-#: ../cli.py:498
+#: ../cli.py:444
 msgid "Disk Requirements:\n"
 msgstr "Các yêu cầu về đĩa:\n"
 
-#: ../cli.py:500
+#: ../cli.py:446
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
@@ -151,580 +133,501 @@ msgstr[0] "  Cần ít nhất hơn %dMB trống còn lại trên hệ thống t�
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:505
+#: ../cli.py:451
 msgid ""
 "Error Summary\n"
 "-------------\n"
-msgstr ""
-"Tổng hợp lỗi\n"
-"------------\n"
+msgstr "Tổng hợp lỗi\n------------\n"
 
-#: ../cli.py:526
+#: ../cli.py:472
 msgid "Can't create lock file; exiting"
 msgstr "Không thể tạo khóa cho tập tin nên thoát ra"
 
-#: ../cli.py:533
+#: ../cli.py:479
 msgid ""
 "Another app is currently holding the yum lock; exiting as configured by "
 "exit_on_lock"
-msgstr ""
-"Ứng dụng khác hiện đang giữ hóa yum; thoát ra như là được cấu hình bằng "
-"exit_on_lock"
+msgstr "Ứng dụng khác hiện đang giữ hóa yum; thoát ra như là được cấu hình bằng exit_on_lock"
 
-#: ../cli.py:587
-msgid "d"
-msgstr "t"
-
-#: ../cli.py:587
-msgid "download"
-msgstr "tải về"
-
-#: ../cli.py:588
-msgid "downloadonly"
-msgstr "chỉ tải về"
-
-#: ../cli.py:594
-msgid "Is this ok [y/d/N]: "
-msgstr "Được chứ [y/d/N][c/t/K]: "
-
-#: ../cli.py:599
+#: ../cli.py:532
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr "Đang thử chạy giao dịch nhưng không cần làm gì nên thoát."
 
-#: ../cli.py:644
+#: ../cli.py:577
 msgid "future rpmdb ver mismatched saved transaction version,"
 msgstr "phiên bản rpmdb tương lai được ghi là phiên bản giao dịch,"
 
-#: ../cli.py:646 ../yum/__init__.py:6851
+#: ../cli.py:579 ../yum/__init__.py:6601
 msgid " ignoring, as requested."
 msgstr " đang bãi bỏ như theo yêu cầu."
 
-#: ../cli.py:649 ../yum/__init__.py:6854 ../yum/__init__.py:7001
+#: ../cli.py:582 ../yum/__init__.py:6604 ../yum/__init__.py:6751
 msgid " aborting."
 msgstr " đang bãi bỏ."
 
-#: ../cli.py:659
+#: ../cli.py:588
 msgid "Exiting on user command"
 msgstr "Thoát trên lệnh người dùng"
 
-#: ../cli.py:666
-msgid "Background downloading packages, then exiting:"
-msgstr "Tải về gói trên nền, sau đó thoát:"
-
-#: ../cli.py:669
+#: ../cli.py:592
 msgid "Downloading packages:"
 msgstr "Đang tải về các gói:"
 
-#: ../cli.py:674 ../yumcommands.py:4828
+#: ../cli.py:597
 msgid "Error downloading packages:\n"
 msgstr "Gặp lỗi khi tải các gói về:\n"
 
-#: ../cli.py:693
+#: ../cli.py:616
 msgid "Running transaction check"
 msgstr "Đang chạy kiểm tra giao dịch"
 
-#: ../cli.py:703 ../yum/__init__.py:6540
+#: ../cli.py:626 ../yum/__init__.py:6291
 msgid "ERROR You need to update rpm to handle:"
 msgstr "LỖI Bạn cần cập nhật rpm để xử lý:"
 
-#: ../cli.py:705 ../yum/__init__.py:6543
+#: ../cli.py:628 ../yum/__init__.py:6294
 msgid "ERROR with transaction check vs depsolve:"
 msgstr "LỖI với kiểm tra và phân giải lại giao dịch."
 
-#: ../cli.py:712
+#: ../cli.py:635
 msgid "RPM needs to be updated"
 msgstr "RPM cần được cập nhật"
 
-#: ../cli.py:716
+#: ../cli.py:639
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Vui lòng báo cáo lỗi này trong %s"
 
-#: ../cli.py:722
+#: ../cli.py:645
 msgid "Running transaction test"
 msgstr "Đang kiểm tra giao dịch"
 
-#: ../cli.py:732
+#: ../cli.py:657
 msgid "Transaction check error:\n"
 msgstr "Lỗi kiểm tra giao dịch:\n"
 
-#: ../cli.py:739
+#: ../cli.py:664
 msgid "Transaction test succeeded"
 msgstr "Kiểm tra giao dịch thành công"
 
-#: ../cli.py:771
+#: ../cli.py:696
 msgid "Running transaction"
 msgstr "Đang chạy giao dịch"
 
-#: ../cli.py:804
+#: ../cli.py:729
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
-msgstr ""
-"Từ chối tự động nhập khóa khi chạy tự động.\n"
-"Dùng tùy chọn “-y” để đè lên."
+msgstr "Từ chối tự động nhập khóa khi chạy tự động.\nDùng tùy chọn “-y” để đè lên."
 
-#: ../cli.py:823 ../cli.py:866
+#: ../cli.py:748 ../cli.py:791
 msgid "  * Maybe you meant: "
 msgstr "  * Có phải ý bạn là:"
 
-#: ../cli.py:849 ../cli.py:857
+#: ../cli.py:774 ../cli.py:782
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "Các gói %s%s%s sẵn có, nhưng lại chưa được cài đặt."
 
-#: ../cli.py:863 ../cli.py:973 ../cli.py:1240
+#: ../cli.py:788 ../cli.py:896 ../cli.py:1163
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Không có gói %s%s%s sẵn có."
 
-#: ../cli.py:951 ../cli.py:961 ../cli.py:1183 ../cli.py:1193
+#: ../cli.py:876 ../cli.py:886 ../cli.py:1106 ../cli.py:1116
 #, python-format
 msgid "Bad %s argument %s."
 msgstr "Đối số %s sai %s."
 
-#: ../cli.py:982 ../yumcommands.py:3592
+#: ../cli.py:905 ../yumcommands.py:3464
 #, python-format
 msgid "%d package to install"
 msgid_plural "%d packages to install"
 msgstr[0] "%d gói được cài"
 
-#: ../cli.py:985 ../cli.py:986 ../cli.py:1251 ../cli.py:1252 ../cli.py:1306
-#: ../cli.py:1307 ../cli.py:1342 ../yumcommands.py:336 ../yumcommands.py:3758
+#: ../cli.py:908 ../cli.py:909 ../cli.py:1174 ../cli.py:1175 ../cli.py:1229
+#: ../cli.py:1230 ../cli.py:1265 ../yumcommands.py:325 ../yumcommands.py:3618
 msgid "Nothing to do"
 msgstr "Không cần làm gì"
 
-#: ../cli.py:1035
+#: ../cli.py:958
 #, python-format
 msgid "%d package marked for update"
 msgid_plural "%d packages marked for update"
 msgstr[0] "%d gói được đánh dấu cần cập nhật"
 
-#: ../cli.py:1037
+#: ../cli.py:960
 msgid "No packages marked for update"
 msgstr "Không có gói nào được đánh dấu cần cập nhật"
 
-#: ../cli.py:1149
+#: ../cli.py:1072
 #, python-format
 msgid "%d package marked for distribution synchronization"
 msgid_plural "%d packages marked for distribution synchronization"
 msgstr[0] "%d gói được đánh đấu cho đồng bộ hóa phân phối"
 
-#: ../cli.py:1151
+#: ../cli.py:1074
 msgid "No packages marked for distribution synchronization"
 msgstr "Chưa có gói nào được đánh đấu cho đồng bộ hóa phân phối"
 
-#: ../cli.py:1206
+#: ../cli.py:1129
 #, python-format
 msgid "%d package marked for removal"
 msgid_plural "%d packages marked for removal"
 msgstr[0] "%d gói được đánh dấu là cần gỡ bỏ"
 
-#: ../cli.py:1208
+#: ../cli.py:1131
 msgid "No Packages marked for removal"
 msgstr "Không có gói nào được đánh dấu để gỡ bỏ"
 
-#: ../cli.py:1248
+#: ../cli.py:1171
 #, python-format
 msgid "%d package to downgrade"
 msgid_plural "%d packages to downgrade"
 msgstr[0] "%d gói bị hạ cấp"
 
-#: ../cli.py:1289 ../yum/update_md.py:530
+#: ../cli.py:1212
 #, python-format
 msgid " (from %s)"
 msgstr " (từ %s)"
 
-#: ../cli.py:1290
+#: ../cli.py:1213
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "Gói đã cài %s%s%s%s không sẵn có."
 
-#: ../cli.py:1303 ../yumcommands.py:3634 ../yumcommands.py:3669
-#: ../yumcommands.py:4729
+#: ../cli.py:1226 ../yumcommands.py:3494 ../yumcommands.py:3529
 #, python-format
 msgid "%d package to reinstall"
 msgid_plural "%d packages to reinstall"
 msgstr[0] "%d gói được cài đặt lại"
 
-#: ../cli.py:1328
+#: ../cli.py:1251
 msgid "No packages provided"
 msgstr "Chưa đưa ra gói nào"
 
-#: ../cli.py:1341
+#: ../cli.py:1264
 msgid "Package(s) to install"
 msgstr "Các gói được cài"
 
-#: ../cli.py:1449
+#: ../cli.py:1372
 #, python-format
 msgid "N/S matched: %s"
 msgstr "Khớp N/S: %s"
 
-#: ../cli.py:1466
+#: ../cli.py:1389
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr "  Tên và tổng thể khớp %schỉ%s, dùng \"search all\" cho mọi thứ."
 
-#: ../cli.py:1468
+#: ../cli.py:1391
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
-msgstr ""
-"  Tên đầy đủ và tổng thể khớp %schỉ%s, dùng \"search all\" cho mọi thứ."
+msgstr "  Tên đầy đủ và tổng thể khớp %schỉ%s, dùng \"search all\" cho mọi thứ."
 
-#: ../cli.py:1486
+#: ../cli.py:1409
 #, python-format
 msgid "Matched: %s"
 msgstr "Đã khớp: %s"
 
-#: ../cli.py:1493
+#: ../cli.py:1416
 #, python-format
-msgid ""
-"  Name and summary matches %smostly%s, use \"search all\" for everything."
-msgstr ""
-"  Tên đầy đủ và tổng thể khớp %sphần lớn%s, dùng \"search all\" cho mọi thứ."
+msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
+msgstr "  Tên đầy đủ và tổng thể khớp %sphần lớn%s, dùng \"search all\" cho mọi thứ."
 
-#: ../cli.py:1497
+#: ../cli.py:1420
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Cảnh báo: Không tìm thấy gì khớp cho: %s"
 
-#: ../cli.py:1500
+#: ../cli.py:1423
 msgid "No matches found"
 msgstr "Không tìm thấy kết quả nào khớp"
 
-#: ../cli.py:1620
+#: ../cli.py:1541
 #, python-format
 msgid ""
 "Error: No packages found for:\n"
 "  %s"
-msgstr ""
-"Lỗi: không tìm thấy các gói cho:\n"
-"  %s"
+msgstr "Lỗi: không tìm thấy các gói cho:\n  %s"
 
-#: ../cli.py:1656
+#: ../cli.py:1577
 msgid "Cleaning repos: "
 msgstr "Đang dọn kho: "
 
-#: ../cli.py:1661
+#: ../cli.py:1582
 msgid "Cleaning up everything"
 msgstr "Đang dọn mọi thứ"
 
-#: ../cli.py:1677
+#: ../cli.py:1598
 msgid "Cleaning up headers"
 msgstr "Đang dọn phần đầu"
 
-#: ../cli.py:1680
+#: ../cli.py:1601
 msgid "Cleaning up packages"
 msgstr "Đang dọn các gói"
 
-#: ../cli.py:1683
+#: ../cli.py:1604
 msgid "Cleaning up xml metadata"
 msgstr "Đang dọn siêu dữ liệu xml"
 
-#: ../cli.py:1686
+#: ../cli.py:1607
 msgid "Cleaning up database cache"
 msgstr "Đang dọn bộ nhớ đệm cơ sở dữ liệu"
 
-#: ../cli.py:1689
+#: ../cli.py:1610
 msgid "Cleaning up expire-cache metadata"
 msgstr "Đang xóa siêu dữ liệu đệm hết hạn"
 
-#: ../cli.py:1692
+#: ../cli.py:1613
 msgid "Cleaning up cached rpmdb data"
 msgstr "Đang xóa dữ liệu rpmdb đã nhớ đệm"
 
-#: ../cli.py:1695
+#: ../cli.py:1616
 msgid "Cleaning up plugins"
 msgstr "Đang dọn phần bổ xung"
 
-#: ../cli.py:1811
+#: ../cli.py:1732
 msgid "Installed Environment Groups:"
 msgstr "Nhóm môi trường đã cài:"
 
-#: ../cli.py:1812
+#: ../cli.py:1733
 msgid "Available Environment Groups:"
 msgstr "Nhóm môi trường sẵn có:"
 
-#: ../cli.py:1819
+#: ../cli.py:1740
 msgid "Installed Groups:"
 msgstr "Các nhóm đã cài:"
 
-#: ../cli.py:1826
+#: ../cli.py:1747
 msgid "Installed Language Groups:"
 msgstr "Các nhóm ngôn ngữ đã cài:"
 
-#: ../cli.py:1833
+#: ../cli.py:1754
 msgid "Available Groups:"
 msgstr "Các nhóm sẵn có:"
 
-#: ../cli.py:1840
+#: ../cli.py:1761
 msgid "Available Language Groups:"
 msgstr "Các nhóm ngôn ngữ sẵn có:"
 
-#: ../cli.py:1843
+#: ../cli.py:1764
 #, python-format
 msgid "Warning: no environments/groups match: %s"
 msgstr "Cảnh báo: không tìm thấy nhóm/môi-trường khớp: %s"
 
-#: ../cli.py:1847
+#: ../cli.py:1768
 msgid "Done"
 msgstr "Xong"
 
-#: ../cli.py:1902
+#: ../cli.py:1823
 #, python-format
 msgid "Warning: group/environment %s does not exist."
 msgstr "Cảnh báo: nhóm/biến “%s” không tồn tại."
 
-#: ../cli.py:1952
+#: ../cli.py:1864
 #, python-format
-msgid "Warning: Environment group %s does not exist."
-msgstr "Cảnh báo: Nhóm biến môi trường “%s” không tồn tại."
+msgid "Warning: environment %s does not exist."
+msgstr ""
 
-#: ../cli.py:1966
-#, python-format
-msgid "Warning: Package group %s does not exist."
-msgstr "Cảnh báo: Nhóm gói “%s” không tồn tại."
-
-#: ../cli.py:1972
+#: ../cli.py:1878 ../cli.py:1884
 #, python-format
 msgid "Warning: group %s does not exist."
 msgstr "Cảnh báo: nhóm “%s” không tồn tại."
 
-#: ../cli.py:1978
-msgid "Maybe run: yum groups mark install (see man yum)"
-msgstr "Có lẽ nên chạy: yum groups mark install (xem trang hướng dẫn yum)"
-
-#: ../cli.py:1986
+#: ../cli.py:1888
 msgid "No packages in any requested group available to install or update"
-msgstr ""
-"Không có gói trong bất kỳ nhóm đã yêu cầu sẵn có để mà cài đặt hay nâng cấp"
+msgstr "Không có gói trong bất kỳ nhóm đã yêu cầu sẵn có để mà cài đặt hay nâng cấp"
 
-#: ../cli.py:1988
+#: ../cli.py:1890
 #, python-format
 msgid "%d package to Install"
 msgid_plural "%d packages to Install"
 msgstr[0] "%d gói được cài đặt"
 
-#: ../cli.py:2019
+#: ../cli.py:1924
 #, python-format
 msgid "No environment named %s exists"
 msgstr "Không có biến môi trường có tên %s"
 
-#: ../cli.py:2032 ../yum/__init__.py:4578
+#: ../cli.py:1940 ../yum/__init__.py:4336
 #, python-format
 msgid "No group named %s exists"
 msgstr "Không có nhóm mang tên “%s”"
 
-#: ../cli.py:2043
-msgid "Maybe run: yum groups mark remove (see man yum)"
-msgstr "Có lẽ nên chạy: yum groups mark remove (xem yum(1))"
-
-#: ../cli.py:2044
+#: ../cli.py:1950
 msgid "No packages to remove from groups"
 msgstr "Không có gói nào để gỡ bỏ từ các nhóm"
 
-#: ../cli.py:2046 ../yumcommands.py:3690
+#: ../cli.py:1952 ../yumcommands.py:3550
 #, python-format
 msgid "%d package to remove"
 msgid_plural "%d packages to remove"
 msgstr[0] "%d gói được gỡ bỏ"
 
-#: ../cli.py:2087
+#: ../cli.py:1993
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "Gói %s đã cài rồi, nên bỏ qua"
 
-#: ../cli.py:2098
+#: ../cli.py:2004
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "Loại bỏ pkg không thể so sánh %s.%s"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:2124
+#: ../cli.py:2030
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr ""
-"Không có %s khác được cài, thêm vào danh sách dành cho cài đặt tiềm năng"
+msgstr "Không có %s khác được cài, thêm vào danh sách dành cho cài đặt tiềm năng"
 
-#: ../cli.py:2144
+#: ../cli.py:2050
 msgid "Plugin Options"
 msgstr "Tùy chọn cho phần bổ xung"
 
-#: ../cli.py:2156
+#: ../cli.py:2062
 #, python-format
 msgid "Command line error: %s"
 msgstr "Lỗi dòng lệnh: %s"
 
-#: ../cli.py:2178
+#: ../cli.py:2084
 #, python-format
 msgid ""
 "\n"
 "\n"
 "%s: %s option requires an argument"
-msgstr ""
-"\n"
-"\n"
-"%s: tùy chọn %s yêu cầu một tham số"
+msgstr "\n\n%s: tùy chọn %s yêu cầu một tham số"
 
-#: ../cli.py:2254
+#: ../cli.py:2152
 msgid "--color takes one of: auto, always, never"
 msgstr "--color nhận một trong số: auto, always, never"
 
 #. We have a relative installroot ... haha
-#: ../cli.py:2322
+#: ../cli.py:2223
 #, python-format
 msgid "--installroot must be an absolute path: %s"
 msgstr "--installroot phải là một đường dẫn tuyệt đối: %s"
 
-#: ../cli.py:2376
+#: ../cli.py:2277
 msgid "show this help message and exit"
 msgstr "hiển thị trợ giúp này rồi thoát"
 
-#: ../cli.py:2380
+#: ../cli.py:2281
 msgid "be tolerant of errors"
 msgstr "ngưỡng lỗi"
 
-#: ../cli.py:2383
+#: ../cli.py:2284
 msgid "run entirely from system cache, don't update cache"
 msgstr "chạy toàn bộ từ bộ nhớ đệm hệ thống, đừng cập nhật bộ nhớ đệm"
 
-#: ../cli.py:2386
+#: ../cli.py:2287
 msgid "config file location"
 msgstr "vị trí tập tin cấu hình"
 
-#: ../cli.py:2389
+#: ../cli.py:2290
 msgid "maximum command wait time"
 msgstr "thời gian chờ lệnh tối đa"
 
-#: ../cli.py:2391
+#: ../cli.py:2292
 msgid "debugging output level"
 msgstr "mức kết xuất thông tin gỡ lỗi"
 
-#: ../cli.py:2395
+#: ../cli.py:2296
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "hiển thị trùng, trong kho, trong lệnh liệt kê hay tìm kiếm"
 
-#: ../cli.py:2400
+#: ../cli.py:2301
 msgid "error output level"
 msgstr "mức kết xuất lỗi"
 
-#: ../cli.py:2403
+#: ../cli.py:2304
 msgid "debugging output level for rpm"
 msgstr "mức xuất gỡ lỗi cho rpm"
 
-#: ../cli.py:2406
+#: ../cli.py:2307
 msgid "quiet operation"
 msgstr "thực hiện im lặng"
 
-#: ../cli.py:2408
+#: ../cli.py:2309
 msgid "verbose operation"
 msgstr "thực hiện có mô tả những gì đang làm"
 
-#: ../cli.py:2410
+#: ../cli.py:2311
 msgid "answer yes for all questions"
 msgstr "trả lời có cho mọi câu hỏi"
 
-#: ../cli.py:2412
+#: ../cli.py:2313
 msgid "answer no for all questions"
 msgstr "trả lời không cho mọi câu hỏi"
 
-#: ../cli.py:2416
+#: ../cli.py:2317
 msgid "show Yum version and exit"
 msgstr "hiển thị phiên bản của Yum rồi thoát"
 
-#: ../cli.py:2417
+#: ../cli.py:2318
 msgid "set install root"
 msgstr "đặt gốc cài đặt"
 
-#: ../cli.py:2421
+#: ../cli.py:2322
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr "bật một hay nhiều kho (cho phép ký tự đại diện)"
 
-#: ../cli.py:2425
+#: ../cli.py:2326
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr "tắt một hay nhiều kho (cho phép ký tự đại diện)"
 
-#: ../cli.py:2428
+#: ../cli.py:2329
 msgid "exclude package(s) by name or glob"
 msgstr "loại trừ các gói theo tên hay glob"
 
-#: ../cli.py:2430
+#: ../cli.py:2331
 msgid "disable exclude from main, for a repo or for everything"
 msgstr "tắt loại trừ từ phần chính, cho một hay mọi kho"
 
-#: ../cli.py:2433
-msgid "disable includepkgs for a repo or for everything"
-msgstr "tắt “includepkgs” cho một kho hoặc mọi thứ"
-
-#: ../cli.py:2436
+#: ../cli.py:2334
 msgid "enable obsoletes processing during updates"
 msgstr "bật xử lý gói cũ khi cập nhật"
 
-#: ../cli.py:2438
+#: ../cli.py:2336
 msgid "disable Yum plugins"
 msgstr "tắt phần bổ xung cho Yum"
 
-#: ../cli.py:2440
+#: ../cli.py:2338
 msgid "disable gpg signature checking"
 msgstr "tắt chức năng xác thực chữ ký gpg"
 
-#: ../cli.py:2442
+#: ../cli.py:2340
 msgid "disable plugins by name"
 msgstr "tắt phần bổ xung theo tên"
 
-#: ../cli.py:2445
+#: ../cli.py:2343
 msgid "enable plugins by name"
 msgstr "bật phần bổ xung theo tên"
 
-#: ../cli.py:2448
+#: ../cli.py:2346
 msgid "skip packages with depsolving problems"
 msgstr "bỏ qua các gói để mà xử lý trục trặc"
 
-#: ../cli.py:2450
+#: ../cli.py:2348
 msgid "control whether color is used"
 msgstr "điều khiển khi nào thì tô màu"
 
-#: ../cli.py:2452
+#: ../cli.py:2350
 msgid "set value of $releasever in yum config and repo files"
 msgstr "đặt giá trị cho $releasever trong tập tin cấu hình kho yum"
 
-#: ../cli.py:2454
+#: ../cli.py:2352
 msgid "don't update, just download"
 msgstr "không cập nhật, chỉ tải về"
 
-#: ../cli.py:2456
+#: ../cli.py:2354
 msgid "specifies an alternate directory to store packages"
 msgstr "chỉ định một thư mục thay thế để lưu các gói"
 
-#: ../cli.py:2458
+#: ../cli.py:2356
 msgid "set arbitrary config and repo options"
 msgstr "đặt tùy chọn thuộc tính và kho cấu hình"
-
-#: ../cli.py:2462
-msgid "Include bugfix relevant packages, in updates"
-msgstr "Bao gồm các gói liên quan đến sửa lỗi, vào cập nhật"
-
-#: ../cli.py:2464
-msgid "Include security relevant packages, in updates"
-msgstr "Bao gồm các gói an ninh xác đáng, trong các cập nhật"
-
-#: ../cli.py:2467
-msgid "Include packages needed to fix the given advisory, in updates"
-msgstr "Bao gồm các gói cần sửa lỗi tham vấn đã cho, vào cập nhật"
-
-#: ../cli.py:2469
-msgid "Include packages needed to fix the given BZ, in updates"
-msgstr "Bao gồm các gói cần sửa lỗi do BZ đưa ra, vào cập nhật"
-
-#: ../cli.py:2471
-msgid "Include packages needed to fix the given CVE, in updates"
-msgstr "Bao gồm các gói cần sửa lỗi do CVE đưa ra, vào cập nhật"
-
-#: ../cli.py:2474
-msgid "Include security relevant packages matching the severity, in updates"
-msgstr ""
-"Bao gồm các gói an ninh dành cho dịch vụ máy chủ xác đáng, trong các cập nhật"
 
 #: ../output.py:458
 msgid "Jan"
@@ -808,7 +711,7 @@ msgstr "Phát hành   : %s"
 msgid "Size        : %s"
 msgstr "Kích thước  : %s"
 
-#: ../output.py:823 ../output.py:1350
+#: ../output.py:823 ../output.py:1329
 #, python-format
 msgid "Repo        : %s"
 msgstr "Kho         : %s"
@@ -852,7 +755,7 @@ msgstr "Thay đổi bởi: %s"
 msgid "Summary     : "
 msgstr "Tổng hợp    : "
 
-#: ../output.py:849 ../output.py:1366
+#: ../output.py:849 ../output.py:1345
 #, python-format
 msgid "URL         : %s"
 msgstr "URL         : %s"
@@ -861,947 +764,895 @@ msgstr "URL         : %s"
 msgid "License     : "
 msgstr "Giấy phép   : "
 
-#: ../output.py:851 ../output.py:1363
+#: ../output.py:851 ../output.py:1342
 msgid "Description : "
 msgstr "Mô tả       : "
 
-#: ../output.py:964
-msgid "Is this ok [y/N]: "
-msgstr "Được chứ [y/N][c/K]: "
-
-#. Allow the one letter english versions in all langs.
-#: ../output.py:972 ../yumcommands.py:3303
+#: ../output.py:969 ../yumcommands.py:3199
 msgid "y"
 msgstr "c"
 
-#: ../output.py:972
+#: ../output.py:969
 msgid "yes"
 msgstr "có"
 
-#: ../output.py:973
+#: ../output.py:970
 msgid "n"
 msgstr "k"
 
-#: ../output.py:973
+#: ../output.py:970
 msgid "no"
 msgstr "không"
 
-#: ../output.py:1105
+#: ../output.py:974
+msgid "Is this ok [y/N]: "
+msgstr "Được chứ [y/N][c/K]: "
+
+#: ../output.py:1097
 #, python-format
 msgid ""
 "\n"
 "Group: %s"
-msgstr ""
-"\n"
-"Nhóm: %s"
+msgstr "\nNhóm: %s"
 
-#: ../output.py:1109
+#: ../output.py:1101
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Id-Nhóm: %s"
 
-#: ../output.py:1130 ../output.py:1190
+#: ../output.py:1122 ../output.py:1169
 #, python-format
 msgid " Description: %s"
 msgstr " Mô tả: %s"
 
-#: ../output.py:1132
+#: ../output.py:1124
 #, python-format
 msgid " Language: %s"
 msgstr " Ngôn ngữ: %s"
 
-#: ../output.py:1134
+#: ../output.py:1126
 msgid " Mandatory Packages:"
 msgstr " Các gói bắt buộc:"
 
-#: ../output.py:1136
+#: ../output.py:1127
 msgid " Default Packages:"
 msgstr " Các gói mặc định:"
 
-#: ../output.py:1138
+#: ../output.py:1128
 msgid " Optional Packages:"
 msgstr " Các gói tùy chọn:"
 
-#: ../output.py:1140
+#: ../output.py:1129
 msgid " Conditional Packages:"
 msgstr " Các gói điều kiện:"
 
-#: ../output.py:1168
+#: ../output.py:1147
 msgid " Installed Packages:"
 msgstr " Các gói đã cài:"
 
-#: ../output.py:1178
+#: ../output.py:1157
 #, python-format
 msgid ""
 "\n"
 "Environment Group: %s"
-msgstr ""
-"\n"
-"Nhóm biến môi-trường: %s"
+msgstr "\nNhóm biến môi-trường: %s"
 
-#: ../output.py:1179
+#: ../output.py:1158
 #, python-format
 msgid " Environment-Id: %s"
 msgstr "Mã biến môi-trường: %s"
 
-#: ../output.py:1212
+#: ../output.py:1191
 msgid " Mandatory Groups:"
 msgstr " Nhóm theo yêu cầu:"
 
-#: ../output.py:1213
+#: ../output.py:1192
 msgid " Optional Groups:"
 msgstr " Các nhóm tùy chọn:"
 
-#: ../output.py:1226
+#: ../output.py:1205
 msgid " Installed Groups:"
 msgstr " Các nhóm đã cài:"
 
-#: ../output.py:1238
+#: ../output.py:1217
 #, python-format
 msgid "package: %s"
 msgstr "gói    : %s"
 
-#: ../output.py:1240
+#: ../output.py:1219
 msgid "  No dependencies for this package"
 msgstr "  Không có phần phụ thuộc cho gói này"
 
-#: ../output.py:1245
+#: ../output.py:1224
 #, python-format
 msgid "  dependency: %s"
 msgstr "  phụ thuộc: %s"
 
-#: ../output.py:1247
+#: ../output.py:1226
 msgid "   Unsatisfied dependency"
 msgstr "   Quan hệ phụ thuộc chưa chắc chắn"
 
-#: ../output.py:1358
+#: ../output.py:1337
 msgid "Matched from:"
 msgstr "Đã khớp từ:"
 
-#: ../output.py:1369
+#: ../output.py:1348
 #, python-format
 msgid "License     : %s"
 msgstr "Giấy phép   : %s"
 
-#: ../output.py:1372
+#: ../output.py:1351
 #, python-format
 msgid "Filename    : %s"
 msgstr "Tên tập tin : %s"
 
-#: ../output.py:1381
+#: ../output.py:1360
 msgid "Provides    : "
 msgstr "Cung cấp    : "
 
-#: ../output.py:1384
+#: ../output.py:1363
 msgid "Other       : "
 msgstr "Khác        : "
 
-#: ../output.py:1447
+#: ../output.py:1426
 msgid "There was an error calculating total download size"
 msgstr "Có lỗi xảy ra khi tính tổng kích thước tải về"
 
-#: ../output.py:1452
+#: ../output.py:1431
 #, python-format
 msgid "Total size: %s"
 msgstr "Tổng kích thước: %s"
 
-#: ../output.py:1454
+#: ../output.py:1433
 #, python-format
 msgid "Total download size: %s"
 msgstr "Kích thước tải về tổng cộng: %s"
 
-#: ../output.py:1457 ../output.py:1480 ../output.py:1484
+#: ../output.py:1436 ../output.py:1459 ../output.py:1463
 #, python-format
 msgid "Installed size: %s"
 msgstr "Kích thước cần để cài đặt: %s"
 
-#: ../output.py:1475
+#: ../output.py:1454
 msgid "There was an error calculating installed size"
 msgstr "Có lỗi xảy ra khi tính toán kích cỡ đĩa cần để cài"
 
-#: ../output.py:1543
-msgid "Installing for group upgrade \"%s\""
-msgstr "Đang cài đăt cho nhóm nâng cấp “%s”"
-
-#: ../output.py:1545
-msgid "Installing for group install \"%s\""
-msgstr "Đang cài đăt cho nhóm cài đặt “%s”"
-
-#: ../output.py:1558
+#: ../output.py:1504
 msgid "Reinstalling"
 msgstr "Đang cài đặt lại"
 
-#: ../output.py:1559
+#: ../output.py:1505
 msgid "Downgrading"
 msgstr "Đang hạ cấp"
 
-#: ../output.py:1560
+#: ../output.py:1506
 msgid "Installing for dependencies"
 msgstr "Đang cài đặt phần phụ thuộc"
 
-#: ../output.py:1561
+#: ../output.py:1507
 msgid "Updating for dependencies"
 msgstr "Đang cập nhật phần phụ thuộc"
 
-#: ../output.py:1562
+#: ../output.py:1508
 msgid "Removing for dependencies"
 msgstr "Đang gỡ bỏ phần phụ thuộc"
 
-#: ../output.py:1569 ../output.py:1630 ../output.py:1726
+#: ../output.py:1515 ../output.py:1576 ../output.py:1672
 msgid "Skipped (dependency problems)"
 msgstr "Bỏ qua (gặp vấn đề về quan hệ phụ thuộc)"
 
-#: ../output.py:1571 ../output.py:1631 ../output.py:2277
+#: ../output.py:1517 ../output.py:1577 ../output.py:2223
 msgid "Not installed"
 msgstr "Chưa cài đặt"
 
-#: ../output.py:1572 ../output.py:1632
+#: ../output.py:1518 ../output.py:1578
 msgid "Not available"
 msgstr "Không sẵn sang"
 
-#: ../output.py:1594 ../output.py:1642 ../output.py:1658 ../output.py:2635
+#: ../output.py:1540 ../output.py:1588 ../output.py:1604 ../output.py:2581
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Gói"
 
-#: ../output.py:1594
+#: ../output.py:1540
 msgid "Arch"
 msgstr "Kiến trúc"
 
-#: ../output.py:1595
+#: ../output.py:1541
 msgid "Version"
 msgstr "Phiên bản"
 
-#: ../output.py:1595
+#: ../output.py:1541
 msgid "Repository"
 msgstr "Kho chứa"
 
-#: ../output.py:1596 ../yumcommands.py:4226
+#: ../output.py:1542
 msgid "Size"
 msgstr "Kích cỡ"
 
-#: ../output.py:1608
+#: ../output.py:1554
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr "     đang thay thế  %s%s%s.%s %s\n"
 
-#: ../output.py:1617
+#: ../output.py:1563
 #, python-format
 msgid ""
 "\n"
 "Transaction Summary\n"
 "%s\n"
-msgstr ""
-"\n"
-"Tóm tắt giao dịch\n"
-"%s\n"
+msgstr "\nTóm tắt giao dịch\n%s\n"
 
-#: ../output.py:1622 ../output.py:2430 ../output.py:2431
-#: ../yumcommands.py:3334
+#: ../output.py:1568 ../output.py:2376 ../output.py:2377
 msgid "Install"
 msgstr "Cài đặt"
 
-#: ../output.py:1624
+#: ../output.py:1570
 msgid "Upgrade"
 msgstr "Nâng cấp"
 
-#: ../output.py:1626 ../yumcommands.py:3340
+#: ../output.py:1572
 msgid "Remove"
 msgstr "Gỡ bỏ"
 
-#: ../output.py:1628 ../output.py:2436
+#: ../output.py:1574 ../output.py:2382
 msgid "Reinstall"
 msgstr "Cài đặt lại"
 
-#: ../output.py:1629 ../output.py:2437
+#: ../output.py:1575 ../output.py:2383
 msgid "Downgrade"
 msgstr "Hạ cấp"
 
-#: ../output.py:1660
+#: ../output.py:1606
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] "Các gói phụ thuộc"
 
-#: ../output.py:1720
+#: ../output.py:1666
 msgid "Removed"
 msgstr "Bị gỡ bỏ"
 
-#: ../output.py:1721
+#: ../output.py:1667
 msgid "Dependency Removed"
 msgstr "Đã gỡ bỏ phần phụ thuộc"
 
-#: ../output.py:1723
+#: ../output.py:1669
 msgid "Dependency Installed"
 msgstr "Đã cài đặt phần phụ thuộc"
 
-#: ../output.py:1725
+#: ../output.py:1671
 msgid "Dependency Updated"
 msgstr "Đã cập nhật phần phụ thuộc"
 
-#: ../output.py:1727
+#: ../output.py:1673
 msgid "Replaced"
 msgstr "Bị thay thế"
 
-#: ../output.py:1728
+#: ../output.py:1674
 msgid "Failed"
 msgstr "Thất bại"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1818
+#: ../output.py:1764
 msgid "two"
 msgstr "hai"
 
 #. For translators: This is output like:
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
-#. Where "interrupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1829
+#. Where "interupt (ctrl-c) again" and "two" are highlighted.
+#: ../output.py:1775
 #, python-format
 msgid ""
 "\n"
-" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
-"seconds\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
 "to exit.\n"
-msgstr ""
-"\n"
-" Việc tải về hiện hành đã bị hủy bỏ, %s ngắt (ctrl-c) lần nữa%s trong %s%s%s "
-"giây\n"
-"to exit.\n"
+msgstr "\n Việc tải về hiện hành đã bị hủy bỏ, %s ngắt (ctrl-c) lần nữa%s trong %s%s%s giây\nto exit.\n"
 
-#: ../output.py:1840
+#: ../output.py:1786
 msgid "user interrupt"
 msgstr "ngắt người dùng"
 
-#: ../output.py:1866
+#: ../output.py:1812
 msgid "Total"
 msgstr "Tổng cộng"
 
-#: ../output.py:1888
+#: ../output.py:1834
 msgid "I"
 msgstr "I"
 
-#: ../output.py:1889
+#: ../output.py:1835
 msgid "O"
 msgstr "O"
 
-#: ../output.py:1890
+#: ../output.py:1836
 msgid "E"
 msgstr "E"
 
-#: ../output.py:1891
+#: ../output.py:1837
 msgid "R"
 msgstr "R"
 
-#: ../output.py:1892
+#: ../output.py:1838
 msgid "D"
 msgstr "D"
 
-#: ../output.py:1893
+#: ../output.py:1839
 msgid "U"
 msgstr "U"
 
-#: ../output.py:1907
+#: ../output.py:1853
 msgid "<unset>"
 msgstr "<hủy đặt>"
 
-#: ../output.py:1908
+#: ../output.py:1854
 msgid "System"
 msgstr "Hệ thống"
 
-#: ../output.py:1977
+#: ../output.py:1923
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
 msgstr "Bỏ qua giao dịch %d hòa trộn vào %d, như là nó chồng lên nhau"
 
-#: ../output.py:1987 ../output.py:2179
+#: ../output.py:1933 ../output.py:2125
 msgid "No transactions"
 msgstr "Không có giao dịch"
 
-#: ../output.py:2012 ../output.py:2624 ../output.py:2714
+#: ../output.py:1958 ../output.py:2570 ../output.py:2660
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Mã số giao dịch, hoặc (các) gói đã cho sai"
 
-#: ../output.py:2061
+#: ../output.py:2007
 msgid "Command line"
 msgstr "Dòng lệnh"
 
-#: ../output.py:2063 ../output.py:2512
+#: ../output.py:2009 ../output.py:2458
 msgid "Login user"
 msgstr "Người đăng nhập"
 
 #. REALLY Needs to use columns!
-#: ../output.py:2064 ../output.py:2633
+#: ../output.py:2010 ../output.py:2579
 msgid "ID"
 msgstr "ID"
 
-#: ../output.py:2066
+#: ../output.py:2012
 msgid "Date and time"
 msgstr "Ngày giờ"
 
-#: ../output.py:2067 ../output.py:2514 ../output.py:2634
+#: ../output.py:2013 ../output.py:2460 ../output.py:2580
 msgid "Action(s)"
 msgstr "Thao tác"
 
-#: ../output.py:2068 ../output.py:2515
+#: ../output.py:2014 ../output.py:2461
 msgid "Altered"
 msgstr "Đã sửa đổi"
 
-#: ../output.py:2115
+#: ../output.py:2061
 msgid "No transaction ID given"
 msgstr "Chưa đưa ra mã số giao dịch"
 
-#: ../output.py:2141 ../output.py:2580
+#: ../output.py:2087 ../output.py:2526
 msgid "Bad transaction ID given"
 msgstr "Đưa ra mã số giao dịch sai"
 
-#: ../output.py:2146
+#: ../output.py:2092
 msgid "Not found given transaction ID"
 msgstr "Không tìm thấy giao dịch có mã số đã cho"
 
-#: ../output.py:2154
+#: ../output.py:2100
 msgid "Found more than one transaction ID!"
 msgstr "Tìm thấy nhiều hơn một giao dịch có mã số đã cho!"
 
-#: ../output.py:2205 ../output.py:2588
+#: ../output.py:2151 ../output.py:2534
 msgid "No transaction ID, or package, given"
 msgstr "Chưa đưa ra mã số giao dịch, hay gói"
 
-#: ../output.py:2276 ../output.py:2438
+#: ../output.py:2222 ../output.py:2384
 msgid "Downgraded"
 msgstr "Đã hạ cấp"
 
-#: ../output.py:2278
+#: ../output.py:2224
 msgid "Older"
 msgstr "Cũ hơn"
 
-#: ../output.py:2278
+#: ../output.py:2224
 msgid "Newer"
 msgstr "Mới hơn"
 
-#: ../output.py:2315 ../output.py:2317 ../output.py:2735
+#: ../output.py:2261 ../output.py:2263 ../output.py:2681
 msgid "Transaction ID :"
 msgstr "Mã số giao dịch:"
 
-#: ../output.py:2319 ../output.py:2737
+#: ../output.py:2265 ../output.py:2683
 msgid "Begin time     :"
 msgstr "Thời điểm bắt đầu:"
 
-#: ../output.py:2322 ../output.py:2324
+#: ../output.py:2268 ../output.py:2270
 msgid "Begin rpmdb    :"
 msgstr "Bắt đầu rpmdb:"
 
-#: ../output.py:2340
+#: ../output.py:2286
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u giây)"
 
-#: ../output.py:2342
+#: ../output.py:2288
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u phút)"
 
-#: ../output.py:2344
+#: ../output.py:2290
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u giờ)"
 
-#: ../output.py:2346
+#: ../output.py:2292
 #, python-format
 msgid "(%u days)"
 msgstr "(%u ngày)"
 
-#: ../output.py:2347
+#: ../output.py:2293
 msgid "End time       :"
 msgstr "Thời điểm cuối :"
 
-#: ../output.py:2350 ../output.py:2352
+#: ../output.py:2296 ../output.py:2298
 msgid "End rpmdb      :"
 msgstr "Kết thúc rpmdb:"
 
-#: ../output.py:2355 ../output.py:2357
+#: ../output.py:2301 ../output.py:2303
 msgid "User           :"
 msgstr "Người dùng    :"
 
-#: ../output.py:2361 ../output.py:2364 ../output.py:2366 ../output.py:2368
-#: ../output.py:2370
+#: ../output.py:2307 ../output.py:2310 ../output.py:2312 ../output.py:2314
+#: ../output.py:2316
 msgid "Return-Code    :"
 msgstr "Mã trả về     :"
 
-#: ../output.py:2361 ../output.py:2366
+#: ../output.py:2307 ../output.py:2312
 msgid "Aborted"
 msgstr "Bị bỏ dở"
 
-#: ../output.py:2364
+#: ../output.py:2310
 msgid "Failures:"
 msgstr "Thất bại:"
 
-#: ../output.py:2368
+#: ../output.py:2314
 msgid "Failure:"
 msgstr "Thất bại:"
 
-#: ../output.py:2370
+#: ../output.py:2316
 msgid "Success"
 msgstr "Thành công"
 
-#: ../output.py:2375 ../output.py:2377 ../output.py:2766
+#: ../output.py:2321 ../output.py:2323 ../output.py:2712
 msgid "Command Line   :"
 msgstr "Dòng lệnh     :"
 
-#: ../output.py:2386
+#: ../output.py:2332
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Thông tin không mặc định bổ xung được lưu: %d"
 
 #. This is _possible_, but not common
-#: ../output.py:2391
+#: ../output.py:2337
 msgid "Transaction performed with:"
 msgstr "Giao dịch thực hiện với:"
 
-#: ../output.py:2395
+#: ../output.py:2341
 msgid "Packages Altered:"
 msgstr "Các gói đã thay đổi:"
 
-#: ../output.py:2399
+#: ../output.py:2345
 msgid "Packages Skipped:"
 msgstr "Các gói bị bỏ qua:"
 
-#: ../output.py:2407
+#: ../output.py:2353
 msgid "Rpmdb Problems:"
 msgstr "Vấn đề với CSDL rpm:"
 
-#: ../output.py:2418
+#: ../output.py:2364
 msgid "Scriptlet output:"
 msgstr "Kết xuất Scriptlet:"
 
-#: ../output.py:2424
+#: ../output.py:2370
 msgid "Errors:"
 msgstr "Lỗi:"
 
-#: ../output.py:2432
+#: ../output.py:2378
 msgid "Dep-Install"
 msgstr "Cài-Đặt-Phần-Phụ-Thuộc"
 
-#: ../output.py:2434
+#: ../output.py:2380
 msgid "Obsoleting"
 msgstr "Đã lạc hậu"
 
-#: ../output.py:2435
+#: ../output.py:2381
 msgid "Erase"
 msgstr "Tẩy"
 
-#: ../output.py:2439
+#: ../output.py:2385
 msgid "Update"
 msgstr "Cập nhật"
 
-#: ../output.py:2513
+#: ../output.py:2459
 msgid "Time"
 msgstr "Thời gian"
 
-#: ../output.py:2539
+#: ../output.py:2485
 msgid "Last day"
 msgstr "Ngày cuối"
 
-#: ../output.py:2540
+#: ../output.py:2486
 msgid "Last week"
 msgstr "Tuần cuối"
 
-#: ../output.py:2541
+#: ../output.py:2487
 msgid "Last 2 weeks"
 msgstr "2 tháng cuối"
 
 #. US default :p
-#: ../output.py:2542
+#: ../output.py:2488
 msgid "Last 3 months"
 msgstr "3 tháng cuối"
 
-#: ../output.py:2543
+#: ../output.py:2489
 msgid "Last 6 months"
 msgstr "6 tháng cuối"
 
-#: ../output.py:2544
+#: ../output.py:2490
 msgid "Last year"
 msgstr "Năm cuối"
 
-#: ../output.py:2545
+#: ../output.py:2491
 msgid "Over a year ago"
 msgstr "Hơn một năm trước"
 
-#: ../output.py:2592
+#: ../output.py:2538
 #, python-format
 msgid "No Transaction %s found"
 msgstr "Không tìm thấy giao dịch %s"
 
-#: ../output.py:2598
+#: ../output.py:2544
 msgid "Transaction ID:"
 msgstr "Mã số giao dịch:"
 
-#: ../output.py:2599
+#: ../output.py:2545
 msgid "Available additional history information:"
 msgstr "Thông tin lịch sử phụ thêm sẵn có:"
 
-#: ../output.py:2612
+#: ../output.py:2558
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: Không tìm thấy dữ liệu thêm nào cho tên này"
 
-#: ../output.py:2738
+#: ../output.py:2684
 msgid "Package        :"
 msgstr "Gói                  :"
 
-#: ../output.py:2739
+#: ../output.py:2685
 msgid "State          :"
 msgstr "Tình trạng           :"
 
-#: ../output.py:2742
+#: ../output.py:2688
 msgid "Size           :"
 msgstr "Cỡ                   :"
 
-#: ../output.py:2744
+#: ../output.py:2690
 msgid "Build host     :"
 msgstr "Máy dịch             :"
 
-#: ../output.py:2747
+#: ../output.py:2693
 msgid "Build time     :"
 msgstr "Lúc biên dịch        :"
 
-#: ../output.py:2749
+#: ../output.py:2695
 msgid "Packager       :"
 msgstr "Người đóng gói       :"
 
-#: ../output.py:2751
+#: ../output.py:2697
 msgid "Vendor         :"
 msgstr "Nhà cung cấp         :"
 
-#: ../output.py:2753
+#: ../output.py:2699
 msgid "License        :"
 msgstr "Giấy phép            :"
 
-#: ../output.py:2755
+#: ../output.py:2701
 msgid "URL            :"
 msgstr "URL                  :"
 
-#: ../output.py:2757
+#: ../output.py:2703
 msgid "Source RPM     :"
 msgstr "Gói nguồn RPM        :"
 
-#: ../output.py:2760
+#: ../output.py:2706
 msgid "Commit Time    :"
 msgstr "Thời điểm chuyển giao:"
 
-#: ../output.py:2762
+#: ../output.py:2708
 msgid "Committer      :"
 msgstr "Người chuyển giao    :"
 
-#: ../output.py:2764
+#: ../output.py:2710
 msgid "Reason         :"
 msgstr "Lý do                :"
 
-#: ../output.py:2768
+#: ../output.py:2714
 msgid "From repo      :"
 msgstr "Từ kho               :"
 
-#: ../output.py:2772
+#: ../output.py:2718
 msgid "Installed by   :"
 msgstr "Được cài đặt bởi     :"
 
-#: ../output.py:2776
+#: ../output.py:2722
 msgid "Changed by     :"
 msgstr "Thay đổi bởi         :"
 
-#: ../output.py:2821
+#: ../output.py:2767
 msgid "installed"
 msgstr "đã cài đặt"
 
-#: ../output.py:2822
+#: ../output.py:2768
 msgid "an update"
 msgstr "một cập nhật"
 
-#: ../output.py:2823
+#: ../output.py:2769
 msgid "erased"
 msgstr "được xóa"
 
-#: ../output.py:2824
+#: ../output.py:2770
 msgid "reinstalled"
 msgstr "được cài đặt lại"
 
-#: ../output.py:2825
+#: ../output.py:2771
 msgid "a downgrade"
 msgstr "một hạ cấp"
 
-#: ../output.py:2826
+#: ../output.py:2772
 msgid "obsoleting"
 msgstr "đã cũ"
 
-#: ../output.py:2827
+#: ../output.py:2773
 msgid "updated"
 msgstr "đã cập nhật"
 
-#: ../output.py:2828
+#: ../output.py:2774
 msgid "obsoleted"
 msgstr "đã cũ"
 
-#: ../output.py:2832
+#: ../output.py:2778
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
 msgstr "---> Gói %s.%s %s:%s-%s sẽ %s"
 
-#: ../output.py:2843
+#: ../output.py:2789
 msgid "--> Running transaction check"
 msgstr "--> Đang chạy kiểm tra giao dịch"
 
-#: ../output.py:2849
+#: ../output.py:2795
 msgid "--> Restarting Dependency Resolution with new changes."
-msgstr ""
-"--> Đang khởi động lại phân giải quan hệ phụ thuộc với các thay đổi mới."
+msgstr "--> Đang khởi động lại phân giải quan hệ phụ thuộc với các thay đổi mới."
 
-#: ../output.py:2855
+#: ../output.py:2801
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Đã hoàn tất phân giải quan hệ phụ thuộc"
 
-#: ../output.py:2868 ../output.py:2881
+#: ../output.py:2814 ../output.py:2827
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> Đang xử lý quan hệ phụ thuộc: %s cho gói: %s"
 
-#: ../output.py:2895
+#: ../output.py:2841
 #, python-format
 msgid "---> Keeping package: %s due to %s"
 msgstr "---> Giữ lại gói: %s bởi vì %s"
 
-#: ../output.py:2904
+#: ../output.py:2850
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Không thể giải quyết ra quan hệ phụ thuộc: %s"
 
-#: ../output.py:2921
+#: ../output.py:2867
 #, python-format
 msgid "Package: %s"
 msgstr "Gói: %s"
 
-#: ../output.py:2923
+#: ../output.py:2869
 #, python-format
 msgid ""
 "\n"
 "    Requires: %s"
-msgstr ""
-"\n"
-"    Cần     : %s"
+msgstr "\n    Cần     : %s"
 
-#: ../output.py:2932
+#: ../output.py:2878
 #, python-format
 msgid ""
 "\n"
 "    %s: %s (%s)"
-msgstr ""
-"\n"
-"    %s: %s (%s)"
+msgstr "\n    %s: %s (%s)"
 
-#: ../output.py:2937
+#: ../output.py:2883
 #, python-format
 msgid ""
 "\n"
 "        %s"
-msgstr ""
-"\n"
-"        %s"
+msgstr "\n        %s"
 
-#: ../output.py:2949
-#, python-format
-msgid ""
-"\n"
-"       ~%s"
-msgstr ""
-"\n"
-"       ~%s"
-
-#: ../output.py:2951
+#: ../output.py:2885
 msgid ""
 "\n"
 "        Not found"
-msgstr ""
-"\n"
-"        Không tìm thấy"
+msgstr "\n        Không tìm thấy"
 
 #. These should be the only three things we care about:
-#: ../output.py:2966
+#: ../output.py:2900
 msgid "Updated By"
 msgstr "Được cập nhật bởi"
 
-#: ../output.py:2967
+#: ../output.py:2901
 msgid "Downgraded By"
 msgstr "Bị hạ cấp bới"
 
-#: ../output.py:2968
+#: ../output.py:2902
 msgid "Obsoleted By"
 msgstr "Cũ do"
 
-#: ../output.py:2986
+#: ../output.py:2920
 msgid "Available"
 msgstr "Sẵn sàng"
 
-#: ../output.py:3021 ../output.py:3034
+#: ../output.py:2955 ../output.py:2968
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Đang xử lý xung đột: %s xung đột %s"
 
-#: ../output.py:3040
+#: ../output.py:2974
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr "--> Đi đến tập hợp giao dịch với các gói đã chọn. Vui lòng chờ."
 
-#: ../output.py:3049
+#: ../output.py:2983
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr "---> Đang tải phần đầu cho %s để gói vào một tập hợp giao dịch."
 
 #. self.event(txmbr.name, count, len(base.tsInfo), count, )
 #. (te_current*100L)/te_total
-#: ../output.py:3314
+#: ../output.py:3248
 msgid "Verifying"
 msgstr "Thẩm tra"
 
-#: ../utils.py:133
+#: ../utils.py:123
 msgid "Running"
 msgstr "Đang chạy"
 
-#: ../utils.py:134
+#: ../utils.py:124
 msgid "Sleeping"
 msgstr "Đang ngủ"
 
-#: ../utils.py:135
+#: ../utils.py:125
 msgid "Uninterruptible"
 msgstr "Không thể ngắt"
 
-#: ../utils.py:136
+#: ../utils.py:126
 msgid "Zombie"
 msgstr "Ma"
 
-#: ../utils.py:137
+#: ../utils.py:127
 msgid "Traced/Stopped"
 msgstr "Theo dõi / Dừng"
 
-#: ../utils.py:138 ../yumcommands.py:2295 ../yummain.py:103
+#: ../utils.py:128 ../yumcommands.py:2224
 msgid "Unknown"
 msgstr "Không rõ"
 
-#: ../utils.py:163
+#: ../utils.py:153
 msgid "  The other application is: PackageKit"
 msgstr "  Ứng dụng khác là: PackageKit"
 
-#: ../utils.py:165
+#: ../utils.py:155
 #, python-format
 msgid "  The other application is: %s"
 msgstr "  Ứng dụng khác là: %s"
 
-#: ../utils.py:168
+#: ../utils.py:158
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
 msgstr "    Bộ nhớ : %5s RSS (%5sB VSZ)"
 
-#: ../utils.py:173
+#: ../utils.py:163
 #, python-format
 msgid "    Started: %s - %s ago"
 msgstr "    Khởi chạy: %s - %s trước"
 
-#: ../utils.py:175
+#: ../utils.py:165
 #, python-format
 msgid "    State  : %s, pid: %d"
 msgstr "    Trạng thái: %s, pid: %d"
 
-#: ../utils.py:204 ../yummain.py:43
+#: ../utils.py:194 ../yummain.py:43
 msgid ""
 "\n"
 "\n"
 "Exiting on user cancel"
-msgstr ""
-"\n"
-"\n"
-"Thoát ra do người dùng hủy thao tác"
+msgstr "\n\nThoát ra do người dùng hủy thao tác"
 
-#: ../utils.py:216 ../yummain.py:49
+#: ../utils.py:206 ../yummain.py:49
 msgid ""
 "\n"
 "\n"
 "Exiting on Broken Pipe"
-msgstr ""
-"\n"
-"\n"
-"Thoát ra do đường ống dẫn lệnh hỏng"
+msgstr "\n\nThoát ra do đường ống dẫn lệnh hỏng"
 
-#: ../utils.py:218 ../yummain.py:51
+#: ../utils.py:208 ../yummain.py:51
 #, python-format
 msgid ""
 "\n"
 "\n"
 "%s"
-msgstr ""
-"\n"
-"\n"
-"%s"
+msgstr "\n\n%s"
 
-#: ../utils.py:330
+#: ../utils.py:320
 #, python-format
 msgid "Config Error: %s"
 msgstr "Lỗi cấu hình: %s"
 
-#: ../utils.py:333
+#: ../utils.py:323
 #, python-format
 msgid "Options Error: %s"
 msgstr "Lỗi tùy chọn: %s"
 
-#: ../utils.py:336
+#: ../utils.py:326
 #, python-format
 msgid "PluginExit Error: %s"
 msgstr "Lỗi PluginExit: %s"
 
-#: ../utils.py:339
+#: ../utils.py:329
 #, python-format
 msgid "Yum Error: %s"
 msgstr "Lỗi Yum: %s"
 
-#: ../utils.py:397 ../yummain.py:197 ../yummain.py:238
+#: ../utils.py:387 ../yummain.py:152 ../yummain.py:196
 #, python-format
 msgid "Error: %s"
 msgstr "Lỗi: %s"
 
-#: ../utils.py:401 ../yummain.py:243
+#: ../utils.py:391 ../yummain.py:201
 msgid " You could try using --skip-broken to work around the problem"
 msgstr " Bạn có thể thử dùng --skip-broken để sửa vấn đề này"
 
-#: ../utils.py:403 ../yummain.py:132
+#: ../utils.py:393 ../yummain.py:87
 msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr " Bạn nên chạy: rpm -Va --nofiles --nodigest"
 
-#: ../utils.py:410 ../yummain.py:207 ../yummain.py:251
+#: ../utils.py:400 ../yummain.py:162 ../yummain.py:209
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Lỗi chưa biết: Mã thoát: %d:"
 
-#: ../utils.py:416 ../yummain.py:257
+#: ../utils.py:406 ../yummain.py:215
 msgid ""
 "\n"
 "Dependencies Resolved"
-msgstr ""
-"\n"
-"Đã phân giải các thành phần phụ thuộc"
+msgstr "\nĐã phân giải các thành phần phụ thuộc"
 
-#: ../utils.py:432 ../yummain.py:291
+#: ../utils.py:422 ../yummain.py:252
 msgid "Complete!"
 msgstr "Hoàn thành!"
 
-#: ../yumcommands.py:51
+#: ../yumcommands.py:44
 msgid " Mini usage:\n"
 msgstr " Cách dùng dạng giản lược:\n"
 
-#: ../yumcommands.py:61
+#: ../yumcommands.py:54
 msgid "You need to be root to perform this command."
 msgstr "Bạn cần phải thực hiện lệnh này dưới quyền siêu quản trị"
 
-#: ../yumcommands.py:76
+#: ../yumcommands.py:69
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
-"However, you do not have any GPG public keys installed. You need to "
-"download\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -1812,975 +1663,598 @@ msgid ""
 "will install it for you.\n"
 "\n"
 "For more information contact your distribution or package provider.\n"
-msgstr ""
-"\n"
-"Bạn phải bật kiểm tra gói thông qua khóa GPG. Đây là một thứ tốt. \n"
-"Tuy nhiên, bạn không có bất kỳ khóa GPG công nào được cài đặt. Bạn cần tải\n"
-"những khóa dành cho những gói muốn cài và cài đặt chúng.\n"
-"Bạn có thể thực hiện điều này bằng cách chạy lệnh:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Một cách khác là bạn có thể chỉ định url đến khóa bạn muốn dùng cho\n"
-"kho trong tùy chọn “gpgkey” trong phần kho và yum \n"
-"sẽ cài đặt nó cho bạn.\n"
-"\n"
-"Để có thêm thông tin vui lòng liên hệ với bản phân phối của bạn hoặc người "
-"cung cấp gói.\n"
+msgstr "\nBạn phải bật kiểm tra gói thông qua khóa GPG. Đây là một thứ tốt. \nTuy nhiên, bạn không có bất kỳ khóa GPG công nào được cài đặt. Bạn cần tải\nnhững khóa dành cho những gói muốn cài và cài đặt chúng.\nBạn có thể thực hiện điều này bằng cách chạy lệnh:\n    rpm --import public.gpg.key\n\n\nMột cách khác là bạn có thể chỉ định url đến khóa bạn muốn dùng cho\nkho trong tùy chọn “gpgkey” trong phần kho và yum \nsẽ cài đặt nó cho bạn.\n\nĐể có thêm thông tin vui lòng liên hệ với bản phân phối của bạn hoặc người cung cấp gói.\n"
 
-#: ../yumcommands.py:91
+#: ../yumcommands.py:84
 #, python-format
 msgid "Problem repository: %s"
 msgstr "Có vấn đề với kho chứa: %s"
 
-#: ../yumcommands.py:105
+#: ../yumcommands.py:98
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "Lỗi: Cần chuyển một danh sách pkgs cho %s"
 
-#: ../yumcommands.py:123
+#: ../yumcommands.py:116
 #, python-format
 msgid "Error: Need at least two packages to %s"
 msgstr "Lỗi: Cần ít nhất hai gói cho %s"
 
-#: ../yumcommands.py:139
+#: ../yumcommands.py:131
+#, python-format
+msgid "Error: Need to pass a repoid. and command to %s"
+msgstr "Lỗi: cần chuyển qua một mã số kho và lệnh đến %s"
+
+#: ../yumcommands.py:138 ../yumcommands.py:144
 #, python-format
 msgid "Error: Need to pass a single valid repoid. to %s"
 msgstr "Lỗi: Cần chuyển một mã số kho hợp lệ đơn vào %s"
 
 #: ../yumcommands.py:149
 #, python-format
-msgid "Error: Need to pass only a single valid repoid. to %s, passed: %s"
-msgstr "Lỗi: Cần chuyển chỉ một mã kho đơn hợp lệ cho %s, đã chuyển: %s"
+msgid "Error: Repo %s is not enabled"
+msgstr ""
 
-#: ../yumcommands.py:156
-#, python-format
-msgid "Repo %s has been automatically enabled."
-msgstr "Kho %s được tự động bật."
-
-#: ../yumcommands.py:172
+#: ../yumcommands.py:166
 msgid "Error: Need an item to match"
 msgstr "Lỗi: Cần một mục khớp mẫu"
 
-#: ../yumcommands.py:186
+#: ../yumcommands.py:180
 msgid "Error: Need a group or list of groups"
 msgstr "Lỗi: Cần một nhóm hay danh sách các nhóm"
 
-#: ../yumcommands.py:203
+#: ../yumcommands.py:197
 #, python-format
 msgid "Error: clean requires an option: %s"
 msgstr "Lỗi: dọn dẹp cần một tùy chọn: %s"
 
-#: ../yumcommands.py:209
+#: ../yumcommands.py:203
 #, python-format
 msgid "Error: invalid clean argument: %r"
 msgstr "Lỗi: đối số dọn dẹp không hợp lệ: %r"
 
-#: ../yumcommands.py:224
+#: ../yumcommands.py:218
 msgid "No argument to shell"
 msgstr "Không có đối số cho hệ vỏ"
 
-#: ../yumcommands.py:226
+#: ../yumcommands.py:220
 #, python-format
 msgid "Filename passed to shell: %s"
 msgstr "Tên tập tin chuyển sang hệ vỏ: %s"
 
-#: ../yumcommands.py:230
+#: ../yumcommands.py:224
 #, python-format
 msgid "File %s given as argument to shell does not exist."
 msgstr "Tập tin %s đưa ra nhưng là tham số cho hệ vỏ không tồn tại."
 
-#: ../yumcommands.py:236
+#: ../yumcommands.py:230
 msgid "Error: more than one file given as argument to shell."
 msgstr "Lỗi: đã cho nhiều hơn một tập tin làm đối số cho hệ vỏ."
 
-#: ../yumcommands.py:260
+#: ../yumcommands.py:249
 msgid ""
 "There are no enabled repos.\n"
 " Run \"yum repolist all\" to see the repos you have.\n"
 " You can enable repos with yum-config-manager --enable <repo>"
-msgstr ""
-"Ở đây không có kho nào được bật cả.\n"
-" Hãy chạy \"yum repolist all\" để thấy được bạn có.\n"
-" Bạn có thể bật kho với lệnh yum-config-manager --enable <kho>"
+msgstr "Ở đây không có kho nào được bật cả.\n Hãy chạy \"yum repolist all\" để thấy được bạn có.\n Bạn có thể bật kho với lệnh yum-config-manager --enable <kho>"
 
-#: ../yumcommands.py:396
+#: ../yumcommands.py:385
 msgid "PACKAGE..."
 msgstr "GÓI..."
 
-#: ../yumcommands.py:403
+#: ../yumcommands.py:392
 msgid "Install a package or packages on your system"
 msgstr "Cài đặt một hay nhiều gói lên hệ thống của bạn"
 
-#: ../yumcommands.py:434
+#: ../yumcommands.py:423
 msgid "Setting up Install Process"
 msgstr "Đang cài đặt Tiến trình Cài đặt"
 
-#: ../yumcommands.py:457 ../yumcommands.py:516
+#: ../yumcommands.py:449 ../yumcommands.py:509
 msgid "[PACKAGE...]"
 msgstr "[GÓI...]"
 
-#: ../yumcommands.py:464
+#: ../yumcommands.py:456
 msgid "Update a package or packages on your system"
 msgstr "Cập nhật một hay nhiều gói trên hệ thống của bạn"
 
-#: ../yumcommands.py:493
+#: ../yumcommands.py:485
 msgid "Setting up Update Process"
 msgstr "Đang cài đặt Tiến trình Cập nhật"
 
-#: ../yumcommands.py:523
+#: ../yumcommands.py:516
 msgid "Synchronize installed packages to the latest available versions"
 msgstr "Đồng bộ hóa các gói đã cài với phiên bản mới nhất sẵn có"
 
-#: ../yumcommands.py:552
+#: ../yumcommands.py:545
 msgid "Setting up Distribution Synchronization Process"
 msgstr "Đang cài đặt Xử lý Đồng bộ bản phân phối"
 
-#: ../yumcommands.py:611
+#: ../yumcommands.py:605
 msgid "Display details about a package or group of packages"
 msgstr "Hiển thị chi tiết về một gói hay một nhóm gói"
 
-#: ../yumcommands.py:684
+#: ../yumcommands.py:674
 msgid "Installed Packages"
 msgstr "Các gói đã cài"
 
-#: ../yumcommands.py:694
+#: ../yumcommands.py:684
 msgid "Available Packages"
 msgstr "Các gói sẵn sàng"
 
-#: ../yumcommands.py:699
+#: ../yumcommands.py:689
 msgid "Extra Packages"
 msgstr "Các gói mở rộng"
 
-#: ../yumcommands.py:703
+#: ../yumcommands.py:693
 msgid "Updated Packages"
 msgstr "Các gói đã cập nhật"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:711 ../yumcommands.py:718 ../yumcommands.py:1648
+#: ../yumcommands.py:701 ../yumcommands.py:708 ../yumcommands.py:1570
 msgid "Obsoleting Packages"
 msgstr "Các gói đã lỗi thời"
 
-#: ../yumcommands.py:720
+#: ../yumcommands.py:710
 msgid "Recently Added Packages"
 msgstr "Các gói mới thêm"
 
-#: ../yumcommands.py:727
+#: ../yumcommands.py:717
 msgid "No matching Packages to list"
 msgstr "Không có gói nào khớp với danh sách"
 
-#: ../yumcommands.py:778
+#: ../yumcommands.py:768
 msgid "List a package or groups of packages"
 msgstr "Liệt kê một gói hay nhóm của gói"
 
-#: ../yumcommands.py:809
+#: ../yumcommands.py:800
 msgid "Remove a package or packages from your system"
 msgstr "Gỡ bỏ một hay nhiều gói phần mềm từ hệ thống của bạn"
 
-#: ../yumcommands.py:859
+#: ../yumcommands.py:850
 msgid "Setting up Remove Process"
 msgstr "Đang cài đặt Tiến trình Gỡ bỏ"
 
-#: ../yumcommands.py:904
-msgid "Remove leaf packages"
-msgstr "Xóa các gói cành lá"
-
-#: ../yumcommands.py:937
+#: ../yumcommands.py:911
 msgid "Display, or use, the groups information"
 msgstr "Hiển thị, hoặc dùng, thông tin nhóm"
 
-#: ../yumcommands.py:940
+#: ../yumcommands.py:914
 msgid "Setting up Group Process"
 msgstr "Đang cài đặt Tiến trình Nhóm"
 
-#: ../yumcommands.py:946
+#: ../yumcommands.py:920
 msgid "No Groups on which to run command"
 msgstr "Không có nhóm để chạy lệnh"
 
-#: ../yumcommands.py:1019
+#: ../yumcommands.py:990
 #, python-format
 msgid "Invalid groups sub-command, use: %s."
 msgstr "Lệnh-con nhóm không hợp lệ, dùng: %s."
 
-#: ../yumcommands.py:1026 ../yumcommands.py:1032
+#: ../yumcommands.py:997
 msgid "There is no installed groups file."
 msgstr "Không có tập tin các nhóm được cài."
 
-#: ../yumcommands.py:1027 ../yumcommands.py:1033
-msgid "Maybe run: yum groups mark convert (see man yum)"
-msgstr "Có lẽ nên chạy: yum groups mark convert (xem yum(1))"
-
-#: ../yumcommands.py:1029
-msgid "You don't have access to the groups DBs."
-msgstr "Bạn không có quyền truy cập vào Cơ sở dữ liệu nhóm."
-
-#: ../yumcommands.py:1035
+#: ../yumcommands.py:999
 msgid "You don't have access to the groups DB."
 msgstr "Bạn không có quyền truy cập vào Cơ sở dữ liệu nhóm."
 
-#: ../yumcommands.py:1341
+#: ../yumcommands.py:1261
 msgid "Generate the metadata cache"
 msgstr "Tạo bộ nhớ đệm metadata"
 
-#: ../yumcommands.py:1367
+#: ../yumcommands.py:1287
 msgid "Making cache files for all metadata files."
 msgstr "Tạo tập tin dữ liệu nhớ tạm cho mọi tập tin siêu dữ liệu."
 
-#: ../yumcommands.py:1368
+#: ../yumcommands.py:1288
 msgid "This may take a while depending on the speed of this computer"
 msgstr "Lệnh này cần thời gian phụ thuộc vào tốc độ của máy tính này"
 
-#: ../yumcommands.py:1410
+#: ../yumcommands.py:1332
 msgid "Metadata Cache Created"
 msgstr "Bộ đệm Siêu dữ liệu đã được tạo"
 
-#: ../yumcommands.py:1448
+#: ../yumcommands.py:1370
 msgid "Remove cached data"
 msgstr "Gỡ bỏ dữ liệu nhớ đệm"
 
-#: ../yumcommands.py:1526
+#: ../yumcommands.py:1448
 msgid "Find what package provides the given value"
 msgstr "Tìm gói nào cung cấp giá trị đã cho"
 
-#: ../yumcommands.py:1593
+#: ../yumcommands.py:1516
 msgid "Check for available package updates"
 msgstr "Kiểm tra xem có gói cập nhật nào không"
 
-#: ../yumcommands.py:1700
+#: ../yumcommands.py:1618
 msgid "Search package details for the given string"
 msgstr "Tìm thông tin chi tiết gói cho giá trị đã cho"
 
-#: ../yumcommands.py:1726
+#: ../yumcommands.py:1644
 msgid "Searching Packages: "
 msgstr "Đang tìm các gói:"
 
-#: ../yumcommands.py:1777
+#: ../yumcommands.py:1697
 msgid "Update packages taking obsoletes into account"
 msgstr "Cập nhật các gói nhận những gói cũ vào tài khoản"
 
-#: ../yumcommands.py:1807
+#: ../yumcommands.py:1727
 msgid "Setting up Upgrade Process"
 msgstr "Đang cài đặt Tiến trình Nâng cấp"
 
-#: ../yumcommands.py:1841
+#: ../yumcommands.py:1762
 msgid "Install a local RPM"
 msgstr "Cài một RPM nội bộ"
 
-#: ../yumcommands.py:1871
+#: ../yumcommands.py:1792
 msgid "Setting up Local Package Process"
 msgstr "Đang cài đặt quá trình gói nội bộ"
 
-#: ../yumcommands.py:1932
+#: ../yumcommands.py:1856
 msgid "Searching Packages for Dependency:"
 msgstr "Đang tìm Các gói cho phần phụ thuộc:"
 
-#: ../yumcommands.py:1972
+#: ../yumcommands.py:1898
 msgid "Run an interactive yum shell"
 msgstr "Chạy hệ vỏ yum tương tác"
 
-#: ../yumcommands.py:1998
+#: ../yumcommands.py:1924
 msgid "Setting up Yum Shell"
 msgstr "Đang cài đặt hệ vỏ yum"
 
-#: ../yumcommands.py:2038
+#: ../yumcommands.py:1967
 msgid "List a package's dependencies"
 msgstr "Danh sách các phần phụ thuộc của gói"
 
-#: ../yumcommands.py:2065
+#: ../yumcommands.py:1994
 msgid "Finding dependencies: "
 msgstr "Tìm sự phụ thuộc:"
 
-#: ../yumcommands.py:2105
+#: ../yumcommands.py:2036
 msgid "Display the configured software repositories"
 msgstr "Hiển thị các kho phần mềm đã cấu hình"
 
-#: ../yumcommands.py:2191 ../yumcommands.py:2192
+#: ../yumcommands.py:2125 ../yumcommands.py:2126
 msgid "enabled"
 msgstr "đã bật"
 
-#: ../yumcommands.py:2218 ../yumcommands.py:2219
+#: ../yumcommands.py:2152 ../yumcommands.py:2153
 msgid "disabled"
 msgstr "đã tắt"
 
-#: ../yumcommands.py:2239
+#: ../yumcommands.py:2168
 msgid "Repo-id      : "
 msgstr "id-kho       :"
 
-#: ../yumcommands.py:2240
+#: ../yumcommands.py:2169
 msgid "Repo-name    : "
 msgstr "Tên-kho      :"
 
-#: ../yumcommands.py:2243
+#: ../yumcommands.py:2172
 msgid "Repo-status  : "
 msgstr "Trạng-thái-kho:"
 
-#: ../yumcommands.py:2246
+#: ../yumcommands.py:2175
 msgid "Repo-revision: "
 msgstr "Phiên-bản-kho:"
 
-#: ../yumcommands.py:2250
+#: ../yumcommands.py:2179
 msgid "Repo-tags    : "
 msgstr "Thẻ-kho      :"
 
-#: ../yumcommands.py:2256
+#: ../yumcommands.py:2185
 msgid "Repo-distro-tags: "
 msgstr "Thẻ-kho-bản-phân-phối:"
 
-#: ../yumcommands.py:2261
+#: ../yumcommands.py:2190
 msgid "Repo-updated : "
 msgstr "Kho-đã-cập-nhật:"
 
-#: ../yumcommands.py:2263
+#: ../yumcommands.py:2192
 msgid "Repo-pkgs    : "
 msgstr "Repo-pkgs    : "
 
-#: ../yumcommands.py:2264
+#: ../yumcommands.py:2193
 msgid "Repo-size    : "
 msgstr "Cỡ-kho       :"
 
-#: ../yumcommands.py:2271 ../yumcommands.py:2292
+#: ../yumcommands.py:2200 ../yumcommands.py:2221
 msgid "Repo-baseurl : "
 msgstr "URL-kho      :"
 
-#: ../yumcommands.py:2279
+#: ../yumcommands.py:2208
 msgid "Repo-metalink: "
 msgstr "Repo-metalink: "
 
-#: ../yumcommands.py:2283
+#: ../yumcommands.py:2212
 msgid "  Updated    : "
 msgstr "Đã được cập nhật: "
 
-#: ../yumcommands.py:2286
+#: ../yumcommands.py:2215
 msgid "Repo-mirrors : "
 msgstr "Ảnh-kho      : "
 
-#: ../yumcommands.py:2301
+#: ../yumcommands.py:2230
 #, python-format
 msgid "Never (last: %s)"
 msgstr "Chưa bao giờ (cuối: %s)"
 
-#: ../yumcommands.py:2303
+#: ../yumcommands.py:2232
+#, python-format
 msgid "Instant (last: %s)"
 msgstr "Minh dụ (cuối: %s)"
 
-#: ../yumcommands.py:2306
+#: ../yumcommands.py:2235
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s giây (cuối: %s)"
 
-#: ../yumcommands.py:2308
+#: ../yumcommands.py:2237
 msgid "Repo-expire  : "
 msgstr "Kho-hết-hạn  :"
 
-#: ../yumcommands.py:2311
+#: ../yumcommands.py:2240
 msgid "Repo-exclude : "
 msgstr "Kho-loại-trừ : "
 
-#: ../yumcommands.py:2315
+#: ../yumcommands.py:2244
 msgid "Repo-include : "
 msgstr "Kho-bao-gồm  :"
 
-#: ../yumcommands.py:2319
+#: ../yumcommands.py:2248
 msgid "Repo-excluded: "
 msgstr "Kho-đã-loại-trừ: "
 
-#: ../yumcommands.py:2323
+#: ../yumcommands.py:2252
 msgid "Repo-filename: "
 msgstr "Tập-tin-kho  :"
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:2332 ../yumcommands.py:2361
+#: ../yumcommands.py:2261 ../yumcommands.py:2290
 msgid "repo id"
 msgstr "id kho"
 
-#: ../yumcommands.py:2349 ../yumcommands.py:2350 ../yumcommands.py:2368
+#: ../yumcommands.py:2278 ../yumcommands.py:2279 ../yumcommands.py:2297
 msgid "status"
 msgstr "trạng thái"
 
-#: ../yumcommands.py:2362
+#: ../yumcommands.py:2291
 msgid "repo name"
 msgstr "tên kho"
 
-#: ../yumcommands.py:2434
+#: ../yumcommands.py:2363
 msgid "Display a helpful usage message"
 msgstr "Hiển thị cách dùng hữu dụng"
 
-#: ../yumcommands.py:2476
+#: ../yumcommands.py:2405
 #, python-format
 msgid "No help available for %s"
 msgstr "Không có trợ giúp nào sẵn sàng cho “%s”"
 
-#: ../yumcommands.py:2481
+#: ../yumcommands.py:2410
 msgid ""
 "\n"
 "\n"
 "aliases: "
-msgstr ""
-"\n"
-"\n"
-"bí danh: "
+msgstr "\n\nbí danh: "
 
-#: ../yumcommands.py:2483
+#: ../yumcommands.py:2412
 msgid ""
 "\n"
 "\n"
 "alias: "
-msgstr ""
-"\n"
-"\n"
-"bí danh: "
+msgstr "\n\nbí danh: "
 
-#: ../yumcommands.py:2568
+#: ../yumcommands.py:2497
 msgid "Setting up Reinstall Process"
 msgstr "Đang cài đặt Tiến trình cài LẠI"
 
-#: ../yumcommands.py:2576
+#: ../yumcommands.py:2509
 msgid "reinstall a package"
 msgstr "cài lại một gói"
 
-#: ../yumcommands.py:2639
+#: ../yumcommands.py:2572
 msgid "Setting up Downgrade Process"
 msgstr "Đang cài đặt Tiến trình Hạ cấp"
 
-#: ../yumcommands.py:2647
+#: ../yumcommands.py:2583
 msgid "downgrade a package"
 msgstr "hạ cấp một gói"
 
-#: ../yumcommands.py:2686
+#: ../yumcommands.py:2622
 msgid "Display a version for the machine and/or available repos."
 msgstr "Hiển thị phiên bản cho máy và/hoặc các kho phần mềm sẵn có."
 
-#: ../yumcommands.py:2746
+#: ../yumcommands.py:2674
 msgid " Yum version groups:"
 msgstr " Nhóm phiên bản Yum:"
 
-#: ../yumcommands.py:2756
+#: ../yumcommands.py:2684
 msgid " Group   :"
 msgstr " Nhóm    :"
 
-#: ../yumcommands.py:2757
+#: ../yumcommands.py:2685
 msgid " Packages:"
 msgstr " Các gói :"
 
-#: ../yumcommands.py:2784
-#, python-format
-msgid " File doesn't exist: %s"
-msgstr " Tập tin không tồn tại: %s"
-
-#: ../yumcommands.py:2810
+#: ../yumcommands.py:2714
 msgid "Installed:"
 msgstr "Đã cài:"
 
-#: ../yumcommands.py:2818
+#: ../yumcommands.py:2722
 msgid "Group-Installed:"
 msgstr "Nhóm-Đã-Cài:"
 
-#: ../yumcommands.py:2826
+#: ../yumcommands.py:2731
 msgid "Available:"
 msgstr "Hiện có :"
 
-#: ../yumcommands.py:2835
+#: ../yumcommands.py:2740
 msgid "Group-Available:"
 msgstr "Nhóm-Sẵn-Có:"
 
-#: ../yumcommands.py:2907
+#: ../yumcommands.py:2814
 msgid "Display, or use, the transaction history"
 msgstr "Hiển thị hay dùng lịch sử giao dịch"
 
-#: ../yumcommands.py:3000 ../yumcommands.py:3007
+#: ../yumcommands.py:2907 ../yumcommands.py:2911
 msgid "Transactions:"
 msgstr "Giao dịch   :"
 
-#: ../yumcommands.py:3004
-#, python-format
-msgid "could not open history file: %s"
-msgstr "không thể mở tập tin lịch sử: %s"
-
-#: ../yumcommands.py:3008
+#: ../yumcommands.py:2912
 msgid "Begin time  :"
 msgstr "Lúc bắt đầu   :"
 
-#: ../yumcommands.py:3009
+#: ../yumcommands.py:2913
 msgid "End time    :"
 msgstr "Thời gian cuối:"
 
-#: ../yumcommands.py:3010
+#: ../yumcommands.py:2914
 msgid "Counts      :"
 msgstr "Số lượng      :"
 
-#: ../yumcommands.py:3011
+#: ../yumcommands.py:2915
 msgid "  NEVRAC :"
 msgstr "  NEVRAC :"
 
-#: ../yumcommands.py:3012
+#: ../yumcommands.py:2916
 msgid "  NEVRA  :"
 msgstr "  NEVRA  :"
 
-#: ../yumcommands.py:3013
+#: ../yumcommands.py:2917
 msgid "  NA     :"
 msgstr "  NA     :"
 
-#: ../yumcommands.py:3014
+#: ../yumcommands.py:2918
 msgid "  NEVR   :"
 msgstr "  NEVR   :"
 
-#: ../yumcommands.py:3015
+#: ../yumcommands.py:2919
 msgid "  rpm DB :"
 msgstr "  rpm DB :"
 
-#: ../yumcommands.py:3016
+#: ../yumcommands.py:2920
 msgid "  yum DB :"
 msgstr "  CSDL yum:"
 
-#: ../yumcommands.py:3049
+#: ../yumcommands.py:2953
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr "Lệnh-con lịch sử không hợp lệ, dùng: %s."
 
-#: ../yumcommands.py:3056
+#: ../yumcommands.py:2960
 msgid "You don't have access to the history DB."
 msgstr "Bạn không có quyền truy cập vào CSDL lịch sử."
 
-#: ../yumcommands.py:3163
+#: ../yumcommands.py:3067
 msgid "Check for problems in the rpmdb"
 msgstr "Kiểm tra trục trặc trong rpmdb"
 
-#: ../yumcommands.py:3239
+#: ../yumcommands.py:3143
 msgid "load a saved transaction from filename"
 msgstr "tải một giao địch đã lưu từ tên tập tin"
 
-#: ../yumcommands.py:3288
+#: ../yumcommands.py:3184
 #, python-format
 msgid "showing transaction files from %s"
 msgstr "hiển thị các tập tin giao dịch từ %s"
 
-#: ../yumcommands.py:3345
+#: ../yumcommands.py:3224
+msgid "Members"
+msgstr ""
+
+#: ../yumcommands.py:3229
 msgid "Filename"
 msgstr "Tên tập tin"
 
-#: ../yumcommands.py:3355
+#: ../yumcommands.py:3235
 #, python-format
 msgid "Saved transactions from %s; looked at %u files"
 msgstr "Các giao dịch đã lưu lại từ %s; nhìn vào %u tập tin"
 
-#: ../yumcommands.py:3358
+#: ../yumcommands.py:3238
 #, python-format
 msgid "loading transaction from %s"
 msgstr "đang tải giao dịch từ %s"
 
-#: ../yumcommands.py:3361
+#: ../yumcommands.py:3244
 #, python-format
 msgid "Transaction loaded from %s with %s members"
 msgstr "Giao dịch được tải từ %s với thành viên %s"
 
-#: ../yumcommands.py:3417
+#: ../yumcommands.py:3300
 msgid "Simple way to swap packages, instead of using shell"
 msgstr "Cách đơn giản để tráo đổi các gói, thay vì dùng hệ vỏ"
 
-#: ../yumcommands.py:3512
+#: ../yumcommands.py:3395
 msgid ""
 "Treat a repo. as a group of packages, so we can install/remove all of them"
 msgstr "Coi một kho là một nhóm gói, và có thể cài/gỡ bỏ tất cả chúng"
 
-#: ../yumcommands.py:3526
-#, python-format
-msgid "Error: Need to pass a repoid. and command to %s"
-msgstr "Lỗi: cần chuyển qua một mã số kho và lệnh đến %s"
-
-#: ../yumcommands.py:3603 ../yumcommands.py:3614
+#: ../yumcommands.py:3474
 #, python-format
 msgid "%d package to update"
 msgid_plural "%d packages to update"
 msgstr[0] "%d gói được cập nhật"
 
-#: ../yumcommands.py:3649 ../yumcommands.py:3680
+#: ../yumcommands.py:3509 ../yumcommands.py:3540
 #, python-format
 msgid "%d package to move to"
 msgid_plural "%d packages to move to"
 msgstr[0] "%d gói được chuyển tới"
 
-#: ../yumcommands.py:3709
+#: ../yumcommands.py:3569
 #, python-format
 msgid "%d package to remove/reinstall"
 msgid_plural "%d packages to remove/reinstall"
 msgstr[0] "%d gói bị gỡ bỏ hay cài đặt lại"
 
-#: ../yumcommands.py:3752
+#: ../yumcommands.py:3612
 #, python-format
 msgid "%d package to remove/sync"
 msgid_plural "%d packages to remove/sync"
 msgstr[0] "%d gói được gỡ bỏ hay đồng bộ"
 
-#: ../yumcommands.py:3756 ../yumcommands.py:4928
+#: ../yumcommands.py:3616
 #, python-format
 msgid "Not a valid sub-command of %s"
 msgstr "Không phải là lệnh con hợp lệ của %s"
 
-#: ../yumcommands.py:4148
-msgid ""
-"Works like upgrade, but goes to the 'newest' package match which fixes a "
-"problem that affects your system"
-msgstr ""
-"Làm việc như là nâng cấp, nhưng tới gói “mới nhất” khớp với những cái đã sửa "
-"chữa trục trặc mà có ảnh hưởng đến hệ thống của bạn"
-
-#: ../yumcommands.py:4197
-msgid "Creates filesystem snapshots, or lists/deletes current snapshots."
-msgstr ""
-"Tạo bản chụp của hệ thống tập tin, hoặc liệt kê hay xóa bản chụp hiện tại"
-
-#: ../yumcommands.py:4215 ../yumcommands.py:4225
-msgid "Snapshot"
-msgstr "Bản chụp"
-
-#: ../yumcommands.py:4216 ../yumcommands.py:4229
-msgid "Origin"
-msgstr "Gốc"
-
-#: ../yumcommands.py:4227
-msgid "Used"
-msgstr "Dùng"
-
-#: ../yumcommands.py:4228
-msgid "Free"
-msgstr "Trống"
-
-#: ../yumcommands.py:4229
-msgid "Tags"
-msgstr "Thẻ"
-
-#: ../yumcommands.py:4260
-msgid "Snapshot support not available, no python-lvm package installed."
-msgstr "Bản chụp không được hỗ trợ, chưa cài đặt gói python-lvm"
-
-#: ../yumcommands.py:4262
-msgid "Snapshot support not available, python-lvm is old/broken."
-msgstr "Bản chụp không được hỗ trợ, python-lvm bị hỏng hay quá cũ."
-
-#: ../yumcommands.py:4267
-#, python-format
-msgid "List of %u snapshosts:"
-msgstr "Liệt kê %u bản chụp:"
-
-#: ../yumcommands.py:4283
-#, python-format
-msgid "Deleted %u snapshosts:"
-msgstr "Xóa %u bản chụp:"
-
-#: ../yumcommands.py:4289
-msgid "Space available to take a snapshot."
-msgstr "Không đủ chỗ trống để tạo bản chụp."
-
-#: ../yumcommands.py:4291
-msgid "Not enough space available to take a snapshot."
-msgstr "Không đủ chỗ trống để tạo bản chụp."
-
-#: ../yumcommands.py:4297
-#, python-format
-msgid "Created snapshot from %s, results is: %s"
-msgstr "Tạo bản chụp từ %s, kết quả là: %s"
-
-#: ../yumcommands.py:4299
-msgid "Failed to create snapshots"
-msgstr "Gặp lỗi khi tạo bản chụp"
-
-#: ../yumcommands.py:4304
-msgid "No snapshots, LVM version:"
-msgstr "Không có bản chụp, LVM phiên bản:"
-
-#: ../yumcommands.py:4313
-#, python-format
-msgid "Have %u snapshots, using %s space, from %u origins."
-msgstr "Có %u bản chụp, dùng %s đĩa, từ %u gốc."
-
-#: ../yumcommands.py:4327
-msgid ""
-"Acts on the filesystem data of the host, mainly for removing docs/lanuages "
-"for minimal hosts."
-msgstr ""
-"Thực hiện trên dữ liệu hệ thống tập tin của máy chủ, chính là để gõ bỏ phần "
-"tài liệu và ngôn ngữ để tối giản cho máy chủ."
-
-#: ../yumcommands.py:4495
-msgid "No such file or directory: "
-msgstr "Không có tập tin hoặc thư mục như vậy:"
-
-#: ../yumcommands.py:4545
-msgid " Ghost pkgs size :"
-msgstr " Cỡ pkgs Ma :"
-
-#: ../yumcommands.py:4547
-msgid " Not pkgs size :"
-msgstr " Cỡ pkgs Không:"
-
-#: ../yumcommands.py:4549
-msgid " Miss pkgs size :"
-msgstr " Cỡ pkgs Thiếu:"
-
-#: ../yumcommands.py:4551
-msgid " Mod. pkgs size :"
-msgstr " Cỡ gói sửa:"
-
-#: ../yumcommands.py:4560
-msgid "       Data size :"
-msgstr " Kích cỡ dữ liệu:"
-
-#: ../yumcommands.py:4564
-msgid "Pkgs       :"
-msgstr "Pkgs       :"
-
-#: ../yumcommands.py:4565
-msgid "Ghost Pkgs :"
-msgstr "Pkgs Ma :"
-
-#: ../yumcommands.py:4566
-msgid "Not Pkgs   :"
-msgstr "Pkgs Không:"
-
-#: ../yumcommands.py:4567
-msgid "Miss. Pkgs :"
-msgstr "Pkgs Thiếu:"
-
-#: ../yumcommands.py:4568
-msgid "Mod. Pkgs  :"
-msgstr "Gói sửa    : %s"
-
-#: ../yumcommands.py:4578 ../yumcommands.py:4618
-#, python-format
-msgid "%*d. %60s %-5s"
-msgstr "%*d. %60s %-5s"
-
-#: ../yumcommands.py:4584 ../yumcommands.py:4599
-#, python-format
-msgid "Top %d packages:"
-msgstr "Top %d gói:"
-
-#: ../yumcommands.py:4585
-#, python-format
-msgid "Top %d ghost packages:"
-msgstr "Top %d gói ma:"
-
-#: ../yumcommands.py:4586
-#, python-format
-msgid "Top %d not. packages:"
-msgstr "Top %d không gói:"
-
-#: ../yumcommands.py:4587
-#, python-format
-msgid "Top %d miss packages:"
-msgstr "Top %d gói thiếu:"
-
-#: ../yumcommands.py:4588
-#, python-format
-msgid "Top %d mod. packages:"
-msgstr "Top %d gói sửa:"
-
-#: ../yumcommands.py:4589
-#, python-format
-msgid "Top %d prefix packages:"
-msgstr "Top %d gói tiền tố:"
-
-#: ../yumcommands.py:4611
-#, python-format
-msgid "Top %d non-package files:"
-msgstr "Top %d tập tin không phải gói:"
-
-#: ../yumcommands.py:4649
-msgid "File system filters:"
-msgstr "Các bộ lọc hệ thống tập tin:"
-
-#: ../yumcommands.py:4650
-msgid "  Nodocs:"
-msgstr " Không tài liệu:"
-
-#: ../yumcommands.py:4651
-msgid "  Languages:"
-msgstr " Ngôn ngữ:"
-
-#: ../yumcommands.py:4658
-msgid "Already enabled documentation filter."
-msgstr "Đã bật sẵn bộ lọc tài liệu."
-
-#: ../yumcommands.py:4660
-msgid "Already disabled documentation filter."
-msgstr "Đã tắt sẵn bộ lọc tài liệu."
-
-#: ../yumcommands.py:4664
-msgid "Enabling documentation filter."
-msgstr "Bật bộ lọc tài liệu."
-
-#: ../yumcommands.py:4666
-msgid "Disabling documentation filter."
-msgstr "Tắt bộ lọc tài liệu."
-
-#: ../yumcommands.py:4687
-#, python-format
-msgid "Already filtering languages to: %s"
-msgstr "Đã sẵn lọc dữ liệu thành: %s"
-
-#: ../yumcommands.py:4689
-msgid "Already disabled language filter."
-msgstr "Các bộ lọc ngôn ngữ sẵn bị tắt."
-
-#: ../yumcommands.py:4693
-#, python-format
-msgid "Setting language filter to: %s"
-msgstr "Đang đặt lọc ngôn ngữ thành: %s"
-
-#: ../yumcommands.py:4695
-msgid "Disabling language filter."
-msgstr "Tắt bộ lọc ngôn ngữ."
-
-#: ../yumcommands.py:4702
-msgid "Not a valid sub-command of fs filter"
-msgstr "Không phải là lệnh con hợp lệ cho bộ lọc fs"
-
-#: ../yumcommands.py:4733
-#, python-format
-msgid "No valid packages: %s"
-msgstr "Không phải là gói hợp lệ : %s"
-
-#: ../yumcommands.py:4745
-msgid "Removing:"
-msgstr "Đang gỡ bỏ:"
-
-#: ../yumcommands.py:4764 ../yumcommands.py:4853
-msgid "Not installed:"
-msgstr "Chưa cài đặt:"
-
-#: ../yumcommands.py:4779 ../yumcommands.py:4859
-msgid "Not packaged?:"
-msgstr "Chưa được đóng gói?:"
-
-#: ../yumcommands.py:4782
-msgid "Can't find diff command"
-msgstr "Không thể tìm thấy lệnh diff"
-
-#: ../yumcommands.py:4785
-msgid "Can't find cpio command"
-msgstr "Không thể tìm thấy lệnh cpio"
-
-#: ../yumcommands.py:4787
-msgid "Can't find rpm2cpio command"
-msgstr "Không thể tìm thấy lệnh rpm2cpio"
-
-#: ../yumcommands.py:4821
-#, python-format
-msgid "Can't find package: %s"
-msgstr "Không thể tìm thấy gói: %s"
-
-#: ../yumcommands.py:4857
-msgid "Modified:"
-msgstr "Đã sửa:"
-
-#: ../yummain.py:76
-#, python-format
-msgid ""
-" One of the configured repositories failed (%(repo)s),\n"
-" and yum doesn't have enough cached data to continue. At this point the "
-"only\n"
-" safe thing yum can do is fail. There are a few ways to work \"fix\" this:\n"
-"\n"
-"     1. Contact the upstream for the repository and get them to fix the "
-"problem.\n"
-"\n"
-"     2. Reconfigure the baseurl/etc. for the repository, to point to a "
-"working\n"
-"        upstream. This is most often useful if you are using a newer\n"
-"        distribution release than is supported by the repository (and the\n"
-"        packages for the previous distribution release still work).\n"
-"\n"
-"     3. Disable the repository, so yum won't use it by default. Yum will "
-"then\n"
-"        just ignore the repository until you permanently enable it again or "
-"use\n"
-"        --enablerepo for temporary usage:\n"
-"\n"
-"            yum-config-manager --disable %(repoid)s\n"
-"\n"
-"     4. Configure the failing repository to be skipped, if it is "
-"unavailable.\n"
-"        Note that yum will try to contact the repo. when it runs most "
-"commands,\n"
-"        so will have to try and fail each time (and thus. yum will be be "
-"much\n"
-"        slower). If it is a very temporary problem though, this is often a "
-"nice\n"
-"        compromise:\n"
-"\n"
-"            yum-config-manager --save --setopt=%(repoid)s."
-"skip_if_unavailable=true\n"
-msgstr ""
-" Một trong số những kho đã cấu hình bị lỗi (%(repo)s),\n"
-" và yum không đủ dữ liệu nhớ tạm để tiếp tục. Đến thời điểm này\n"
-" thứ yum có thể làm được là lỗi. Có một số cách để sửa nó:\n"
-"\n"
-"     1. Liên hệ với kho thượng nguồn và nhờ họ sửa chữa.\n"
-"\n"
-"     2. Cấu hình lại baseurl v.v.. cho kho, và for the repository, chỉ tới "
-"thượng\n"
-"        nguồn làm việc. Cái này phần lớn là hữu dùng nếu bạn dùng một\n"
-"        bản phân phối phát hành mới hơn là được hỗ trợ bởi kho (và các\n"
-"        gói cho bản phân phối phát hành trước đây vẫn hoạt động).\n"
-"\n"
-"     3. Tắt kho đi, và yum sẽ không dùng nó theo mặc định. Yum sau đó sẽ\n"
-"        chỉ lờ kho đi cho đến khi bạn bật nó trở lại hoặc dùng\n"
-"        --enablerepo cho mục đích tạm thời:\n"
-"\n"
-"            yum-config-manager --disable %(repoid)s\n"
-"\n"
-"     4. Cấu hình kho lỗi sẽ bị bỏ qua, nếu có thể được.\n"
-"        Chú ý là yum sẽ cố liên hệ với kho. Khi nó chạy phần lớn lệnh,\n"
-"        thế thì sẽ phải cố thử và lỗi từng lần (và do đó yum sẽ trở nên "
-"chậm\n"
-"        dần). Nếu nó đủ phần nhớ tạm, lệnh sau thường là sự thỏa hiệp\n"
-"        tốt:\n"
-"\n"
-"            yum-config-manager --save --setopt=%(repoid)s."
-"skip_if_unavailable=true\n"
-
-#: ../yummain.py:104
-msgid "<repoid>"
-msgstr "<repoid>"
-
 #. This is mainly for PackageSackError from rpmdb.
-#: ../yummain.py:129
+#: ../yummain.py:84
 #, python-format
 msgid " Yum checks failed: %s"
 msgstr " Gặp lỗi khi yum kiểm tra: %s"
 
-#: ../yummain.py:143
+#: ../yummain.py:98
 msgid "No read/execute access in current directory, moving to /"
 msgstr "Không có quyền đọc/thực thi trong thư mục hiện tại, di chuyển vào /"
 
-#: ../yummain.py:151
+#: ../yummain.py:106
 msgid "No getcwd() access in current directory, moving to /"
 msgstr "Không có quyền đgetcwd() trong thư mục hiện tại, di chuyển vào /"
 
 #. Depsolve stage
-#: ../yummain.py:214
+#: ../yummain.py:169
 msgid "Resolving Dependencies"
 msgstr "Đang phân giải các gói phụ thuộc"
 
-#: ../yummain.py:281 ../yummain.py:289
+#: ../yummain.py:242 ../yummain.py:250
 #, python-format
 msgid ""
 "Your transaction was saved, rerun it with:\n"
 " yum load-transaction %s"
-msgstr ""
-"Giao dịch của bạn đã được ghi lại, chạy lại bằng lệnh:\n"
-" yum load-transaction %s"
+msgstr "Giao dịch của bạn đã được ghi lại, chạy lại bằng lệnh:\n yum load-transaction %s"
 
-#: ../yummain.py:366
+#: ../yummain.py:327
 msgid ""
 "\n"
 "\n"
 "Exiting on user cancel."
-msgstr ""
-"\n"
-"\n"
-"Thoát ra do người dùng hủy bỏ thao tác."
+msgstr "\n\nThoát ra do người dùng hủy bỏ thao tác."
 
 #: ../yum/depsolve.py:127
 msgid "doTsSetup() will go away in a future version of Yum.\n"
@@ -2790,402 +2264,371 @@ msgstr "doTsSetup() sẽ ra đi trong phiên bản tương lai của Yum.\n"
 msgid "Setting up TransactionSets before config class is up"
 msgstr "Đang cài đặt TransactionSets trước khi lớp cấu hình tới"
 
-#: ../yum/depsolve.py:207
+#: ../yum/depsolve.py:200
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "tsflag không hợp lệ trong tập tin cấu hình: %s"
 
-#: ../yum/depsolve.py:229
+#: ../yum/depsolve.py:218
 #, python-format
 msgid "Searching pkgSack for dep: %s"
 msgstr "Đang tìm kiếm pkgSack dành cho phần phụ thuộc: %s"
 
-#: ../yum/depsolve.py:280
+#: ../yum/depsolve.py:269
 #, python-format
 msgid "Member: %s"
 msgstr "Thành viên: %s"
 
-#: ../yum/depsolve.py:294 ../yum/depsolve.py:954
+#: ../yum/depsolve.py:283 ../yum/depsolve.py:945
 #, python-format
 msgid "%s converted to install"
 msgstr "%s được chuyển đổi để cài đặt"
 
-#: ../yum/depsolve.py:306
+#: ../yum/depsolve.py:295
 #, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "Thêm Gói %s trong chế độ %s"
 
-#: ../yum/depsolve.py:322
+#: ../yum/depsolve.py:311
 #, python-format
 msgid "Removing Package %s"
 msgstr "Đang gỡ bỏ gói %s"
 
-#: ../yum/depsolve.py:344
+#: ../yum/depsolve.py:333
 #, python-format
 msgid "%s requires: %s"
 msgstr "%s yêu cầu: %s"
 
-#: ../yum/depsolve.py:385
+#: ../yum/depsolve.py:374
 #, python-format
 msgid "%s requires %s"
 msgstr "%s yêu cầu %s"
 
-#: ../yum/depsolve.py:412
+#: ../yum/depsolve.py:401
 msgid "Needed Require has already been looked up, cheating"
 msgstr "Yêu cầu cần đã được tìm thấy, lừa đảo"
 
-#: ../yum/depsolve.py:422
+#: ../yum/depsolve.py:411
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "Yêu cầu cần không phải là tên gói. Tìm kiếm: %s"
 
-#: ../yum/depsolve.py:430
+#: ../yum/depsolve.py:419
 #, python-format
 msgid "Potential Provider: %s"
 msgstr "Nhà cung tiềm năng: %s"
 
-#: ../yum/depsolve.py:453
+#: ../yum/depsolve.py:442
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "Chế độ là %s cho người cung cấp %s: %s"
 
-#: ../yum/depsolve.py:457
+#: ../yum/depsolve.py:446
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "Chế độ cho pkg cung cấp %s: %s"
 
 #. the thing it needs is being updated or obsoleted away
-#. try to update the requiring package in hopes that all this problem goes away :(
-#: ../yum/depsolve.py:462 ../yum/depsolve.py:497
+#. try to update the requiring package in hopes that all this problem goes
+#. away :(
+#: ../yum/depsolve.py:451 ../yum/depsolve.py:486
 #, python-format
 msgid "Trying to update %s to resolve dep"
 msgstr "Thử cập nhật %s để giải quyết quan hệ phụ thuộc"
 
-#: ../yum/depsolve.py:491
+#: ../yum/depsolve.py:480
 #, python-format
 msgid "No update paths found for %s. Failure!"
 msgstr "Không tìm thấy đường dẫn cập nhật cho %s. Lỗi!"
 
-#: ../yum/depsolve.py:502
+#: ../yum/depsolve.py:491
 #, python-format
 msgid "No update paths found for %s. Failure due to requirement: %s!"
 msgstr "Không tìm thấy đường dẫn cập nhật cho %s. Lỗi bởi vì yêu cần: %s!"
 
-#: ../yum/depsolve.py:518
+#: ../yum/depsolve.py:507
 #, python-format
 msgid "Update for %s. Doesn't fix requirement: %s!"
 msgstr "Cập nhật cho %s. Không thể sửa các yêu cầu: %s!"
 
-#: ../yum/depsolve.py:525
+#: ../yum/depsolve.py:514
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr "TSINFO: gói %s yêu cầu đánh dấu %s là tẩy"
 
-#: ../yum/depsolve.py:538
+#: ../yum/depsolve.py:527
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr "TSINFO: Đang dùng gói cũ %s với %s để mà giải quyết quan hệ phụ thuộc."
 
-#: ../yum/depsolve.py:541
+#: ../yum/depsolve.py:530
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: Đang cập nhật %s để giải quyết quan hệ phụ thuộc."
 
-#: ../yum/depsolve.py:549
+#: ../yum/depsolve.py:538
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "Không thể tìm thấy đường dẫn cập nhật cho phụ thuộc cho: %s"
 
-#: ../yum/depsolve.py:580
+#: ../yum/depsolve.py:569
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "Tìm nhanh %s để yêu cầu cho %s"
 
 #. is it already installed?
-#: ../yum/depsolve.py:622
+#: ../yum/depsolve.py:611
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr "%s là để cung cấp các gói, nhưng mà nó đã được cài đặt rồi, bỏ đi."
 
-#: ../yum/depsolve.py:638
+#: ../yum/depsolve.py:627
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr "Có khả năng phân giải gói %s có minh dụ mới hơn trong ts."
 
-#: ../yum/depsolve.py:649
+#: ../yum/depsolve.py:638
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr "Có khả năng phân giải gói %s có minh dụ mới hơn đã cài."
 
-#: ../yum/depsolve.py:667
+#: ../yum/depsolve.py:656
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "%s đã sẵn trong ts, nên bỏ qua cái này"
 
-#: ../yum/depsolve.py:716
+#: ../yum/depsolve.py:705
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: Đánh dấu %s là cập nhật cho %s"
 
-#: ../yum/depsolve.py:728
+#: ../yum/depsolve.py:714
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: Đánh dấu %s là cài đặt cho %s"
 
-#: ../yum/depsolve.py:878 ../yum/depsolve.py:984
+#: ../yum/depsolve.py:849 ../yum/depsolve.py:975
 msgid "Success - empty transaction"
 msgstr "Thành công - giao dịch trống rỗng"
 
-#: ../yum/depsolve.py:897
-msgid "Depsolving loop limit reached."
-msgstr "Đã đạt đến ngưỡng giới hạn việc lặp phân giải phần phụ thuộc"
-
-#: ../yum/depsolve.py:922 ../yum/depsolve.py:944
+#: ../yum/depsolve.py:889 ../yum/depsolve.py:935
 msgid "Restarting Loop"
 msgstr "Đang khởi động lại vòng Lặp"
 
-#: ../yum/depsolve.py:964
-msgid "Dependency Process ending"
-msgstr "Kết thúc Xử lý phần phụ thuộc"
-
-#: ../yum/depsolve.py:986
-msgid "Success - deps resolved"
-msgstr "Thành công - đã giải quyết các thành phần phụ thuộc"
-
-#: ../yum/depsolve.py:1010
-#, python-format
-msgid "Checking deps for %s"
-msgstr "Đang kiểm tra phụ thuộc cho %s"
-
-#: ../yum/depsolve.py:1099
-#, python-format
-msgid "looking for %s as a requirement of %s"
-msgstr "đang tìm %s như theo yêu cầu của %s"
-
-#: ../yum/depsolve.py:1371
-#, python-format
-msgid "Removing %s due to obsoletes from installed %s"
-msgstr "Đang gỡ bỏ %s nó đã lạc hậu do  %s đã cài"
-
-#: ../yum/depsolve.py:1395
+#. No callback?
+#: ../yum/depsolve.py:922
 #, python-format
 msgid "Removing %s due to obsoletes from %s"
 msgstr "Đang gỡ bỏ %s vì cũ so với %s"
 
-#: ../yum/depsolve.py:1429
+#: ../yum/depsolve.py:955
+msgid "Dependency Process ending"
+msgstr "Kết thúc Xử lý phần phụ thuộc"
+
+#: ../yum/depsolve.py:977
+msgid "Success - deps resolved"
+msgstr "Thành công - đã giải quyết các thành phần phụ thuộc"
+
+#: ../yum/depsolve.py:1001
+#, python-format
+msgid "Checking deps for %s"
+msgstr "Đang kiểm tra phụ thuộc cho %s"
+
+#: ../yum/depsolve.py:1090
+#, python-format
+msgid "looking for %s as a requirement of %s"
+msgstr "đang tìm %s như theo yêu cầu của %s"
+
+#: ../yum/depsolve.py:1357
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "Đang chạy compare_providers() cho %s"
 
-#: ../yum/depsolve.py:1456 ../yum/depsolve.py:1462
+#: ../yum/depsolve.py:1384 ../yum/depsolve.py:1390
 #, python-format
 msgid "better arch in po %s"
 msgstr "kiến trúc tốt hơn trong po %s"
 
-#: ../yum/depsolve.py:1576
+#: ../yum/depsolve.py:1504
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "%s cũ %s"
 
-#: ../yum/depsolve.py:1588
+#: ../yum/depsolve.py:1516
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
 "  Winner: %s"
-msgstr ""
-"archdist đã so sánh %s với %s trên %s\n"
-"  Chiến thắng: %s"
+msgstr "archdist đã so sánh %s với %s trên %s\n  Chiến thắng: %s"
 
-#: ../yum/depsolve.py:1596
+#: ../yum/depsolve.py:1524
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "sourcerpm chung %s và %s"
 
-#: ../yum/depsolve.py:1600
+#: ../yum/depsolve.py:1528
 #, python-format
 msgid "base package %s is installed for %s"
 msgstr "gói cơ bản %s được cài đặt cho %s"
 
-#: ../yum/depsolve.py:1606
+#: ../yum/depsolve.py:1534
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "tiền tố chung của %s giữa %s và %s"
 
-#: ../yum/depsolve.py:1623
+#: ../yum/depsolve.py:1551
 #, python-format
 msgid "provides vercmp: %s"
 msgstr "cung cấp vercmp: %s"
 
-#: ../yum/depsolve.py:1630 ../yum/depsolve.py:1664
+#: ../yum/depsolve.py:1555 ../yum/depsolve.py:1589
 #, python-format
 msgid " Winner: %s"
 msgstr " Thắng: %s"
 
-#: ../yum/depsolve.py:1660
+#: ../yum/depsolve.py:1585
 #, python-format
 msgid "requires minimal: %d"
 msgstr "yêu cầu tối thiểu: %d"
 
-#: ../yum/depsolve.py:1669
+#: ../yum/depsolve.py:1594
 #, python-format
 msgid " Loser(with %d): %s"
 msgstr " Thua(với %d): %s"
 
-#: ../yum/depsolve.py:1685
+#: ../yum/depsolve.py:1610
 #, python-format
 msgid "Best Order: %s"
 msgstr "Thứ tự tốt nhất: %s"
 
-#: ../yum/__init__.py:282
+#: ../yum/__init__.py:275
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr "doConfigSetup() sẽ ra đi trong phiên bản tương lai của Yum.\n"
 
-#: ../yum/__init__.py:570
+#: ../yum/__init__.py:554
 #, python-format
 msgid "Skipping unreadable repository %s"
 msgstr "Bỏ qua kho không thể đọc được %s"
 
-#: ../yum/__init__.py:589
+#: ../yum/__init__.py:573
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
 msgstr "Kho %r: Lỗi phân tích cấu hình: %s"
 
-#: ../yum/__init__.py:595
+#: ../yum/__init__.py:579
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr "Kho %r thiếu tên trong cấu hình, đang dùng mã số"
 
-#: ../yum/__init__.py:635
+#: ../yum/__init__.py:619
 msgid "plugins already initialised"
 msgstr "các phần bổ xung đã được khởi tạo rồi"
 
-#: ../yum/__init__.py:644
+#: ../yum/__init__.py:628
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr "doRpmDBSetup() sẽ ra đi trong phiên bản kế của Yum.\n"
 
-#: ../yum/__init__.py:655
+#: ../yum/__init__.py:639
 msgid "Reading Local RPMDB"
 msgstr "Đang đọc cơ sở dữ liệu rpm nội bộ"
 
-#: ../yum/__init__.py:686
+#: ../yum/__init__.py:669
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "doRepoSetup() sẽ bị bỏ đi trong phiên bản tương lai của Yum.\n"
 
-#: ../yum/__init__.py:746
+#: ../yum/__init__.py:723
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "doSackSetup() sẽ bị bỏ đi trong phiên bản tương lai của Yum.\n"
 
-#: ../yum/__init__.py:776
+#: ../yum/__init__.py:753
 msgid "Setting up Package Sacks"
 msgstr "Đang cài đặt Sack gói"
 
-#: ../yum/__init__.py:821
+#: ../yum/__init__.py:798
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "đối tượng repo cho repo %s thiếu phương thức _resetSack\n"
 
-#: ../yum/__init__.py:822
+#: ../yum/__init__.py:799
 msgid "therefore this repo cannot be reset.\n"
 msgstr "bởi vậy kho này không thể bị đặt lại.\n"
 
-#: ../yum/__init__.py:830
+#: ../yum/__init__.py:807
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "doUpdateSetup() sẽ ra đi trong phiên bản kế của Yum.\n"
 
-#: ../yum/__init__.py:842
+#: ../yum/__init__.py:819
 msgid "Building updates object"
 msgstr "Đang xây dựng các cập nhật"
 
-#: ../yum/__init__.py:886
+#: ../yum/__init__.py:863
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "doGroupSetup() sẽ ra đi trong phiên bản kế của Yum.\n"
 
-#: ../yum/__init__.py:916
+#: ../yum/__init__.py:888
 msgid "Getting group metadata"
 msgstr "Đang lấy siêu dữ liệu nhóm"
 
-#: ../yum/__init__.py:959
+#: ../yum/__init__.py:916
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "Đang thêm tập tin nhóm từ kho: %s"
 
-#: ../yum/__init__.py:962
+#: ../yum/__init__.py:919
 #, python-format
 msgid "Failed to retrieve group file for repository: %s"
 msgstr "Gặp lỗi khi lấy tập tin nhóm cho kho: %s"
 
-#: ../yum/__init__.py:968
+#: ../yum/__init__.py:925
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Gặp lỗi khi thêm tập tin nhóm cho kho: %s - %s"
 
-#: ../yum/__init__.py:974
+#: ../yum/__init__.py:931
 msgid "No Groups Available in any repository"
 msgstr "Chẳng có nhóm nào sẵn có trong mọi kho"
 
-#: ../yum/__init__.py:989
+#: ../yum/__init__.py:946
 msgid "Getting pkgtags metadata"
 msgstr "Đang lấy pkgtags metadata"
 
-#: ../yum/__init__.py:999
+#: ../yum/__init__.py:956
 #, python-format
 msgid "Adding tags from repository: %s"
 msgstr "Thêm các thẻ từ kho: %s"
 
-#: ../yum/__init__.py:1010
+#: ../yum/__init__.py:967
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
 msgstr "Gặp lỗi khi thêm Thẻ Pkg cho kho: %s - %s"
 
-#: ../yum/__init__.py:1024
-msgid "Getting updateinfo metadata"
-msgstr "Đang lấy siêu dữ liệu thông tin cập nhật"
-
-#: ../yum/__init__.py:1037
-#, python-format
-msgid "Adding Update Info from repository: %s"
-msgstr "Thêm thông tin cập nhật từ kho: %s"
-
-#: ../yum/__init__.py:1042
-#, python-format
-msgid "Failed to add Update Info for repository: %s - %s"
-msgstr "Gặp lỗi khi thêm thông tin cập nhật cho kho: %s - %s"
-
-#: ../yum/__init__.py:1153
+#: ../yum/__init__.py:1060
 msgid "Importing additional filelist information"
 msgstr "Đang nhập thông tin danh sách tập tin phụ thêm"
 
-#: ../yum/__init__.py:1167
+#: ../yum/__init__.py:1078
 #, python-format
-msgid "The program %s is found in the yum-utils package."
-msgstr "Chương trình %s được tìm thấy trong gói yum-utils."
+msgid "The program %s%s%s is found in the yum-utils package."
+msgstr ""
 
-#: ../yum/__init__.py:1183
+#: ../yum/__init__.py:1095
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
-"complete-transaction, or \"yum-complete-transaction --cleanup-only\" and "
-"\"yum history redo last\", first to finish them. If those don't work you'll "
-"have to try removing/installing packages by hand (maybe package-cleanup can "
-"help)."
+"complete-transaction first to finish them."
 msgstr ""
-"Có giao dịch chư hoàn tất còn lại. Bạn có lẽ nên cân nhắc chạy yum-complete-"
-"transaction, hay \"yum-complete-transaction --cleanup-only\" và \"yum "
-"history redo last\", trước để hoàn tất chúng. Nếu nó không làm việc bạn sẽ "
-"phải thử gỡ bỏ hoặc cài đặt các gói bằng tay (có lẽ lệnh package-cleanup sẽ "
-"giúp được bạn)"
 
-#: ../yum/__init__.py:1204
+#: ../yum/__init__.py:1112
 msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Đang tìm các phần phụ thuộc không cần còn lại"
 
-#: ../yum/__init__.py:1262
+#: ../yum/__init__.py:1170
 #, python-format
 msgid "Protected multilib versions: %s != %s"
 msgstr "Phiên bản đa thư viện có bảo vệ: %s != %s"
 
 #. People are confused about protected mutilib ... so give
 #. them a nicer message.
-#: ../yum/__init__.py:1266
+#: ../yum/__init__.py:1174
 #, python-format
 msgid ""
 " Multilib version problems found. This often means that the root\n"
@@ -3215,106 +2658,64 @@ msgid ""
 "do as something else is very likely to go wrong (often causing\n"
 "much more problems).\n"
 "\n"
-msgstr ""
-" Đã gặp vấn đề đa phiên bản thư viện. Điều này thường có nghĩa là nguyên\n"
-"nhân gốc là một cái gì đó khác, và việc kiểm tra đa phiên bản thư viện chỉ\n"
-"ra rằng đó là một trục trặc. Ví dụ:\n"
-"\n"
-"  1. Bạn nâng cấp cho %(name)s cái mà thiếu một số phần\n"
-"     phụ thuộc, cái mà yêu cầu gói khác. Yum thì cố giải quyết\n"
-"     đều này bằng cách cài các phiên bản cũ của %(name)s của\n"
-"     một kiến trúc khác. Nếu bạn lại trừ kiến trúc sai\n"
-"     yum sẽ nói với bạn nguyên nhân gốc là gì (gói nào\n"
-"     yêu cầu cái gì). Bạn có thể thử thực hiện lại việc nâng cấp với\n"
-"     --exclude %(name)s.otherarch ... nó cố thể đưa ra cho bạn một thông "
-"báo\n"
-"     lỗi hiển thị nguyên nhân gốc của vấn đề.\n"
-"\n"
-"  2. Bạn có %(name)s đa kiến trúc đã cài đặt, nhưng\n"
-"     yum chỉ có thể thấy một nâng cấp trong số những kiến trúc đó.\n"
-"     Nếu bạn không muốn hay cần cả các kiến trúc đó nữa thì bạn\n"
-"     có thể gỡ bỏ đi một cái thiếu cập nhật và mọi thứ\n"
-"     sẽ lại hoạt động.\n"
-"\n"
-"  3. Bạn có các phiên bản cài đặt trùng lặp của %(name)s.\n"
-"     Bạn có thể dùng \"yum check\" để yum hiển thị các lỗi.\n"
-"\n"
-"...bạn còn có thể dùng --setopt=protected_multilib=false để gỡ bỏ\n"
-"kiểm tra này, tuy nhiên điều đó phần lớn là không đúng đắn\n"
-"vì nó làm cho các thứ khác trở thành lỗi (thường là nguyên\n"
-"nhân dẫn đến trục trặc hơn nữa).\n"
-"\n"
+msgstr " Đã gặp vấn đề đa phiên bản thư viện. Điều này thường có nghĩa là nguyên\nnhân gốc là một cái gì đó khác, và việc kiểm tra đa phiên bản thư viện chỉ\nra rằng đó là một trục trặc. Ví dụ:\n\n  1. Bạn nâng cấp cho %(name)s cái mà thiếu một số phần\n     phụ thuộc, cái mà yêu cầu gói khác. Yum thì cố giải quyết\n     đều này bằng cách cài các phiên bản cũ của %(name)s của\n     một kiến trúc khác. Nếu bạn lại trừ kiến trúc sai\n     yum sẽ nói với bạn nguyên nhân gốc là gì (gói nào\n     yêu cầu cái gì). Bạn có thể thử thực hiện lại việc nâng cấp với\n     --exclude %(name)s.otherarch ... nó cố thể đưa ra cho bạn một thông báo\n     lỗi hiển thị nguyên nhân gốc của vấn đề.\n\n  2. Bạn có %(name)s đa kiến trúc đã cài đặt, nhưng\n     yum chỉ có thể thấy một nâng cấp trong số những kiến trúc đó.\n     Nếu bạn không muốn hay cần cả các kiến trúc đó nữa thì bạn\n     có thể gỡ bỏ đi một cái thiếu cập nhật và mọi thứ\n     sẽ lại hoạt động.\n\n  3. Bạn có các phiên bản cài đặt trùng lặp của %(name)s.\n     Bạn có thể dùng \"yum check\" để yum hiển thị các lỗi.\n\n...bạn còn có thể dùng --setopt=protected_multilib=false để gỡ bỏ\nkiểm tra này, tuy nhiên điều đó phần lớn là không đúng đắn\nvì nó làm cho các thứ khác trở thành lỗi (thường là nguyên\nnhân dẫn đến trục trặc hơn nữa).\n\n"
 
-#: ../yum/__init__.py:1350
+#: ../yum/__init__.py:1258
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
 msgstr "Thử gỡ bỏ “%s”, cái mà được bảo vệ"
 
-#: ../yum/__init__.py:1471
+#: ../yum/__init__.py:1379
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
-msgstr ""
-"\n"
-"Các gói bị bỏ qua bởi vì gặp trục trặc trong quan hệ phụ thuộc:"
+msgstr "\nCác gói bị bỏ qua bởi vì gặp trục trặc trong quan hệ phụ thuộc:"
 
-#: ../yum/__init__.py:1475
+#: ../yum/__init__.py:1383
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s từ %s"
 
 #. FIXME: _N()
-#: ../yum/__init__.py:1657
+#: ../yum/__init__.py:1565
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
-msgstr ""
-"** Tìm thấy %d trục trặc đã xảy ra trước đó với rpmdb, “yum check” đã đưa ra "
-"những thông tin sau:"
+msgstr "** Tìm thấy %d trục trặc đã xảy ra trước đó với rpmdb, “yum check” đã đưa ra những thông tin sau:"
 
-#: ../yum/__init__.py:1661
+#: ../yum/__init__.py:1569
 msgid "Warning: RPMDB altered outside of yum."
 msgstr "Cảnh báo: RPMDB được cảnh báo ở ngoài yum."
 
-#: ../yum/__init__.py:1673
+#: ../yum/__init__.py:1581
 msgid "missing requires"
 msgstr "thiếu yêu cầu"
 
-#: ../yum/__init__.py:1674
+#: ../yum/__init__.py:1582
 msgid "installed conflict"
 msgstr "xung đột đã cài"
 
-#: ../yum/__init__.py:1753
-msgid "Not enough space to create pre. FS snapshot, aborting transaction."
-msgstr "Không đủ chỗ trống để tạo pre. Chụp FS, đang bỏ qua giao dịch."
-
-#: ../yum/__init__.py:1843
+#: ../yum/__init__.py:1718
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr ""
-"Cảnh báo: scriptlet hoặc lỗi không nghiêm trọng khác đã xảy ra trong quá "
-"trình giao dịch."
+msgstr "Cảnh báo: scriptlet hoặc lỗi không nghiêm trọng khác đã xảy ra trong quá trình giao dịch."
 
-#: ../yum/__init__.py:1853
+#: ../yum/__init__.py:1728
 msgid "Transaction couldn't start:"
 msgstr "Giao dịch không thể khởi chạy:"
 
 #. should this be 'to_unicoded'?
-#: ../yum/__init__.py:1856
+#: ../yum/__init__.py:1731
 msgid "Could not run transaction."
 msgstr "Không thể chạy giao dịch."
 
-#: ../yum/__init__.py:1869
+#: ../yum/__init__.py:1745
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Gặp lỗi khi gỡ bỏ tập tin giao dịch %s"
 
-#: ../yum/__init__.py:1893
-msgid "Not enough space to create post trans FS snapshot."
-msgstr "Không đủ chỗ trống để tạo trước bản chụp “trans FS”."
-
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1943
+#: ../yum/__init__.py:1801
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s được coi là đã cài đặt nhưng không phải vậy!"
@@ -3324,520 +2725,506 @@ msgstr "%s được coi là đã cài đặt nhưng không phải vậy!"
 #. Note: This actually triggers atm. because we can't
 #. always find the erased txmbr to set it when
 #. we should.
-#: ../yum/__init__.py:2038
+#: ../yum/__init__.py:1882
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s được coi là đã được gỡ bỏ nhưng không phải vậy!"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:2181
+#: ../yum/__init__.py:2017
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "Đã có khóa %s: bản sao khác đã chạy với mã số tiến trình %s."
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:2242
+#: ../yum/__init__.py:2066
 #, python-format
 msgid "Could not create lock at %s: %s "
 msgstr "Không thể tạo khóa tại %s: %s "
 
-#: ../yum/__init__.py:2254
+#: ../yum/__init__.py:2078
 #, python-format
 msgid "Could not open lock %s: %s"
 msgstr "Không thể mở khóa %s: %s"
 
 #. The pid doesn't exist
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:2271
+#: ../yum/__init__.py:2095
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "Không thể kiểm tra nếu PID của %s đang hoạt động"
 
-#: ../yum/__init__.py:2321
+#: ../yum/__init__.py:2145
 #, python-format
 msgid ""
-"Package does not match intended download. Suggestion: run yum --enablerepo="
-"%s clean metadata"
-msgstr ""
-"Gói không khớp với cái cần tải về. Gợi ý là chạy lệnh “yum --enablerepo=%s "
-"clean metadata”"
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
+msgstr "Gói không khớp với cái cần tải về. Gợi ý là chạy lệnh “yum --enablerepo=%s clean metadata”"
 
-#: ../yum/__init__.py:2344
+#: ../yum/__init__.py:2168
 msgid "Could not perform checksum"
 msgstr "Không thể thực hiện tổng kiểm tra"
 
-#: ../yum/__init__.py:2347
+#: ../yum/__init__.py:2171
 msgid "Package does not match checksum"
 msgstr "Gói không khớp mã tổng kiểm tra"
 
 #. This is definitely a depsolver bug.  Make it fatal?
-#: ../yum/__init__.py:2408
+#: ../yum/__init__.py:2230
 #, python-format
 msgid "ignoring a dupe of %s"
 msgstr "bỏ qua bản sự trùng lặp của %s"
 
-#: ../yum/__init__.py:2416
+#: ../yum/__init__.py:2235
 #, python-format
 msgid "using local copy of %s"
 msgstr "đang dùng bản sao nội bộ của %s"
 
-#: ../yum/__init__.py:2419
+#: ../yum/__init__.py:2238
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr "tổng kiểm gói không đạt nhưng mà bộ nhớ tạm được bật cho %s"
 
-#: ../yum/__init__.py:2454
+#: ../yum/__init__.py:2274
 #, python-format
 msgid "Delta RPMs reduced %s of updates to %s (%d%% saved)"
 msgstr "Delta RPMs giảm %s cập nhật xuống thành %s (%d%% được ghi lại)"
 
-#: ../yum/__init__.py:2574
+#: ../yum/__init__.py:2375
 msgid "Some delta RPMs failed to download or rebuild. Retrying.."
-msgstr ""
-"Một số RPMs delta gặp lỗi khi tải về hay biên dịch lại. Đang thử lại..."
+msgstr "Một số RPMs delta gặp lỗi khi tải về hay biên dịch lại. Đang thử lại..."
 
 #. caller handles errors
-#: ../yum/__init__.py:2587
-msgid "exiting because \"Download Only\" specified"
-msgstr "thoát ra bởi vì đã chỉ định \"chỉ tải về\""
+#: ../yum/__init__.py:2386
+msgid "exiting because --downloadonly specified"
+msgstr ""
 
-#: ../yum/__init__.py:2616
+#: ../yum/__init__.py:2415
 msgid "Header is not complete."
 msgstr "Phần đầu chưa hoàn thiện."
 
-#: ../yum/__init__.py:2656
+#: ../yum/__init__.py:2455
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
-msgstr ""
-"Phần đầu trong bộ nhớ tạm nội bộ và chế độ chỉ nhớ tạm được bật. Không thể "
-"tải về %s"
+msgstr "Phần đầu trong bộ nhớ tạm nội bộ và chế độ chỉ nhớ tạm được bật. Không thể tải về %s"
 
-#: ../yum/__init__.py:2716
+#: ../yum/__init__.py:2515
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Khóa công cho %s chưa được cài đặt"
 
-#: ../yum/__init__.py:2720
+#: ../yum/__init__.py:2519
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Gặp lỗi khi mở gói %s"
 
-#: ../yum/__init__.py:2728
+#: ../yum/__init__.py:2527
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Khóa công cho %s là không đáng tin"
 
-#: ../yum/__init__.py:2732
+#: ../yum/__init__.py:2531
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Gói %s chưa được ký"
 
-#: ../yum/__init__.py:2776
+#: ../yum/__init__.py:2573
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Không thể gỡ bỏ %s"
 
-#: ../yum/__init__.py:2780
+#: ../yum/__init__.py:2577
 #, python-format
 msgid "%s removed"
 msgstr "Đã gỡ bỏ %s"
 
-#: ../yum/__init__.py:2841
+#: ../yum/__init__.py:2638
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Không thể gỡ bỏ %s tập tin %s"
 
-#: ../yum/__init__.py:2845
+#: ../yum/__init__.py:2642
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s tập tin %s bị gỡ bỏ"
 
-#: ../yum/__init__.py:2847
+#: ../yum/__init__.py:2644
 #, python-format
 msgid "%d %s file removed"
 msgid_plural "%d %s files removed"
 msgstr[0] "%d %s tập tin bị gỡ bỏ"
 
-#: ../yum/__init__.py:2960
+#: ../yum/__init__.py:2756
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Có nhiều hơn một khớp đúng trong sack dành cho %s"
 
-#: ../yum/__init__.py:2966
+#: ../yum/__init__.py:2762
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Không có gì khớp với %s.%s %s:%s-%s từ cập nhật"
 
-#: ../yum/__init__.py:3354
+#: ../yum/__init__.py:3150
 msgid ""
-"searchPackages() will go away in a future version of "
-"Yum.                      Use searchGenerator() instead. \n"
-msgstr ""
-"searchPackages()  sẽ ra đi trong phiên bản kế của Yum.\n"
-"Hãy dùng searchGenerator() để thay thế. \n"
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
+msgstr "searchPackages()  sẽ ra đi trong phiên bản kế của Yum.\nHãy dùng searchGenerator() để thay thế. \n"
 
-#: ../yum/__init__.py:3407
+#: ../yum/__init__.py:3203
 #, python-format
 msgid "Searching %d package"
 msgid_plural "Searching %d packages"
 msgstr[0] "Đang tìm kiếm %d gói"
 
-#: ../yum/__init__.py:3411
+#: ../yum/__init__.py:3207
 #, python-format
 msgid "searching package %s"
 msgstr "đang tìm gói %s"
 
-#: ../yum/__init__.py:3423
+#: ../yum/__init__.py:3219
 msgid "searching in file entries"
 msgstr "đang tìm trong các mục tin tập tin"
 
-#: ../yum/__init__.py:3430
+#: ../yum/__init__.py:3226
 msgid "searching in provides entries"
 msgstr "tìm kiếm trong toàn bộ nhóm cung cấp"
 
-#: ../yum/__init__.py:3633
+#: ../yum/__init__.py:3423
 msgid "No group data available for configured repositories"
 msgstr "Không có dữ liệu nhóm sẵn có nào cho các kho đã cấu hình"
 
-#: ../yum/__init__.py:3733 ../yum/__init__.py:3763 ../yum/__init__.py:3835
-#: ../yum/__init__.py:3982 ../yum/__init__.py:3986 ../yum/__init__.py:4594
+#: ../yum/__init__.py:3520 ../yum/__init__.py:3554 ../yum/__init__.py:3630
+#: ../yum/__init__.py:3636 ../yum/__init__.py:3773 ../yum/__init__.py:3777
+#: ../yum/__init__.py:4352
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Không có Nhóm mang tên %s"
 
-#: ../yum/__init__.py:3775 ../yum/__init__.py:4003
+#: ../yum/__init__.py:3566 ../yum/__init__.py:3794
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "gói %s chưa được đánh dấu vào trong nhóm %s"
 
-#: ../yum/__init__.py:3796 ../yum/__init__.py:4029 ../yum/__init__.py:4099
+#: ../yum/__init__.py:3590 ../yum/__init__.py:3820 ../yum/__init__.py:3878
 #, python-format
 msgid "No Environment named %s exists"
 msgstr "Không có biến môi trường mang tên %s"
 
-#. (lupgrade and igroup_data[pkg] == 'available')):
-#: ../yum/__init__.py:3881
+#. (upgrade and igroup_data[pkg] == 'available')):
+#: ../yum/__init__.py:3676
 #, python-format
 msgid "Skipping package %s from group %s"
 msgstr "Bỏ qua nhóm %s từ nhóm %s"
 
-#: ../yum/__init__.py:3887
+#: ../yum/__init__.py:3682
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "Thêm gói %s từ nhóm %s"
 
-#: ../yum/__init__.py:3912
+#: ../yum/__init__.py:3703
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "Không có gói mang tên %s sẵn có để mà cài đặt"
 
-#: ../yum/__init__.py:3965
+#: ../yum/__init__.py:3756
 #, python-format
 msgid "Warning: Group %s does not have any packages to install."
 msgstr "Cảnh báo: Nhóm %s không có gói nào để cài đặt."
 
-#: ../yum/__init__.py:3967
+#: ../yum/__init__.py:3758
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
 msgstr "Nhóm %s không có %u gói điều kiện, gái mà có lẽ cần cài đặt."
 
-#: ../yum/__init__.py:4057
+#: ../yum/__init__.py:3848
 #, python-format
 msgid "Skipping group %s from environment %s"
 msgstr "Bỏ qua nhóm %s từ môi trường %s"
 
 #. This can happen due to excludes after .up has
 #. happened.
-#: ../yum/__init__.py:4133
+#: ../yum/__init__.py:3912
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "Không thể tìm thấy bản ghi về gói %s trong packagesack"
 
-#: ../yum/__init__.py:4161
+#: ../yum/__init__.py:3940
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr "Không thể tìm thấy bản ghi về gói %s trong rpmdb"
 
-#: ../yum/__init__.py:4224 ../yum/__init__.py:4291
+#: ../yum/__init__.py:4003 ../yum/__init__.py:4066
 #, python-format
 msgid "Invalid version flag from: %s"
 msgstr "Cờ phiên bản không hợp lệ từ: %s"
 
-#: ../yum/__init__.py:4252 ../yum/__init__.py:4258 ../yum/__init__.py:4319
-#: ../yum/__init__.py:4325
+#: ../yum/__init__.py:4027 ../yum/__init__.py:4033 ../yum/__init__.py:4090
+#: ../yum/__init__.py:4096
 #, python-format
 msgid "No Package found for %s"
 msgstr "Không tìm thấy gói nào cho %s"
 
-#: ../yum/__init__.py:4547
-#, python-format
-msgid "Group %s does not exist."
-msgstr "Nhóm %s không tồn tại."
-
-#: ../yum/__init__.py:4555
-#, python-format
-msgid "Warning: %s"
-msgstr "Cảnh báo: %s"
-
-#: ../yum/__init__.py:4570
+#: ../yum/__init__.py:4299 ../yum/__init__.py:4328
 #, python-format
 msgid "Warning: Environment Group %s does not exist."
 msgstr "Cảnh báo: Nhóm Môi trường %s không tồn tại."
 
-#: ../yum/__init__.py:4693
+#: ../yum/__init__.py:4308
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr ""
+
+#: ../yum/__init__.py:4451
 #, python-format
 msgid "Package: %s - can't co-install with %s"
 msgstr "Gói: %s - không thể đồng cài đặt với %s"
 
-#: ../yum/__init__.py:4733
+#: ../yum/__init__.py:4491
 msgid "Package Object was not a package object instance"
 msgstr "Đối tượng Gói đã không phải là minh dụ đối tượng gói"
 
-#: ../yum/__init__.py:4737
+#: ../yum/__init__.py:4495
 msgid "Nothing specified to install"
 msgstr "Chưa chỉ định gì để cài đặt"
 
-#: ../yum/__init__.py:4761 ../yum/__init__.py:5722
+#: ../yum/__init__.py:4519 ../yum/__init__.py:5477
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Đang kiểm tra cho người cung cấp ảo hay cung cấp tập tin cho %s"
 
-#: ../yum/__init__.py:4840
+#: ../yum/__init__.py:4596
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "Gói %s đã cài đặt và không sẵn có"
 
-#: ../yum/__init__.py:4843
+#: ../yum/__init__.py:4599
 msgid "No package(s) available to install"
 msgstr "Không có gói nào sẵn sàng để cài đặt"
 
-#: ../yum/__init__.py:4855
+#: ../yum/__init__.py:4611
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "Gói: %s - đã sẵn có trong tập hợp giao dịch"
 
-#: ../yum/__init__.py:4887
+#: ../yum/__init__.py:4643
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "Gói %s đã lạc hậu do %s cái mà đã được cài đặt rồi"
 
-#: ../yum/__init__.py:4892
+#: ../yum/__init__.py:4648
 #, python-format
 msgid ""
 "Package %s is obsoleted by %s, but obsoleting package does not provide for "
 "requirements"
 msgstr "Gói %s đã lạc hậu do %s, nhưng mà gói cũ không cung cấp cho yêu cầu"
 
-#: ../yum/__init__.py:4895
+#: ../yum/__init__.py:4651
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr "Gói %s đã lạc hậu do %s, đang thử cài thay thế bằng %s"
 
-#: ../yum/__init__.py:4903
+#: ../yum/__init__.py:4659
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "Gói %s đã được cài đặt với phiên bản mới nhất"
 
-#: ../yum/__init__.py:4917
+#: ../yum/__init__.py:4673
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr "Gói %s đã được cài đặt. Đang kiểm tra phiên bản mới."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:5049
+#: ../yum/__init__.py:4805
 msgid "Updating Everything"
 msgstr "Đang cập nhật mọi thứ"
 
-#: ../yum/__init__.py:5073 ../yum/__init__.py:5232 ../yum/__init__.py:5280
-#: ../yum/__init__.py:5316
+#: ../yum/__init__.py:4829 ../yum/__init__.py:4987 ../yum/__init__.py:5035
+#: ../yum/__init__.py:5071
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Không cập nhật gói mà nó đã lạc hậu: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:5129 ../yum/__init__.py:5377
+#: ../yum/__init__.py:4884 ../yum/__init__.py:5132
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:5156 ../yum/__init__.py:5385 ../yum/__init__.py:5728
+#: ../yum/__init__.py:4911 ../yum/__init__.py:5140 ../yum/__init__.py:5483
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "không khớp cho đối số: %s"
 
-#: ../yum/__init__.py:5174
+#: ../yum/__init__.py:4929
 #, python-format
 msgid "No package matched to upgrade: %s"
 msgstr "Không có gói nào cần nâng cấp: %s"
 
-#: ../yum/__init__.py:5221
+#: ../yum/__init__.py:4976
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Gói đã cũ rồi: %s.%s %s:%s-%s"
 
 #. Meh.
-#: ../yum/__init__.py:5275
+#: ../yum/__init__.py:5030
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr "Không cập nhật gói mà nó đã lạc hậu: %s"
 
-#: ../yum/__init__.py:5284 ../yum/__init__.py:5320
+#: ../yum/__init__.py:5039 ../yum/__init__.py:5075
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Không cập nhật gói mà nó đã cập nhật rồi: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:5398
+#: ../yum/__init__.py:5153
 #, python-format
 msgid "No package matched to remove: %s"
 msgstr "Không có gói khớp với cần gỡ bỏ: %s"
 
-#: ../yum/__init__.py:5404
+#: ../yum/__init__.py:5159
 #, python-format
 msgid "Skipping the running kernel: %s"
 msgstr "Bỏ qua việc chạy hạt nhân: %s"
 
-#: ../yum/__init__.py:5410
+#: ../yum/__init__.py:5165
 #, python-format
 msgid "Removing %s from the transaction"
 msgstr "Gỡ bỏ %s khỏi giao dịch"
 
-#: ../yum/__init__.py:5447
+#: ../yum/__init__.py:5202
 #, python-format
 msgid "Cannot open: %s. Skipping."
 msgstr "Không thể mở: %s. Bỏ qua."
 
-#: ../yum/__init__.py:5450 ../yum/__init__.py:5567 ../yum/__init__.py:5659
+#: ../yum/__init__.py:5205 ../yum/__init__.py:5322 ../yum/__init__.py:5414
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Đang kiểm tra %s: %s"
 
-#: ../yum/__init__.py:5454
+#: ../yum/__init__.py:5209
 #, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
 msgstr "Không thể  cài đặt nội bộ deltarpm: %s. Bỏ qua."
 
-#: ../yum/__init__.py:5463 ../yum/__init__.py:5570 ../yum/__init__.py:5662
+#: ../yum/__init__.py:5218 ../yum/__init__.py:5325 ../yum/__init__.py:5417
 #, python-format
-msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr "Không thể thêm gói %s vào giao dịch. Kiến trúc không tương thích: %s"
 
-#: ../yum/__init__.py:5469
+#: ../yum/__init__.py:5224
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr "Không thể cài đặt gói %s. Nó bị lạc hậu do đã cài gói %s"
 
-#: ../yum/__init__.py:5477
+#: ../yum/__init__.py:5232
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
-msgstr ""
-"Gói %s chưa được cài đặt nên không thể cập nhật nó. Chạy “yum install” để "
-"cài đặt nó."
+msgstr "Gói %s chưa được cài đặt nên không thể cập nhật nó. Chạy “yum install” để cài đặt nó."
 
-#: ../yum/__init__.py:5496 ../yum/__init__.py:5503
+#: ../yum/__init__.py:5251 ../yum/__init__.py:5258
 #, python-format
 msgid ""
-"Package %s.%s not installed, cannot update it. Run yum install to install it "
-"instead."
-msgstr ""
-"Gói %s.%s chưa được cài đặt nên không thể cập nhật nó. Chạy “yum install” để "
-"cài đặt nó."
+"Package %s.%s not installed, cannot update it. Run yum install to install it"
+" instead."
+msgstr "Gói %s.%s chưa được cài đặt nên không thể cập nhật nó. Chạy “yum install” để cài đặt nó."
 
-#: ../yum/__init__.py:5512 ../yum/__init__.py:5575 ../yum/__init__.py:5667
+#: ../yum/__init__.py:5267 ../yum/__init__.py:5330 ../yum/__init__.py:5422
 #, python-format
 msgid "Excluding %s"
 msgstr "Đang bao gồm %s"
 
-#: ../yum/__init__.py:5517
+#: ../yum/__init__.py:5272
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Đánh dấu %s là đã cài đặt"
 
-#: ../yum/__init__.py:5523
+#: ../yum/__init__.py:5278
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "Đánh dấu %s là được cập nhật thành %s"
 
-#: ../yum/__init__.py:5530
+#: ../yum/__init__.py:5285
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s: không thể cập nhật gói đã cài."
 
-#: ../yum/__init__.py:5564 ../yum/__init__.py:5656
+#: ../yum/__init__.py:5319 ../yum/__init__.py:5411
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Không thể mở tập tin: %s nên bỏ qua."
 
-#: ../yum/__init__.py:5610
+#: ../yum/__init__.py:5365
 msgid "Problem in reinstall: no package matched to remove"
 msgstr "Gặp trục trặc khi cài lại: không có gói nào khớp với để mà gỡ bỏ"
 
-#: ../yum/__init__.py:5637
+#: ../yum/__init__.py:5392
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
 msgstr "Gặp trục trặc khi cài lại: không có gói nào khớp với %s để mà cài đặt"
 
-#: ../yum/__init__.py:5750
+#: ../yum/__init__.py:5505
 msgid "No package(s) available to downgrade"
 msgstr "Không có gói nào sẵn có để mà hạ cấp"
 
-#: ../yum/__init__.py:5758
+#: ../yum/__init__.py:5513
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "Gói %s là cho phép đa cài đặt, bỏ qua"
 
-#: ../yum/__init__.py:5808
+#: ../yum/__init__.py:5563
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "Không khớp với mọi gói sẵn có: %s"
 
-#: ../yum/__init__.py:5818
+#: ../yum/__init__.py:5573
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Chỉ nâng cấp sẵn sàng trên gói: %s"
 
-#: ../yum/__init__.py:5931 ../yum/__init__.py:5998
+#: ../yum/__init__.py:5686 ../yum/__init__.py:5753
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Gặp lỗi khi hạ cấp: %s"
 
-#: ../yum/__init__.py:5948 ../yum/__init__.py:6004
+#: ../yum/__init__.py:5703 ../yum/__init__.py:5759
 #, python-format
 msgid "Failed to upgrade: %s"
 msgstr "Gặp lỗi khi cập nhật: %s"
 
-#: ../yum/__init__.py:6037
+#: ../yum/__init__.py:5792
 #, python-format
 msgid "Retrieving key from %s"
 msgstr "Đang lấy khóa về từ %s"
 
-#: ../yum/__init__.py:6055
+#: ../yum/__init__.py:5810
 msgid "GPG key retrieval failed: "
 msgstr "Gặp lỗi khi tìm kiếm khóa GPG:"
 
 #. if we decide we want to check, even though the sig failed
 #. here is where we would do that
-#: ../yum/__init__.py:6078
+#: ../yum/__init__.py:5833
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr "Chữ ký GPG trên khóa %s không khớp với CA cho kho: %s"
 
-#: ../yum/__init__.py:6080
+#: ../yum/__init__.py:5835
 msgid "GPG key signature verified against CA Key(s)"
 msgstr "Xác thực chữ ký khóa GPG dựa vào Khóa CA"
 
-#: ../yum/__init__.py:6088
+#: ../yum/__init__.py:5843
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "Khóa GPG không hợp lệ từ %s: %s"
 
-#: ../yum/__init__.py:6097
+#: ../yum/__init__.py:5852
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "Gặp lỗi khi phân tích khóa GPG: khóa không có giá trị %s"
 
-#: ../yum/__init__.py:6113
+#: ../yum/__init__.py:5868
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -3845,27 +3232,18 @@ msgid ""
 " Fingerprint: %s\n"
 " Package    : %s (%s)\n"
 " From       : %s"
-msgstr ""
-"Đang nhập khóa %s 0x%s:\n"
-" Mã số người dùng: \"%s\"\n"
-" Dấu vân tay    : %s\n"
-" Gói            : %s (%s)\n"
-" Từ             : %s"
+msgstr "Đang nhập khóa %s 0x%s:\n Mã số người dùng: \"%s\"\n Dấu vân tay    : %s\n Gói            : %s (%s)\n Từ             : %s"
 
-#: ../yum/__init__.py:6123
+#: ../yum/__init__.py:5878
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
 " Userid     : \"%s\"\n"
 " Fingerprint: %s\n"
 " From       : %s"
-msgstr ""
-"Đang nhập khóa %s 0x%s:\n"
-" Mã số người dùng: \"%s\"\n"
-" Dấu vân tay    : %s\n"
-" Từ             : %s"
+msgstr "Đang nhập khóa %s 0x%s:\n Mã số người dùng: \"%s\"\n Dấu vân tay    : %s\n Từ             : %s"
 
-#: ../yum/__init__.py:6151
+#: ../yum/__init__.py:5906
 #, python-format
 msgid ""
 "\n"
@@ -3873,56 +3251,46 @@ msgid ""
 "\n"
 " Failing package is: %s\n"
 " GPG Keys are configured as: %s\n"
-msgstr ""
-"\n"
-"\n"
-"\n"
-" Gói lỗi là: %s\n"
-" Khóa GPG được cấu hình là: %s\n"
+msgstr "\n\n\n Gói lỗi là: %s\n Khóa GPG được cấu hình là: %s\n"
 
-#: ../yum/__init__.py:6165
+#: ../yum/__init__.py:5920
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "Khóa GPG tại %s (0x%s) đã được cài rồi"
 
-#: ../yum/__init__.py:6203
+#: ../yum/__init__.py:5958
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Nhập vào khóa bị lỗi (mã lỗi %d)"
 
-#: ../yum/__init__.py:6205 ../yum/__init__.py:6306
+#: ../yum/__init__.py:5960 ../yum/__init__.py:6061
 msgid "Key imported successfully"
 msgstr "Khóa được nhập vào thành công"
 
-#: ../yum/__init__.py:6209
+#: ../yum/__init__.py:5964
 msgid "Didn't install any keys"
 msgstr "đã không cài khóa nào"
 
-#: ../yum/__init__.py:6212
+#: ../yum/__init__.py:5967
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
-msgstr ""
-"Khóa GPG được liệt kê cho kho “%s” đã được cài đặt nhưng chúng lại không "
-"chính xác với gói này.\n"
-"Vui lòng kiểm tra xem URL của khóa được cấu hình cho kho này đã chính xác "
-"chưa."
+msgstr "Khóa GPG được liệt kê cho kho “%s” đã được cài đặt nhưng chúng lại không chính xác với gói này.\nVui lòng kiểm tra xem URL của khóa được cấu hình cho kho này đã chính xác chưa."
 
-#: ../yum/__init__.py:6222
+#: ../yum/__init__.py:5977
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Việc nhập khóa không giúp được gì, khóa sai hả?"
 
-#: ../yum/__init__.py:6244
+#: ../yum/__init__.py:5999
 msgid "No"
 msgstr "Không"
 
-#: ../yum/__init__.py:6246
+#: ../yum/__init__.py:6001
 msgid "Yes"
 msgstr "Có"
 
-#: ../yum/__init__.py:6247
+#: ../yum/__init__.py:6002
 #, python-format
 msgid ""
 "\n"
@@ -3931,199 +3299,183 @@ msgid ""
 " CA Key: %s\n"
 " Failing repo is: %s\n"
 " GPG Keys are configured as: %s\n"
-msgstr ""
-"\n"
-"\n"
-"\n"
-" Khóa CA: %s\n"
-" Kho lỗi là: %s\n"
-" Khóa GPG đã cấu hình là: %s\n"
+msgstr "\n\n\n Khóa CA: %s\n Kho lỗi là: %s\n Khóa GPG đã cấu hình là: %s\n"
 
-#: ../yum/__init__.py:6260
+#: ../yum/__init__.py:6015
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "Khóa GPG tại %s (0x%s) đã được nhập vào rồi"
 
-#: ../yum/__init__.py:6304
+#: ../yum/__init__.py:6059
 #, python-format
 msgid "Key %s import failed"
 msgstr "Nhập vào khóa %s gặp lỗi"
 
-#: ../yum/__init__.py:6321
+#: ../yum/__init__.py:6076
 #, python-format
 msgid "Didn't install any keys for repo %s"
 msgstr "Chưa cài đặt khóa nào cho kho %s"
 
-#: ../yum/__init__.py:6326
+#: ../yum/__init__.py:6081
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
-msgstr ""
-"Khóa GPG được liệt kê cho kho “%s” đã được cài đặt nhưng chúng lại không "
-"chính xác.\n"
-"Vui lòng kiểm tra xem URL của khóa được cấu hình cho kho này đã chính xác "
-"chưa."
+msgstr "Khóa GPG được liệt kê cho kho “%s” đã được cài đặt nhưng chúng lại không chính xác.\nVui lòng kiểm tra xem URL của khóa được cấu hình cho kho này đã chính xác chưa."
 
-#: ../yum/__init__.py:6488
+#: ../yum/__init__.py:6239
 msgid "Unable to find a suitable mirror."
 msgstr "Không thể tìm thấy máy chứa bản sao thích hợp."
 
-#: ../yum/__init__.py:6490
+#: ../yum/__init__.py:6241
 msgid "Errors were encountered while downloading packages."
 msgstr "Đã có lỗi xảy ra trong khi đang tải các gói."
 
-#: ../yum/__init__.py:6531
+#: ../yum/__init__.py:6282
 msgid "Running Transaction Check"
 msgstr "Đang chạy kiểm tra giao dịch"
 
-#: ../yum/__init__.py:6562
+#: ../yum/__init__.py:6313
 msgid "Test Transaction Errors: "
 msgstr "Lỗi kiểm tra giao dịch:"
 
-#: ../yum/__init__.py:6674
+#: ../yum/__init__.py:6425
 #, python-format
 msgid "Could not set cachedir: %s"
 msgstr "Không thể đặt cachedir: %s"
 
-#: ../yum/__init__.py:6737 ../yum/__init__.py:6739
+#: ../yum/__init__.py:6487 ../yum/__init__.py:6489
 msgid "Dependencies not solved. Will not save unresolved transaction."
-msgstr ""
-"Phần phụ thuộc chưa được phân giải. Sẽ không thể ghi lại giao dịch chưa phân "
-"giải."
+msgstr "Phần phụ thuộc chưa được phân giải. Sẽ không thể ghi lại giao dịch chưa phân giải."
 
-#: ../yum/__init__.py:6772 ../yum/__init__.py:6774
+#: ../yum/__init__.py:6522 ../yum/__init__.py:6524
 #, python-format
 msgid "Could not save transaction file %s: %s"
 msgstr "Không thể ghi lại tập tin giao dịch %s: %s"
 
-#: ../yum/__init__.py:6784
+#: ../yum/__init__.py:6534
 msgid "File is empty."
 msgstr "Tập tin rỗng."
 
-#: ../yum/__init__.py:6821
+#: ../yum/__init__.py:6571
 #, python-format
 msgid "Could not access/read saved transaction %s : %s"
 msgstr "Không thể truy cập hoặc đọc giao dịch đã lưu %s : %s"
 
-#: ../yum/__init__.py:6849
+#: ../yum/__init__.py:6599
 msgid "rpmdb ver mismatched saved transaction version,"
 msgstr "phiên bản rpmdb không khớp với phiên bản được ghi trong giao dịch, "
 
-#: ../yum/__init__.py:6863
+#: ../yum/__init__.py:6613
 msgid "cannot find tsflags or tsflags not integer."
 msgstr "không thể tìm thấy tsflags hoặc tsflags không phải số nguyên."
 
-#: ../yum/__init__.py:6912
+#: ../yum/__init__.py:6662
 #, python-format
 msgid "Found txmbr in unknown current state: %s"
 msgstr "Thấy txmbr trong trạng thái hiện tại không hiểu: %s"
 
-#: ../yum/__init__.py:6916
+#: ../yum/__init__.py:6666
 #, python-format
 msgid "Could not find txmbr: %s in state %s"
 msgstr "Không thể tìm thấy txmbr: %s trong tình trạng %s"
 
-#: ../yum/__init__.py:6953 ../yum/__init__.py:6970
+#: ../yum/__init__.py:6703 ../yum/__init__.py:6720
 #, python-format
 msgid "Could not find txmbr: %s from origin: %s"
 msgstr "Không thể tìm thấy txmbr: %s từ gốc: %s"
 
-#: ../yum/__init__.py:6995
+#: ../yum/__init__.py:6745
 msgid "Transaction members, relations are missing or ts has been modified,"
 msgstr "Thành viên giao dịch, quan hệ bị thiếu hoặc ts đã bị sửa đổi,"
 
-#: ../yum/__init__.py:6998
+#: ../yum/__init__.py:6748
 msgid " ignoring, as requested. You must redepsolve!"
 msgstr " đang bỏ qua, như theo yêu cầu. Bạn phải phân giải lại!"
 
 #. Debugging output
-#: ../yum/__init__.py:7066 ../yum/__init__.py:7085
+#: ../yum/__init__.py:6816 ../yum/__init__.py:6835
 #, python-format
 msgid "%s has been visited already and cannot be removed."
 msgstr "%s đã được viếng thăm rồi và không thể bị gỡ bỏ."
 
 #. Debugging output
-#: ../yum/__init__.py:7069
+#: ../yum/__init__.py:6819
 #, python-format
 msgid "Examining revdeps of %s"
 msgstr "Đang kiểm tra revdeps của %s"
 
 #. Debugging output
-#: ../yum/__init__.py:7090
+#: ../yum/__init__.py:6840
 #, python-format
 msgid "%s has revdep %s which was user-installed."
 msgstr "%s có revdep %s cái là người cài đặt."
 
-#: ../yum/__init__.py:7101 ../yum/__init__.py:7107
+#: ../yum/__init__.py:6851 ../yum/__init__.py:6857
 #, python-format
 msgid "%s is needed by a package to be installed."
 msgstr "%s là cần bởi một gói được cài đặt"
 
 #. Debugging output
-#: ../yum/__init__.py:7121
+#: ../yum/__init__.py:6871
 #, python-format
 msgid "%s has no user-installed revdeps."
 msgstr "%s không có revdeps người dùng cài đặt."
 
 #. Mostly copied from YumOutput._outKeyValFill()
-#: ../yum/plugins.py:213
+#: ../yum/plugins.py:212
 msgid "Loaded plugins: "
 msgstr "Đã tải phần bổ xung:"
 
-#: ../yum/plugins.py:227 ../yum/plugins.py:233
+#: ../yum/plugins.py:226 ../yum/plugins.py:232
 #, python-format
 msgid "No plugin match for: %s"
 msgstr "Không có phần bổ xung khớp với: %s"
 
-#: ../yum/plugins.py:273
+#: ../yum/plugins.py:262
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
 msgstr "Không tải phần bổ xung “%s”, vì nó đã bị tắt"
 
 #. Give full backtrace:
-#: ../yum/plugins.py:285
+#: ../yum/plugins.py:274
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
 msgstr "Không thể nhập vào phần bổ xung “%s”"
 
-#: ../yum/plugins.py:292
+#: ../yum/plugins.py:281
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
 msgstr "Phần bổ xung “%s” không chỉ định phiên bản API mong muốn"
 
-#: ../yum/plugins.py:297
+#: ../yum/plugins.py:286
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
 msgstr "Phần bổ xung “%s” yêu cầu API %s. Nhưng API hỗ trợ lại là %s."
 
-#: ../yum/plugins.py:321
+#: ../yum/plugins.py:319
 #, python-format
 msgid "Loading \"%s\" plugin"
 msgstr "Đang tải phần bổ xung \"%s\""
 
-#: ../yum/plugins.py:328
+#: ../yum/plugins.py:326
 #, python-format
-msgid ""
-"Two or more plugins with the name \"%s\" exist in the plugin search path"
-msgstr ""
-"Có hai hay hơn phần bổ xung có tên “%s” ở trong đường đường dẫn tìm kiếm "
-"phần bổ xung"
+msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr "Có hai hay hơn phần bổ xung có tên “%s” ở trong đường đường dẫn tìm kiếm phần bổ xung"
 
-#: ../yum/plugins.py:348
+#: ../yum/plugins.py:346
 #, python-format
 msgid "Configuration file %s not found"
 msgstr "Không tìm thấy tập tin cấu hình %s"
 
 #. for
 #. Configuration files for the plugin not found
-#: ../yum/plugins.py:351
+#: ../yum/plugins.py:349
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
 msgstr "Không thể tìm thấy tập tin cấu hình cho phần bổ xung %s"
 
-#: ../yum/plugins.py:555
+#: ../yum/plugins.py:553
 msgid "registration of commands not supported"
 msgstr "việc đăng ký các lệnh không được hỗ trợ"
 
@@ -4131,21 +3483,25 @@ msgstr "việc đăng ký các lệnh không được hỗ trợ"
 msgid "has missing requires of"
 msgstr "có các yêu cầu bị thiếu của"
 
-#: ../yum/rpmsack.py:162
+#: ../yum/rpmsack.py:163
+msgid "has installed obsoletes"
+msgstr ""
+
+#: ../yum/rpmsack.py:167
 msgid "has installed conflicts"
 msgstr "có gói xung đột"
 
-#: ../yum/rpmsack.py:171
+#: ../yum/rpmsack.py:176
 #, python-format
 msgid "%s is a duplicate with %s"
 msgstr "%s bị trùng với %s"
 
-#: ../yum/rpmsack.py:179
+#: ../yum/rpmsack.py:184
 #, python-format
 msgid "%s is obsoleted by %s"
 msgstr "%s bị lạc hậu do %s"
 
-#: ../yum/rpmsack.py:187
+#: ../yum/rpmsack.py:192
 #, python-format
 msgid "%s provides %s but it cannot be found"
 msgstr "%s cung cấp %s nhưng không thể tìm thấy nó"
@@ -4159,42 +3515,15 @@ msgstr "Đóng gói lại"
 msgid "Verify: %u/%u: %s"
 msgstr "Thẩm tra: %u/%u: %s"
 
-#: ../yum/update_md.py:45
-#, python-format
-msgid "Updateinfo file is not valid XML: %s"
-msgstr "Tập tin thông tin cập nhật không hợp chuẩn XML: %s"
-
-#: ../yum/update_md.py:562
-#, python-format
-msgid "An update notice%s is broken, skipping."
-msgstr "Cập nhật cảnh báo rằng %s bị hỏng, bỏ qua."
-
-#: ../yum/update_md.py:570
-#, python-format
-msgid "Update notice %s%s is broken, or a bad duplicate, skipping."
-msgstr "Cập nhật cảnh báo rằng %s%s bị hỏng, hay trùng lặp, bỏ qua."
-
-#: ../yum/update_md.py:572
-#, python-format
-msgid ""
-"\n"
-"You should report this problem to the owner of the %srepository."
-msgstr ""
-"\n"
-"Bạn nên báo cáo vấn đề này với chủ sở hữu của %skho."
-
-#: ../yum/yumRepo.py:980
+#: ../yum/yumRepo.py:956
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
 "    * free   %s\n"
 "    * needed %s"
-msgstr ""
-"Không đủ chỗ trống tại thư mục tải dữ liệu %s\n"
-"    * còn trống %s\n"
-"    * cần       %s"
+msgstr "Không đủ chỗ trống tại thư mục tải dữ liệu %s\n    * còn trống %s\n    * cần       %s"
 
-#: ../yum/yumRepo.py:1049
+#: ../yum/yumRepo.py:1022
 msgid "Package does not match intended download."
 msgstr "Gói không khớp với cái định tại về."
 
@@ -4226,9 +3555,3 @@ msgstr "Phần đầu Hỏng %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Lỗi mở rpm %s - lỗi %s"
-
-#~ msgid "Members"
-#~ msgstr "Thành viên"
-
-#~ msgid "has installed obsoletes"
-#~ msgstr "có gói đã lạc hậu"

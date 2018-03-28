@@ -172,21 +172,19 @@ msgstr ""
 
 #: ../cli.py:615
 msgid "d"
-msgstr ""
+msgstr "s"
 
 #: ../cli.py:615
-#, fuzzy
 msgid "download"
-msgstr "downgradovaný"
+msgstr "stiahnuť"
 
 #: ../cli.py:616
 msgid "downloadonly"
 msgstr ""
 
 #: ../cli.py:622
-#, fuzzy
 msgid "Is this ok [y/d/N]: "
-msgstr "Je to v poriadku [a/N]"
+msgstr "Je to v poriadku [a/s/N]: "
 
 #: ../cli.py:627
 msgid "Trying to run the transaction but nothing to do. Exiting."
@@ -925,7 +923,7 @@ msgstr "Popis : "
 
 #: ../output.py:971
 msgid "Is this ok [y/N]: "
-msgstr "Je to v poriadku [a/N]"
+msgstr "Je to v poriadku [a/N]: "
 
 #. Allow the one letter english versions in all langs.
 #: ../output.py:979 ../yumcommands.py:3331
@@ -2868,7 +2866,7 @@ msgid ""
 "Your transaction was saved, rerun it with:\n"
 " yum load-transaction %s"
 msgstr ""
-"Vaša transakcia bola uložená, znova ju spustite s príkazom:\n"
+"Vaša transakcia bola uložená, znova ju spustíte pomocou:\n"
 " yum load-transaction %s"
 
 #: ../yummain.py:392

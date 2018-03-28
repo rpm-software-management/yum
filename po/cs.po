@@ -175,21 +175,19 @@ msgstr ""
 
 #: ../cli.py:615
 msgid "d"
-msgstr ""
+msgstr "s"
 
 #: ../cli.py:615
-#, fuzzy
 msgid "download"
-msgstr "ponížen"
+msgstr "stáhnout"
 
 #: ../cli.py:616
 msgid "downloadonly"
 msgstr ""
 
 #: ../cli.py:622
-#, fuzzy
 msgid "Is this ok [y/d/N]: "
-msgstr "V pořádku [a/N]: "
+msgstr "V pořádku [a/s/N]: "
 
 #: ../cli.py:627
 msgid "Trying to run the transaction but nothing to do. Exiting."
@@ -2869,7 +2867,7 @@ msgid ""
 "Your transaction was saved, rerun it with:\n"
 " yum load-transaction %s"
 msgstr ""
-"Transakce yum byla uložena, znovustit lze s:\n"
+"Vaše transakce byla uložena, znovu ji lze spustit pomocí:\n"
 " yum load-transaction %s"
 
 #: ../yummain.py:392

@@ -49,7 +49,7 @@ transifex-pull:
 
 transifex-push:
 	make -C po yum.pot
-	tx push -s -t
+	tx push -s -t --skip
 	@echo "You can now git commit -a -m 'Transifex push, yum.pot update'"
 
 transifex:

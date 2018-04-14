@@ -968,7 +968,7 @@ def _getloginuid():
     #  We might normally call audit.audit_getloginuid(), except that requires
     # importing all of the audit module. And it doesn't work anyway: BZ 518721
     try:
-        if (platform.system() == "AIX"):
+        if (platform.system() == "AIX" or platform.system() == "OS400"):
             fo = os.popen('/usr/bin/id -l -u')
         else:
             fo = open("/proc/self/loginuid")

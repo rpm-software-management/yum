@@ -245,11 +245,11 @@ class EmailEmitter(UpdateEmitter):
         # Send the email
         try:
             s = smtplib.SMTP()
-            s.connect(self.opts.email_host)
+            s.connect(self.opts.email_host, self.opts.email_port)
             s.sendmail(self.opts.email_from, self.opts.email_to, msg.as_string())
             s.close()
         except Exception, e:
-            self.logger.error("Failed to send an email to %s: %s" % (self.opts.email_host, e))
+            self.logger.error("Failed to send an email to %s:%s: %s" % (self.opts.email_host, self.opts.email_port, e))
 
 
 class StdIOEmitter(UpdateEmitter):

@@ -1032,8 +1032,10 @@ A human readable string describing the repository.
 .IP
 \fBbaseurl\fR
 Must be a URL to the directory where the yum repository's `repodata' directory
-lives. Can be an http://, ftp:// or file:// URL. You can specify multiple URLs
-in one baseurl statement. The best way to do this is like this:
+lives. Can be an http://, ftp:// or file:// URL.
+
+You can specify multiple URLs in one baseurl statement. The best way to do this
+is like this:
 .br
 [repositoryid]
 .br
@@ -1045,6 +1047,12 @@ baseurl=url://server1/path/to/repository/
 .br
         url://server3/path/to/repository/
 .br
+
+The URLs listed are considered different locations (mirrors) of the same
+repository.
+That means, if one URL fails, another one is tried, and so on.
+The order in which the URLs are tried is determined by the \fBfailovermethod\fR
+option.
 
 If you list more than one baseurl= statement in a repository you will find
 yum will ignore the earlier ones and probably act bizarrely. Don't do this,

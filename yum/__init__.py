@@ -1037,6 +1037,7 @@ class YumBase(depsolve.Depsolve):
             self._upinfo = update_md.UpdateMetadata(logger=logger,
                                                     vlogger=vlogger)
 
+            self.pkgSack  # Preload the sack now, to honor skip_if_unavailable
             for repo in self.repos.listEnabled():
                 if 'updateinfo' not in repo.repoXML.fileTypes():
                     continue

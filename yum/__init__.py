@@ -2890,6 +2890,16 @@ much more problems).
             filelist = misc.getFileList(cachedir, '', [])
         return self._cleanFilelist('rpmdb', filelist)
 
+    def getCachedirGlob(self, dynvar):
+        """Return a glob matching all dirs where yum stores cache files, based
+        on cachedir and the given list of dynamic vars."""
+        yumvar = self.conf.yumvar.copy()
+        for d in dynvar:
+            yumvar[d] = '*'
+        instroot = config.varReplace(self.conf.installroot, self.conf.yumvar)
+        cachedir = config.varReplace(self.conf._pristine_cachedir, yumvar)
+        return (instroot + cachedir).replace('//', '/')
+
     def _cleanFiles(self, exts, pathattr, filetype):
         filelist = []
         for ext in exts:

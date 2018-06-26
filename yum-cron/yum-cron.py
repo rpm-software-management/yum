@@ -289,6 +289,8 @@ class YumCronConfig(BaseConfig):
     yum_config_file = Option("/etc/yum.conf")
     group_list = ListOption([])
     group_package_types = ListOption(['mandatory', 'default'])
+    disable_repos = ListOption([])
+    enable_repos = ListOption([])
 
 
 class YumCronBase(yum.YumBase, YumOutput):
@@ -342,6 +344,7 @@ class YumCronBase(yum.YumBase, YumOutput):
             sys.exit(1)
 
         # Populate the values into  the opts object
+        self.opts.populate(confparser, 'repos')
         self.opts.populate(confparser, 'commands')
         self.opts.populate(confparser, 'emitters')
         self.opts.populate(confparser, 'email')
@@ -599,6 +602,12 @@ class YumCronBase(yum.YumBase, YumOutput):
             self.emitInstalled()
         self.emitMessages()
 
+    def setRepos(self):
+        if len(self.opts.disable_repos) > 0:
+            self.repos.disableRepo(','.join(self.opts.disable_repos))
+        if len(self.opts.enable_repos) > 0:
+            self.repos.enableRepo(','.join(self.opts.enable_repos))
+
     def updatesCheck(self):
         """Check to see whether updates are available for any
         installed packages. If updates are available, install them,
@@ -615,6 +624,9 @@ class YumCronBase(yum.YumBase, YumOutput):
         self.acquireLock()
 
         self.run_with_package_names.add("yum-cron")
+
+        # Setup repos for update
+        self.setRepos()
 
         # Update the metadata
         self.populateUpdateMetadata()

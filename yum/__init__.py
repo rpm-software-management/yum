@@ -6116,6 +6116,31 @@ much more problems).
         self.conf.obsoletes = old_conf_obs
         return done
 
+    def redirect_failure_callback(self, data):
+        """Failure callback for urlgrabber to force a retry if we time out
+        (code 12) or error out (code 14) after being redirected (since these
+        codes are not in opts.retrycodes).
+
+        This allows for failovers if the URL points to a MirrorManager2 (such
+        as download.fedoraproject.org).  If the mirror it redirects to is down
+        for some reason, this will ensure that we try again, hopefully getting
+        a mirror that works.
+        """
+        e = data.exception
+        url_initial = data.url
+        url_actual = e.url
+        if (e.errno not in (12, 14) or url_initial == url_actual):
+            # Not a timeout/HTTPError, or there was no redirect, so leave it up
+            # to urlgrabber
+            return
+        if e.errno == 12:
+            msg = _('Timeout on %s, trying again') % url_actual
+        else:
+            msg = _('Could not retrieve %s: %s, trying again') % (url_actual, e)
+        # Force a retry by hacking the errno so that it falls within retrycodes
+        e.errno = -1
+        self.logger.error(msg)
+
     def _retrievePublicKey(self, keyurl, repo=None, getSig=True):
         """
         Retrieve a key file
@@ -6123,6 +6148,7 @@ much more problems).
         Returns a list of dicts with all the keyinfo
         """
         key_installed = False
+        cb = self.redirect_failure_callback
         
         msg = _('Retrieving key from %s') % keyurl
         self.verbose_logger.log(logginglevels.INFO_2, msg)
@@ -6139,7 +6165,7 @@ much more problems).
                 # external callers should just update.
                 opts = repo._default_grabopts()
                 text = repo.id + '/gpgkey'
-            rawkey = urlgrabber.urlread(url, **opts)
+            rawkey = urlgrabber.urlread(url, failure_callback=cb, **opts)
 
         except urlgrabber.grabber.URLGrabError, e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
@@ -6155,7 +6181,7 @@ much more problems).
                 url = misc.to_utf8(keyurl + '.asc')
                 opts = repo._default_grabopts()
                 text = repo.id + '/gpgkeysig'
-                sigfile = urlgrabber.urlopen(url, **opts)
+                sigfile = urlgrabber.urlopen(url, failure_callback=cb, **opts)
 
             except urlgrabber.grabber.URLGrabError, e:
                 sigfile = None

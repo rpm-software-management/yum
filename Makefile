@@ -13,6 +13,7 @@ WEB_DOC_PATH = /srv/projects/yum/web/download/docs/yum-api/
 
 BUILDDIR = build
 MOCK_CONF = epel-7-x86_64
+PODMAN_IMAGE = yum-devel
 
 all: subdirs
 
@@ -63,7 +64,7 @@ transifex:
 	make transifex-push
 	git commit -a -m 'Transifex push, yum.pot update'
 
-.PHONY: docs test srpm rpm
+.PHONY: docs test srpm rpm shell
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
 	   yummain.py 
@@ -141,3 +142,15 @@ rpm: srpm
 	      --no-clean --no-cleanup-after \
 	      $(BUILDDIR)/SRPMS/$(PKGNAME)-$(VERSION)-$(RELEASE).src.rpm
 	@echo "The RPMs are in $(BUILDDIR)/RPMS"
+
+### Container-based development ###
+
+$(BUILDDIR)/image: Dockerfile $(BUILDDIR)
+	podman build -t $(PODMAN_IMAGE) .
+	@touch $@
+
+shell: $(BUILDDIR)/image
+	@podman run \
+	        -v=$(CURDIR):/src:ro,z \
+	        --detach-keys="ctrl-@" \
+	        -it $(PODMAN_ARGS) $(PODMAN_IMAGE) || true

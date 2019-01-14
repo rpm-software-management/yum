@@ -1036,10 +1036,10 @@ The following are the ways which you can invoke \fByum\fP in clean mode.
 Note that these commands only operate on the currently enabled repositories
 within the current \fBcachedir\fR (that is, with any substitution variables
 such as $releasever expanded to their runtime values).
-For more control over which repositories are cleaned, you can use
-\fB\-\-enablerepo\fP, \fB\-\-disablerepo\fP and \fB\-\-releasever\fP.
+To clean specific repositories, use \fB\-\-enablerepo\fP, \fB\-\-disablerepo\fP
+or \fB\-\-releasever\fP accordingly.
 Note, however, that untracked (no longer configured) repositories cannot be
-cleaned this way and have to be removed manually.
+cleaned this way; they have to be removed manually.
 
 .IP "\fByum clean expire-cache\fP"
 Eliminate the local data saying when the metadata and mirrorlists were downloaded for each repo. This means yum will revalidate the cache for each repo. next time it is used. However if the cache is still valid, nothing significant was deleted.
@@ -1073,6 +1073,9 @@ As a convenience, if this command does not result in a completely empty cache
 due to the restrictions outlined at the beginning of this section, a message
 will be printed, saying how much disk space can be reclaimed by cleaning the
 remaining repos manually.
+For this purpose, a repo is considered clean when its disk usage doesn't exceed
+64KB (that is to account for directory entries and tiny metadata files such as
+"productid" that are never cleaned).
 
 .SH "EXAMPLES"
 .PP

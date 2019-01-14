@@ -29,6 +29,7 @@ import math
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
 import rpm
 import ctypes
+import glob
 
 from weakref import proxy as weakref
 
@@ -1748,26 +1749,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         msg = self.fmtKeyValFill(_('Cleaning repos: '), 
                         ' '.join([ x.id for x in self.repos.listEnabled()]))
         self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
+        msg = (_('Operating on %s (see CLEAN OPTIONS in yum(8) for details)')
+               % self.conf.cachedir)
+        self.verbose_logger.log(yum.logginglevels.DEBUG_3, msg)
         if 'all' in userlist:
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                _('Cleaning up everything'))
-
-            # Print a "maybe you want rm -rf" hint to compensate for the fact
-            # that yum clean all is often misunderstood.  Don't do that,
-            # however, if cachedir is non-default as we would have to replace
-            # arbitrary yum vars with * and that could produce a harmful
-            # command, e.g. for /mydata/$myvar we would say rm -rf /mydata/*
-            cachedir = self.conf.cachedir
-            if cachedir.startswith(('/var/cache/yum', '/var/tmp/yum-')):
-                # Take just the first 3 path components
-                rmdir = '/'.join(cachedir.split('/')[:4])
-                self.verbose_logger.log(
-                    yum.logginglevels.INFO_2,
-                    _('Maybe you want: rm -rf %s, to also free up space taken '
-                      'by orphaned data from disabled or removed repos'
-                      % rmdir),
-                )
-
             pkgcode, pkgresults = self.cleanPackages()
             hdrcode, hdrresults = self.cleanHeaders()
             xmlcode, xmlresults = self.cleanMetadata()
@@ -1780,6 +1765,67 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                        rpmresults)
             for msg in results:
                 self.logger.debug(msg)
+
+            # Walk the cachedir, look for any leftovers and categorize them
+            cacheglob = self.getCachedirGlob(['basearch', 'releasever'])
+            paths = glob.glob(cacheglob + '/*')
+            table = ([], [], [], [])  # (enabled, disabled, untracked, other)
+            repos = self.repos.repos
+            for path in paths:
+                base = os.path.basename(path)
+                if os.path.isdir(path):
+                    # Repodir
+                    if base not in repos:
+                        col = 2
+                    elif repos[base].enabled:
+                        col = 0
+                    else:
+                        col = 1
+                    # Recursively gather all files in this repodir
+                    files = yum.misc.getFileList(path, '', [])
+                else:
+                    # Ordinary file (such as timedhosts)
+                    col = 3
+                    files = [path]
+                usage = sum(map(os.path.getsize, files))
+                if usage > 0:
+                    table[col].append((usage, path))
+
+            # Print the table (verbose mode only)
+            lines = [_('Disk usage of %s after cleanup:') % cacheglob]
+            headers = ('enabled repos', 'disabled repos', 'untracked repos',
+                       'other data')
+            totals = [0, 0, 0, 0]
+            for col, header in enumerate(headers):
+                rows = []
+                total = 0
+                # Start with the biggest items
+                for usage, path in sorted(table[col], key=lambda x:x[0],
+                                          reverse=True):
+                    rows.append('  %-5s  %s'
+                                % (self.format_number(usage), path))
+                    total += usage
+                colon = ':' if rows else ''
+                lines += ['%-5s  %s%s'
+                          % (self.format_number(total), _(header), colon)]
+                lines += rows
+                totals[col] = total
+            lines += [_('%-5s  total') % self.format_number(sum(totals))]
+            msg = '\n'.join(lines)
+            self.verbose_logger.log(yum.logginglevels.DEBUG_3, msg)
+
+            # Print a short hint for leftover repos specifically (non-verbose
+            # mode only)
+            total = sum(totals[:3])
+            if self.conf.debuglevel == 6 or not total:
+                return code, []
+            total = self.format_number(total)
+            if total[-1] == ' ':
+                total = total[:-1] + 'bytes'
+            msg = (_('Other repos take up %s of disk space '
+                     '(use --verbose for details)') % total)
+            self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
+
             return code, []
             
         if 'headers' in userlist:

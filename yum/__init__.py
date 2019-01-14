@@ -4789,6 +4789,21 @@ much more problems).
             return False
         return True
 
+    def _valid_obsoleter_arch(self, obsoleter, obsoletee):
+        """Return whether this obsoleter meets multilib_policy in case we are
+        dealing with the noarch->arch obsoletion case."""
+        if not self.arch.multilib or self.conf.multilib_policy != 'best':
+            # Install everything
+            return True
+        if obsoletee.arch != 'noarch' or obsoleter.arch == 'noarch':
+            # We do respect any arch->(no)arch obsoletions (having
+            # obsoletee.i386 installed on x86_64, you'd still expect
+            # obsoleter.i386 to replace it, even if you have
+            # multilib_policy=best).
+            return True
+        # noarch->arch case
+        return obsoleter.arch in self.arch.legit_multi_arches
+
     def install(self, po=None, **kwargs):
         """Mark the specified item for installation.  If a package
         object is given, mark it for installation.  Otherwise, mark
@@ -5156,10 +5171,12 @@ much more problems).
                                                        allow_missing=True)
                 if obsoleting_pkg is None:
                     continue
+                installed_pkg =  self.getInstalledPackageObject(installed)
+                if not self._valid_obsoleter_arch(obsoleting_pkg, installed_pkg):
+                    continue
                 topkg = self._test_loop(obsoleting_pkg, self._pkg2obspkg)
                 if topkg is not None:
                     obsoleting_pkg = topkg
-                installed_pkg =  self.getInstalledPackageObject(installed)
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                 if requiringPo:
@@ -5193,6 +5210,7 @@ much more problems).
         
         instpkgs = []
         availpkgs = []
+        arch_specified = True
         if po: # just a po
             if po.repoid == 'installed':
                 instpkgs.append(po)
@@ -5254,6 +5272,8 @@ much more problems).
                 self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
                 if not self.conf.skip_missing_names_on_update:
                     raise Errors.UpdateMissingNameError, _('Not tolerating missing names on update, stopping.')
+
+            arch_specified = '.' in kwargs['pattern']
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
@@ -5306,12 +5326,16 @@ much more problems).
                                                            allow_missing=True)
                     if obsoleting_pkg is None:
                         continue
+                    if not arch_specified and not self._valid_obsoleter_arch(obsoleting_pkg, installed_pkg):
+                        continue
                     obs_pkgs.append(obsoleting_pkg)
                 # NOTE: Broekn wrt. repoid
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
                 for obsoleted_pkg in self._find_obsoletees(available_pkg):
+                    if not arch_specified and not self._valid_obsoleter_arch(available_pkg, obsoleted_pkg):
+                        continue
                     obsoleted = obsoleted_pkg.pkgtup
                     txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
                     if requiringPo:

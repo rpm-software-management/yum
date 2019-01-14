@@ -1771,6 +1771,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             paths = glob.glob(cacheglob + '/*')
             table = ([], [], [], [])  # (enabled, disabled, untracked, other)
             repos = self.repos.repos
+            empty = True
             for path in paths:
                 base = os.path.basename(path)
                 if os.path.isdir(path):
@@ -1785,8 +1786,22 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     # Ordinary file (such as timedhosts)
                     col = 3
                 usage = yum.misc.disk_usage(path)
-                if usage > 0:
-                    table[col].append((usage, path))
+                if not usage:
+                    continue
+                table[col].append((usage, path))
+                # Detect any uncleaned data.
+                #
+                # We never remove directories or any unrecognized repodata
+                # files, so there always will be a few kilobytes left behind.
+                # To avoid a constant false alarm, let's ignore such files if
+                # they are really tiny (such as "productid").  The easiest way
+                # is to look at "usage" as it covers both directories and
+                # files.  Given that a typical cleaned repodir (4K) consists of
+                # the gen/ (4K) and packages/ (4K) subdirs and possibly the
+                # productid file (8K), let's "round" it up to 64K and use that
+                # as our threshold.
+                if col < 3 and usage > 64*1024:
+                    empty = False
 
             # Print the table (verbose mode only)
             lines = [_('Disk usage under %s after cleanup:') % cacheglob]
@@ -1811,12 +1826,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             msg = '\n'.join(lines)
             self.verbose_logger.log(yum.logginglevels.DEBUG_3, msg)
 
-            # Print a short hint for leftover repos specifically (non-verbose
-            # mode only)
-            total = sum(totals[:3])
-            if self.conf.debuglevel == 6 or not total:
+            # Print a short hint if leftover repos are found (non-verbose mode
+            # only).
+            if empty or self.conf.debuglevel == 6:
                 return code, []
-            total = self.format_number(total)
+            total = self.format_number(sum(totals[:3]))
             if total[-1] == ' ':
                 total = total[:-1] + 'bytes'
             msg = (_('Other repos take up %s of disk space '

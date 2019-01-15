@@ -1310,3 +1310,15 @@ def validate_repoid(repoid):
             return char
     else:
         return None
+
+def disk_usage(path):
+    """Return disk usage of the given filename, recursively for dirs."""
+    def usage(path):
+        return os.stat(path).st_blocks * 512
+    total = usage(path)
+    if not os.path.isdir(path):
+        return total
+    for root, dirs, files in os.walk(path):
+        paths = (os.path.join(root, entry) for entry in dirs + files)
+        total += sum(usage(path) for path in paths)
+    return total

@@ -1781,18 +1781,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                         col = 0
                     else:
                         col = 1
-                    # Recursively gather all files in this repodir
-                    files = yum.misc.getFileList(path, '', [])
                 else:
                     # Ordinary file (such as timedhosts)
                     col = 3
-                    files = [path]
-                usage = sum(map(os.path.getsize, files))
+                usage = yum.misc.disk_usage(path)
                 if usage > 0:
                     table[col].append((usage, path))
 
             # Print the table (verbose mode only)
-            lines = [_('Disk usage of %s after cleanup:') % cacheglob]
+            lines = [_('Disk usage under %s after cleanup:') % cacheglob]
             headers = ('enabled repos', 'disabled repos', 'untracked repos',
                        'other data')
             totals = [0, 0, 0, 0]

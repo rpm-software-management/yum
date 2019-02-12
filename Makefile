@@ -118,8 +118,8 @@ _archive:
 	@rm -rf ${PKGNAME}-%{VERSION}.tar.gz
 	@rm -rf /tmp/${PKGNAME}-$(VERSION) /tmp/${PKGNAME}
 	@dir=$$PWD; cd /tmp; git clone $$dir ${PKGNAME}
-	lynx -dump 'http://yum.baseurl.org/wiki/WritingYumPlugins?format=txt' > /tmp/${PKGNAME}/PLUGINS
-	lynx -dump 'http://yum.baseurl.org/wiki/Faq?format=txt' > /tmp/${PKGNAME}/FAQ
+	@touch /tmp/${PKGNAME}/PLUGINS
+	@touch /tmp/${PKGNAME}/FAQ
 	@rm -f /tmp/${PKGNAME}/$(remove_spec)
 	@rm -rf /tmp/${PKGNAME}/.git
 	@mv /tmp/${PKGNAME} /tmp/${PKGNAME}-$(VERSION)

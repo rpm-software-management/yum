@@ -18,7 +18,6 @@ import constants
 import pgpmsg
 import tempfile
 import glob
-import gpg
 import pwd
 import fnmatch
 import bz2
@@ -36,6 +35,62 @@ except ImportError:
 
 from rpmUtils.miscutils import stringToVersion, flagToString
 from stat import *
+
+class GpgmeAdapter(object):
+    """Wrapper for the old gpg API."""
+
+    class errors(object):
+        class GPGMEError(Exception):
+            pass
+        class BadSignatures(Exception):
+            pass
+
+    class Context(object):
+        def __init__(self):
+            self.ctx = gpgme.Context()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def op_import(self, rawkey):
+            keyf = StringIO(rawkey)
+            imp = self.ctx.import_(keyf)
+            keyf.close()
+            # Ultimately trust the key
+            fpr = imp.imports[0][0]
+            key = self.ctx.get_key(fpr)
+            gpgme.editutil.edit_trust(self.ctx, key, gpgme.VALIDITY_ULTIMATE)
+
+        def verify(self, signed_text, sig, plaintext):
+            try:
+                sigs = self.ctx.verify(sig, signed_text, plaintext)
+            except gpgme.GpgmeError as e:
+                raise GpgmeAdapter.errors.GPGMEError()
+            # is there ever a case where we care about a sig beyond the first
+            # one?
+            if not sigs or not sigs[0] or sigs[0].validity not in (
+                    gpgme.VALIDITY_FULL, gpgme.VALIDITY_MARGINAL,
+                    gpgme.VALIDITY_ULTIMATE):
+                raise GpgmeAdapter.errors.BadSignatures()
+
+        def __getattr__(self, name):
+            return getattr(self.ctx, name)
+
+    def __getattr__(self, name):
+        return getattr(gpgme, name)
+
+try:
+    # Official GnuPG Python binding (not available on CentOS/RHEL <= 7)
+    import gpg
+except ImportError:
+    # Alternative fallback implementation (not available on Fedora any more)
+    import gpgme
+    import gpgme.editutil
+    gpg = GpgmeAdapter()
+
 try:
     import hashlib
     _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])

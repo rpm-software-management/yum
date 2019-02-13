@@ -9,3 +9,4 @@ docs/sphinxdocs/_build
 .project
 .pydevproject
 asthelper.completions
+build

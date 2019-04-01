@@ -6903,24 +6903,24 @@ much more problems).
         
         self._ts_save_file = filename
         
-        msg = "%s\n" % self.rpmdb.simpleVersion(main_only=True)[0]
-        msg += "%s\n" % self.ts.getTsFlags()
+        msg = ["%s\n" % self.rpmdb.simpleVersion(main_only=True)[0],
+               "%s\n" % self.ts.getTsFlags()]
 
         if self.tsInfo._pkgSack is None: # Transactions have pkgSack?
-            msg += "1\n"
+            msg += ["1\n"]
         else:
-            msg += "%s\n" % (len(self.repos.listEnabled()) + 1)
+            msg += ["%s\n" % (len(self.repos.listEnabled()) + 1)]
             for r in self.repos.listEnabled():
-                msg += "%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)
+                msg += ["%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)]
 
         # Save what we think the future rpmdbv will be.
-        msg += "%s:%s\n" % ('installed', self.tsInfo.futureRpmDBVersion())
+        msg += ["%s:%s\n" % ('installed', self.tsInfo.futureRpmDBVersion())]
 
-        msg += "%s\n" % len(self.tsInfo.getMembers())
+        msg += ["%s\n" % len(self.tsInfo.getMembers())]
         for txmbr in self.tsInfo.getMembers():
-            msg += txmbr._dump()
+            msg += [txmbr._dump()]
         try:
-            f.write(msg)
+            f.write(''.join(msg))
             f.close()
         except (IOError, OSError), e:
             self._ts_save_file = None

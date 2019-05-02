@@ -264,6 +264,15 @@ def _parse_auxv():
             _aux_vector["hwcap"] = at_val
         offset = offset + fmtlen
 
+# vendor ID check for AMD arch,
+# return true when found "AuthenticAMD" or "HygonGenuine"
+def _parse_amd_arch_vendorstr(vendorstr):
+    if vendorstr.find("AuthenticAMD") != -1:
+        return 1;
+    if vendorstr.find("HygonGenuine") != -1:
+        return 1;
+    return 0;
+
 def getCanonX86Arch(arch):
     # 
     if arch == "i586":
@@ -277,9 +286,9 @@ def getCanonX86Arch(arch):
     if arch != "i686":
         return arch
 
-    # if we're i686 and AuthenticAMD, then we should be an athlon
+    # if we're i686 and AMD|Hygon, then we should be an athlon
     for line in _try_read_cpuinfo():
-        if line.startswith("vendor") and line.find("AuthenticAMD") != -1:
+        if line.startswith("vendor") and _parse_amd_arch_vendorstr(line):
             return "athlon"
         # i686 doesn't guarantee cmov, but we depend on it
         elif line.startswith("flags"):
@@ -364,7 +373,7 @@ def getCanonX86_64Arch(arch):
     if vendor is None:
         return arch
 
-    if vendor.find("Authentic AMD") != -1 or vendor.find("AuthenticAMD") != -1:
+    if vendor.find("Authentic AMD") != -1 or _parse_amd_arch_vendorstr(vendor):
         return "amd64"
     if vendor.find("GenuineIntel") != -1:
         return "ia32e"

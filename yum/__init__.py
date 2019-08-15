@@ -5607,6 +5607,8 @@ much more problems).
                 if (installed_pkg.name in self.conf.exactarchlist
                         and po.arch != installed_pkg.arch):
                     donothingpkgs.append(po)
+                elif self.allowedMultipleInstalls(po):
+                    installpkgs.append(po)
                 else:
                     updatepkgs.append((po, installed_pkg))
             elif po.verEQ(installed_pkg):

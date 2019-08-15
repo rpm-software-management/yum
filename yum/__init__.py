@@ -5604,7 +5604,8 @@ much more problems).
                 installpkgs.append(po)
 
         for installed_pkg in installedByKey:
-            if po.verGT(installed_pkg): # we're newer - this is an update, pass to them
+            if po.verGT(installed_pkg) and not self.allowedMultipleInstalls(po):
+                # we're newer - this is an update, pass to them
                 if installed_pkg.name in self.conf.exactarchlist:
                     if po.arch == installed_pkg.arch:
                         updatepkgs.append((po, installed_pkg))

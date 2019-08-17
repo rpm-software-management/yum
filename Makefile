@@ -131,7 +131,7 @@ _archive:
 ### RPM packaging ###
 
 $(BUILDDIR):
-	@mkdir -p $@/{SOURCES,SRPMS,RPMS}
+	@mkdir -p $@/SOURCES $@/SRPMS $@/RPMS
 
 srpm: archive $(BUILDDIR)
 	@cp $(PKGNAME)-$(VERSION).tar.gz $(BUILDDIR)/SOURCES/

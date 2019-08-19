@@ -5604,11 +5604,9 @@ much more problems).
 
         for installed_pkg in installedByKey:
             if po.verGT(installed_pkg): # we're newer - this is an update, pass to them
-                if installed_pkg.name in self.conf.exactarchlist:
-                    if po.arch == installed_pkg.arch:
-                        updatepkgs.append((po, installed_pkg))
-                    else:
-                        donothingpkgs.append(po)
+                if (installed_pkg.name in self.conf.exactarchlist
+                        and po.arch != installed_pkg.arch):
+                    donothingpkgs.append(po)
                 else:
                     updatepkgs.append((po, installed_pkg))
             elif po.verEQ(installed_pkg):

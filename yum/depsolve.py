@@ -1504,6 +1504,14 @@ class Depsolve(object):
                     return True
             return False
 
+        def _conflict_req(x, y):
+            if y is None:
+                return False
+            for ydep in y.conflicts:
+                if x.checkPrco('provides', ydep):
+                    return True
+            return False
+
         def _compare_arch_distance(x, y, req_compare_arch):
             # take X and Y package objects
             # determine which has a closer archdistance to compare_arch
@@ -1558,6 +1566,7 @@ class Depsolve(object):
         pkgs = unique_nevra_pkgs.values()
             
         pkgresults = {}
+        penalize = set()
 
         for pkg in pkgs:
             pkgresults[pkg] = 0
@@ -1671,6 +1680,10 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('informational req %s and %s' % (po, reqpo)))
                 pkgresults[po] += 333
+            if _conflict_req(po, reqpo):
+                self.verbose_logger.log(logginglevels.DEBUG_4,
+                    _('conflict req %s and %s' % (po, reqpo)))
+                penalize.add(po)
             if self.isPackageInstalled(po.base_package_name):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('base package %s is installed for %s' % (po.base_package_name, po)))
@@ -1754,6 +1767,13 @@ class Depsolve(object):
                 continue
             pkgresults[po] += 1000
             pkgresults[po] += (len(po.name)*-1)
+
+        # Bump down any packages that we identified as "last-resort" in such a
+        # way that they all score below the worst overall score whilst keeping
+        # their relative differences.
+        shift = max(pkgresults.values()) - min(pkgresults.values()) + 1
+        for po in penalize:
+            pkgresults[po] -= shift
 
         bestorder = sorted(pkgresults.items(),
                            key=lambda x: (x[1], x[0]), reverse=True)

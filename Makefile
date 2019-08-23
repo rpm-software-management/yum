@@ -19,7 +19,7 @@ all: subdirs
 
 clean:
 	rm -f *.pyc *.pyo *~ *.bak
-	rm -f $(BUILDDIR)/{SOURCES,SRPMS,RPMS}/*
+	rm -f $(BUILDDIR)/SOURCES/* $(BUILDDIR)/SRPMS/* $(BUILDDIR)/RPMS/*
 	mock -r $(MOCK_CONF) --clean
 	for d in $(SUBDIRS); do make -C $$d clean ; done
 	cd test; rm -f *.pyc *.pyo *~ *.bak
@@ -131,7 +131,7 @@ _archive:
 ### RPM packaging ###
 
 $(BUILDDIR):
-	@mkdir -p $@/{SOURCES,SRPMS,RPMS}
+	@mkdir -p $@/SOURCES $@/SRPMS $@/RPMS
 
 srpm: archive $(BUILDDIR)
 	@cp $(PKGNAME)-$(VERSION).tar.gz $(BUILDDIR)/SOURCES/

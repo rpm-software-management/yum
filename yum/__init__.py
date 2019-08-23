@@ -6744,7 +6744,23 @@ much more problems).
             #  Newer rpm (4.8.0+) has problem objects, older have just strings.
             #  Should probably move to using the new objects, when we can. For
             # now just be compatible.
-            results.append(to_str(prob))
+            msg = to_str(prob)
+
+            # RPM currently complains about self-conflicts on reinstalls, even
+            # though they are allowed otherwise, so just ignore them.
+            # Unfortunately, we have to parse the problem string in order to
+            # get the provide name (which should be the first token).
+            if prob.type == rpm.RPMPROB_CONFLICT:
+                tokens = msg.split()
+                pkgs = self.rpmdb.returnPackages(patterns=[prob.pkgNEVR])
+                if tokens and pkgs:
+                    name = tokens[0]
+                    pkg = pkgs[0]
+                    provs = self.rpmdb.getProvides(name).keys()
+                    if len(provs) == 1 and provs[0] == pkg:
+                        continue
+
+            results.append(msg)
 
         return results
 

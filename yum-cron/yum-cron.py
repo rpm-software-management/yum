@@ -140,7 +140,11 @@ class UpdateEmitter(object):
         overridden by inheriting classes to emit the messages
         according to their individual methods.
         """
-        pass
+        # Convert any byte strings to unicode objects now (so that we avoid
+        # implicit conversions with the "ascii" codec later when join()-ing the
+        # strings, leading to tracebacks).
+        self.output = [x.decode('utf-8') if isinstance(x, str) else x
+                       for x in self.output]
 
 
 class EmailEmitter(UpdateEmitter):
@@ -220,6 +224,7 @@ class EmailEmitter(UpdateEmitter):
         """Combine the stored messages that have been stored into a
         single email message, and send this message.
         """
+        super(EmailEmitter, self).sendMessages()
         # Don't send empty emails
         if not self.output:
             return
@@ -262,6 +267,7 @@ class StdIOEmitter(UpdateEmitter):
         """Combine the stored messages that have been stored into a
         single email message, and send this message to standard output.
         """
+        super(StdIOEmitter, self).sendMessages()
         # Don't print blank lines
         if not self.output:
             return

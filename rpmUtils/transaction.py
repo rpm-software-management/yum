@@ -119,11 +119,13 @@ class TransactionWrapper:
         tserrors = self.ts.run(cb.callback, '')
         self.ts.setFlags(origflags)
     
+        if tserrors is None:
+            return []
+        if not tserrors:
+            return ['Unknown error during transaction test in RPM']
         reserrors = []
-        if tserrors:
-            for (descr, (etype, mount, need)) in tserrors:
-                reserrors.append(descr)
-        
+        for (descr, (etype, mount, need)) in tserrors:
+            reserrors.append(descr)
         return reserrors
             
         

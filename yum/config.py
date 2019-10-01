@@ -1048,7 +1048,7 @@ class RepoConf(BaseConfig):
     ssl_check_cert_permissions = Inherit(YumConf.ssl_check_cert_permissions)
 
     skip_if_unavailable = BoolOption(False)
-    async = BoolOption(True)
+    asyncr = BoolOption(True)
 
     ui_repoid_vars = Inherit(YumConf.ui_repoid_vars)
 

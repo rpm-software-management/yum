@@ -23,7 +23,7 @@ from yum.i18n import exception2msg, _
 from yum.Errors import MiscError
 from yum.misc import checksum, repo_gen_decompress, unlink_f
 from urlgrabber import grabber, progress
-async = hasattr(grabber, 'parallel_wait')
+asyncr = hasattr(grabber, 'parallel_wait')
 from xml.etree.cElementTree import iterparse
 import os, re
 
@@ -183,12 +183,12 @@ class DeltaInfo:
                 self.verbose_logger.warn(_('Failed to download %s for repository %s: %s'),
                                          name, repo, exception2msg(e))
             kwargs = {}
-            if async and repo._async:
+            if asyncr and repo._async:
                 kwargs['failfunc'] = failfunc
-                kwargs['async'] = True
+                kwargs['asyncr'] = True
             try: mdpath[repo] = repo._retrieveMD(name, **kwargs)
             except RepoError, e: failfunc(e)
-        if async:
+        if asyncr:
             grabber.parallel_wait()
 
         # parse metadata, create DeltaPackage instances

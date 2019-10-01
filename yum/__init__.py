@@ -606,7 +606,7 @@ class YumBase(depsolve.Depsolve):
         repo._cashe = self._cashe
         repo.cfg = parser
         # Enable parallel downloading
-        repo._async = repo.async
+        repo._async = repo.asyncr
         # Allow caching local repos
         if repo.keepcache and any(u.startswith('file:') for u in repo.baseurl):
             repo.copy_local = True
@@ -2556,7 +2556,7 @@ much more problems).
             i = 0
             local_size = [0]
             done_repos = set()
-            async = hasattr(urlgrabber.grabber, 'parallel_wait')
+            asyncr = hasattr(urlgrabber.grabber, 'parallel_wait')
             for po in remote_pkgs:
                 i += 1
 
@@ -2589,9 +2589,9 @@ much more problems).
 
                 text = os.path.basename(po.relativepath)
                 kwargs = {}
-                if async and po.repo._async:
+                if asyncr and po.repo._async:
                     kwargs['failfunc'] = lambda obj, po=po: adderror(po, exception2msg(obj.exception))
-                    kwargs['async'] = True
+                    kwargs['asyncr'] = True
                 elif not (i == 1 and not local_size[0] and remote_size == po.size):
                     text = '(%s/%s): %s' % (i, len(remote_pkgs), text)
                 try:
@@ -2603,7 +2603,7 @@ much more problems).
                                        )
                 except Errors.RepoError, e:
                     adderror(po, exception2msg(e))
-            if async:
+            if asyncr:
                 try:
                     urlgrabber.grabber.parallel_wait()
                 except KeyboardInterrupt:

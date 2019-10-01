@@ -103,7 +103,7 @@ class RepoStorage:
                     error[0] = True
                 for (ndata, nmdtype) in downloading:
                     if (ndata.size is None) == no_size:
-                        repo._retrieveMD(nmdtype, async=True, failfunc=failfunc)
+                        repo._retrieveMD(nmdtype, asyncr=True, failfunc=failfunc)
             urlgrabber.grabber.parallel_wait()
 
         # done or revert

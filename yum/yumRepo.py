@@ -185,7 +185,7 @@ class YumPackageSack(packageSack.PackageSack):
             if self._check_db_version(repo, mydbtype):
                 if not self._check_uncompressed_db_gen(repo, mydbtype):
                     # NOTE: No failfunc.
-                    repo._retrieveMD(mydbtype, async=True, failfunc=None)
+                    repo._retrieveMD(mydbtype, asyncr=True, failfunc=None)
 
     def populate(self, repo, mdtype='metadata', callback=None, cacheonly=0):
         if mdtype == 'all':
@@ -1074,7 +1074,7 @@ Insufficient space in download directory %s
         finally:
             self._retry_no_cache = False
 
-        if not kwargs.get('async') and not package.verifyLocalPkg():
+        if not kwargs.get('asyncr') and not package.verifyLocalPkg():
             # Don't return as "success" when bad.
             msg = "Downloaded package %s, from %s, but it was invalid."
             msg = msg % (package, package.repo.id)

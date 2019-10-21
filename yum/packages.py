@@ -2302,7 +2302,7 @@ class YumLocalPackage(YumHeaderPackage):
 
         # if we start seeing fullpaths in the location tag - this is the culprit
         if self._reldir and self.localpath.startswith(self._reldir):
-            relpath = self.localpath.replace(self._reldir, '')
+            relpath = self.localpath.replace(self._reldir, '', 1)
             if relpath[0] == '/': relpath = relpath[1:]
         else:
             relpath = self.localpath

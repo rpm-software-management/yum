@@ -241,6 +241,7 @@ class EmailEmitter(UpdateEmitter):
             domain = self.opts.system_name
         msg['From'] = '%s@%s' % (username, domain)
         msg['To'] = ",".join(self.opts.email_to)
+        msg['Cc'] = ",".join(self.opts.email_cc)
 
         # Send the email
         try:
@@ -599,6 +600,9 @@ class YumCronBase(yum.YumBase, YumOutput):
             self.emitInstalled()
         self.emitMessages()
 
+    def autoRestart(self, emit):
+        pass
+
     def updatesCheck(self):
         """Check to see whether updates are available for any
         installed packages. If updates are available, install them,
@@ -613,8 +617,6 @@ class YumCronBase(yum.YumBase, YumOutput):
 
         # Acquire the yum lock
         self.acquireLock()
-
-        self.run_with_package_names.add("yum-cron")
 
         # Update the metadata
         self.populateUpdateMetadata()
@@ -649,6 +651,13 @@ class YumCronBase(yum.YumBase, YumOutput):
             sys.exit(0)
 
         self.installUpdates(self.opts.update_messages)
+
+        # reboot if necessary to do so and configured to be allowed
+        if not self.opts.auto_restart:
+            self.releaseLocks()
+            sys.exit(0)
+
+        self.autoRestart(self.opts.update_messages)
 
         self.releaseLocks()
         sys.exit(0)

@@ -2,6 +2,7 @@
 import os
 import sys
 import gzip
+import subprocess
 from socket import gethostname
 
 import yum
@@ -75,6 +76,13 @@ class UpdateEmitter(object):
         have been installed successfully.
         """
         self.output.append('The updates were successfully applied')
+
+    def restartNeeded(self, restart_reason):
+        """Append a message to the output list stating that a
+        restart is needed.
+        """
+        self.output.append('A system restart is required and is scheduled to occur in 5 minutes')
+        self.output.append(restart_reason)
 
     def setupFailed(self, errmsg):
         """Append a message to the output list stating that setup
@@ -176,6 +184,13 @@ class EmailEmitter(UpdateEmitter):
         self.subject = "Yum: Updates installed on %s" % self.opts.system_name
         super(EmailEmitter, self).updatesInstalled()
 
+    def restartNeeded(self, restart_reason):
+        """Append a message to the output list stating that updates
+        require a restart, and set an appropriate subject line.
+        """
+        self.subject = "Yum: Updates require a restart on %s" % self.opts.system_name
+        super(EmailEmitter, self).restartNeeded(restart_reason)
+
     def setupFailed(self, errmsg):
         """Append a message to the output list stating that setup
         failed, and then call sendMessages to emit the output, and set
@@ -227,7 +242,7 @@ class EmailEmitter(UpdateEmitter):
         # utf-8 if possible.  This ensures the email package will not
         # transfer-encode it to base64 in such a case (it decides based on the
         # charset passed to the MIMEText constructor).
-        output = ''.join(self.output)
+        output = '\n'.join(self.output)
         try:
             output.encode('us-ascii')
         except UnicodeEncodeError:
@@ -280,12 +295,14 @@ class YumCronConfig(BaseConfig):
     lock_sleep = IntOption(60)
     emit_via = ListOption(['email','stdio'])
     email_to = ListOption(["root"])
+    email_cc = ListOption([])
     email_from = Option("root")
     email_host = Option("localhost")
     email_port = IntOption(25)
     update_messages = BoolOption(False)
     update_cmd = Option("default")
     apply_updates = BoolOption(False)
+    auto_restart = BoolOption(False)
     download_updates = BoolOption(False)
     yum_config_file = Option("/etc/yum.conf")
     group_list = ListOption([])
@@ -598,10 +615,25 @@ class YumCronBase(yum.YumBase, YumOutput):
 
         if emit :
             self.emitInstalled()
-        self.emitMessages()
 
     def autoRestart(self, emit):
-        pass
+        """Check if a restart is needed and schedule one if so.
+
+        :param emit: Boolean indicating whether to emit messages about
+           the restart
+        """
+        try:
+            subprocess.check_output(['needs-restarting', '-r'])
+            needs_restarting = False
+        except subprocess.CalledProcessError, e:
+            needs_restarting = True
+            restart_reason = e.output
+
+        if needs_restarting:
+            os.system('shutdown -r +5')
+            if emit:
+                self.emitRestarting(restart_reason)
+        self.emitMessages()
 
     def updatesCheck(self):
         """Check to see whether updates are available for any
@@ -652,8 +684,9 @@ class YumCronBase(yum.YumBase, YumOutput):
 
         self.installUpdates(self.opts.update_messages)
 
-        # reboot if necessary to do so and configured to be allowed
+        # restart the system if configured; else just exit
         if not self.opts.auto_restart:
+            self.emitMessages()
             self.releaseLocks()
             sys.exit(0)
 
@@ -691,6 +724,10 @@ class YumCronBase(yum.YumBase, YumOutput):
     def emitInstalled(self):
         """Emit a notice stating that automatic updates have been applied."""
         map(lambda x: x.updatesInstalled(), self.emitters)
+
+    def emitRestarting(self, restart_reason):
+        """Emit a notice stating that a system restart will be initiated."""
+        map(lambda x: x.restartNeeded(restart_reason), self.emitters)
 
     def emitSetupFailed(self, error):
         """Emit a notice stating that checking for updates failed."""

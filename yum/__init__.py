@@ -2583,7 +2583,6 @@ much more problems).
                         result, errmsg = self.sigCheckPkg(po)
                         if result != 0:
                             self.verbose_logger.warn("%s", errmsg)
-                    po.localpath = obj.filename
                     if po in errors:
                         del errors[po]
 

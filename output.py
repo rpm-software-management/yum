@@ -2073,14 +2073,18 @@ to exit.
         fmt = "%s | %s | %s | %s | %s"
         if len(uids) == 1:
             name = _("Command line")
+            name_width = self.term.columns - 55 if self.term.columns > 79 else 24
         else:
             name = _("Login user")
+            name_width = 24
         print fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(name, 24, 24),
+                     utf8_width_fill(name, name_width, name_width),
                      utf8_width_fill(_("Date and time"), 16, 16),
                      utf8_width_fill(_("Action(s)"), 14, 14),
                      utf8_width_fill(_("Altered"), 7, 7))
-        print "-" * 79
+        # total table width: each column length +3 (padding and separator between columns)
+        table_width = 6 + 3 + name_width + 3 + 16 + 3 + 14 + 3 + 7
+        print("-" * table_width)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
         for old in old_tids:
@@ -2095,7 +2099,7 @@ to exit.
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)
-            name   = utf8_width_fill(name,   24, 24)
+            name   = utf8_width_fill(name,   name_width, name_width)
             uiacts = utf8_width_fill(uiacts, 14, 14)
             rmark = lmark = ' '
             if old.return_code is None:

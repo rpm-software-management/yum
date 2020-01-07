@@ -81,7 +81,7 @@ def main(args):
         msg = _("""\
  One of the configured repositories failed (%(repo)s),
  and yum doesn't have enough cached data to continue. At this point the only
- safe thing yum can do is fail. There are a few ways to work "fix" this:
+ safe thing yum can do is fail. There are a few ways to "fix" this:
 
      1. Contact the upstream for the repository and get them to fix the problem.
 

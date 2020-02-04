@@ -1,11 +1,11 @@
 import unittest
-import gpg
 import os
 import shutil
 import tempfile
 import time
 
 from yum import misc
+from yum.misc import gpg
 
 PWD = os.path.dirname(os.path.abspath(__file__))
 KEYDIR = '%s/gpg' % PWD
@@ -26,6 +26,10 @@ class PubringTests(unittest.TestCase):
         self.ctx = gpg.Context()
 
     def tearDown(self):
+        if isinstance(gpg, misc.GpgmeAdapter):
+            shutil.rmtree(self.gpgdir)
+            return
+
         # Ask gpg-agent to quit (copied from the gpgme test suite).  If we
         # didn't do this, shutil.rmtree() could fail when deleting some of the
         # sockets due to them already being gone.  That's because gpg-agent
@@ -34,7 +38,13 @@ class PubringTests(unittest.TestCase):
         agent_socket = os.path.join(self.gpgdir, "S.gpg-agent")
         self.ctx.protocol = gpg.constants.protocol.ASSUAN
         self.ctx.set_engine_info(self.ctx.protocol, file_name=agent_socket)
-        self.ctx.assuan_transact(["KILLAGENT"])
+        try:
+            self.ctx.assuan_transact(["KILLAGENT"])
+        except gpg.errors.GPGMEError as e:
+            if e.getcode() == gpg.errors.ASS_CONNECT_FAILED:
+                pass # the agent was not running
+            else:
+                raise
         # Block until it is really gone.
         while os.path.exists(agent_socket):
             time.sleep(.01)

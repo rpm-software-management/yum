@@ -941,7 +941,12 @@ class YumConf(StartupConf):
 
     usr_w_check = BoolOption(True)
 
+    shell_exit_status = SelectionOption('0', ('0', '?'))
+
     _reposlist = []
+
+    # cachedir before variable substitutions
+    _pristine_cachedir = None
 
     def dump(self):
         """Return a string representing the values of all the
@@ -1144,6 +1149,9 @@ def readMainConfig(startupconf):
     # Read [main] section
     yumconf = YumConf()
     yumconf.populate(startupconf._parser, 'main')
+
+    # Store the original cachedir (for later reference in clean commands)
+    yumconf._pristine_cachedir = yumconf.cachedir
 
     # Apply the installroot to directory options
     def _apply_installroot(yumconf, option):

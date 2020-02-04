@@ -11,10 +11,16 @@ PYTHON=python
 WEBHOST = yum.baseurl.org
 WEB_DOC_PATH = /srv/projects/yum/web/download/docs/yum-api/
 
+BUILDDIR = build
+MOCK_CONF = epel-7-x86_64
+PODMAN_IMAGE = yum-devel
+
 all: subdirs
 
 clean:
 	rm -f *.pyc *.pyo *~ *.bak
+	rm -f $(BUILDDIR)/SOURCES/* $(BUILDDIR)/SRPMS/* $(BUILDDIR)/RPMS/*
+	mock -r $(MOCK_CONF) --clean
 	for d in $(SUBDIRS); do make -C $$d clean ; done
 	cd test; rm -f *.pyc *.pyo *~ *.bak
 
@@ -31,7 +37,7 @@ install:
 	$(PYTHON) -c "import compileall; compileall.compile_dir('$(DESTDIR)/usr/share/yum-cli', 1, '/usr/share/yum-cli', 1)"
 
 	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/sbin
-	install -m 755 bin/yum.py $(DESTDIR)/usr/bin/yum
+	install -m 755 bin/yum $(DESTDIR)/usr/bin/yum
 	install -m 755 bin/yum-updatesd.py $(DESTDIR)/usr/sbin/yum-updatesd
 
 	mkdir -p $(DESTDIR)/var/cache/yum
@@ -58,7 +64,7 @@ transifex:
 	make transifex-push
 	git commit -a -m 'Transifex push, yum.pot update'
 
-.PHONY: docs test
+.PHONY: docs test srpm rpm shell
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
 	   yummain.py 
@@ -113,8 +119,8 @@ _archive:
 	@rm -rf ${PKGNAME}-%{VERSION}.tar.gz
 	@rm -rf /tmp/${PKGNAME}-$(VERSION) /tmp/${PKGNAME}
 	@dir=$$PWD; cd /tmp; git clone $$dir ${PKGNAME}
-	lynx -dump 'http://yum.baseurl.org/wiki/WritingYumPlugins?format=txt' > /tmp/${PKGNAME}/PLUGINS
-	lynx -dump 'http://yum.baseurl.org/wiki/Faq?format=txt' > /tmp/${PKGNAME}/FAQ
+	@touch /tmp/${PKGNAME}/PLUGINS
+	@touch /tmp/${PKGNAME}/FAQ
 	@rm -f /tmp/${PKGNAME}/$(remove_spec)
 	@rm -rf /tmp/${PKGNAME}/.git
 	@mv /tmp/${PKGNAME} /tmp/${PKGNAME}-$(VERSION)
@@ -122,3 +128,29 @@ _archive:
 	@rm -rf /tmp/${PKGNAME}-$(VERSION)	
 	@echo "The archive is in ${PKGNAME}-$(VERSION).tar.gz"
 
+### RPM packaging ###
+
+$(BUILDDIR):
+	@mkdir -p $@/SOURCES $@/SRPMS $@/RPMS
+
+srpm: archive $(BUILDDIR)
+	@cp $(PKGNAME)-$(VERSION).tar.gz $(BUILDDIR)/SOURCES/
+	@rpmbuild --define '_topdir $(BUILDDIR)' -bs yum.spec
+
+rpm: srpm
+	@mock -r $(MOCK_CONF) --resultdir=$(BUILDDIR)/RPMS \
+	      --no-clean --no-cleanup-after \
+	      $(BUILDDIR)/SRPMS/$(PKGNAME)-$(VERSION)-$(RELEASE).src.rpm
+	@echo "The RPMs are in $(BUILDDIR)/RPMS"
+
+### Container-based development ###
+
+$(BUILDDIR)/image: Dockerfile $(BUILDDIR)
+	podman build -t $(PODMAN_IMAGE) .
+	@touch $@
+
+shell: $(BUILDDIR)/image
+	@podman run \
+	        -v=$(CURDIR):/src:ro,z \
+	        --detach-keys="ctrl-@" \
+	        -it $(PODMAN_ARGS) $(PODMAN_IMAGE) || true

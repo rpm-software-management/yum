@@ -1554,7 +1554,14 @@ class Depsolve(object):
                 unique_nevra_pkgs[pkg.pkgtup].repo <= pkg.repo):
                 continue
             unique_nevra_pkgs[pkg.pkgtup] = pkg
-        pkgs = list(unique_nevra_pkgs.values())
+        pkgs = unique_nevra_pkgs.values()
+
+        # Do a conflict filtering; get rid of those pkgs that reqpo conflicts
+        # with
+        if reqpo is not None:
+            pkgs = [pkg for pkg in pkgs
+                        if not any(pkg.checkPrco('provides', conflict)
+                                   for conflict in reqpo.conflicts)]
             
         pkgresults = {}
 

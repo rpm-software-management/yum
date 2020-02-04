@@ -38,8 +38,9 @@ class SimpleObsoletesTests(OperationsTests):
 
     def testObsoletenoarchToi386(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.obsoletes_i386])
-        self.assertTrue(res=='ok', msg)
+        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.obsoletes_i386],
+                                     {'multilib_policy': 'all'})
+        self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_i386,))
     def testObsoletenoarchToi386ForDependency(self):
         p = self.pkgs
@@ -50,8 +51,9 @@ class SimpleObsoletesTests(OperationsTests):
 
     def testObsoletenoarchTox86_64(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.obsoletes_x86_64])
-        self.assertTrue(res=='ok', msg)
+        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.obsoletes_x86_64],
+                                     {'multilib_policy': 'all'})
+        self.assert_(res=='ok', msg)
         self.assertResult((p.obsoletes_x86_64,))
     def testObsoletenoarchTox86_64ForDependency(self):
         p = self.pkgs
@@ -62,8 +64,9 @@ class SimpleObsoletesTests(OperationsTests):
 
     def testObsoletenoarchToMultiarch(self):
         p = self.pkgs
-        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.obsoletes_i386, p.obsoletes_x86_64])
-        self.assertTrue(res=='ok', msg)
+        res, msg = self.runOperation(['update'], [p.installed_noarch], [p.obsoletes_i386, p.obsoletes_x86_64],
+                                     {'multilib_policy': 'all'})
+        self.assert_(res=='ok', msg)
         if new_behavior:
             self.assertResult((p.obsoletes_x86_64,), (p.obsoletes_i386,))
         else:

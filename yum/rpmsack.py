@@ -1748,6 +1748,12 @@ class RPMDBAdditionalData(object):
 
         pass
 
+def _validate_from_repo(value):
+    if value and value[0] == '/':
+        # Local package; chop the slash as it's not a valid repoid char
+        value = value[1:]
+    return misc.validate_repoid(value) is None
+
 class RPMDBAdditionalDataPackage(object):
 
     # We do auto hardlink on these attributes
@@ -1761,7 +1767,7 @@ class RPMDBAdditionalDataPackage(object):
     # Validate these attributes when they are read from a file
     _validators = {
         # Fixes BZ 1234967
-        'from_repo': lambda repoid: misc.validate_repoid(repoid) is None,
+        'from_repo': _validate_from_repo,
     }
 
     def __init__(self, conf, pkgdir, yumdb_cache=None):

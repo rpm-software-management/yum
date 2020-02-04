@@ -872,44 +872,47 @@ class TransactionMember:
         return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self))) 
     
     def _dump(self):
-        msg = "mbr: %s,%s,%s,%s,%s %s\n" % (self.name, self.arch, self.epoch, 
-                     self.version, self.release, self.current_state)
-        msg += "  repo: %s\n" % self.po.repo.id
-        msg += "  ts_state: %s\n" % self.ts_state
-        msg += "  output_state: %s\n" %  self.output_state
-        msg += "  isDep: %s\n" %  bool(self.isDep)
-        msg += "  reason: %s\n" % self.reason
-        #msg += "  process: %s\n" % self.process
-        msg += "  reinstall: %s\n" % bool(self.reinstall)
+        msg = ["mbr: %s,%s,%s,%s,%s %s\n" %
+               (self.name, self.arch, self.epoch, self.version, self.release,
+                self.current_state),
+               "  repo: %s\n" % self.po.repo.id,
+               "  ts_state: %s\n" % self.ts_state,
+               "  output_state: %s\n" %  self.output_state,
+               "  isDep: %s\n" %  bool(self.isDep),
+               "  reason: %s\n" % self.reason,
+        #       "  process: %s\n" % self.process,
+               "  reinstall: %s\n" % bool(self.reinstall)]
         
         if self.relatedto:
-            msg += "  relatedto:"
+            msg += ["  relatedto:"]
             for (po, rel) in self.relatedto:
                 pkgorigin = 'a'
                 if isinstance(po, YumInstalledPackage):
                     pkgorigin = 'i'
-                msg += " %s,%s,%s,%s,%s@%s:%s" % (po.name, po.arch, po.epoch, 
-                      po.version, po.release, pkgorigin, rel)
-            msg += "\n"
+                msg += [" %s,%s,%s,%s,%s@%s:%s" %
+                        (po.name, po.arch, po.epoch, po.version, po.release,
+                         pkgorigin, rel)]
+            msg += ["\n"]
             
         for lst in ['depends_on', 'obsoletes', 'obsoleted_by', 'downgrades',
                     'downgraded_by', 'updates', 'updated_by']:
             thislist = getattr(self, lst)
             if thislist:
-                msg += "  %s:" % lst
+                msg += ["  %s:" % lst]
                 for po in thislist:
                     pkgorigin = 'a'
                     if isinstance(po, YumInstalledPackage):
                         pkgorigin = 'i'
-                    msg += " %s,%s,%s,%s,%s@%s" % (po.name, po.arch, po.epoch, 
-                        po.version, po.release, pkgorigin)
-                msg += "\n"
+                    msg += [" %s,%s,%s,%s,%s@%s" %
+                            (po.name, po.arch, po.epoch, po.version,
+                             po.release, pkgorigin)]
+                msg += ["\n"]
                 
         if self.groups:
-            msg += "  groups: %s\n" % ' '.join(self.groups)
+            msg += ["  groups: %s\n" % ' '.join(self.groups)]
         if self.environments:
-            msg += "  environments: %s\n" % ' '.join(self.environments)
+            msg += ["  environments: %s\n" % ' '.join(self.environments)]
         if self.repopkg:
-            msg += "  repopkg: %s\n" % self.repopkg
+            msg += ["  repopkg: %s\n" % self.repopkg]
 
-        return msg
+        return ''.join(msg)

@@ -83,7 +83,13 @@ BuildRequires: rpm-python, rpm >= 0:4.4.2
 BuildRequires: python-iniparse
 BuildRequires: python-urlgrabber >= 3.10-8
 BuildRequires: yum-metadata-parser >= 1.1.0
+%if 0%{?rhel}
+BuildRequires: pygpgme
+Requires: pygpgme
+%else
 BuildRequires: python2-gpg
+Requires: python2-gpg
+%endif
 # End of CheckRequires
 Conflicts: pirut < 1.1.4
 Requires: python >= 2.4
@@ -91,7 +97,6 @@ Requires: rpm-python, rpm >= 0:4.4.2
 Requires: python-iniparse
 Requires: python-urlgrabber >= 3.10-8
 Requires: yum-metadata-parser >= 1.1.0
-Requires: python2-gpg
 # rawhide is >= 0.5.3-7.fc18 ... as this is added.
 Requires: pyliblzma
 # Not really a suggests anymore, due to metadata using it.
@@ -252,14 +257,13 @@ INIT=sysv
 
 make DESTDIR=$RPM_BUILD_ROOT UNITDIR=%{_unitdir} INIT=$INIT install
 
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/yum/pluginconf.d $RPM_BUILD_ROOT/%{yum_pluginslib}
 mkdir -p $RPM_BUILD_ROOT/%{yum_pluginsshare}
 
 %if %{move_yum_conf_back}
 # for now, move repodir/yum.conf back
 mv $RPM_BUILD_ROOT/%{_sysconfdir}/yum/repos.d $RPM_BUILD_ROOT/%{_sysconfdir}/yum.repos.d
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum.conf
+mv $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum.conf $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
 %endif
 
 %if %{yum_updatesd}
@@ -406,7 +410,7 @@ exit 0
 
 %files -f %{name}.lang
 %defattr(-, root, root, -)
-%doc README AUTHORS COPYING TODO ChangeLog PLUGINS docs/comps.rng
+%doc README.md AUTHORS COPYING TODO ChangeLog PLUGINS docs/comps.rng
 %if %{move_yum_conf_back}
 %config(noreplace) %{_sysconfdir}/yum.conf
 %dir %{_sysconfdir}/yum.repos.d

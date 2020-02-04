@@ -126,6 +126,7 @@ class YumShell(cmd.Cmd):
 
         :param line: the next line of input
         """
+        self.result = 0
         if len(line) > 0 and line.strip()[0] == '#':
             pass
         else:
@@ -150,7 +151,8 @@ class YumShell(cmd.Cmd):
             except Errors.YumBaseError:
                 pass
             else:
-                self.base.doCommands()
+                result, _ = self.base.doCommands()
+                self.result = result
     
     def emptyline(self):
         """Do nothing on an empty line of input."""
@@ -211,13 +213,14 @@ class YumShell(cmd.Cmd):
             self.base.shellUsage()
         
         self.verbose_logger.info(msg)
+        self.result = 0
         
     def do_EOF(self, line):
         """Exit the shell when EOF is reached.
 
         :param line: unused
         """
-        self.resultmsgs = ['Leaving Shell']
+        self.do_exit(line)
         return True
     
     def do_quit(self, line):
@@ -225,7 +228,7 @@ class YumShell(cmd.Cmd):
 
         :param line: unused
         """
-        self.resultmsgs = ['Leaving Shell']
+        self.do_exit(line)
         return True
     
     def do_exit(self, line):
@@ -233,6 +236,9 @@ class YumShell(cmd.Cmd):
 
         :param line: unused
         """
+        # Make sure we don't go onto the next stage in yummain (result == 2)
+        if self.base.conf.shell_exit_status == '0' or self.result == 2:
+            self.result = 0
         self.resultmsgs = ['Leaving Shell']
         return True
     
@@ -254,6 +260,7 @@ class YumShell(cmd.Cmd):
         :param line: the remainder of the line, containing the name of
            a subcommand.  If no subcommand is given, run the list subcommand.
         """
+        self.result = 0
         (cmd, args, line) = self.parseline(line)
         if cmd in ['list', None]:
             self.verbose_logger.log(logginglevels.INFO_2,
@@ -267,11 +274,13 @@ class YumShell(cmd.Cmd):
                 (code, msgs) = self.base.buildTransaction()
             except Errors.YumBaseError as e:
                 self.logger.critical('Error building transaction: %s', e)
+                self.result = 1
                 return False
                 
             if code == 1:
                 for msg in msgs:
                     self.logger.critical('Error: %s', msg)
+                self.result = 1
             else:
                 self.verbose_logger.log(logginglevels.INFO_2,
                     'Success resolving dependencies')
@@ -292,6 +301,7 @@ class YumShell(cmd.Cmd):
            value is given, print the current value.  If a value is
            supplied, set the option to the given value.
         """
+        self.result = 0
         (cmd, args, line) = self.parseline(line)
         # logs
         if cmd in ['debuglevel', 'errorlevel']:
@@ -305,6 +315,7 @@ class YumShell(cmd.Cmd):
                     val = int(val)
                 except ValueError:
                     self.logger.critical('Value %s for %s cannot be made to an int', val, cmd)
+                    self.result = 1
                     return
                 setattr(self.base.conf, cmd, val)
                 if cmd == 'debuglevel':
@@ -321,6 +332,7 @@ class YumShell(cmd.Cmd):
                 value = opts[0]
                 if value.lower() not in BOOLEAN_STATES:
                     self.logger.critical('Value %s for %s is not a Boolean', value, cmd)
+                    self.result = 1
                     return False
                 value = BOOLEAN_STATES[value.lower()]
                 setattr(self.base.conf, cmd, value)
@@ -363,6 +375,7 @@ class YumShell(cmd.Cmd):
            a subcommand and other parameters if required.  If no
            subcommand is given, run the list subcommand.
         """
+        self.result = 0
         (cmd, args, line) = self.parseline(line)
         if cmd in ['list', None]:
             # Munge things to run the repolist command
@@ -380,7 +393,8 @@ class YumShell(cmd.Cmd):
             except Errors.YumBaseError:
                 pass
             else:
-                self.base.doCommands()
+                result, _ = self.base.doCommands()
+                self.result = result
 
         elif cmd == 'enable':
             repos = self._shlex_split(args)
@@ -392,8 +406,10 @@ class YumShell(cmd.Cmd):
                     changed = self.base.repos.enableRepo(repo)
                 except Errors.ConfigError as e:
                     self.logger.critical(e)
+                    self.result = 1
                 except Errors.RepoError as e:
                     self.logger.critical(e)
+                    self.result = 1
                     
                 else:
                     for repo in changed:
@@ -402,6 +418,7 @@ class YumShell(cmd.Cmd):
                         except Errors.RepoError as e:
                             self.logger.critical('Disabling Repository')
                             self.base.repos.disableRepo(repo)
+                            self.result = 1
                             return False
                             
                     self.base.up = None
@@ -413,8 +430,10 @@ class YumShell(cmd.Cmd):
                     offrepos = self.base.repos.disableRepo(repo)
                 except Errors.ConfigError as e:
                     self.logger.critical(e)
-                except Errors.RepoError as e:
+                    self.result = 1
+                except Errors.RepoError  as e:
                     self.logger.critical(e)
+                    self.result = 1
 
                 else:
                     # close the repos, too
@@ -432,36 +451,45 @@ class YumShell(cmd.Cmd):
         print(cmd)
         print(args)
         print(line)
+        self.result = 0
         
     def do_run(self, line):
         """Run the transaction.
 
         :param line: unused
         """
+        self.result = 0
         if len(self.base.tsInfo) > 0:
             try:
                 (code, msgs) = self.base.buildTransaction()
                 if code == 1:
                     for msg in msgs:
                         self.logger.critical('Error: %s', msg)
+                    self.result = 1
                     return False
 
                 returnval = self.base.doTransaction()
             except Errors.YumBaseError as e:
                 self.logger.critical('Error: %s', e)
+                self.result = 1
             except KeyboardInterrupt as e:
                 self.logger.critical('\n\nExiting on user cancel')
+                self.result = 1
             except IOError as e:
                 if e.errno == 32:
                     self.logger.critical('\n\nExiting on Broken Pipe')
+                self.result = 1
             else:
                 if returnval not in [0,1,-1]:
                     self.verbose_logger.info('Transaction encountered a serious error.')
+                    self.result = 1
                 else:
                     if returnval == 1:
                         self.verbose_logger.info('There were non-fatal errors in the transaction')
+                        self.result = 1
                     elif returnval == -1:
                         self.verbose_logger.info("Transaction didn't start")
+                        self.result = 1
                     self.verbose_logger.log(logginglevels.INFO_2,
                         'Finished Transaction')
                 self.base.closeRpmDB()

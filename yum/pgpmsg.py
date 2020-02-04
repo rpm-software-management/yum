@@ -983,7 +983,7 @@ be scanned to make sure they are valid for a pgp certificate."""
                 # bind it to the key
                 while pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
                     if pkts[pkt_idx].sig_type not in (SIG_TYPE_PK_USER_GEN, SIG_TYPE_PK_USER_PER, SIG_TYPE_PK_USER_CAS, SIG_TYPE_PK_USER_POS, SIG_TYPE_CERT_REVOKE) :
-                        raise ValueError('signature %d doesn\'t bind user_id to key, is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
+                        raise ValueError('signature %d doesn\'t bind user_id to key, is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_type)))
 
                     user_id.append(pkts[pkt_idx])
 
@@ -1078,7 +1078,7 @@ be scanned to make sure they are valid for a pgp certificate."""
                     if pkt_idx >= len(pkts) :
                         raise ValueError('subkey at index %d was not followed by a signature' % (pkt_idx-1))
                     if pkts[pkt_idx].pkt_typ != CTB_PKT_SIG or pkts[pkt_idx].sig_type != SIG_TYPE_SUBKEY_BIND :
-                        raise ValueError('signature %d doesn\'t bind subkey to key, type is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_typ)))
+                        raise ValueError('signature %d doesn\'t bind subkey to key, type is %s' % (pkt_idx, map_to_str(sig_type_to_str, pkts[pkt_idx].sig_type)))
                     subkey.append(pkts[pkt_idx])
 
                     pkt_idx = pkt_idx + 1

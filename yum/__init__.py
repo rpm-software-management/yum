@@ -1037,6 +1037,7 @@ class YumBase(depsolve.Depsolve):
             self._upinfo = update_md.UpdateMetadata(logger=logger,
                                                     vlogger=vlogger)
 
+            self.pkgSack  # Preload the sack now, to honor skip_if_unavailable
             for repo in self.repos.listEnabled():
                 if 'updateinfo' not in repo.repoXML.fileTypes():
                     continue
@@ -2582,7 +2583,6 @@ much more problems).
                         result, errmsg = self.sigCheckPkg(po)
                         if result != 0:
                             self.verbose_logger.warn("%s", errmsg)
-                    po.localpath = obj.filename
                     if po in errors:
                         del errors[po]
 
@@ -2888,6 +2888,16 @@ much more problems).
         else:
             filelist = misc.getFileList(cachedir, '', [])
         return self._cleanFilelist('rpmdb', filelist)
+
+    def getCachedirGlob(self, dynvar):
+        """Return a glob matching all dirs where yum stores cache files, based
+        on cachedir and the given list of dynamic vars."""
+        yumvar = self.conf.yumvar.copy()
+        for d in dynvar:
+            yumvar[d] = '*'
+        instroot = config.varReplace(self.conf.installroot, self.conf.yumvar)
+        cachedir = config.varReplace(self.conf._pristine_cachedir, yumvar)
+        return (instroot + cachedir).replace('//', '/')
 
     def _cleanFiles(self, exts, pathattr, filetype):
         filelist = []
@@ -4778,6 +4788,21 @@ much more problems).
             return False
         return True
 
+    def _valid_obsoleter_arch(self, obsoleter, obsoletee):
+        """Return whether this obsoleter meets multilib_policy in case we are
+        dealing with the noarch->arch obsoletion case."""
+        if not self.arch.multilib or self.conf.multilib_policy != 'best':
+            # Install everything
+            return True
+        if obsoletee.arch != 'noarch' or obsoleter.arch == 'noarch':
+            # We do respect any arch->(no)arch obsoletions (having
+            # obsoletee.i386 installed on x86_64, you'd still expect
+            # obsoleter.i386 to replace it, even if you have
+            # multilib_policy=best).
+            return True
+        # noarch->arch case
+        return obsoleter.arch in self.arch.legit_multi_arches
+
     def install(self, po=None, **kwargs):
         """Mark the specified item for installation.  If a package
         object is given, mark it for installation.  Otherwise, mark
@@ -5145,10 +5170,12 @@ much more problems).
                                                        allow_missing=True)
                 if obsoleting_pkg is None:
                     continue
+                installed_pkg =  self.getInstalledPackageObject(installed)
+                if not self._valid_obsoleter_arch(obsoleting_pkg, installed_pkg):
+                    continue
                 topkg = self._test_loop(obsoleting_pkg, self._pkg2obspkg)
                 if topkg is not None:
                     obsoleting_pkg = topkg
-                installed_pkg =  self.getInstalledPackageObject(installed)
                 txmbr = self.tsInfo.addObsoleting(obsoleting_pkg, installed_pkg)
                 self.tsInfo.addObsoleted(installed_pkg, obsoleting_pkg)
                 if requiringPo:
@@ -5182,6 +5209,7 @@ much more problems).
         
         instpkgs = []
         availpkgs = []
+        arch_specified = True
         if po: # just a po
             if po.repoid == 'installed':
                 instpkgs.append(po)
@@ -5242,7 +5270,9 @@ much more problems).
             if not availpkgs and not instpkgs:
                 self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
                 if not self.conf.skip_missing_names_on_update:
-                    raise Errors.UpdateMissingNameError(_('Not tolerating missing names on update, stopping.'))
+                    raise Errors.UpdateMissingNameError, _('Not tolerating missing names on update, stopping.')
+
+            arch_specified = '.' in kwargs['pattern']
         
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
@@ -5295,12 +5325,16 @@ much more problems).
                                                            allow_missing=True)
                     if obsoleting_pkg is None:
                         continue
+                    if not arch_specified and not self._valid_obsoleter_arch(obsoleting_pkg, installed_pkg):
+                        continue
                     obs_pkgs.append(obsoleting_pkg)
                 # NOTE: Broekn wrt. repoid
                 for obsoleting_pkg in packagesNewestByName(obs_pkgs):
                     tx_return.extend(self.install(po=obsoleting_pkg))
             for available_pkg in availpkgs:
                 for obsoleted_pkg in self._find_obsoletees(available_pkg):
+                    if not arch_specified and not self._valid_obsoleter_arch(available_pkg, obsoleted_pkg):
+                        continue
                     obsoleted = obsoleted_pkg.pkgtup
                     txmbr = self.tsInfo.addObsoleting(available_pkg, obsoleted_pkg)
                     if requiringPo:
@@ -6115,6 +6149,31 @@ much more problems).
         self.conf.obsoletes = old_conf_obs
         return done
 
+    def redirect_failure_callback(self, data):
+        """Failure callback for urlgrabber to force a retry if we time out
+        (code 12) or error out (code 14) after being redirected (since these
+        codes are not in opts.retrycodes).
+
+        This allows for failovers if the URL points to a MirrorManager2 (such
+        as download.fedoraproject.org).  If the mirror it redirects to is down
+        for some reason, this will ensure that we try again, hopefully getting
+        a mirror that works.
+        """
+        e = data.exception
+        url_initial = data.url
+        url_actual = e.url
+        if (e.errno not in (12, 14) or url_initial == url_actual):
+            # Not a timeout/HTTPError, or there was no redirect, so leave it up
+            # to urlgrabber
+            return
+        if e.errno == 12:
+            msg = _('Timeout on %s, trying again') % url_actual
+        else:
+            msg = _('Could not retrieve %s: %s, trying again') % (url_actual, e)
+        # Force a retry by hacking the errno so that it falls within retrycodes
+        e.errno = -1
+        self.logger.error(msg)
+
     def _retrievePublicKey(self, keyurl, repo=None, getSig=True):
         """
         Retrieve a key file
@@ -6122,6 +6181,7 @@ much more problems).
         Returns a list of dicts with all the keyinfo
         """
         key_installed = False
+        cb = self.redirect_failure_callback
         
         msg = _('Retrieving key from %s') % keyurl
         self.verbose_logger.log(logginglevels.INFO_2, msg)
@@ -6138,7 +6198,7 @@ much more problems).
                 # external callers should just update.
                 opts = repo._default_grabopts()
                 text = repo.id + '/gpgkey'
-            rawkey = urlgrabber.urlread(url, **opts)
+            rawkey = urlgrabber.urlread(url, failure_callback=cb, **opts)
 
         except urlgrabber.grabber.URLGrabError as e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
@@ -6154,7 +6214,7 @@ much more problems).
                 url = misc.to_utf8(keyurl + '.asc')
                 opts = repo._default_grabopts()
                 text = repo.id + '/gpgkeysig'
-                sigfile = urlgrabber.urlopen(url, **opts)
+                sigfile = urlgrabber.urlopen(url, failure_callback=cb, **opts)
 
             except urlgrabber.grabber.URLGrabError as e:
                 sigfile = None
@@ -6839,24 +6899,24 @@ much more problems).
         
         self._ts_save_file = filename
         
-        msg = "%s\n" % self.rpmdb.simpleVersion(main_only=True)[0]
-        msg += "%s\n" % self.ts.getTsFlags()
+        msg = ["%s\n" % self.rpmdb.simpleVersion(main_only=True)[0],
+               "%s\n" % self.ts.getTsFlags()]
 
         if self.tsInfo._pkgSack is None: # Transactions have pkgSack?
-            msg += "1\n"
+            msg += ["1\n"]
         else:
-            msg += "%s\n" % (len(self.repos.listEnabled()) + 1)
+            msg += ["%s\n" % (len(self.repos.listEnabled()) + 1)]
             for r in self.repos.listEnabled():
-                msg += "%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)
+                msg += ["%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)]
 
         # Save what we think the future rpmdbv will be.
-        msg += "%s:%s\n" % ('installed', self.tsInfo.futureRpmDBVersion())
+        msg += ["%s:%s\n" % ('installed', self.tsInfo.futureRpmDBVersion())]
 
-        msg += "%s\n" % len(self.tsInfo.getMembers())
+        msg += ["%s\n" % len(self.tsInfo.getMembers())]
         for txmbr in self.tsInfo.getMembers():
-            msg += txmbr._dump()
+            msg += [txmbr._dump()]
         try:
-            f.write(msg)
+            f.write(''.join(msg))
             f.close()
         except (IOError, OSError) as e:
             self._ts_save_file = None

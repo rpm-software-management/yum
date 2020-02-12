@@ -1,3 +1,5 @@
+:no_entry: This project is **deprecated**. Please use [DNF](https://github.com/rpm-software-management/dnf), the successor of YUM.
+
 # YUM
 
 Yum is an automatic updater and installer for rpm-based systems.

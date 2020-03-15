@@ -4803,6 +4803,51 @@ much more problems).
         # noarch->arch case
         return obsoleter.arch in self.arch.legit_multi_arches
 
+    def _is_in_docker(self):
+        """ Returns: True if running in a Docker container, else False """
+        with open('/proc/1/cgroup', 'rt') as f:
+            return 'docker' in f.read()
+
+    def _is_kernel_pkgs(self, pkg):
+        """ Returns: True if pkg is a kernel related package, else False """
+        kernel_pkgs = ("kernel", "kernel-debug", "kernel-debug-devel",
+                       "kernel-devel", "kernel-headers", "kernel-tools",
+                       "kernel-tools-libs", "kernel-tools-libs-devel",
+                       "perf", "kernel-debug-debuginfo", "kernel-debuginfo",
+                       "kernel-debuginfo-common", "kernel-tools-debuginfo",
+                       "perf-debuginfo", "python-perf", "python-perf-debuginfo")
+        return pkg in kernel_pkgs
+
+    def _get_real_kernel_ver(self):
+        """ Return the "real" kernel version of the running kernel. we can look at
+            the /proc/version. """
+        with open('/proc/version', 'rt') as f:
+           vers = f.read().split(' ')
+           if len(vers) < 3:
+               return ""
+           else:
+               return vers[2]
+
+    def _filter_pkgs_docker(self, pkgs):
+        """ Given a list of packages, filter them for those related to the running kernel."""
+        k_ver = self._get_real_kernel_ver()
+        k_pkgs = {}
+        ret = []
+        for pkg in pkgs:
+            key = pkg.name
+            if k_ver != "" and self._is_kernel_pkgs(key):
+                if k_ver == pkg.vra:
+                    if key in k_pkgs:
+                        k_pkgs[key].append(pkg)
+                    else:
+                        k_pkgs[key] = [pkg]
+            else:
+                ret.append(pkg)
+
+        for vals in k_pkgs.itervalues():
+            ret.extend(vals)
+        return ret
+
     def install(self, po=None, **kwargs):
         """Mark the specified item for installation.  If a package
         object is given, mark it for installation.  Otherwise, mark
@@ -4916,6 +4961,8 @@ much more problems).
                            
                             pkgs = use
                            
+                if self._is_in_docker():
+                    pkgs = self._filter_pkgs_docker(pkgs)
                 pkgs = packagesNewestByName(pkgs)
 
                 pkgbyname = {}

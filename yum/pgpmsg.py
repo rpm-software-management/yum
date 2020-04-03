@@ -1074,6 +1074,12 @@ be scanned to make sure they are valid for a pgp certificate."""
                     pkt_idx = pkt_idx + 1
                     is_revoked = 0
 
+                    # there may optionally be a revocation
+                    if pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG and pkts[pkt_idx].sig_type == SIG_TYPE_SUBKEY_REVOKE :
+                        is_revoked = 1
+                        subkey.append(pkts[pkt_idx])
+                        pkt_idx = pkt_idx + 1
+
                     # there must be one signature following the subkey that binds it to the main key
                     if pkt_idx >= len(pkts) :
                         raise ValueError('subkey at index %d was not followed by a signature' % (pkt_idx-1))
@@ -1082,12 +1088,6 @@ be scanned to make sure they are valid for a pgp certificate."""
                     subkey.append(pkts[pkt_idx])
 
                     pkt_idx = pkt_idx + 1
-
-                    # there may optionally be a revocation
-                    if pkt_idx < len(pkts) and pkts[pkt_idx].pkt_typ == CTB_PKT_SIG and pkts[pkt_idx].sig_type == SIG_TYPE_SUBKEY_REVOKE :
-                        is_revoked = 1
-                        subkey.append(pkts[pkt_idx])
-                        pkt_idx = pkt_idx + 1
 
                     # append the user ID and signature(s) onto the list
                     if is_revoked :

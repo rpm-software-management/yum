@@ -59,22 +59,24 @@ class GpgmeAdapter(object):
             keyf = StringIO(rawkey)
             imp = self.ctx.import_(keyf)
             keyf.close()
-            # Ultimately trust the key
-            fpr = imp.imports[0][0]
-            key = self.ctx.get_key(fpr)
-            gpgme.editutil.edit_trust(self.ctx, key, gpgme.VALIDITY_ULTIMATE)
+            # Ultimately trust the keys
+            for import_status in imp.imports:
+              fpr = impport_status[0]
+              key = self.ctx.get_key(fpr)
+              gpgme.editutil.edit_trust(self.ctx, key, gpgme.VALIDITY_ULTIMATE)
 
         def verify(self, signed_text, sig, plaintext):
             try:
                 sigs = self.ctx.verify(sig, signed_text, plaintext)
             except gpgme.GpgmeError as e:
                 raise GpgmeAdapter.errors.GPGMEError()
-            # is there ever a case where we care about a sig beyond the first
-            # one?
-            if not sigs or not sigs[0] or sigs[0].validity not in (
-                    gpgme.VALIDITY_FULL, gpgme.VALIDITY_MARGINAL,
-                    gpgme.VALIDITY_ULTIMATE):
-                raise GpgmeAdapter.errors.BadSignatures()
+            for sig in sigs:
+                # Check that at least one sig is recognized as valid.
+                if sig.validity in (
+                        gpgme.VALIDITY_FULL, gpgme.VALIDITY_MARGINAL,
+                        gpgme.VALIDITY_ULTIMATE):
+                    return
+            raise GpgmeAdapter.errors.BadSignatures()
 
         def __getattr__(self, name):
             return getattr(self.ctx, name)

@@ -46,6 +46,12 @@ class UpdateEmitter(object):
         self.output.append('The following updates are available on %s:' % self.opts.system_name)
         self.output.append(summary)
 
+    def updatesUnavailable(self):
+        """Appends a message to the output list stating that there are
+        no updates available.
+        """
+        self.output.append('Yum indicates that there are no updates available')
+
     def updatesDownloading(self, summary):
         """Append a message to the output list stating that
         downloading updates has started.
@@ -163,6 +169,13 @@ class EmailEmitter(UpdateEmitter):
         """
         super(EmailEmitter, self).updatesAvailable(summary)
         self.subject = "Yum: Updates Available on %s" % self.opts.system_name
+
+    def updatesUnavailable(self):
+        """Appends a message to the output list stating that there are
+        no updates available, and set an appropiate subject line.
+        """
+        super(EmailEmitter, self).updatesUnavailable()
+        self.subject = "Yum: Up-To-Date"
 
     def updatesDownloaded(self):
         """Append a message to the output list stating that updates
@@ -284,6 +297,7 @@ class YumCronConfig(BaseConfig):
     lock_retries = IntOption(5)
     lock_sleep = IntOption(60)
     emit_via = ListOption(['email','stdio'])
+    emit_when_up_to_date = BoolOption(False)
     email_to = ListOption(["root"])
     email_from = Option("root")
     email_host = Option("localhost")
@@ -634,6 +648,10 @@ class YumCronBase(yum.YumBase, YumOutput):
         gups = self.refreshGroupUpdates()
         # If neither have updates, we can just exit.
         if not (pups or gups):
+            if self.opts.emit_when_up_to_date:
+                self.emitUnavailable()
+            self.sendMessages()
+            self.releaseLocks()
             sys.exit(0)
 
         # Build the transaction to find the additional dependencies
@@ -668,6 +686,10 @@ class YumCronBase(yum.YumBase, YumOutput):
         """Emit a notice stating whether updates are available."""
         summary = self.listTransaction()
         map(lambda x: x.updatesAvailable(summary), self.emitters)
+
+    def emitUnavailable(self):
+        """Emit a notice stating updates are not avaialble."""
+        map(lambda x: x.updatesUnavailable(), self.emitters)
 
     def emitDownloading(self):
         """Emit a notice stating that updates are downloading."""

@@ -7,7 +7,6 @@ Documentation:
 
 Mail:
 - Use a different subject for success and failure mail
-- Make receiving mail when nothing happens optional
 
 General:
 - Break out check-updates and download-updates into their own actions;
